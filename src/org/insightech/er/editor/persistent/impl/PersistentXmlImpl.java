@@ -1154,11 +1154,19 @@ public class PersistentXmlImpl extends Persistent {
             }
 
             xml.append("\t<id>").append(context.columnMap.get(normalColumn)).append("</id>\n");
+            String prevRef = "";
             for (final NormalColumn referencedColumn : normalColumn.getReferencedColumnList()) {
-                xml.append("\t<referenced_column>").append(Format.toString(context.columnMap.get(referencedColumn))).append("</referenced_column>\n");
+                String ref = Format.toString(context.columnMap.get(referencedColumn));
+                if (!ref.equals(prevRef)) {
+                    xml.append("\t<referenced_column>").append(ref).append("</referenced_column>\n");
+                }
             }
+            Integer prevRel = null;
             for (final Relation relation : normalColumn.getRelationList()) {
-                xml.append("\t<relation>").append(context.connectionMap.get(relation)).append("</relation>\n");
+                Integer rel = context.connectionMap.get(relation);
+                if (!rel.equals(prevRel)) {
+                    xml.append("\t<relation>").append(rel).append("</relation>\n");
+                }
             }
         }
 
