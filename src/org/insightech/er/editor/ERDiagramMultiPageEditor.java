@@ -179,7 +179,8 @@ public class ERDiagramMultiPageEditor extends MultiPageEditorPart {
             ERDiagramActivator.showExceptionDialog(e);
         }
 
-        initCategoryPages();
+        // [ermaster-fast] Avoid expensive initialization, disable category tabs
+        //initCategoryPages();
 
         initStartPage();
 
