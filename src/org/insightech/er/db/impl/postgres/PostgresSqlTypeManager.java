@@ -5,8 +5,9 @@ import org.insightech.er.db.sqltype.SqlTypeManagerBase;
 
 public class PostgresSqlTypeManager extends SqlTypeManagerBase {
 
-	public int getByteLength(SqlType type, Integer length, Integer decimal) {
-		return 0;
-	}
+    @Override
+    public int getByteLength(final SqlType type, final Integer length, final Integer decimal) {
+        return 0;
+    }
 
 }

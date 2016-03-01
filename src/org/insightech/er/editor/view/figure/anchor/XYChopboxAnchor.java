@@ -6,43 +6,43 @@ import org.eclipse.draw2d.geometry.Point;
 
 public class XYChopboxAnchor extends ChopboxAnchor {
 
-	private Point location;
+    private Point location;
 
-	public XYChopboxAnchor(IFigure owner) {
-		super(owner);
-	}
+    public XYChopboxAnchor(final IFigure owner) {
+        super(owner);
+    }
 
-	public void setLocation(Point location) {
-		this.location = location;
-		this.fireAnchorMoved();
-	}
+    public void setLocation(final Point location) {
+        this.location = location;
+        fireAnchorMoved();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Point getLocation(Point reference) {
-		if (this.location != null) {
-			Point point = new Point(this.location);
-			this.getOwner().translateToAbsolute(point);
-			return point;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Point getLocation(final Point reference) {
+        if (location != null) {
+            final Point point = new Point(location);
+            getOwner().translateToAbsolute(point);
+            return point;
+        }
 
-		return super.getLocation(reference);
-	}
+        return super.getLocation(reference);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Point getReferencePoint() {
-		if (this.location != null) {
-			Point point = new Point(this.location);
-			this.getOwner().translateToAbsolute(point);
-			return point;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Point getReferencePoint() {
+        if (location != null) {
+            final Point point = new Point(location);
+            getOwner().translateToAbsolute(point);
+            return point;
+        }
 
-		return super.getReferencePoint();
-	}
+        return super.getReferencePoint();
+    }
 
 }

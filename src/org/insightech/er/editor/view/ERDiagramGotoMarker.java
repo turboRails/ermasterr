@@ -8,24 +8,24 @@ import org.insightech.er.editor.ERDiagramMultiPageEditor;
 
 public class ERDiagramGotoMarker implements IGotoMarker {
 
-	private ERDiagramMultiPageEditor editor;
+    private final ERDiagramMultiPageEditor editor;
 
-	public ERDiagramGotoMarker(ERDiagramMultiPageEditor editor) {
-		this.editor = editor;
-	}
+    public ERDiagramGotoMarker(final ERDiagramMultiPageEditor editor) {
+        this.editor = editor;
+    }
 
-	public void gotoMarker(IMarker marker) {
-		focus(this.editor.getMarkedObject(marker));
-	}
+    @Override
+    public void gotoMarker(final IMarker marker) {
+        focus(editor.getMarkedObject(marker));
+    }
 
-	private void focus(Object object) {
-		GraphicalViewer viewer = this.editor.getActiveEditor()
-				.getGraphicalViewer();
-		EditPart editPart = (EditPart) viewer.getEditPartRegistry().get(object);
+    private void focus(final Object object) {
+        final GraphicalViewer viewer = editor.getActiveEditor().getGraphicalViewer();
+        final EditPart editPart = (EditPart) viewer.getEditPartRegistry().get(object);
 
-		if (editPart != null) {
-			viewer.select(editPart);
-			viewer.reveal(editPart);
-		}
-	}
+        if (editPart != null) {
+            viewer.select(editPart);
+            viewer.reveal(editPart);
+        }
+    }
 }

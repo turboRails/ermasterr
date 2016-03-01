@@ -21,74 +21,69 @@ import org.insightech.er.editor.model.ERDiagram;
 import org.insightech.er.editor.model.diagram_contents.not_element.sequence.Sequence;
 import org.insightech.er.editor.view.dialog.outline.sequence.SequenceDialog;
 
-public class SequenceOutlineEditPart extends AbstractOutlineEditPart implements
-		DeleteableEditPart {
+public class SequenceOutlineEditPart extends AbstractOutlineEditPart implements DeleteableEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		Sequence sequence = (Sequence) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        final Sequence sequence = (Sequence) getModel();
 
-		if (!DBManagerFactory.getDBManager(this.getDiagram()).isSupported(
-				DBManager.SUPPORT_SEQUENCE)) {
-			((TreeItem) getWidget()).setForeground(ColorConstants.lightGray);
+        if (!DBManagerFactory.getDBManager(getDiagram()).isSupported(DBManager.SUPPORT_SEQUENCE)) {
+            ((TreeItem) getWidget()).setForeground(ColorConstants.lightGray);
 
-		} else {
-			((TreeItem) getWidget()).setForeground(ColorConstants.black);
-		}
+        } else {
+            ((TreeItem) getWidget()).setForeground(ColorConstants.black);
+        }
 
-		this.setWidgetText(this.getDiagram().filter(sequence.getName()));
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.SEQUENCE));
-	}
+        setWidgetText(getDiagram().filter(sequence.getName()));
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.SEQUENCE));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		try {
-			Sequence sequence = (Sequence) this.getModel();
-			ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        try {
+            final Sequence sequence = (Sequence) getModel();
+            final ERDiagram diagram = getDiagram();
 
-			if (request.getType().equals(RequestConstants.REQ_OPEN)) {
-				SequenceDialog dialog = new SequenceDialog(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						sequence, diagram);
+            if (request.getType().equals(RequestConstants.REQ_OPEN)) {
+                final SequenceDialog dialog = new SequenceDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), sequence, diagram);
 
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					EditSequenceCommand command = new EditSequenceCommand(
-							diagram, sequence, dialog.getResult());
-					this.execute(command);
-				}
-			}
+                if (dialog.open() == IDialogConstants.OK_ID) {
+                    final EditSequenceCommand command = new EditSequenceCommand(diagram, sequence, dialog.getResult());
+                    execute(command);
+                }
+            }
 
-			super.performRequest(request);
+            super.performRequest(request);
 
-		} catch (Exception e) {
-			ERDiagramActivator.showExceptionDialog(e);
-		}
-	}
+        } catch (final Exception e) {
+            ERDiagramActivator.showExceptionDialog(e);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new SequenceComponentEditPolicy());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new SequenceComponentEditPolicy());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DragTracker getDragTracker(Request req) {
-		return new SelectEditPartTracker(this);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DragTracker getDragTracker(final Request req) {
+        return new SelectEditPartTracker(this);
+    }
 
-	public boolean isDeleteable() {
-		return true;
-	}
+    @Override
+    public boolean isDeleteable() {
+        return true;
+    }
 }

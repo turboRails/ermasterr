@@ -10,96 +10,86 @@ import org.insightech.er.editor.model.settings.Settings;
 import org.insightech.er.editor.view.dialog.element.ModelPropertiesDialog;
 import org.insightech.er.editor.view.figure.ModelPropertiesFigure;
 
-public class ModelPropertiesEditPart extends NodeElementEditPart implements
-		IResizable {
+public class ModelPropertiesEditPart extends NodeElementEditPart implements IResizable {
 
-	public ModelPropertiesEditPart() {
-		super();
-	}
+    public ModelPropertiesEditPart() {
+        super();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected IFigure createFigure() {
-		ERDiagram diagram = this.getDiagram();
-		Settings settings = diagram.getDiagramContents().getSettings();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected IFigure createFigure() {
+        final ERDiagram diagram = getDiagram();
+        final Settings settings = diagram.getDiagramContents().getSettings();
 
-		ModelPropertiesFigure figure = new ModelPropertiesFigure();
+        final ModelPropertiesFigure figure = new ModelPropertiesFigure();
 
-		this.changeFont(figure);
+        changeFont(figure);
 
-		figure.setVisible(settings.getModelProperties().isDisplay());
+        figure.setVisible(settings.getModelProperties().isDisplay());
 
-		return figure;
-	}
+        return figure;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doRefreshVisuals() {
-		ERDiagram diagram = this.getDiagram();
-		ModelProperties modelProperties = (ModelProperties) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRefreshVisuals() {
+        final ERDiagram diagram = getDiagram();
+        final ModelProperties modelProperties = (ModelProperties) getModel();
 
-		ModelPropertiesFigure figure = (ModelPropertiesFigure) this.getFigure();
+        final ModelPropertiesFigure figure = (ModelPropertiesFigure) getFigure();
 
-		figure.setData(modelProperties.getProperties(),
-				modelProperties.getCreationDate(),
-				modelProperties.getUpdatedDate(), diagram.getDiagramContents()
-						.getSettings().getTableStyle(),
-				modelProperties.getColor());
-	}
+        figure.setData(modelProperties.getProperties(), modelProperties.getCreationDate(), modelProperties.getUpdatedDate(), diagram.getDiagramContents().getSettings().getTableStyle(), modelProperties.getColor());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void refreshSettings(Settings settings) {
-		this.figure.setVisible(settings.getModelProperties().isDisplay());
-		super.refreshSettings(settings);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void refreshSettings(final Settings settings) {
+        figure.setVisible(settings.getModelProperties().isDisplay());
+        super.refreshSettings(settings);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void setVisible() {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setVisible() {
+        final ERDiagram diagram = getDiagram();
 
-		Settings settings = diagram.getDiagramContents().getSettings();
+        final Settings settings = diagram.getDiagramContents().getSettings();
 
-		this.figure.setVisible(settings.getModelProperties().isDisplay());
-	}
+        figure.setVisible(settings.getModelProperties().isDisplay());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequestOpen() {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequestOpen() {
+        final ERDiagram diagram = getDiagram();
 
-		ModelProperties copyModelProperties = (ModelProperties) diagram
-				.getDiagramContents().getSettings().getModelProperties()
-				.clone();
+        final ModelProperties copyModelProperties = diagram.getDiagramContents().getSettings().getModelProperties().clone();
 
-		ModelPropertiesDialog dialog = new ModelPropertiesDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				copyModelProperties);
+        final ModelPropertiesDialog dialog = new ModelPropertiesDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), copyModelProperties);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			ChangeModelPropertiesCommand command = new ChangeModelPropertiesCommand(
-					diagram, copyModelProperties);
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            final ChangeModelPropertiesCommand command = new ChangeModelPropertiesCommand(diagram, copyModelProperties);
 
-			this.executeCommand(command);
-		}
-	}
+            executeCommand(command);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isDeleteable() {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isDeleteable() {
+        return false;
+    }
 }

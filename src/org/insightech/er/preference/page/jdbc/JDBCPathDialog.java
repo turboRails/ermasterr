@@ -23,165 +23,156 @@ import org.insightech.er.util.Format;
 
 public class JDBCPathDialog extends AbstractDialog {
 
-	private MultiFileFieldEditor fileFieldEditor;
+    private MultiFileFieldEditor fileFieldEditor;
 
-	private Combo databaseCombo;
+    private Combo databaseCombo;
 
-	private Text driverClassNameText;
+    private Text driverClassNameText;
 
-	private String database;
+    private String database;
 
-	private String driverClassName;
+    private String driverClassName;
 
-	private String path;
+    private String path;
 
-	private List<JDBCDriverSetting> otherDriverSettingList;
+    private final List<JDBCDriverSetting> otherDriverSettingList;
 
-	private boolean editable;
+    private boolean editable;
 
-	public JDBCPathDialog(Shell parentShell, String database,
-			String driverClassName, String path,
-			List<JDBCDriverSetting> otherDriverSettingList, boolean editable) {
-		super(parentShell);
+    public JDBCPathDialog(final Shell parentShell, final String database, final String driverClassName, final String path, final List<JDBCDriverSetting> otherDriverSettingList, final boolean editable) {
+        super(parentShell);
 
-		this.database = database;
-		this.driverClassName = driverClassName;
-		this.path = path;
+        this.database = database;
+        this.driverClassName = driverClassName;
+        this.path = path;
 
-		this.otherDriverSettingList = otherDriverSettingList;
-		this.editable = editable;
-	}
+        this.otherDriverSettingList = otherDriverSettingList;
+        this.editable = editable;
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
 
-		layout.numColumns = 3;
-	}
+        layout.numColumns = 3;
+    }
 
-	@Override
-	protected Object createLayoutData() {
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.widthHint = 750;
-		gridData.heightHint = 200;
-		gridData.horizontalIndent = 10;
-		gridData.horizontalSpan = 10;
+    @Override
+    protected Object createLayoutData() {
+        final GridData gridData = new GridData(GridData.FILL_BOTH);
+        gridData.widthHint = 750;
+        gridData.heightHint = 200;
+        gridData.horizontalIndent = 10;
+        gridData.horizontalSpan = 10;
 
-		return gridData;
-	}
+        return gridData;
+    }
 
-	@Override
-	protected void initialize(Composite composite) {
-		GridData gridData = new GridData();
-		gridData.horizontalSpan = 3;
-		gridData.heightHint = 50;
+    @Override
+    protected void initialize(final Composite composite) {
+        final GridData gridData = new GridData();
+        gridData.horizontalSpan = 3;
+        gridData.heightHint = 50;
 
-		Label label = new Label(composite, SWT.NONE);
-		label.setLayoutData(gridData);
-		label.setText(ResourceString
-				.getResourceString("label.jdbc.driver.message"));
+        final Label label = new Label(composite, SWT.NONE);
+        label.setLayoutData(gridData);
+        label.setText(ResourceString.getResourceString("label.jdbc.driver.message"));
 
-		if (this.database != null) {
-			DBManager dbManager = DBManagerFactory.getDBManager(this.database);
+        if (database != null) {
+            final DBManager dbManager = DBManagerFactory.getDBManager(database);
 
-			if (dbManager.getDriverClassName().equals(this.driverClassName)
-					&& !dbManager.getDriverClassName().equals("")) {
-				this.editable = false;
-			}
+            if (dbManager.getDriverClassName().equals(driverClassName) && !dbManager.getDriverClassName().equals("")) {
+                editable = false;
+            }
 
-		}
+        }
 
-		if (this.editable) {
-			this.databaseCombo = CompositeFactory.createReadOnlyCombo(this,
-					composite, "label.database", 2, -1);
-			this.databaseCombo.setVisibleItemCount(10);
+        if (editable) {
+            databaseCombo = CompositeFactory.createReadOnlyCombo(this, composite, "label.database", 2, -1);
+            databaseCombo.setVisibleItemCount(10);
 
-		} else {
-			CompositeFactory.createLabel(composite, "label.database");
-			CompositeFactory.createLabel(composite, this.database, 2);
-		}
+        } else {
+            CompositeFactory.createLabel(composite, "label.database");
+            CompositeFactory.createLabel(composite, database, 2);
+        }
 
-		this.driverClassNameText = CompositeFactory.createText(this, composite,
-				"label.driver.class.name", 2, -1, SWT.BORDER, false, false);
+        driverClassNameText = CompositeFactory.createText(this, composite, "label.driver.class.name", 2, -1, SWT.BORDER, false, false);
 
-		this.driverClassNameText.setEditable(editable);
+        driverClassNameText.setEditable(editable);
 
-		this.fileFieldEditor = new MultiFileFieldEditor("",
-				ResourceString.getResourceString("label.path"), composite);
-		this.fileFieldEditor.setMultiple(true);
+        fileFieldEditor = new MultiFileFieldEditor("", ResourceString.getResourceString("label.path"), composite);
+        fileFieldEditor.setMultiple(true);
 
-		this.fileFieldEditor.setFocus();
-	}
+        fileFieldEditor.setFocus();
+    }
 
-	@Override
-	protected String getTitle() {
-		return "label.path";
-	}
+    @Override
+    protected String getTitle() {
+        return "label.path";
+    }
 
-	@Override
-	protected String getErrorMessage() {
-		String selectedDatabase = this.database;
+    @Override
+    protected String getErrorMessage() {
+        String selectedDatabase = database;
 
-		if (this.databaseCombo != null) {
-			selectedDatabase = this.databaseCombo.getText();
+        if (databaseCombo != null) {
+            selectedDatabase = databaseCombo.getText();
 
-			if (Check.isEmpty(selectedDatabase)) {
-				return "error.database.name.is.empty";
-			}
-		}
+            if (Check.isEmpty(selectedDatabase)) {
+                return "error.database.name.is.empty";
+            }
+        }
 
-		String text = this.driverClassNameText.getText();
+        final String text = driverClassNameText.getText();
 
-		if (Check.isEmpty(text)) {
-			return "error.driver.class.name.is.empty";
+        if (Check.isEmpty(text)) {
+            return "error.driver.class.name.is.empty";
 
-		} else {
-			JDBCDriverSetting driverSetting = new JDBCDriverSetting(
-					selectedDatabase, text, null);
+        } else {
+            final JDBCDriverSetting driverSetting = new JDBCDriverSetting(selectedDatabase, text, null);
 
-			if (otherDriverSettingList.contains(driverSetting)) {
-				return "error.driver.class.is.already.exist";
-			}
-		}
+            if (otherDriverSettingList.contains(driverSetting)) {
+                return "error.driver.class.is.already.exist";
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected void perfomeOK() throws InputException {
-		this.path = fileFieldEditor.getStringValue();
-		this.driverClassName = this.driverClassNameText.getText();
+    @Override
+    protected void perfomeOK() throws InputException {
+        path = fileFieldEditor.getStringValue();
+        driverClassName = driverClassNameText.getText();
 
-		if (this.databaseCombo != null) {
-			this.database = this.databaseCombo.getText();
-		}
-	}
+        if (databaseCombo != null) {
+            database = databaseCombo.getText();
+        }
+    }
 
-	@Override
-	protected void setData() {
-		this.fileFieldEditor.setStringValue(this.path);
-		this.driverClassNameText.setText(Format
-				.null2blank(this.driverClassName));
+    @Override
+    protected void setData() {
+        fileFieldEditor.setStringValue(path);
+        driverClassNameText.setText(Format.null2blank(driverClassName));
 
-		if (this.databaseCombo != null) {
-			for (String db : DBManagerFactory.getAllDBList()) {
-				this.databaseCombo.add(db);
-			}
+        if (databaseCombo != null) {
+            for (final String db : DBManagerFactory.getAllDBList()) {
+                databaseCombo.add(db);
+            }
 
-			this.databaseCombo.setText(Format.null2blank(this.database));
-		}
-	}
+            databaseCombo.setText(Format.null2blank(database));
+        }
+    }
 
-	public String getPath() {
-		return this.path;
-	}
+    public String getPath() {
+        return path;
+    }
 
-	public String getDriverClassName() {
-		return this.driverClassName;
-	}
+    public String getDriverClassName() {
+        return driverClassName;
+    }
 
-	public String getDatabase() {
-		return database;
-	}
+    public String getDatabase() {
+        return database;
+    }
 
 }

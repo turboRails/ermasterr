@@ -17,61 +17,57 @@ import org.insightech.er.editor.model.ERDiagram;
 import org.insightech.er.editor.model.diagram_contents.not_element.trigger.Trigger;
 import org.insightech.er.editor.view.dialog.outline.trigger.TriggerDialog;
 
-public class TriggerOutlineEditPart extends AbstractOutlineEditPart implements
-		DeleteableEditPart {
+public class TriggerOutlineEditPart extends AbstractOutlineEditPart implements DeleteableEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		Trigger trigger = (Trigger) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        final Trigger trigger = (Trigger) getModel();
 
-		this.setWidgetText(this.getDiagram().filter(trigger.getName()));
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.TRIGGER));
-	}
+        setWidgetText(getDiagram().filter(trigger.getName()));
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.TRIGGER));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		Trigger trigger = (Trigger) this.getModel();
-		ERDiagram diagram = (ERDiagram) this.getRoot().getContents().getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        final Trigger trigger = (Trigger) getModel();
+        final ERDiagram diagram = (ERDiagram) getRoot().getContents().getModel();
 
-		if (request.getType().equals(RequestConstants.REQ_OPEN)) {
-			TriggerDialog dialog = new TriggerDialog(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), trigger);
+        if (request.getType().equals(RequestConstants.REQ_OPEN)) {
+            final TriggerDialog dialog = new TriggerDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), trigger);
 
-			if (dialog.open() == IDialogConstants.OK_ID) {
-				EditTriggerCommand command = new EditTriggerCommand(diagram,
-						trigger, dialog.getResult());
-				this.getViewer().getEditDomain().getCommandStack()
-						.execute(command);
-			}
-		}
+            if (dialog.open() == IDialogConstants.OK_ID) {
+                final EditTriggerCommand command = new EditTriggerCommand(diagram, trigger, dialog.getResult());
+                getViewer().getEditDomain().getCommandStack().execute(command);
+            }
+        }
 
-		super.performRequest(request);
-	}
+        super.performRequest(request);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new TriggerComponentEditPolicy());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new TriggerComponentEditPolicy());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DragTracker getDragTracker(Request req) {
-		return new SelectEditPartTracker(this);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DragTracker getDragTracker(final Request req) {
+        return new SelectEditPartTracker(this);
+    }
 
-	public boolean isDeleteable() {
-		return true;
-	}
+    @Override
+    public boolean isDeleteable() {
+        return true;
+    }
 }

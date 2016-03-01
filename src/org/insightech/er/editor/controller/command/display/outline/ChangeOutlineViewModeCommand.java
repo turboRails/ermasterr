@@ -6,36 +6,36 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ChangeOutlineViewModeCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private int oldViewMode;
+    private final int oldViewMode;
 
-	private int newViewMode;
+    private final int newViewMode;
 
-	private Settings settings;
+    private final Settings settings;
 
-	public ChangeOutlineViewModeCommand(ERDiagram diagram, int viewMode) {
-		this.diagram = diagram;
-		this.settings = this.diagram.getDiagramContents().getSettings();
-		this.newViewMode = viewMode;
-		this.oldViewMode = this.settings.getViewMode();
-	}
+    public ChangeOutlineViewModeCommand(final ERDiagram diagram, final int viewMode) {
+        this.diagram = diagram;
+        settings = this.diagram.getDiagramContents().getSettings();
+        newViewMode = viewMode;
+        oldViewMode = settings.getViewMode();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.settings.setOutlineViewMode(this.newViewMode);
-		this.diagram.refreshOutline();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        settings.setOutlineViewMode(newViewMode);
+        diagram.refreshOutline();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.settings.setOutlineViewMode(this.oldViewMode);
-		this.diagram.refreshOutline();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        settings.setOutlineViewMode(oldViewMode);
+        diagram.refreshOutline();
+    }
 }

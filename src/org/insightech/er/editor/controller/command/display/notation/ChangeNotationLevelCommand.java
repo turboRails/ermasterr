@@ -6,36 +6,36 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ChangeNotationLevelCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private int oldNotationLevel;
+    private final int oldNotationLevel;
 
-	private int newNotationLevel;
-	
-	private Settings settings;
+    private final int newNotationLevel;
 
-	public ChangeNotationLevelCommand(ERDiagram diagram, int notationLevel) {
-		this.diagram = diagram;
-		this.settings = diagram.getDiagramContents().getSettings();
-		this.newNotationLevel = notationLevel;
-		this.oldNotationLevel = this.settings.getNotationLevel();
-	}
+    private final Settings settings;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.settings.setNotationLevel(this.newNotationLevel);
-		this.diagram.refreshVisuals();
-	}
+    public ChangeNotationLevelCommand(final ERDiagram diagram, final int notationLevel) {
+        this.diagram = diagram;
+        settings = diagram.getDiagramContents().getSettings();
+        newNotationLevel = notationLevel;
+        oldNotationLevel = settings.getNotationLevel();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.settings.setNotationLevel(this.oldNotationLevel);
-		this.diagram.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        settings.setNotationLevel(newNotationLevel);
+        diagram.refreshVisuals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        settings.setNotationLevel(oldNotationLevel);
+        diagram.refreshVisuals();
+    }
 }

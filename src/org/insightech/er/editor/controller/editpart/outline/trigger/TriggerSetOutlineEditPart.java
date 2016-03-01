@@ -10,24 +10,23 @@ import org.insightech.er.editor.model.diagram_contents.not_element.trigger.Trigg
 
 public class TriggerSetOutlineEditPart extends AbstractOutlineEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected List getModelChildren() {
-		TriggerSet triggerSet = (TriggerSet) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List getModelChildren() {
+        final TriggerSet triggerSet = (TriggerSet) getModel();
 
-		return triggerSet.getObjectList();
-	}
+        return triggerSet.getObjectList();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		this.setWidgetText(ResourceString.getResourceString("label.trigger")
-				+ " (" + this.getModelChildren().size() + ")");
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        setWidgetText(ResourceString.getResourceString("label.trigger") + " (" + getModelChildren().size() + ")");
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
+    }
 
 }

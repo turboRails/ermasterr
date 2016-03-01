@@ -7,16 +7,19 @@ import org.insightech.er.editor.view.dialog.outline.tablespace.TablespaceDialog;
 
 public class SQLiteEclipseDBManager extends EclipseDBManagerBase {
 
-	public String getId() {
-		return SQLiteDBManager.ID;
-	}
+    @Override
+    public String getId() {
+        return SQLiteDBManager.ID;
+    }
 
-	public AdvancedComposite createAdvancedComposite(Composite composite) {
-		return new SQLiteAdvancedComposite(composite);
-	}
+    @Override
+    public AdvancedComposite createAdvancedComposite(final Composite composite) {
+        return new SQLiteAdvancedComposite(composite);
+    }
 
-	public TablespaceDialog createTablespaceDialog() {
-		return null;
-	}
+    @Override
+    public TablespaceDialog createTablespaceDialog() {
+        return null;
+    }
 
 }

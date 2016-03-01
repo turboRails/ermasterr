@@ -4,33 +4,33 @@ import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.OrderedLayout;
 import org.eclipse.draw2d.geometry.Insets;
 
 public class NormalColumnFigure extends Figure {
 
-	public NormalColumnFigure() {
-		FlowLayout layout = new FlowLayout();
-		layout.setMinorAlignment(FlowLayout.ALIGN_CENTER);
-		this.setLayoutManager(layout);
+    public NormalColumnFigure() {
+        final FlowLayout layout = new FlowLayout();
+        layout.setMinorAlignment(OrderedLayout.ALIGN_CENTER);
+        setLayoutManager(layout);
 
-		this.setBorder(new MarginBorder(new Insets(0, 5, 0, 0)));
-	}
+        setBorder(new MarginBorder(new Insets(0, 5, 0, 0)));
+    }
 
-	public void clearLabel() {
-		this.removeAll();
-	}
+    public void clearLabel() {
+        removeAll();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void paintFigure(Graphics graphics) {
-		if (graphics.getBackgroundColor().equals(
-				this.getParent().getBackgroundColor())) {
-			graphics.setAlpha(0);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void paintFigure(final Graphics graphics) {
+        if (graphics.getBackgroundColor().equals(getParent().getBackgroundColor())) {
+            graphics.setAlpha(0);
+        }
 
-		super.paintFigure(graphics);
-	}
+        super.paintFigure(graphics);
+    }
 
 }

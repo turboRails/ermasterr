@@ -18,92 +18,86 @@ import org.insightech.er.editor.model.ERDiagram;
 
 public class MovablePanningSelectionTool extends PanningSelectionTool {
 
-	public static boolean shift = false;
+    public static boolean shift = false;
 
-	@Override
-	protected boolean handleKeyUp(KeyEvent event) {
-		if (event.keyCode == SWT.SHIFT) {
-			shift = true;
-		}
+    @Override
+    protected boolean handleKeyUp(final KeyEvent event) {
+        if (event.keyCode == SWT.SHIFT) {
+            shift = true;
+        }
 
-		return super.handleKeyUp(event);
-	}
+        return super.handleKeyUp(event);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean handleKeyDown(KeyEvent event) {
-		int dx = 0;
-		int dy = 0;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean handleKeyDown(final KeyEvent event) {
+        int dx = 0;
+        int dy = 0;
 
-		if (event.keyCode == SWT.SHIFT) {
-			shift = true;
-		}
+        if (event.keyCode == SWT.SHIFT) {
+            shift = true;
+        }
 
-		if (event.keyCode == SWT.ARROW_DOWN) {
-			dy = 1;
+        if (event.keyCode == SWT.ARROW_DOWN) {
+            dy = 1;
 
-		} else if (event.keyCode == SWT.ARROW_LEFT) {
-			dx = -1;
+        } else if (event.keyCode == SWT.ARROW_LEFT) {
+            dx = -1;
 
-		} else if (event.keyCode == SWT.ARROW_RIGHT) {
-			dx = 1;
+        } else if (event.keyCode == SWT.ARROW_RIGHT) {
+            dx = 1;
 
-		} else if (event.keyCode == SWT.ARROW_UP) {
-			dy = -1;
-		}
+        } else if (event.keyCode == SWT.ARROW_UP) {
+            dy = -1;
+        }
 
-		if (dx != 0 || dy != 0) {
-			CompoundCommand compoundCommand = new CompoundCommand();
+        if (dx != 0 || dy != 0) {
+            final CompoundCommand compoundCommand = new CompoundCommand();
 
-			ERDiagram diagram = (ERDiagram) this.getCurrentViewer()
-					.getContents().getModel();
+            final ERDiagram diagram = (ERDiagram) getCurrentViewer().getContents().getModel();
 
-			List selectedEditParts = this.getCurrentViewer()
-					.getSelectedEditParts();
+            final List selectedEditParts = getCurrentViewer().getSelectedEditParts();
 
-			for (Object object : selectedEditParts) {
-				if (!(object instanceof NodeElementEditPart)) {
-					continue;
-				}
+            for (final Object object : selectedEditParts) {
+                if (!(object instanceof NodeElementEditPart)) {
+                    continue;
+                }
 
-				NodeElementEditPart editPart = (NodeElementEditPart) object;
+                final NodeElementEditPart editPart = (NodeElementEditPart) object;
 
-				Rectangle rectangle = editPart.getFigure().getBounds().getCopy();
-				
-				rectangle.x += dx;
-				rectangle.y += dy;
+                final Rectangle rectangle = editPart.getFigure().getBounds().getCopy();
 
-				Command command = ERDiagramLayoutEditPolicy
-						.createChangeConstraintCommand(diagram,
-								selectedEditParts, editPart, rectangle);
+                rectangle.x += dx;
+                rectangle.y += dy;
 
-				if (command != null) {
-					compoundCommand.add(command);
-				}
-			}
+                final Command command = ERDiagramLayoutEditPolicy.createChangeConstraintCommand(diagram, selectedEditParts, editPart, rectangle);
 
-			this.getCurrentViewer().getEditDomain().getCommandStack()
-					.execute(compoundCommand.unwrap());
-		}
+                if (command != null) {
+                    compoundCommand.add(command);
+                }
+            }
 
-		return super.handleKeyDown(event);
-	}
+            getCurrentViewer().getEditDomain().getCommandStack().execute(compoundCommand.unwrap());
+        }
 
-	@Override
-	public void mouseDown(MouseEvent e, EditPartViewer viewer) {
-		if (viewer.getContents() instanceof ERDiagramEditPart) {
-			ERDiagramEditPart editPart = (ERDiagramEditPart) viewer
-					.getContents();
-			ERDiagram diagram = (ERDiagram) editPart.getModel();
+        return super.handleKeyDown(event);
+    }
 
-			diagram.mousePoint = new Point(e.x, e.y);
+    @Override
+    public void mouseDown(final MouseEvent e, final EditPartViewer viewer) {
+        if (viewer.getContents() instanceof ERDiagramEditPart) {
+            final ERDiagramEditPart editPart = (ERDiagramEditPart) viewer.getContents();
+            final ERDiagram diagram = (ERDiagram) editPart.getModel();
 
-			editPart.getFigure().translateToRelative(diagram.mousePoint);
-		}
+            diagram.mousePoint = new Point(e.x, e.y);
 
-		super.mouseDown(e, viewer);
-	}
+            editPart.getFigure().translateToRelative(diagram.mousePoint);
+        }
+
+        super.mouseDown(e, viewer);
+    }
 
 }

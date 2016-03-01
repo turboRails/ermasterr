@@ -4,43 +4,43 @@ import org.insightech.er.editor.model.diagram_contents.element.connection.Connec
 
 public class CreateConnectionCommand extends AbstractCreateConnectionCommand {
 
-	private ConnectionElement connection;
+    private final ConnectionElement connection;
 
-	public CreateConnectionCommand(ConnectionElement connection) {
-		super();
-		this.connection = connection;
-	}
+    public CreateConnectionCommand(final ConnectionElement connection) {
+        super();
+        this.connection = connection;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.connection.setSource(this.getSourceModel());
-		this.connection.setTarget(this.getTargetModel());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        connection.setSource(getSourceModel());
+        connection.setTarget(getTargetModel());
 
-		this.getTargetModel().refreshTargetConnections();
-		this.getSourceModel().refreshSourceConnections();
-	}
+        getTargetModel().refreshTargetConnections();
+        getSourceModel().refreshSourceConnections();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.connection.setSource(null);
-		this.connection.setTarget(null);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        connection.setSource(null);
+        connection.setTarget(null);
 
-		this.getTargetModel().refreshTargetConnections();
-		this.getSourceModel().refreshSourceConnections();
-	}
+        getTargetModel().refreshTargetConnections();
+        getSourceModel().refreshSourceConnections();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String validate() {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String validate() {
+        return null;
+    }
 
 }

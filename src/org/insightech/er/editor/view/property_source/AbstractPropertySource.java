@@ -6,34 +6,34 @@ import org.insightech.er.editor.ERDiagramMultiPageEditor;
 
 public abstract class AbstractPropertySource implements IPropertySource {
 
-	private ERDiagramMultiPageEditor editor;
+    private final ERDiagramMultiPageEditor editor;
 
-	private boolean processing = false;
+    private boolean processing = false;
 
-	public AbstractPropertySource(ERDiagramMultiPageEditor editor) {
-		this.editor = editor;
-	}
+    public AbstractPropertySource(final ERDiagramMultiPageEditor editor) {
+        this.editor = editor;
+    }
 
-	public void resetPropertyValue(Object paramObject) {
-	}
+    @Override
+    public void resetPropertyValue(final Object paramObject) {}
 
-	public synchronized void setPropertyValue(Object id, Object value) {
-		if (!this.processing) {
-			try {
-				this.processing = true;
+    @Override
+    public synchronized void setPropertyValue(final Object id, final Object value) {
+        if (!processing) {
+            try {
+                processing = true;
 
-				Command command = this.createSetPropertyCommand(id, value);
+                final Command command = createSetPropertyCommand(id, value);
 
-				if (command != null) {
-					this.editor.getActiveEditor().getGraphicalViewer()
-							.getEditDomain().getCommandStack().execute(command);
-				}
+                if (command != null) {
+                    editor.getActiveEditor().getGraphicalViewer().getEditDomain().getCommandStack().execute(command);
+                }
 
-			} finally {
-				this.processing = false;
-			}
-		}
-	}
+            } finally {
+                processing = false;
+            }
+        }
+    }
 
-	abstract protected Command createSetPropertyCommand(Object id, Object value);
+    abstract protected Command createSetPropertyCommand(Object id, Object value);
 }

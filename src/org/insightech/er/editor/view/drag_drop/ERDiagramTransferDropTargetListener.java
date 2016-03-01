@@ -12,59 +12,51 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.TableV
 import org.insightech.er.editor.model.diagram_contents.element.node.table.column.NormalColumn;
 import org.insightech.er.editor.model.diagram_contents.not_element.dictionary.Word;
 
-public class ERDiagramTransferDropTargetListener extends
-		AbstractTransferDropTargetListener {
+public class ERDiagramTransferDropTargetListener extends AbstractTransferDropTargetListener {
 
-	public ERDiagramTransferDropTargetListener(EditPartViewer dropTargetViewer,
-			Transfer xfer) {
-		super(dropTargetViewer, xfer);
-	}
+    public ERDiagramTransferDropTargetListener(final EditPartViewer dropTargetViewer, final Transfer xfer) {
+        super(dropTargetViewer, xfer);
+    }
 
-	@Override
-	protected void updateTargetRequest() {
-	}
+    @Override
+    protected void updateTargetRequest() {}
 
-	@Override
-	protected Request createTargetRequest() {
-		Object object = this.getTargetModel();
+    @Override
+    protected Request createTargetRequest() {
+        final Object object = getTargetModel();
 
-		if (object instanceof Map) {
-			if (((Map) object)
-					.get(ERDiagramTransferDragSourceListener.MOVE_COLUMN_GROUP_PARAM_PARENT) instanceof TableView) {
-				DirectEditRequest request = new DirectEditRequest(
-						ERDiagramTransferDragSourceListener.REQUEST_TYPE_MOVE_COLUMN_GROUP);
-				request.setDirectEditFeature(object);
-				request.setLocation(this.getDropLocation());
-				return request;
+        if (object instanceof Map) {
+            if (((Map) object).get(ERDiagramTransferDragSourceListener.MOVE_COLUMN_GROUP_PARAM_PARENT) instanceof TableView) {
+                final DirectEditRequest request = new DirectEditRequest(ERDiagramTransferDragSourceListener.REQUEST_TYPE_MOVE_COLUMN_GROUP);
+                request.setDirectEditFeature(object);
+                request.setLocation(getDropLocation());
+                return request;
 
-			} else {
-				DirectEditRequest request = new DirectEditRequest(
-						ERDiagramTransferDragSourceListener.REQUEST_TYPE_ADD_COLUMN_GROUP);
-				request.setDirectEditFeature(object);
-				request.setLocation(this.getDropLocation());
-				return request;
-			}
+            } else {
+                final DirectEditRequest request = new DirectEditRequest(ERDiagramTransferDragSourceListener.REQUEST_TYPE_ADD_COLUMN_GROUP);
+                request.setDirectEditFeature(object);
+                request.setLocation(getDropLocation());
+                return request;
+            }
 
-		} else if (object instanceof Word) {
-			DirectEditRequest request = new DirectEditRequest(
-					ERDiagramTransferDragSourceListener.REQUEST_TYPE_ADD_WORD);
-			request.setDirectEditFeature(object);
-			request.setLocation(this.getDropLocation());
-			return request;
+        } else if (object instanceof Word) {
+            final DirectEditRequest request = new DirectEditRequest(ERDiagramTransferDragSourceListener.REQUEST_TYPE_ADD_WORD);
+            request.setDirectEditFeature(object);
+            request.setLocation(getDropLocation());
+            return request;
 
-		} else if (object instanceof NormalColumn) {
-			DirectEditRequest request = new DirectEditRequest(
-					ERDiagramTransferDragSourceListener.REQUEST_TYPE_MOVE_COLUMN);
-			request.setDirectEditFeature(object);
-			request.setLocation(this.getDropLocation());
-			return request;
-		}
+        } else if (object instanceof NormalColumn) {
+            final DirectEditRequest request = new DirectEditRequest(ERDiagramTransferDragSourceListener.REQUEST_TYPE_MOVE_COLUMN);
+            request.setDirectEditFeature(object);
+            request.setLocation(getDropLocation());
+            return request;
+        }
 
-		return super.createTargetRequest();
-	}
+        return super.createTargetRequest();
+    }
 
-	private Object getTargetModel() {
-		TemplateTransfer transfer = (TemplateTransfer) this.getTransfer();
-		return transfer.getObject();
-	}
+    private Object getTargetModel() {
+        final TemplateTransfer transfer = (TemplateTransfer) getTransfer();
+        return transfer.getObject();
+    }
 }

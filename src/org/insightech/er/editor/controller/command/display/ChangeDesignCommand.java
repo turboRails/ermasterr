@@ -6,36 +6,36 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ChangeDesignCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private String oldDesign;
+    private final String oldDesign;
 
-	private String newDesign;
+    private final String newDesign;
 
-	private Settings settings;
+    private final Settings settings;
 
-	public ChangeDesignCommand(ERDiagram diagram, String design) {
-		this.diagram = diagram;
-		this.settings = this.diagram.getDiagramContents().getSettings();
-		this.newDesign = design;
-		this.oldDesign = this.settings.getTableStyle();
-	}
+    public ChangeDesignCommand(final ERDiagram diagram, final String design) {
+        this.diagram = diagram;
+        settings = this.diagram.getDiagramContents().getSettings();
+        newDesign = design;
+        oldDesign = settings.getTableStyle();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.settings.setTableStyle(this.newDesign);
-		this.diagram.refreshSettings();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        settings.setTableStyle(newDesign);
+        diagram.refreshSettings();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.settings.setTableStyle(this.oldDesign);
-		this.diagram.refreshSettings();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        settings.setTableStyle(oldDesign);
+        diagram.refreshSettings();
+    }
 }

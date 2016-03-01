@@ -5,25 +5,25 @@ import org.eclipse.swt.widgets.Spinner;
 
 public class SpinnerWithScale {
 
-	private Spinner spinner;
+    private final Spinner spinner;
 
-	private Scale scale;
+    private final Scale scale;
 
-	private int diff;
+    private final int diff;
 
-	public SpinnerWithScale(Spinner spinner, Scale scale, int diff) {
-		this.spinner = spinner;
-		this.scale = scale;
-		this.diff = diff;
-	}
+    public SpinnerWithScale(final Spinner spinner, final Scale scale, final int diff) {
+        this.spinner = spinner;
+        this.scale = scale;
+        this.diff = diff;
+    }
 
-	public void setSelection(int value) {
-		this.spinner.setSelection(value);
-		this.scale.setSelection(this.spinner.getSelection() - diff);
-	}
+    public void setSelection(final int value) {
+        spinner.setSelection(value);
+        scale.setSelection(spinner.getSelection() - diff);
+    }
 
-	public int getSelection() {
-		return this.spinner.getSelection();
-	}
-	
+    public int getSelection() {
+        return spinner.getSelection();
+    }
+
 }

@@ -12,142 +12,112 @@ import org.insightech.er.editor.model.dbexport.image.ImageInfoSet;
 
 public class OverviewHtmlReportPageGenerator {
 
-	private Map<Object, Integer> idMap;
+    private final Map<Object, Integer> idMap;
 
-	public OverviewHtmlReportPageGenerator(Map<Object, Integer> idMap) {
-		this.idMap = idMap;
-	}
+    public OverviewHtmlReportPageGenerator(final Map<Object, Integer> idMap) {
+        this.idMap = idMap;
+    }
 
-	public String getObjectId(Object object) {
-		Integer id = (Integer) idMap.get(object);
+    public String getObjectId(final Object object) {
+        Integer id = idMap.get(object);
 
-		if (id == null) {
-			id = new Integer(idMap.size());
-			this.idMap.put(object, id);
-		}
+        if (id == null) {
+            id = new Integer(idMap.size());
+            idMap.put(object, id);
+        }
 
-		return String.valueOf(id);
-	}
+        return String.valueOf(id);
+    }
 
-	public String generateFrame(
-			List<HtmlReportPageGenerator> htmlReportPageGeneratorList)
-			throws IOException {
-		String template = ExportToHtmlManager
-				.getTemplate("overview/overview-frame_template.html");
+    public String generateFrame(final List<HtmlReportPageGenerator> htmlReportPageGeneratorList) throws IOException {
+        final String template = ExportToHtmlManager.getTemplate("overview/overview-frame_template.html");
 
-		Object[] args = { this.generateFrameTable(htmlReportPageGeneratorList) };
-		return MessageFormat.format(template, args);
-	}
+        final Object[] args = {generateFrameTable(htmlReportPageGeneratorList)};
+        return MessageFormat.format(template, args);
+    }
 
-	private String generateFrameTable(
-			List<HtmlReportPageGenerator> htmlReportPageGeneratorList)
-			throws IOException {
-		StringBuilder sb = new StringBuilder();
+    private String generateFrameTable(final List<HtmlReportPageGenerator> htmlReportPageGeneratorList) throws IOException {
+        final StringBuilder sb = new StringBuilder();
 
-		String template = ExportToHtmlManager
-				.getTemplate("overview/overview-frame_row_template.html");
+        final String template = ExportToHtmlManager.getTemplate("overview/overview-frame_row_template.html");
 
-		for (HtmlReportPageGenerator pageGenerator : htmlReportPageGeneratorList) {
-			Object[] args = { pageGenerator.getType(),
-					pageGenerator.getPageTitle() };
-			String row = MessageFormat.format(template, args);
+        for (final HtmlReportPageGenerator pageGenerator : htmlReportPageGeneratorList) {
+            final Object[] args = {pageGenerator.getType(), pageGenerator.getPageTitle()};
+            final String row = MessageFormat.format(template, args);
 
-			sb.append(row);
-		}
+            sb.append(row);
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	public String generateSummary(ImageInfoSet imageInfoSet,
-			List<HtmlReportPageGenerator> htmlReportPageGeneratorList)
-			throws IOException {
+    public String generateSummary(final ImageInfoSet imageInfoSet, final List<HtmlReportPageGenerator> htmlReportPageGeneratorList) throws IOException {
 
-		String template = ExportToHtmlManager
-				.getTemplate("overview/overview-summary_template.html");
+        final String template = ExportToHtmlManager.getTemplate("overview/overview-summary_template.html");
 
-		String imagePart = "";
+        String imagePart = "";
 
-		if (imageInfoSet != null) {
-			ImagePartGenerator imagePartGenerator = new ImagePartGenerator(
-					this.idMap);
+        if (imageInfoSet != null) {
+            final ImagePartGenerator imagePartGenerator = new ImagePartGenerator(idMap);
 
-			imagePart = imagePartGenerator.generateImage(
-					imageInfoSet.getDiagramImageInfo(), "");
-		}
+            imagePart = imagePartGenerator.generateImage(imageInfoSet.getDiagramImageInfo(), "");
+        }
 
-		Object[] args = { imagePart,
-				this.generateSummaryTable(htmlReportPageGeneratorList) };
+        final Object[] args = {imagePart, generateSummaryTable(htmlReportPageGeneratorList)};
 
-		return MessageFormat.format(template, args);
-	}
+        return MessageFormat.format(template, args);
+    }
 
-	private String generateSummaryTable(
-			List<HtmlReportPageGenerator> htmlReportPageGeneratorList)
-			throws IOException {
-		StringBuilder sb = new StringBuilder();
+    private String generateSummaryTable(final List<HtmlReportPageGenerator> htmlReportPageGeneratorList) throws IOException {
+        final StringBuilder sb = new StringBuilder();
 
-		String template = ExportToHtmlManager
-				.getTemplate("overview/overview-summary_row_template.html");
+        final String template = ExportToHtmlManager.getTemplate("overview/overview-summary_row_template.html");
 
-		for (HtmlReportPageGenerator pageGenerator : htmlReportPageGeneratorList) {
-			Object[] args = { pageGenerator.getType(),
-					pageGenerator.getPageTitle() };
-			String row = MessageFormat.format(template, args);
+        for (final HtmlReportPageGenerator pageGenerator : htmlReportPageGeneratorList) {
+            final Object[] args = {pageGenerator.getType(), pageGenerator.getPageTitle()};
+            final String row = MessageFormat.format(template, args);
 
-			sb.append(row);
-		}
+            sb.append(row);
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	public String generateAllClasses(ERDiagram diagram,
-			List<HtmlReportPageGenerator> htmlReportPageGeneratorList)
-			throws IOException {
-		String template = ExportToHtmlManager
-				.getTemplate("allclasses_template.html");
+    public String generateAllClasses(final ERDiagram diagram, final List<HtmlReportPageGenerator> htmlReportPageGeneratorList) throws IOException {
+        final String template = ExportToHtmlManager.getTemplate("allclasses_template.html");
 
-		Object[] args = { this.generateAllClassesTable(diagram,
-				htmlReportPageGeneratorList) };
+        final Object[] args = {generateAllClassesTable(diagram, htmlReportPageGeneratorList)};
 
-		return MessageFormat.format(template, args);
-	}
+        return MessageFormat.format(template, args);
+    }
 
-	private String generateAllClassesTable(ERDiagram diagram,
-			List<HtmlReportPageGenerator> htmlReportPageGeneratorList)
-			throws IOException {
-		StringBuilder sb = new StringBuilder();
+    private String generateAllClassesTable(final ERDiagram diagram, final List<HtmlReportPageGenerator> htmlReportPageGeneratorList) throws IOException {
+        final StringBuilder sb = new StringBuilder();
 
-		String template = ExportToHtmlManager
-				.getTemplate("allclasses_row_template.html");
+        final String template = ExportToHtmlManager.getTemplate("allclasses_row_template.html");
 
-		for (int i = 0; i < htmlReportPageGeneratorList.size(); i++) {
-			HtmlReportPageGenerator pageGenerator = htmlReportPageGeneratorList
-					.get(i);
+        for (int i = 0; i < htmlReportPageGeneratorList.size(); i++) {
+            final HtmlReportPageGenerator pageGenerator = htmlReportPageGeneratorList.get(i);
 
-			for (Object object : pageGenerator.getObjectList(diagram)) {
-				Object[] args = {
-						pageGenerator.getType() + "/"
-								+ pageGenerator.getObjectId(object) + ".html",
-						pageGenerator.getObjectName(object) };
-				String row = MessageFormat.format(template, args);
+            for (final Object object : pageGenerator.getObjectList(diagram)) {
+                final Object[] args = {pageGenerator.getType() + "/" + pageGenerator.getObjectId(object) + ".html", pageGenerator.getObjectName(object)};
+                final String row = MessageFormat.format(template, args);
 
-				sb.append(row);
-			}
-		}
+                sb.append(row);
+            }
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	public int countAllClasses(ERDiagram diagram,
-			List<HtmlReportPageGenerator> htmlReportPageGeneratorList) {
-		int count = 0;
+    public int countAllClasses(final ERDiagram diagram, final List<HtmlReportPageGenerator> htmlReportPageGeneratorList) {
+        int count = 0;
 
-		for (int i = 0; i < htmlReportPageGeneratorList.size(); i++) {
-			HtmlReportPageGenerator pageGenerator = htmlReportPageGeneratorList
-					.get(i);
-			count += pageGenerator.getObjectList(diagram).size();
-		}
+        for (int i = 0; i < htmlReportPageGeneratorList.size(); i++) {
+            final HtmlReportPageGenerator pageGenerator = htmlReportPageGeneratorList.get(i);
+            count += pageGenerator.getObjectList(diagram).size();
+        }
 
-		return count;
-	}
+        return count;
+    }
 }

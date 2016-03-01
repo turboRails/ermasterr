@@ -10,47 +10,46 @@ import org.insightech.er.editor.model.diagram_contents.element.node.category.Cat
 
 public class DeleteElementCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private NodeElement element;
+    private final NodeElement element;
 
-	private List<Category> categoryList;
+    private List<Category> categoryList;
 
-	public DeleteElementCommand(ERDiagram diagram, NodeElement element) {
-		this.diagram = diagram;
-		this.element = element;
-	}
+    public DeleteElementCommand(final ERDiagram diagram, final NodeElement element) {
+        this.diagram = diagram;
+        this.element = element;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.diagram.removeContent(this.element);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        diagram.removeContent(element);
 
-		this.categoryList = new ArrayList<Category>();
+        categoryList = new ArrayList<Category>();
 
-		for (Category category : this.diagram.getDiagramContents()
-				.getSettings().getCategorySetting().getAllCategories()) {
-			if (category.contains(this.element)) {
-				category.remove(this.element);
-				this.categoryList.add(category);
-			}
-		}
+        for (final Category category : diagram.getDiagramContents().getSettings().getCategorySetting().getAllCategories()) {
+            if (category.contains(element)) {
+                category.remove(element);
+                categoryList.add(category);
+            }
+        }
 
-		this.diagram.refreshChildren();
-	}
+        diagram.refreshChildren();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		for (Category category : this.categoryList) {
-			category.add(this.element);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        for (final Category category : categoryList) {
+            category.add(element);
+        }
 
-		this.diagram.addContent(this.element);
-		this.diagram.refreshChildren();
-	}
+        diagram.addContent(element);
+        diagram.refreshChildren();
+    }
 }

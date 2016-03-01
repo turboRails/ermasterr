@@ -8,16 +8,19 @@ import org.insightech.er.editor.view.dialog.outline.tablespace.TablespaceDialog;
 
 public class MySQLEclipseDBManager extends EclipseDBManagerBase {
 
-	public String getId() {
-		return MySQLDBManager.ID;
-	}
+    @Override
+    public String getId() {
+        return MySQLDBManager.ID;
+    }
 
-	public AdvancedComposite createAdvancedComposite(Composite composite) {
-		return new MySQLAdvancedComposite(composite);
-	}
+    @Override
+    public AdvancedComposite createAdvancedComposite(final Composite composite) {
+        return new MySQLAdvancedComposite(composite);
+    }
 
-	public TablespaceDialog createTablespaceDialog() {
-		return new MySQLTablespaceDialog();
-	}
+    @Override
+    public TablespaceDialog createTablespaceDialog() {
+        return new MySQLTablespaceDialog();
+    }
 
 }

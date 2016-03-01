@@ -6,37 +6,36 @@ import org.insightech.er.editor.model.diagram_contents.element.node.model_proper
 
 public class ChangeStampCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private boolean oldStamp;
+    private final boolean oldStamp;
 
-	private boolean newStamp;
+    private final boolean newStamp;
 
-	private ModelProperties modelProperties;
+    private final ModelProperties modelProperties;
 
-	public ChangeStampCommand(ERDiagram diagram, boolean isDisplay) {
-		this.diagram = diagram;
-		this.modelProperties = this.diagram.getDiagramContents().getSettings()
-				.getModelProperties();
-		this.newStamp = isDisplay;
-		this.oldStamp = this.modelProperties.isDisplay();
-	}
+    public ChangeStampCommand(final ERDiagram diagram, final boolean isDisplay) {
+        this.diagram = diagram;
+        modelProperties = this.diagram.getDiagramContents().getSettings().getModelProperties();
+        newStamp = isDisplay;
+        oldStamp = modelProperties.isDisplay();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.modelProperties.setDisplay(this.newStamp);
-		this.modelProperties.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        modelProperties.setDisplay(newStamp);
+        modelProperties.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.modelProperties.setDisplay(this.oldStamp);
-		this.modelProperties.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        modelProperties.setDisplay(oldStamp);
+        modelProperties.refreshVisuals();
+    }
 }

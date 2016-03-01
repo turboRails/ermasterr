@@ -12,54 +12,46 @@ import org.insightech.er.Resources;
 import org.insightech.er.common.widgets.CompositeFactory;
 import org.insightech.er.preference.PreferenceInitializer;
 
-public class TranslationPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class TranslationPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private TranslationFileListEditor fileListEditor;
+    private TranslationFileListEditor fileListEditor;
 
-	public void init(IWorkbench workbench) {
-	}
+    @Override
+    public void init(final IWorkbench workbench) {}
 
-	@Override
-	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
+    @Override
+    protected Control createContents(final Composite parent) {
+        final Composite composite = new Composite(parent, SWT.NONE);
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        composite.setLayout(layout);
 
-		CompositeFactory.fillLine(composite,
-				Resources.PREFERENCE_PAGE_MARGIN_TOP);
+        CompositeFactory.fillLine(composite, Resources.PREFERENCE_PAGE_MARGIN_TOP);
 
-		this.fileListEditor = new TranslationFileListEditor(
-				PreferenceInitializer.TRANSLATION_FILE_LIST,
-				ResourceString
-						.getResourceString("label.custom.dictionary.for.translation"),
-				composite);
-		this.fileListEditor.load();
+        fileListEditor = new TranslationFileListEditor(PreferenceInitializer.TRANSLATION_FILE_LIST, ResourceString.getResourceString("label.custom.dictionary.for.translation"), composite);
+        fileListEditor.load();
 
-		CompositeFactory.fillLine(composite);
+        CompositeFactory.fillLine(composite);
 
-		CompositeFactory.createLabel(composite,
-				"dialog.message.translation.file.store", 2);
+        CompositeFactory.createLabel(composite, "dialog.message.translation.file.store", 2);
 
-		CompositeFactory.createLabel(composite,
-				"dialog.message.translation.file.encode", 2);
+        CompositeFactory.createLabel(composite, "dialog.message.translation.file.encode", 2);
 
-		return composite;
-	}
+        return composite;
+    }
 
-	@Override
-	protected void performDefaults() {
-		this.fileListEditor.loadDefault();
+    @Override
+    protected void performDefaults() {
+        fileListEditor.loadDefault();
 
-		super.performDefaults();
-	}
+        super.performDefaults();
+    }
 
-	@Override
-	public boolean performOk() {
-		this.fileListEditor.store();
+    @Override
+    public boolean performOk() {
+        fileListEditor.store();
 
-		return super.performOk();
-	}
+        return super.performOk();
+    }
 
 }

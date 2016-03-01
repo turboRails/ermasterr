@@ -8,43 +8,42 @@ import org.insightech.er.editor.model.diagram_contents.element.node.category.Cat
 
 public abstract class AbstractCreateElementCommand extends AbstractCommand {
 
-	protected ERDiagram diagram;
+    protected ERDiagram diagram;
 
-	protected Category category;
+    protected Category category;
 
-	protected Location newCategoryLocation;
+    protected Location newCategoryLocation;
 
-	protected Location oldCategoryLocation;
+    protected Location oldCategoryLocation;
 
-	public AbstractCreateElementCommand(ERDiagram diagram) {
-		this.diagram = diagram;
-		this.category = this.diagram.getCurrentCategory();
-		if (this.category != null) {
-			this.oldCategoryLocation = this.category.getLocation();
-		}
-	}
+    public AbstractCreateElementCommand(final ERDiagram diagram) {
+        this.diagram = diagram;
+        category = this.diagram.getCurrentCategory();
+        if (category != null) {
+            oldCategoryLocation = category.getLocation();
+        }
+    }
 
-	protected void addToCategory(NodeElement nodeElement) {
-		if (this.category != null) {
-			this.category.add(nodeElement);
-			Location newLocation = category
-					.getNewCategoryLocation(nodeElement);
+    protected void addToCategory(final NodeElement nodeElement) {
+        if (category != null) {
+            category.add(nodeElement);
+            final Location newLocation = category.getNewCategoryLocation(nodeElement);
 
-			if (newLocation != null) {
-				this.newCategoryLocation = newLocation;
-				this.category.setLocation(this.newCategoryLocation);
-			}
-		}
-	}
+            if (newLocation != null) {
+                newCategoryLocation = newLocation;
+                category.setLocation(newCategoryLocation);
+            }
+        }
+    }
 
-	protected void removeFromCategory(NodeElement nodeElement) {
-		if (this.category != null) {
-			this.category.remove(nodeElement);
+    protected void removeFromCategory(final NodeElement nodeElement) {
+        if (category != null) {
+            category.remove(nodeElement);
 
-			if (this.newCategoryLocation != null) {
-				this.category.setLocation(this.oldCategoryLocation);
-			}
-		}
-	}
+            if (newCategoryLocation != null) {
+                category.setLocation(oldCategoryLocation);
+            }
+        }
+    }
 
 }

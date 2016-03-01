@@ -10,103 +10,99 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.column
 
 public class CopyIndex extends Index {
 
-	private static final long serialVersionUID = -7896024413398953097L;
+    private static final long serialVersionUID = -7896024413398953097L;
 
-	private Index originalIndex;
+    private Index originalIndex;
 
-	public CopyIndex(ERTable copyTable, Index originalIndex,
-			List<Column> copyColumns) {
-		super(copyTable, originalIndex.getName(), originalIndex.isNonUnique(),
-				originalIndex.getType(), originalIndex.getDescription());
+    public CopyIndex(final ERTable copyTable, final Index originalIndex, final List<Column> copyColumns) {
+        super(copyTable, originalIndex.getName(), originalIndex.isNonUnique(), originalIndex.getType(), originalIndex.getDescription());
 
-		this.originalIndex = originalIndex;
+        this.originalIndex = originalIndex;
 
-		List<Boolean> descs = originalIndex.getDescs();
+        final List<Boolean> descs = originalIndex.getDescs();
 
-		int i = 0;
+        int i = 0;
 
-		for (NormalColumn originalIndexColumn : originalIndex.getColumns()) {
-			Boolean desc = Boolean.FALSE;
+        for (final NormalColumn originalIndexColumn : originalIndex.getColumns()) {
+            Boolean desc = Boolean.FALSE;
 
-			if (descs.size() > i) {
-				desc = descs.get(i);
-			}
+            if (descs.size() > i) {
+                desc = descs.get(i);
+            }
 
-			if (copyColumns != null) {
+            if (copyColumns != null) {
 
-				boolean isGroupColumn = true;
+                boolean isGroupColumn = true;
 
-				for (Column column : copyColumns) {
-					if (column instanceof CopyColumn) {
-						CopyColumn copyColumn = (CopyColumn) column;
+                for (final Column column : copyColumns) {
+                    if (column instanceof CopyColumn) {
+                        final CopyColumn copyColumn = (CopyColumn) column;
 
-						if (copyColumn.getOriginalColumn().equals(
-								originalIndexColumn)) {
-							this.addColumn(copyColumn, desc);
-							isGroupColumn = false;
-							break;
-						}
-					}
-				}
+                        if (copyColumn.getOriginalColumn().equals(originalIndexColumn)) {
+                            this.addColumn(copyColumn, desc);
+                            isGroupColumn = false;
+                            break;
+                        }
+                    }
+                }
 
-				if (isGroupColumn) {
-					this.addColumn(originalIndexColumn, desc);
-				}
+                if (isGroupColumn) {
+                    this.addColumn(originalIndexColumn, desc);
+                }
 
-			} else {
-				this.addColumn(originalIndexColumn, desc);
-			}
+            } else {
+                this.addColumn(originalIndexColumn, desc);
+            }
 
-			i++;
-		}
-	}
+            i++;
+        }
+    }
 
-	public Index getRestructuredIndex(ERTable originalTable) {
-		if (this.originalIndex == null) {
-			this.originalIndex = new Index(originalTable, this.getName(), this
-					.isNonUnique(), this.getType(), this.getDescription());
-		}
+    public Index getRestructuredIndex(final ERTable originalTable) {
+        if (originalIndex == null) {
+            originalIndex = new Index(originalTable, getName(), isNonUnique(), getType(), getDescription());
+        }
 
-		copyData(this, this.originalIndex);
+        copyData(this, originalIndex);
 
-		List<NormalColumn> indexColumns = new ArrayList<NormalColumn>();
+        final List<NormalColumn> indexColumns = new ArrayList<NormalColumn>();
 
-		for (NormalColumn column : this.originalIndex.getColumns()) {
-			if (column instanceof CopyColumn) {
-				CopyColumn copyColumn = (CopyColumn) column;
-				column = copyColumn.getOriginalColumn();
-			}
-			indexColumns.add(column);
-		}
+        for (NormalColumn column : originalIndex.getColumns()) {
+            if (column instanceof CopyColumn) {
+                final CopyColumn copyColumn = (CopyColumn) column;
+                column = copyColumn.getOriginalColumn();
+            }
+            indexColumns.add(column);
+        }
 
-		this.originalIndex.setColumns(indexColumns);
-		this.originalIndex.setTable(originalTable);
+        originalIndex.setColumns(indexColumns);
+        originalIndex.setTable(originalTable);
 
-		return this.originalIndex;
-	}
+        return originalIndex;
+    }
 
-	public static void copyData(Index from, Index to) {
-		to.setName(from.getName());
-		to.setNonUnique(from.isNonUnique());
-		to.setFullText(from.isFullText());
-		to.setType(from.getType());
-		to.setDescription(from.getDescription());
+    public static void copyData(final Index from, final Index to) {
+        to.setName(from.getName());
+        to.setNonUnique(from.isNonUnique());
+        to.setFullText(from.isFullText());
+        to.setType(from.getType());
+        to.setDescription(from.getDescription());
 
-		to.clearColumns();
+        to.clearColumns();
 
-		List<Boolean> descs = from.getDescs();
-		int i = 0;
+        final List<Boolean> descs = from.getDescs();
+        int i = 0;
 
-		for (NormalColumn column : from.getColumns()) {
-			Boolean desc = Boolean.FALSE;
+        for (final NormalColumn column : from.getColumns()) {
+            Boolean desc = Boolean.FALSE;
 
-			if (descs.size() > i) {
-				desc = descs.get(i);
-			}
-			to.addColumn(column, desc);
-			i++;
-		}
+            if (descs.size() > i) {
+                desc = descs.get(i);
+            }
+            to.addColumn(column, desc);
+            i++;
+        }
 
-	}
+    }
 
 }

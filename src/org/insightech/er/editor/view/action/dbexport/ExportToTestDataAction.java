@@ -7,17 +7,15 @@ import org.insightech.er.editor.view.dialog.dbexport.ExportToTestDataDialog;
 
 public class ExportToTestDataAction extends AbstractExportWithDialogAction {
 
-	public static final String ID = ExportToTestDataAction.class.getName();
+    public static final String ID = ExportToTestDataAction.class.getName();
 
-	public ExportToTestDataAction(ERDiagramEditor editor) {
-		super(ID, "action.title.export.test.data",
-				ImageKey.EXPORT_TO_TEST_DATA, editor);
-	}
+    public ExportToTestDataAction(final ERDiagramEditor editor) {
+        super(ID, "action.title.export.test.data", ImageKey.EXPORT_TO_TEST_DATA, editor);
+    }
 
-	@Override
-	protected AbstractExportDialog getExportDialog() {
-		return new ExportToTestDataDialog(this.getDiagram()
-				.getDiagramContents().getTestDataList());
-	}
+    @Override
+    protected AbstractExportDialog getExportDialog() {
+        return new ExportToTestDataDialog(getDiagram().getDiagramContents().getTestDataList());
+    }
 
 }

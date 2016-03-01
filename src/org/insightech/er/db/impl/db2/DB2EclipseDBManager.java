@@ -8,16 +8,19 @@ import org.insightech.er.editor.view.dialog.outline.tablespace.TablespaceDialog;
 
 public class DB2EclipseDBManager extends EclipseDBManagerBase {
 
-	public String getId() {
-		return DB2DBManager.ID;
-	}
+    @Override
+    public String getId() {
+        return DB2DBManager.ID;
+    }
 
-	public AdvancedComposite createAdvancedComposite(Composite composite) {
-		return new DB2AdvancedComposite(composite);
-	}
+    @Override
+    public AdvancedComposite createAdvancedComposite(final Composite composite) {
+        return new DB2AdvancedComposite(composite);
+    }
 
-	public TablespaceDialog createTablespaceDialog() {
-		return new DB2TablespaceDialog();
-	}
+    @Override
+    public TablespaceDialog createTablespaceDialog() {
+        return new DB2TablespaceDialog();
+    }
 
 }

@@ -7,131 +7,133 @@ import org.insightech.er.editor.model.WithSchemaModel;
 
 public class Sequence extends WithSchemaModel implements ObjectModel {
 
-	private static final long serialVersionUID = -4492787972500741281L;
+    private static final long serialVersionUID = -4492787972500741281L;
 
-	private String description;
+    private String description;
 
-	private Integer increment;
+    private Integer increment;
 
-	private Long minValue;
+    private Long minValue;
 
-	private BigDecimal maxValue;
+    private BigDecimal maxValue;
 
-	private Long start;
+    private Long start;
 
-	private Integer cache;
+    private Integer cache;
 
-	private boolean nocache;
-	
-	private boolean cycle;
+    private boolean nocache;
 
-	private boolean order;
+    private boolean cycle;
 
-	private String dataType;
+    private boolean order;
 
-	private int decimalSize;
+    private String dataType;
 
-	public String getObjectType() {
-		return "sequence";
-	}
+    private int decimalSize;
 
-	public Integer getCache() {
-		return cache;
-	}
+    @Override
+    public String getObjectType() {
+        return "sequence";
+    }
 
-	public void setCache(Integer cache) {
-		this.cache = cache;
-	}
+    public Integer getCache() {
+        return cache;
+    }
 
-	public boolean isCycle() {
-		return cycle;
-	}
+    public void setCache(final Integer cache) {
+        this.cache = cache;
+    }
 
-	public void setCycle(boolean cycle) {
-		this.cycle = cycle;
-	}
+    public boolean isCycle() {
+        return cycle;
+    }
 
-	public Integer getIncrement() {
-		return increment;
-	}
+    public void setCycle(final boolean cycle) {
+        this.cycle = cycle;
+    }
 
-	public void setIncrement(Integer increment) {
-		this.increment = increment;
-	}
+    public Integer getIncrement() {
+        return increment;
+    }
 
-	public BigDecimal getMaxValue() {
-		return maxValue;
-	}
+    public void setIncrement(final Integer increment) {
+        this.increment = increment;
+    }
 
-	public void setMaxValue(BigDecimal maxValue) {
-		this.maxValue = maxValue;
-	}
+    public BigDecimal getMaxValue() {
+        return maxValue;
+    }
 
-	public Long getMinValue() {
-		return minValue;
-	}
+    public void setMaxValue(final BigDecimal maxValue) {
+        this.maxValue = maxValue;
+    }
 
-	public void setMinValue(Long minValue) {
-		this.minValue = minValue;
-	}
+    public Long getMinValue() {
+        return minValue;
+    }
 
-	public Long getStart() {
-		return start;
-	}
+    public void setMinValue(final Long minValue) {
+        this.minValue = minValue;
+    }
 
-	public void setStart(Long start) {
-		this.start = start;
-	}
+    public Long getStart() {
+        return start;
+    }
 
-	/**
-	 * description ���擾���܂�.
-	 * 
-	 * @return description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    public void setStart(final Long start) {
+        this.start = start;
+    }
 
-	/**
-	 * description ��ݒ肵�܂�.
-	 * 
-	 * @param description
-	 *            description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * description ���擾���܂�.
+     * 
+     * @return description
+     */
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
-	public String getDataType() {
-		return dataType;
-	}
+    /**
+     * description ��ݒ肵�܂�.
+     * 
+     * @param description
+     *            description
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
-	}
+    public String getDataType() {
+        return dataType;
+    }
 
-	public int getDecimalSize() {
-		return decimalSize;
-	}
+    public void setDataType(final String dataType) {
+        this.dataType = dataType;
+    }
 
-	public void setDecimalSize(int decimalSize) {
-		this.decimalSize = decimalSize;
-	}
+    public int getDecimalSize() {
+        return decimalSize;
+    }
 
-	public boolean isOrder() {
-		return order;
-	}
+    public void setDecimalSize(final int decimalSize) {
+        this.decimalSize = decimalSize;
+    }
 
-	public void setOrder(boolean order) {
-		this.order = order;
-	}
+    public boolean isOrder() {
+        return order;
+    }
 
-	public boolean isNocache() {
-		return nocache;
-	}
+    public void setOrder(final boolean order) {
+        this.order = order;
+    }
 
-	public void setNocache(boolean nocache) {
-		this.nocache = nocache;
-	}
+    public boolean isNocache() {
+        return nocache;
+    }
+
+    public void setNocache(final boolean nocache) {
+        this.nocache = nocache;
+    }
 
 }

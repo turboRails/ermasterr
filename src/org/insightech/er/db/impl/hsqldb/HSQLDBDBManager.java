@@ -18,109 +18,118 @@ import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Ta
 
 public class HSQLDBDBManager extends DBManagerBase {
 
-	public static final String ID = "HSQLDB";
+    public static final String ID = "HSQLDB";
 
-	public String getId() {
-		return ID;
-	}
+    @Override
+    public String getId() {
+        return ID;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDriverClassName() {
-		return "org.hsqldb.jdbcDriver";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDriverClassName() {
+        return "org.hsqldb.jdbcDriver";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getURL() {
-		return "jdbc:hsqldb:hsql://<SERVER NAME>:<PORT>/<DB NAME>";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getURL() {
+        return "jdbc:hsqldb:hsql://<SERVER NAME>:<PORT>/<DB NAME>";
+    }
 
-	public int getDefaultPort() {
-		return 9001;
-	}
+    @Override
+    public int getDefaultPort() {
+        return 9001;
+    }
 
-	public SqlTypeManager getSqlTypeManager() {
-		return new HSQLDBSqlTypeManager();
-	}
+    @Override
+    public SqlTypeManager getSqlTypeManager() {
+        return new HSQLDBSqlTypeManager();
+    }
 
-	public TableProperties createTableProperties(TableProperties tableProperties) {
-		if (tableProperties != null
-				&& tableProperties instanceof HSQLDBTableProperties) {
-			return tableProperties;
-		}
+    @Override
+    public TableProperties createTableProperties(final TableProperties tableProperties) {
+        if (tableProperties != null && tableProperties instanceof HSQLDBTableProperties) {
+            return tableProperties;
+        }
 
-		return new HSQLDBTableProperties();
-	}
+        return new HSQLDBTableProperties();
+    }
 
-	public DDLCreator getDDLCreator(ERDiagram diagram, Category targetCategory,
-			boolean semicolon) {
-		return new HSQLDBDDLCreator(diagram, targetCategory, semicolon);
-	}
+    @Override
+    public DDLCreator getDDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        return new HSQLDBDDLCreator(diagram, targetCategory, semicolon);
+    }
 
-	public List<String> getIndexTypeList(ERTable table) {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getIndexTypeList(final ERTable table) {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("BTREE");
+        list.add("BTREE");
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	protected int[] getSupportItems() {
-		return new int[] { SUPPORT_SCHEMA, SUPPORT_SEQUENCE,
-				SUPPORT_SEQUENCE_NOCACHE };
-	}
+    @Override
+    protected int[] getSupportItems() {
+        return new int[] {SUPPORT_SCHEMA, SUPPORT_SEQUENCE, SUPPORT_SEQUENCE_NOCACHE};
+    }
 
-	public ImportFromDBManager getTableImportManager() {
-		return new HSQLDBTableImportManager();
-	}
+    @Override
+    public ImportFromDBManager getTableImportManager() {
+        return new HSQLDBTableImportManager();
+    }
 
-	public PreImportFromDBManager getPreTableImportManager() {
-		return new HSQLDBPreTableImportManager();
-	}
+    @Override
+    public PreImportFromDBManager getPreTableImportManager() {
+        return new HSQLDBPreTableImportManager();
+    }
 
-	public PreTableExportManager getPreTableExportManager() {
-		return new HSQLDBPreTableExportManager();
-	}
+    @Override
+    public PreTableExportManager getPreTableExportManager() {
+        return new HSQLDBPreTableExportManager();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean doesNeedURLDatabaseName() {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean doesNeedURLDatabaseName() {
+        return false;
+    }
 
-	public TablespaceProperties createTablespaceProperties() {
-		return null;
-	}
+    @Override
+    public TablespaceProperties createTablespaceProperties() {
+        return null;
+    }
 
-	public TablespaceProperties checkTablespaceProperties(
-			TablespaceProperties tablespaceProperties) {
-		return null;
-	}
+    @Override
+    public TablespaceProperties checkTablespaceProperties(final TablespaceProperties tablespaceProperties) {
+        return null;
+    }
 
-	public String[] getCurrentTimeValue() {
-		return new String[] { "CURRENT_TIMESTAMP" };
-	}
+    @Override
+    public String[] getCurrentTimeValue() {
+        return new String[] {"CURRENT_TIMESTAMP"};
+    }
 
-	@Override
-	public List<String> getSystemSchemaList() {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getSystemSchemaList() {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("information_schema");
-		list.add("system_lobs");
+        list.add("information_schema");
+        list.add("system_lobs");
 
-		return list;
-	}
+        return list;
+    }
 
-	public BigDecimal getSequenceMaxValue() {
-		return null;
-	}
+    @Override
+    public BigDecimal getSequenceMaxValue() {
+        return null;
+    }
 
 }

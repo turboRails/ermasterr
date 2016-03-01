@@ -21,57 +21,52 @@ import org.insightech.er.editor.model.diagram_contents.not_element.group.GlobalG
 import org.insightech.er.editor.model.diagram_contents.not_element.group.GroupSet;
 import org.insightech.er.editor.view.dialog.group.GroupManageDialog;
 
-public class RootPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class RootPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	@Override
-	protected Control createContents(Composite parent) {
-		this.noDefaultAndApplyButton();
+    @Override
+    protected Control createContents(final Composite parent) {
+        noDefaultAndApplyButton();
 
-		Composite composite = new Composite(parent, SWT.NONE);
+        final Composite composite = new Composite(parent, SWT.NONE);
 
-		composite.setLayout(new GridLayout());
+        composite.setLayout(new GridLayout());
 
-		initialize(composite);
+        initialize(composite);
 
-		return composite;
-	}
+        return composite;
+    }
 
-	private void initialize(Composite parent) {
-		Button button = new Button(parent, SWT.NONE);
-		button.setText(ResourceString
-				.getResourceString("action.title.manage.global.group"));
-		button.addSelectionListener(new SelectionAdapter() {
+    private void initialize(final Composite parent) {
+        final Button button = new Button(parent, SWT.NONE);
+        button.setText(ResourceString.getResourceString("action.title.manage.global.group"));
+        button.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				GroupSet columnGroups = GlobalGroupSet.load();
-				ERDiagram diagram = new ERDiagram(columnGroups.getDatabase());
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final GroupSet columnGroups = GlobalGroupSet.load();
+                final ERDiagram diagram = new ERDiagram(columnGroups.getDatabase());
 
-				GroupManageDialog dialog = new GroupManageDialog(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						columnGroups, diagram, true, -1);
+                final GroupManageDialog dialog = new GroupManageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), columnGroups, diagram, true, -1);
 
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					List<CopyGroup> newColumnGroups = dialog
-							.getCopyColumnGroups();
+                if (dialog.open() == IDialogConstants.OK_ID) {
+                    final List<CopyGroup> newColumnGroups = dialog.getCopyColumnGroups();
 
-					columnGroups.clear();
+                    columnGroups.clear();
 
-					for (CopyGroup copyColumnGroup : newColumnGroups) {
-						columnGroups.add(copyColumnGroup.restructure(null));
-					}
+                    for (final CopyGroup copyColumnGroup : newColumnGroups) {
+                        columnGroups.add(copyColumnGroup.restructure(null));
+                    }
 
-					GlobalGroupSet.save(columnGroups);
-				}
-			}
-		});
-	}
+                    GlobalGroupSet.save(columnGroups);
+                }
+            }
+        });
+    }
 
-	public void init(IWorkbench workbench) {
-	}
+    @Override
+    public void init(final IWorkbench workbench) {}
 
 }

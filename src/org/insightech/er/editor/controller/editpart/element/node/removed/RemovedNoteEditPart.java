@@ -6,33 +6,32 @@ import org.insightech.er.editor.model.diagram_contents.element.node.note.Note;
 import org.insightech.er.editor.model.tracking.RemovedNote;
 import org.insightech.er.editor.view.figure.NoteFigure;
 
-public class RemovedNoteEditPart extends RemovedNodeElementEditPart implements
-		IResizable {
+public class RemovedNoteEditPart extends RemovedNodeElementEditPart implements IResizable {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected IFigure createFigure() {
-		NoteFigure noteFigure = new NoteFigure();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected IFigure createFigure() {
+        final NoteFigure noteFigure = new NoteFigure();
 
-		this.changeFont(noteFigure);
+        changeFont(noteFigure);
 
-		return noteFigure;
-	}
+        return noteFigure;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshVisuals() {
-		RemovedNote removedNote = (RemovedNote) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshVisuals() {
+        final RemovedNote removedNote = (RemovedNote) getModel();
 
-		NoteFigure figure = (NoteFigure) this.getFigure();
+        final NoteFigure figure = (NoteFigure) getFigure();
 
-		Note note = (Note) removedNote.getNodeElement();
-		figure.setText(note.getText(), note.getColor());
+        final Note note = (Note) removedNote.getNodeElement();
+        figure.setText(note.getText(), note.getColor());
 
-		super.refreshVisuals();
-	}
+        super.refreshVisuals();
+    }
 }

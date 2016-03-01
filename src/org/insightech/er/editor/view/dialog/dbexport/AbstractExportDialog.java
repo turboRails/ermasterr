@@ -33,200 +33,187 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public abstract class AbstractExportDialog extends AbstractDialog {
 
-	protected MultiLineCheckbox openAfterSavedButton;
+    protected MultiLineCheckbox openAfterSavedButton;
 
-	protected Settings settings;
+    protected Settings settings;
 
-	protected ERDiagram diagram;
+    protected ERDiagram diagram;
 
-	private List<Category> categoryList;
+    private List<Category> categoryList;
 
-	public AbstractExportDialog() {
-		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-	}
+    public AbstractExportDialog() {
+        this(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+    }
 
-	public AbstractExportDialog(Shell parentShell) {
-		super(parentShell);
-	}
+    public AbstractExportDialog(final Shell parentShell) {
+        super(parentShell);
+    }
 
-	public void init(ERDiagram diagram) {
-		this.diagram = diagram;
+    public void init(final ERDiagram diagram) {
+        this.diagram = diagram;
 
-		this.settings = this.diagram.getDiagramContents().getSettings().clone();
-		this.categoryList = this.settings.getCategorySetting()
-				.getSelectedCategories();
-	}
+        settings = this.diagram.getDiagramContents().getSettings().clone();
+        categoryList = settings.getCategorySetting().getSelectedCategories();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
 
-		layout.numColumns = 3;
-		layout.verticalSpacing = Resources.VERTICAL_SPACING;
-	}
+        layout.numColumns = 3;
+        layout.verticalSpacing = Resources.VERTICAL_SPACING;
+    }
 
-	protected void createOpenAfterSavedButton(Composite parent, boolean indent,
-			int span) {
-		this.openAfterSavedButton = CompositeFactory.createMultiLineCheckbox(
-				this, parent, "label.open.after.saved", indent, span);
-	}
+    protected void createOpenAfterSavedButton(final Composite parent, final boolean indent, final int span) {
+        openAfterSavedButton = CompositeFactory.createMultiLineCheckbox(this, parent, "label.open.after.saved", indent, span);
+    }
 
-	public Composite createCheckboxArea(Composite parent) {
-		return createCheckboxArea(parent, true);
-	}
+    public Composite createCheckboxArea(final Composite parent) {
+        return createCheckboxArea(parent, true);
+    }
 
-	public Composite createCheckboxArea(Composite parent, boolean separater) {
-		if (separater) {
-			CompositeFactory.fillLine(parent, 5);
-			CompositeFactory.separater(parent);
-		}
+    public Composite createCheckboxArea(final Composite parent, final boolean separater) {
+        if (separater) {
+            CompositeFactory.fillLine(parent, 5);
+            CompositeFactory.separater(parent);
+        }
 
-		Composite checkboxArea = new Composite(parent, SWT.NONE);
+        final Composite checkboxArea = new Composite(parent, SWT.NONE);
 
-		int span = ((GridLayout) parent.getLayout()).numColumns;
+        final int span = ((GridLayout) parent.getLayout()).numColumns;
 
-		GridData checkboxGridData = new GridData(SWT.FILL, SWT.LEFT, true,
-				false, span, 1);
-		// checkboxGridData.horizontalIndent = Resources.INDENT;
-		checkboxArea.setLayoutData(checkboxGridData);
+        final GridData checkboxGridData = new GridData(SWT.FILL, SWT.LEFT, true, false, span, 1);
+        // checkboxGridData.horizontalIndent = Resources.INDENT;
+        checkboxArea.setLayoutData(checkboxGridData);
 
-		GridLayout layout = new GridLayout(1, false);
-		layout.marginWidth = 0;
-		layout.marginLeft = 0;
-		layout.marginRight = 0;
-		layout.marginBottom = 0;
-		layout.verticalSpacing = 0;
-		checkboxArea.setLayout(layout);
+        final GridLayout layout = new GridLayout(1, false);
+        layout.marginWidth = 0;
+        layout.marginLeft = 0;
+        layout.marginRight = 0;
+        layout.marginBottom = 0;
+        layout.verticalSpacing = 0;
+        checkboxArea.setLayout(layout);
 
-		return checkboxArea;
-	}
+        return checkboxArea;
+    }
 
-	public Settings getSettings() {
-		return this.settings;
-	}
+    public Settings getSettings() {
+        return settings;
+    }
 
-	protected File getBaseDir() {
-		return new File(this.diagram.getEditor().getBasePath());
-	}
+    protected File getBaseDir() {
+        return new File(diagram.getEditor().getBasePath());
+    }
 
-	protected String getDefaultOutputFilePath(String extention) {
-		String diagramFilePath = this.diagram.getEditor().getDiagramFilePath();
+    protected String getDefaultOutputFilePath(final String extention) {
+        final String diagramFilePath = diagram.getEditor().getDiagramFilePath();
 
-		return diagramFilePath.substring(0, diagramFilePath.lastIndexOf("."))
-				+ extention;
-	}
+        return diagramFilePath.substring(0, diagramFilePath.lastIndexOf(".")) + extention;
+    }
 
-	protected String getDefaultOutputFileName(String extention) {
-		File file = new File(this.getDefaultOutputFilePath(extention));
+    protected String getDefaultOutputFileName(final String extention) {
+        final File file = new File(getDefaultOutputFilePath(extention));
 
-		return file.getName();
-	}
+        return file.getName();
+    }
 
-	@Override
-	protected void perfomeOK() throws Exception {
-		try {
-			ProgressMonitorDialog monitor = new ProgressMonitorDialog(
-					this.getShell());
+    @Override
+    protected void perfomeOK() throws Exception {
+        try {
+            final ProgressMonitorDialog monitor = new ProgressMonitorDialog(getShell());
 
-			ExportWithProgressManager manager = this
-					.getExportWithProgressManager(this.settings
-							.getExportSetting());
+            final ExportWithProgressManager manager = getExportWithProgressManager(settings.getExportSetting());
 
-			manager.init(this.diagram, this.getBaseDir());
+            manager.init(diagram, getBaseDir());
 
-			ExportManagerRunner runner = new ExportManagerRunner(manager);
+            final ExportManagerRunner runner = new ExportManagerRunner(manager);
 
-			monitor.run(true, true, runner);
+            monitor.run(true, true, runner);
 
-			if (runner.getException() != null) {
-				throw runner.getException();
-			}
+            if (runner.getException() != null) {
+                throw runner.getException();
+            }
 
-			if (this.openAfterSavedButton != null
-					&& this.openAfterSavedButton.getSelection()) {
-				File openAfterSaved = this.openAfterSaved();
+            if (openAfterSavedButton != null && openAfterSavedButton.getSelection()) {
+                final File openAfterSaved = openAfterSaved();
 
-				URI uri = openAfterSaved.toURI();
+                final URI uri = openAfterSaved.toURI();
 
-				IWorkbenchPage page = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage();
+                final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-				if (this.openWithExternalEditor()) {
-					IDE.openEditor(page, uri,
-							IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID, true);
+                if (openWithExternalEditor()) {
+                    IDE.openEditor(page, uri, IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID, true);
 
-				} else {
-					IFileStore fileStore = EFS.getStore(uri);
-					IDE.openEditorOnFileStore(page, fileStore);
-				}
-			}
+                } else {
+                    final IFileStore fileStore = EFS.getStore(uri);
+                    IDE.openEditorOnFileStore(page, fileStore);
+                }
+            }
 
-			// there is a case in another project
-			this.diagram.getEditor().refreshProject();
+            // there is a case in another project
+            diagram.getEditor().refreshProject();
 
-		} catch (InterruptedException e) {
-			throw new InputException();
-		}
-	}
+        } catch (final InterruptedException e) {
+            throw new InputException();
+        }
+    }
 
-	protected abstract ExportWithProgressManager getExportWithProgressManager(
-			ExportSetting exportSetting) throws Exception;
+    protected abstract ExportWithProgressManager getExportWithProgressManager(ExportSetting exportSetting) throws Exception;
 
-	protected File openAfterSaved() {
-		return null;
-	}
+    protected File openAfterSaved() {
+        return null;
+    }
 
-	protected boolean openWithExternalEditor() {
-		return false;
-	}
+    protected boolean openWithExternalEditor() {
+        return false;
+    }
 
-	protected void initCategoryCombo(Combo categoryCombo) {
-		categoryCombo.add(ResourceString.getResourceString("label.all"));
+    protected void initCategoryCombo(final Combo categoryCombo) {
+        categoryCombo.add(ResourceString.getResourceString("label.all"));
 
-		for (Category category : this.categoryList) {
-			categoryCombo.add(category.getName());
-		}
+        for (final Category category : categoryList) {
+            categoryCombo.add(category.getName());
+        }
 
-		categoryCombo.setVisibleItemCount(20);
-	}
+        categoryCombo.setVisibleItemCount(20);
+    }
 
-	protected void setCategoryData(Label categoryLabel) {
-		String categoryName = ResourceString.getResourceString("label.all");
-		if (this.diagram.getCurrentCategory() != null) {
-			categoryName = this.diagram.getCurrentCategory().getName();
-		}
-		categoryLabel.setText(categoryName);
-	}
+    protected void setCategoryData(final Label categoryLabel) {
+        String categoryName = ResourceString.getResourceString("label.all");
+        if (diagram.getCurrentCategory() != null) {
+            categoryName = diagram.getCurrentCategory().getName();
+        }
+        categoryLabel.setText(categoryName);
+    }
 
-	protected void setCategoryComboData(Combo categoryCombo,
-			Category selectedCategory) {
-		categoryCombo.select(0);
+    protected void setCategoryComboData(final Combo categoryCombo, final Category selectedCategory) {
+        categoryCombo.select(0);
 
-		if (selectedCategory != null) {
-			for (int i = 0; i < this.categoryList.size(); i++) {
-				Category category = this.categoryList.get(i);
+        if (selectedCategory != null) {
+            for (int i = 0; i < categoryList.size(); i++) {
+                final Category category = categoryList.get(i);
 
-				if (selectedCategory.equals(category)) {
-					categoryCombo.select(i + 1);
-					break;
-				}
-			}
-		}
-	}
+                if (selectedCategory.equals(category)) {
+                    categoryCombo.select(i + 1);
+                    break;
+                }
+            }
+        }
+    }
 
-	protected Category getSelectedCategory(Combo categoryCombo) {
-		Category category = null;
+    protected Category getSelectedCategory(final Combo categoryCombo) {
+        Category category = null;
 
-		int categoryIndex = categoryCombo.getSelectionIndex();
+        final int categoryIndex = categoryCombo.getSelectionIndex();
 
-		if (categoryIndex != 0) {
-			category = this.categoryList.get(categoryIndex - 1);
-		}
+        if (categoryIndex != 0) {
+            category = categoryList.get(categoryIndex - 1);
+        }
 
-		return category;
-	}
+        return category;
+    }
 
 }

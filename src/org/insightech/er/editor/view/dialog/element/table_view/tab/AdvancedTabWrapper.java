@@ -9,53 +9,49 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.TableV
 
 public class AdvancedTabWrapper extends ValidatableTabWrapper {
 
-	protected TableView tableView;
+    protected TableView tableView;
 
-	private AdvancedComposite composite;
+    private AdvancedComposite composite;
 
-	public AdvancedTabWrapper(AbstractTabbedDialog dialog, TabFolder parent,
-			TableView tableView) {
-		super(dialog, parent, "label.advanced.settings");
+    public AdvancedTabWrapper(final AbstractTabbedDialog dialog, final TabFolder parent, final TableView tableView) {
+        super(dialog, parent, "label.advanced.settings");
 
-		this.tableView = tableView;
-	}
+        this.tableView = tableView;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-		this.composite.validate();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {
+        composite.validate();
+    }
 
-	protected AdvancedComposite createAdvancedComposite() {
-		return new AdvancedComposite(this);
-	}
+    protected AdvancedComposite createAdvancedComposite() {
+        return new AdvancedComposite(this);
+    }
 
-	@Override
-	public void initComposite() {
-		this.composite = this.createAdvancedComposite();
+    @Override
+    public void initComposite() {
+        composite = createAdvancedComposite();
 
-		ERTable table = null;
+        ERTable table = null;
 
-		if (this.tableView instanceof ERTable) {
-			table = (ERTable) this.tableView;
-		}
+        if (tableView instanceof ERTable) {
+            table = (ERTable) tableView;
+        }
 
-		this.composite.initialize(this.dialog,
-				this.tableView.getTableViewProperties(),
-				this.tableView.getDiagram(), table);
-	}
+        composite.initialize(dialog, tableView.getTableViewProperties(), tableView.getDiagram(), table);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setInitFocus() {
-		this.composite.setInitFocus();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setInitFocus() {
+        composite.setInitFocus();
+    }
 
-	@Override
-	public void perfomeOK() {
-	}
+    @Override
+    public void perfomeOK() {}
 }

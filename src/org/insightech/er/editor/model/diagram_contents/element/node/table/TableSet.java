@@ -11,99 +11,96 @@ import org.insightech.er.editor.model.AbstractModel;
 import org.insightech.er.editor.model.ObjectListModel;
 import org.insightech.er.editor.model.diagram_contents.element.node.table.column.NormalColumn;
 
-public class TableSet extends AbstractModel implements ObjectListModel,
-		Iterable<ERTable> {
+public class TableSet extends AbstractModel implements ObjectListModel, Iterable<ERTable> {
 
-	private static final long serialVersionUID = 5264397678674390103L;
+    private static final long serialVersionUID = 5264397678674390103L;
 
-	private List<ERTable> tableList;
+    private List<ERTable> tableList;
 
-	public TableSet() {
-		this.tableList = new ArrayList<ERTable>();
-	}
+    public TableSet() {
+        tableList = new ArrayList<ERTable>();
+    }
 
-	public void sort() {
-		Collections.sort(this.tableList);
+    public void sort() {
+        Collections.sort(tableList);
 
-		for (ERTable table : this.tableList) {
-			Collections.sort(table.getOutgoings());
-			Collections.sort(table.getIncomings());
-		}
-	}
+        for (final ERTable table : tableList) {
+            Collections.sort(table.getOutgoings());
+            Collections.sort(table.getIncomings());
+        }
+    }
 
-	public void add(ERTable table) {
-		this.tableList.add(table);
-	}
+    public void add(final ERTable table) {
+        tableList.add(table);
+    }
 
-	public int remove(ERTable table) {
-		int index = this.tableList.indexOf(table);
-		this.tableList.remove(index);
+    public int remove(final ERTable table) {
+        final int index = tableList.indexOf(table);
+        tableList.remove(index);
 
-		return index;
-	}
+        return index;
+    }
 
-	public void setDirty() {
-	}
+    public void setDirty() {}
 
-	public List<ERTable> getList() {
-		return this.tableList;
-	}
+    public List<ERTable> getList() {
+        return tableList;
+    }
 
-	public Iterator<ERTable> iterator() {
-		return this.tableList.iterator();
-	}
+    @Override
+    public Iterator<ERTable> iterator() {
+        return tableList.iterator();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public TableSet clone() {
-		TableSet tableSet = (TableSet) super.clone();
-		List<ERTable> newTableList = new ArrayList<ERTable>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TableSet clone() {
+        final TableSet tableSet = (TableSet) super.clone();
+        final List<ERTable> newTableList = new ArrayList<ERTable>();
 
-		for (ERTable table : this.tableList) {
-			ERTable newTable = (ERTable) table.clone();
-			newTableList.add(newTable);
-		}
+        for (final ERTable table : tableList) {
+            final ERTable newTable = table.clone();
+            newTableList.add(newTable);
+        }
 
-		tableSet.tableList = newTableList;
+        tableSet.tableList = newTableList;
 
-		return tableSet;
-	}
+        return tableSet;
+    }
 
-	public List<String> getAutoSequenceNames(String database) {
-		List<String> autoSequenceNames = new ArrayList<String>();
+    public List<String> getAutoSequenceNames(final String database) {
+        final List<String> autoSequenceNames = new ArrayList<String>();
 
-		for (ERTable table : this.tableList) {
-			String prefix = table.getNameWithSchema(database) + "_";
+        for (final ERTable table : tableList) {
+            final String prefix = table.getNameWithSchema(database) + "_";
 
-			for (NormalColumn column : table.getNormalColumns()) {
-				SqlType sqlType = column.getType();
+            for (final NormalColumn column : table.getNormalColumns()) {
+                final SqlType sqlType = column.getType();
 
-				if (SqlType.valueOfId(SqlType.SQL_TYPE_ID_SERIAL).equals(
-						sqlType)
-						|| SqlType.valueOfId(SqlType.SQL_TYPE_ID_BIG_SERIAL)
-								.equals(sqlType)) {
-					autoSequenceNames
-							.add((prefix + column.getPhysicalName() + "_seq")
-									.toUpperCase());
-				}
-			}
-		}
+                if (SqlType.valueOfId(SqlType.SQL_TYPE_ID_SERIAL).equals(sqlType) || SqlType.valueOfId(SqlType.SQL_TYPE_ID_BIG_SERIAL).equals(sqlType)) {
+                    autoSequenceNames.add((prefix + column.getPhysicalName() + "_seq").toUpperCase());
+                }
+            }
+        }
 
-		return autoSequenceNames;
-	}
+        return autoSequenceNames;
+    }
 
-	public String getDescription() {
-		return "";
-	}
+    @Override
+    public String getDescription() {
+        return "";
+    }
 
-	public String getName() {
-		return ResourceString.getResourceString("label.object.type.table_list");
-	}
+    @Override
+    public String getName() {
+        return ResourceString.getResourceString("label.object.type.table_list");
+    }
 
-	public String getObjectType() {
-		return "list";
-	}
+    @Override
+    public String getObjectType() {
+        return "list";
+    }
 
 }

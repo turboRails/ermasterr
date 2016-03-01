@@ -14,35 +14,33 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ViewSetOutlineEditPart extends AbstractOutlineEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected List getModelChildren() {
-		ViewSet viewSet = (ViewSet) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List getModelChildren() {
+        final ViewSet viewSet = (ViewSet) getModel();
 
-		List<View> list = viewSet.getList();
+        final List<View> list = viewSet.getList();
 
-		if (this.getDiagram().getDiagramContents().getSettings()
-				.getViewOrderBy() == Settings.VIEW_MODE_LOGICAL) {
-			Collections.sort(list, TableView.LOGICAL_NAME_COMPARATOR);
+        if (getDiagram().getDiagramContents().getSettings().getViewOrderBy() == Settings.VIEW_MODE_LOGICAL) {
+            Collections.sort(list, TableView.LOGICAL_NAME_COMPARATOR);
 
-		} else {
-			Collections.sort(list, TableView.PHYSICAL_NAME_COMPARATOR);
+        } else {
+            Collections.sort(list, TableView.PHYSICAL_NAME_COMPARATOR);
 
-		}
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		this.setWidgetText(ResourceString.getResourceString("label.view")
-				+ " (" + this.getModelChildren().size() + ")");
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        setWidgetText(ResourceString.getResourceString("label.view") + " (" + getModelChildren().size() + ")");
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
+    }
 
 }

@@ -5,8 +5,8 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.AdvancedCompo
 
 public class AccessAdvancedComposite extends AdvancedComposite {
 
-	public AccessAdvancedComposite(Composite parent) {
-		super(parent);
-	}
+    public AccessAdvancedComposite(final Composite parent) {
+        super(parent);
+    }
 
 }

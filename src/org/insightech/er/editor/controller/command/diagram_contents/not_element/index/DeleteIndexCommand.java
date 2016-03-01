@@ -11,38 +11,38 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.index.
 
 public class DeleteIndexCommand extends AbstractCommand {
 
-	private ERTable table;
+    private final ERTable table;
 
-	private List<Index> oldIndexList;
+    private final List<Index> oldIndexList;
 
-	private List<Index> newIndexList;
+    private final List<Index> newIndexList;
 
-	private IndexSet indexSet;
+    private final IndexSet indexSet;
 
-	public DeleteIndexCommand(ERDiagram diagram, Index index) {
-		this.table = index.getTable();
-		this.indexSet = diagram.getDiagramContents().getIndexSet();
+    public DeleteIndexCommand(final ERDiagram diagram, final Index index) {
+        table = index.getTable();
+        indexSet = diagram.getDiagramContents().getIndexSet();
 
-		this.oldIndexList = index.getTable().getIndexes();
-		this.newIndexList = new ArrayList<Index>(oldIndexList);
-		this.newIndexList.remove(index);
-	}
+        oldIndexList = index.getTable().getIndexes();
+        newIndexList = new ArrayList<Index>(oldIndexList);
+        newIndexList.remove(index);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.table.setIndexes(this.newIndexList);
-		this.indexSet.refresh();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        table.setIndexes(newIndexList);
+        indexSet.refresh();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.table.setIndexes(this.oldIndexList);
-		this.indexSet.refresh();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        table.setIndexes(oldIndexList);
+        indexSet.refresh();
+    }
 }

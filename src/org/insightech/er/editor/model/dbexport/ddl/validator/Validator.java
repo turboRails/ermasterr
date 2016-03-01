@@ -22,51 +22,51 @@ import org.insightech.er.editor.model.dbexport.ddl.validator.rule.view.impl.Rese
 
 public class Validator {
 
-	private static final List<Rule> RULE_LIST = new ArrayList<Rule>();
+    private static final List<Rule> RULE_LIST = new ArrayList<Rule>();
 
-	static {
-		// ‘S‘Ì‚É‘Î‚·‚éƒ‹[ƒ‹
-		new DuplicatedPhysicalNameRule();
-		new ReservedNameRule();
+    static {
+        // ï¿½Sï¿½Ì‚É‘Î‚ï¿½ï¿½éƒ‹ï¿½[ï¿½ï¿½
+        new DuplicatedPhysicalNameRule();
+        new ReservedNameRule();
 
-		// ƒe[ƒuƒ‹‚É‘Î‚·‚éƒ‹[ƒ‹
-		new NoTableNameRule();
-		new NoColumnRule();
-		new DuplicatedColumnNameRule();
-		new ReservedWordTableNameRule();
-		new FullTextIndexRule();
+        // ï¿½eï¿½[ï¿½uï¿½ï¿½ï¿½É‘Î‚ï¿½ï¿½éƒ‹ï¿½[ï¿½ï¿½
+        new NoTableNameRule();
+        new NoColumnRule();
+        new DuplicatedColumnNameRule();
+        new ReservedWordTableNameRule();
+        new FullTextIndexRule();
 
-		// ƒrƒ…[‚É‘Î‚·‚éƒ‹[ƒ‹
-		new NoViewNameRule();
-		new ReservedWordViewNameRule();
-		new NoViewSqlRule();
+        // ï¿½rï¿½ï¿½ï¿½[ï¿½É‘Î‚ï¿½ï¿½éƒ‹ï¿½[ï¿½ï¿½
+        new NoViewNameRule();
+        new ReservedWordViewNameRule();
+        new NoViewSqlRule();
 
-		// —ñ‚É‘Î‚·‚éƒ‹[ƒ‹
-		new NoColumnNameRule();
-		new NoColumnTypeRule();
-		new ReservedWordColumnNameRule();
-		new UninputTablespaceRule();
-	}
+        // ï¿½ï¿½É‘Î‚ï¿½ï¿½éƒ‹ï¿½[ï¿½ï¿½
+        new NoColumnNameRule();
+        new NoColumnTypeRule();
+        new ReservedWordColumnNameRule();
+        new UninputTablespaceRule();
+    }
 
-	public static void addRule(Rule rule) {
-		RULE_LIST.add(rule);
-	}
+    public static void addRule(final Rule rule) {
+        RULE_LIST.add(rule);
+    }
 
-	public List<ValidateResult> validate(ERDiagram diagram) {
-		List<ValidateResult> errorList = new ArrayList<ValidateResult>();
+    public List<ValidateResult> validate(final ERDiagram diagram) {
+        final List<ValidateResult> errorList = new ArrayList<ValidateResult>();
 
-		for (Rule rule : RULE_LIST) {
-			boolean ret = rule.validate(diagram);
+        for (final Rule rule : RULE_LIST) {
+            final boolean ret = rule.validate(diagram);
 
-			errorList.addAll(rule.getErrorList());
-			rule.clear();
+            errorList.addAll(rule.getErrorList());
+            rule.clear();
 
-			if (!ret) {
-				break;
-			}
-		}
+            if (!ret) {
+                break;
+            }
+        }
 
-		return errorList;
-	}
+        return errorList;
+    }
 
 }

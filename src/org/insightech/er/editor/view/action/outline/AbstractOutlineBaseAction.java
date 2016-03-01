@@ -11,48 +11,46 @@ import org.insightech.er.editor.model.ERDiagram;
 
 public abstract class AbstractOutlineBaseAction extends Action {
 
-	private TreeViewer treeViewer;
+    private final TreeViewer treeViewer;
 
-	public AbstractOutlineBaseAction(String id, String text,
-			TreeViewer treeViewer) {
-		this(id, text, SWT.NONE, treeViewer);
-	}
+    public AbstractOutlineBaseAction(final String id, final String text, final TreeViewer treeViewer) {
+        this(id, text, SWT.NONE, treeViewer);
+    }
 
-	public AbstractOutlineBaseAction(String id, String text, int style,
-			TreeViewer treeViewer) {
-		super(text, style);
-		this.setId(id);
+    public AbstractOutlineBaseAction(final String id, final String text, final int style, final TreeViewer treeViewer) {
+        super(text, style);
+        setId(id);
 
-		this.treeViewer = treeViewer;
-	}
+        this.treeViewer = treeViewer;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void runWithEvent(Event event) {
-		try {
-			execute(event);
-		} catch (Exception e) {
-			ERDiagramActivator.showExceptionDialog(e);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void runWithEvent(final Event event) {
+        try {
+            execute(event);
+        } catch (final Exception e) {
+            ERDiagramActivator.showExceptionDialog(e);
+        }
+    }
 
-	protected void execute(Command command) {
-		this.treeViewer.getEditDomain().getCommandStack().execute(command);
-	}
+    protected void execute(final Command command) {
+        treeViewer.getEditDomain().getCommandStack().execute(command);
+    }
 
-	protected ERDiagram getDiagram() {
-		EditPart editPart = treeViewer.getContents();
-		ERDiagram diagram = (ERDiagram) editPart.getModel();
+    protected ERDiagram getDiagram() {
+        final EditPart editPart = treeViewer.getContents();
+        final ERDiagram diagram = (ERDiagram) editPart.getModel();
 
-		return diagram;
-	}
+        return diagram;
+    }
 
-	protected TreeViewer getTreeViewer() {
-		return treeViewer;
-	}
+    protected TreeViewer getTreeViewer() {
+        return treeViewer;
+    }
 
-	abstract public void execute(Event event) throws Exception;
+    abstract public void execute(Event event) throws Exception;
 
 }

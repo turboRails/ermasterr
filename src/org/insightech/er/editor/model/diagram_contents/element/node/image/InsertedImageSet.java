@@ -8,69 +8,71 @@ import java.util.List;
 import org.insightech.er.editor.model.AbstractModel;
 import org.insightech.er.editor.model.ObjectListModel;
 
-public class InsertedImageSet extends AbstractModel implements ObjectListModel,
-		Iterable<InsertedImage> {
+public class InsertedImageSet extends AbstractModel implements ObjectListModel, Iterable<InsertedImage> {
 
-	private static final long serialVersionUID = 6136074447375448999L;
+    private static final long serialVersionUID = 6136074447375448999L;
 
-	private List<InsertedImage> insertedImageList;
+    private List<InsertedImage> insertedImageList;
 
-	public InsertedImageSet() {
-		this.insertedImageList = new ArrayList<InsertedImage>();
-	}
+    public InsertedImageSet() {
+        insertedImageList = new ArrayList<InsertedImage>();
+    }
 
-	public void sort() {
-		Collections.sort(this.insertedImageList);
-	}
-	
-	public void add(InsertedImage insertedImage) {
-		this.insertedImageList.add(insertedImage);
-	}
+    public void sort() {
+        Collections.sort(insertedImageList);
+    }
 
-	public int remove(InsertedImage insertedImage) {
-		int index = this.insertedImageList.indexOf(insertedImage);
-		this.insertedImageList.remove(index);
+    public void add(final InsertedImage insertedImage) {
+        insertedImageList.add(insertedImage);
+    }
 
-		return index;
-	}
+    public int remove(final InsertedImage insertedImage) {
+        final int index = insertedImageList.indexOf(insertedImage);
+        insertedImageList.remove(index);
 
-	public List<InsertedImage> getList() {
-		return this.insertedImageList;
-	}
+        return index;
+    }
 
-	public Iterator<InsertedImage> iterator() {
-		return this.insertedImageList.iterator();
-	}
+    public List<InsertedImage> getList() {
+        return insertedImageList;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public InsertedImageSet clone() {
-		InsertedImageSet insertedImageSet = (InsertedImageSet) super.clone();
-		List<InsertedImage> newInsertedImageList = new ArrayList<InsertedImage>();
+    @Override
+    public Iterator<InsertedImage> iterator() {
+        return insertedImageList.iterator();
+    }
 
-		for (InsertedImage insertedImage : this.insertedImageList) {
-			InsertedImage newInsertedImage = (InsertedImage) insertedImage
-					.clone();
-			newInsertedImageList.add(newInsertedImage);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public InsertedImageSet clone() {
+        final InsertedImageSet insertedImageSet = (InsertedImageSet) super.clone();
+        final List<InsertedImage> newInsertedImageList = new ArrayList<InsertedImage>();
 
-		insertedImageSet.insertedImageList = newInsertedImageList;
+        for (final InsertedImage insertedImage : insertedImageList) {
+            final InsertedImage newInsertedImage = (InsertedImage) insertedImage.clone();
+            newInsertedImageList.add(newInsertedImage);
+        }
 
-		return insertedImageSet;
-	}
+        insertedImageSet.insertedImageList = newInsertedImageList;
 
-	public String getDescription() {
-		return "";
-	}
+        return insertedImageSet;
+    }
 
-	public String getName() {
-		return null;
-	}
+    @Override
+    public String getDescription() {
+        return "";
+    }
 
-	public String getObjectType() {
-		return "list";
-	}
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public String getObjectType() {
+        return "list";
+    }
 
 }

@@ -24,246 +24,230 @@ import org.insightech.er.util.Format;
 
 public class RepeatTestDataTabWrapper extends ValidatableTabWrapper {
 
-	private static final int MAX_REPEAT_PREVIEW_NUM = 50;
+    private static final int MAX_REPEAT_PREVIEW_NUM = 50;
 
-	private TestDataDialog dialog;
+    private final TestDataDialog dialog;
 
-	private Text testDataNumText;
+    private Text testDataNumText;
 
-	private RowHeaderTable editColumnTable;
+    private RowHeaderTable editColumnTable;
 
-	private RepeatTestData repeatTestData;
+    private RepeatTestData repeatTestData;
 
-	private ERTable table;
+    private ERTable table;
 
-	public RepeatTestDataTabWrapper(TestDataDialog dialog, TabFolder parent) {
-		super(dialog, parent, "label.testdata.repeat.input");
+    public RepeatTestDataTabWrapper(final TestDataDialog dialog, final TabFolder parent) {
+        super(dialog, parent, "label.testdata.repeat.input");
 
-		this.dialog = dialog;
-	}
+        this.dialog = dialog;
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
-		layout.numColumns = 2;
-	}
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
+        layout.numColumns = 2;
+    }
 
-	@Override
-	public void initComposite() {
-		this.testDataNumText = CompositeFactory.createNumText(this.dialog,
-				this, "label.record.num", 50);
-		this.testDataNumText.setEnabled(false);
+    @Override
+    public void initComposite() {
+        testDataNumText = CompositeFactory.createNumText(dialog, this, "label.record.num", 50);
+        testDataNumText.setEnabled(false);
 
-		this.createEditTable(this);
-	}
+        createEditTable(this);
+    }
 
-	private void createEditTable(Composite composite) {
-		this.editColumnTable = CompositeFactory.createRowHeaderTable(composite,
-				TestDataDialog.TABLE_WIDTH, TestDataDialog.TABLE_HEIGHT, 75,
-				25, 2, true, true);
+    private void createEditTable(final Composite composite) {
+        editColumnTable = CompositeFactory.createRowHeaderTable(composite, TestDataDialog.TABLE_WIDTH, TestDataDialog.TABLE_HEIGHT, 75, 25, 2, true, true);
 
-		this.editColumnTable.setCellEditWorker(new CellEditWorker() {
+        editColumnTable.setCellEditWorker(new CellEditWorker() {
 
-			public void addNewRow() {
-			}
+            @Override
+            public void addNewRow() {}
 
-			public void changeRowNum() {
-				dialog.resetTestDataNum();
-			}
+            @Override
+            public void changeRowNum() {
+                dialog.resetTestDataNum();
+            }
 
-			public boolean isModified(int row, int column) {
-				TestDataCreator testDataCreator = new SQLTestDataCreator();
-				testDataCreator.init(dialog.getTestData(), null);
+            @Override
+            public boolean isModified(final int row, final int column) {
+                final TestDataCreator testDataCreator = new SQLTestDataCreator();
+                testDataCreator.init(dialog.getTestData(), null);
 
-				if (column >= table.getExpandedColumns().size()) {
-					return false;
-				}
+                if (column >= table.getExpandedColumns().size()) {
+                    return false;
+                }
 
-				NormalColumn normalColumn = table.getExpandedColumns().get(
-						column);
+                final NormalColumn normalColumn = table.getExpandedColumns().get(column);
 
-				RepeatTestDataDef dataDef = repeatTestData
-						.getDataDef(normalColumn);
+                final RepeatTestDataDef dataDef = repeatTestData.getDataDef(normalColumn);
 
-				String defaultValue = testDataCreator.getRepeatTestDataValue(
-						row, dataDef, normalColumn);
-				Object value = editColumnTable.getValueAt(row, column);
+                String defaultValue = testDataCreator.getRepeatTestDataValue(row, dataDef, normalColumn);
+                Object value = editColumnTable.getValueAt(row, column);
 
-				if (defaultValue == null) {
-					defaultValue = "null";
-				}
-				if (value == null) {
-					value = "null";
-				}
+                if (defaultValue == null) {
+                    defaultValue = "null";
+                }
+                if (value == null) {
+                    value = "null";
+                }
 
-				if (!defaultValue.equals(value)) {
-					dataDef.setModifiedValue(row, value.toString());
-					return true;
+                if (!defaultValue.equals(value)) {
+                    dataDef.setModifiedValue(row, value.toString());
+                    return true;
 
-				} else {
-					dataDef.removeModifiedValue(row);
-				}
+                } else {
+                    dataDef.removeModifiedValue(row);
+                }
 
-				return false;
-			}
+                return false;
+            }
 
-		});
+        });
 
-		this.editColumnTable.setHeaderClickListener(new HeaderClickListener() {
+        editColumnTable.setHeaderClickListener(new HeaderClickListener() {
 
-			public void onHeaderClick(final int column) {
-				getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						RepeatTestDataSettingDialog dialog = new RepeatTestDataSettingDialog(
-								getShell(), column,
-								RepeatTestDataTabWrapper.this, table);
-						dialog.open();
-					}
-				});
-			}
-		});
-	}
+            @Override
+            public void onHeaderClick(final int column) {
+                getDisplay().asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        final RepeatTestDataSettingDialog dialog = new RepeatTestDataSettingDialog(getShell(), column, RepeatTestDataTabWrapper.this, table);
+                        dialog.open();
+                    }
+                });
+            }
+        });
+    }
 
-	private void initTable() {
-		this.editColumnTable.setVisible(false);
+    private void initTable() {
+        editColumnTable.setVisible(false);
 
-		this.editColumnTable.removeData();
+        editColumnTable.removeData();
 
-		for (NormalColumn normalColumn : this.table.getExpandedColumns()) {
-			String name = normalColumn.getName();
-			String type = null;
+        for (final NormalColumn normalColumn : table.getExpandedColumns()) {
+            final String name = normalColumn.getName();
+            String type = null;
 
-			if (normalColumn.getType() == null) {
-				type = "";
+            if (normalColumn.getType() == null) {
+                type = "";
 
-			} else {
-				type = Format.formatType(normalColumn.getType(), normalColumn
-						.getTypeData(), this.dialog.getDiagram().getDatabase(),
-						true);
-			}
+            } else {
+                type = Format.formatType(normalColumn.getType(), normalColumn.getTypeData(), dialog.getDiagram().getDatabase(), true);
+            }
 
-			this.editColumnTable.addColumnHeader(name + "\r\n" + type, 100);
-		}
+            editColumnTable.addColumnHeader(name + "\r\n" + type, 100);
+        }
 
-		this.initTableData();
+        initTableData();
 
-		this.editColumnTable.setVisible(true);
-	}
+        editColumnTable.setVisible(true);
+    }
 
-	@Override
-	public void reset() {
-		if (this.repeatTestData != null) {
-			this.perfomeOK();
-		}
+    @Override
+    public void reset() {
+        if (repeatTestData != null) {
+            perfomeOK();
+        }
 
-		this.table = dialog.getTargetTable();
+        table = dialog.getTargetTable();
 
-		if (this.table != null) {
-			this.repeatTestData = dialog.getTestData().getTableTestDataMap()
-					.get(this.table).getRepeatTestData();
-			this.testDataNumText.setText(Format.toString(this.repeatTestData
-					.getTestDataNum()));
+        if (table != null) {
+            repeatTestData = dialog.getTestData().getTableTestDataMap().get(table).getRepeatTestData();
+            testDataNumText.setText(Format.toString(repeatTestData.getTestDataNum()));
 
-			this.testDataNumText.setEnabled(true);
+            testDataNumText.setEnabled(true);
 
-			this.initTable();
+            initTable();
 
-		} else {
-			this.repeatTestData = null;
-			this.testDataNumText.setText("");
-			this.testDataNumText.setEnabled(false);
+        } else {
+            repeatTestData = null;
+            testDataNumText.setText("");
+            testDataNumText.setEnabled(false);
 
-			this.editColumnTable.removeData();
+            editColumnTable.removeData();
 
-		}
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {}
 
-	@Override
-	public void setInitFocus() {
-	}
+    @Override
+    public void setInitFocus() {}
 
-	@Override
-	public void perfomeOK() {
-		if (this.repeatTestData != null) {
-			this.repeatTestData.setTestDataNum(this.getTestDataNum());
-		}
-	}
+    @Override
+    public void perfomeOK() {
+        if (repeatTestData != null) {
+            repeatTestData.setTestDataNum(getTestDataNum());
+        }
+    }
 
-	@Override
-	protected void addListener() {
-		super.addListener();
+    @Override
+    protected void addListener() {
+        super.addListener();
 
-		this.testDataNumText.addModifyListener(new ModifyListener() {
+        testDataNumText.addModifyListener(new ModifyListener() {
 
-			public void modifyText(ModifyEvent modifyevent) {
-				initTableData();
-			}
-		});
-	}
+            @Override
+            public void modifyText(final ModifyEvent modifyevent) {
+                initTableData();
+            }
+        });
+    }
 
-	public void initTableData() {
-		if (this.table != null) {
-			this.editColumnTable.setVisible(false);
+    public void initTableData() {
+        if (table != null) {
+            editColumnTable.setVisible(false);
 
-			TestDataCreator testDataCreator = new SQLTestDataCreator();
-			testDataCreator.init(dialog.getTestData(), null);
+            final TestDataCreator testDataCreator = new SQLTestDataCreator();
+            testDataCreator.init(dialog.getTestData(), null);
 
-			this.editColumnTable.removeAllRow();
+            editColumnTable.removeAllRow();
 
-			int num = this.getTestDataNum();
+            int num = getTestDataNum();
 
-			if (num > MAX_REPEAT_PREVIEW_NUM) {
-				num = MAX_REPEAT_PREVIEW_NUM;
-			}
+            if (num > MAX_REPEAT_PREVIEW_NUM) {
+                num = MAX_REPEAT_PREVIEW_NUM;
+            }
 
-			for (int i = 0; i < num; i++) {
-				Object[] values = new Object[this.table.getExpandedColumns()
-						.size()];
+            for (int i = 0; i < num; i++) {
+                final Object[] values = new Object[table.getExpandedColumns().size()];
 
-				int columnIndex = 0;
+                int columnIndex = 0;
 
-				for (NormalColumn column : this.table.getExpandedColumns()) {
-					values[columnIndex++] = testDataCreator
-							.getMergedRepeatTestDataValue(i,
-									repeatTestData.getDataDef(column), column);
-				}
+                for (final NormalColumn column : table.getExpandedColumns()) {
+                    values[columnIndex++] = testDataCreator.getMergedRepeatTestDataValue(i, repeatTestData.getDataDef(column), column);
+                }
 
-				this.editColumnTable
-						.addRow(String.valueOf(this.editColumnTable
-								.getItemCount() + 1), values);
-			}
+                editColumnTable.addRow(String.valueOf(editColumnTable.getItemCount() + 1), values);
+            }
 
-			this.editColumnTable.setVisible(true);
-		}
-	}
+            editColumnTable.setVisible(true);
+        }
+    }
 
-	public void setRepeatTestDataDef(NormalColumn column,
-			RepeatTestDataDef repeatTestDataDef) {
-		this.repeatTestData.setDataDef(column, repeatTestDataDef);
-	}
+    public void setRepeatTestDataDef(final NormalColumn column, final RepeatTestDataDef repeatTestDataDef) {
+        repeatTestData.setDataDef(column, repeatTestDataDef);
+    }
 
-	public RepeatTestData getRepeatTestData() {
-		return repeatTestData;
-	}
+    public RepeatTestData getRepeatTestData() {
+        return repeatTestData;
+    }
 
-	public int getTestDataNum() {
-		String text = testDataNumText.getText();
-		int num = 0;
-		if (!text.equals("")) {
-			try {
-				num = Integer.parseInt(text);
-			} catch (Exception e) {
-			}
-		}
+    public int getTestDataNum() {
+        final String text = testDataNumText.getText();
+        int num = 0;
+        if (!text.equals("")) {
+            try {
+                num = Integer.parseInt(text);
+            } catch (final Exception e) {}
+        }
 
-		return num;
-	}
+        return num;
+    }
 }

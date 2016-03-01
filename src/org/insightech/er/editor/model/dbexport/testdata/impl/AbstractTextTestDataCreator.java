@@ -13,50 +13,45 @@ import org.insightech.er.util.io.FileUtils;
 
 public abstract class AbstractTextTestDataCreator extends TestDataCreator {
 
-	protected PrintWriter out;
+    protected PrintWriter out;
 
-	public AbstractTextTestDataCreator() {
-	}
+    public AbstractTextTestDataCreator() {}
 
-	@Override
-	protected void openFile() throws IOException {
-		File file = new File(FileUtils.getFile(this.baseDir,
-				this.exportTestDataSetting.getExportFilePath()),
-				this.testData.getName() + this.getFileExtention());
+    @Override
+    protected void openFile() throws IOException {
+        final File file = new File(FileUtils.getFile(baseDir, exportTestDataSetting.getExportFilePath()), testData.getName() + getFileExtention());
 
-		file.getParentFile().mkdirs();
+        file.getParentFile().mkdirs();
 
-		out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-				new FileOutputStream(file),
-				this.exportTestDataSetting.getExportFileEncoding())));
+        out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), exportTestDataSetting.getExportFileEncoding())));
 
-	}
+    }
 
-	@Override
-	protected void write() throws Exception {
-		out.print(this.getHeader());
+    @Override
+    protected void write() throws Exception {
+        out.print(getHeader());
 
-		super.write();
+        super.write();
 
-		out.print(this.getFooter());
-	}
+        out.print(getFooter());
+    }
 
-	@Override
-	protected boolean skipTable(ERTable table) {
-		return false;
-	}
+    @Override
+    protected boolean skipTable(final ERTable table) {
+        return false;
+    }
 
-	protected abstract String getHeader();
+    protected abstract String getHeader();
 
-	protected abstract String getFileExtention();
+    protected abstract String getFileExtention();
 
-	protected abstract String getFooter();
+    protected abstract String getFooter();
 
-	@Override
-	protected void closeFile() throws IOException {
-		if (out != null) {
-			out.close();
-		}
-	}
+    @Override
+    protected void closeFile() throws IOException {
+        if (out != null) {
+            out.close();
+        }
+    }
 
 }

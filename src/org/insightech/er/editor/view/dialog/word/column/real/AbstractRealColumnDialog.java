@@ -17,144 +17,124 @@ import org.insightech.er.editor.view.dialog.word.column.AbstractColumnDialog;
 
 public abstract class AbstractRealColumnDialog extends AbstractColumnDialog {
 
-	protected Button notNullCheck;
+    protected Button notNullCheck;
 
-	protected Button uniqueKeyCheck;
+    protected Button uniqueKeyCheck;
 
-	protected Combo defaultText;
+    protected Combo defaultText;
 
-	protected Text constraintText;
+    protected Text constraintText;
 
-	private TabFolder tabFolder;
+    private TabFolder tabFolder;
 
-	protected TabItem tabItem;
+    protected TabItem tabItem;
 
-	public AbstractRealColumnDialog(Shell parentShell, ERDiagram diagram) {
-		super(parentShell, diagram);
-	}
+    public AbstractRealColumnDialog(final Shell parentShell, final ERDiagram diagram) {
+        super(parentShell, diagram);
+    }
 
-	@Override
-	protected Composite createRootComposite(Composite parent) {
-		this.tabFolder = new TabFolder(parent, SWT.NONE);
+    @Override
+    protected Composite createRootComposite(final Composite parent) {
+        tabFolder = new TabFolder(parent, SWT.NONE);
 
-		this.tabItem = new TabItem(this.tabFolder, SWT.NONE);
-		this.tabItem.setText(ResourceString.getResourceString("label.basic"));
+        tabItem = new TabItem(tabFolder, SWT.NONE);
+        tabItem.setText(ResourceString.getResourceString("label.basic"));
 
-		Composite composite = CompositeFactory.createComposite(this.tabFolder,
-				this.getCompositeNumColumns(), true);
-		this.tabItem.setControl(composite);
+        final Composite composite = CompositeFactory.createComposite(tabFolder, getCompositeNumColumns(), true);
+        tabItem.setControl(composite);
 
-		this.tabItem = new TabItem(this.tabFolder, SWT.NONE);
-		this.tabItem.setText(ResourceString.getResourceString("label.detail"));
+        tabItem = new TabItem(tabFolder, SWT.NONE);
+        tabItem.setText(ResourceString.getResourceString("label.detail"));
 
-		Composite detailComposite = CompositeFactory.createComposite(
-				this.tabFolder, 2, true);
-		this.initializeDetailTab(detailComposite);
-		this.tabItem.setControl(detailComposite);
+        final Composite detailComposite = CompositeFactory.createComposite(tabFolder, 2, true);
+        initializeDetailTab(detailComposite);
+        tabItem.setControl(detailComposite);
 
-		return composite;
-	}
+        return composite;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initializeComposite(Composite composite) {
-		int numColumns = this.getCompositeNumColumns();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initializeComposite(final Composite composite) {
+        final int numColumns = getCompositeNumColumns();
 
-		Composite checkBoxComposite = CompositeFactory.createChildComposite(
-				composite, 40, numColumns,
-				this.getCheckBoxCompositeNumColumns());
+        final Composite checkBoxComposite = CompositeFactory.createChildComposite(composite, 40, numColumns, getCheckBoxCompositeNumColumns());
 
-		this.initializeCheckBoxComposite(checkBoxComposite);
+        initializeCheckBoxComposite(checkBoxComposite);
 
-		super.initializeComposite(composite);
+        super.initializeComposite(composite);
 
-		this.defaultText = CompositeFactory.createCombo(this, composite,
-				"label.column.default.value", numColumns - 1);
-	}
+        defaultText = CompositeFactory.createCombo(this, composite, "label.column.default.value", numColumns - 1);
+    }
 
-	protected int getCheckBoxCompositeNumColumns() {
-		return 2;
-	}
+    protected int getCheckBoxCompositeNumColumns() {
+        return 2;
+    }
 
-	protected void initializeDetailTab(Composite composite) {
-		this.constraintText = CompositeFactory.createText(this, composite,
-				"label.column.constraint", false, true);
-	}
+    protected void initializeDetailTab(final Composite composite) {
+        constraintText = CompositeFactory.createText(this, composite, "label.column.constraint", false, true);
+    }
 
-	protected void initializeCheckBoxComposite(Composite composite) {
-		this.notNullCheck = CompositeFactory.createCheckbox(this, composite,
-				"label.not.null", false);
-		this.uniqueKeyCheck = CompositeFactory.createCheckbox(this, composite,
-				"label.unique.key", false);
-	}
+    protected void initializeCheckBoxComposite(final Composite composite) {
+        notNullCheck = CompositeFactory.createCheckbox(this, composite, "label.not.null", false);
+        uniqueKeyCheck = CompositeFactory.createCheckbox(this, composite, "label.unique.key", false);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void setWordData() {
-		this.notNullCheck.setSelection(this.targetColumn.isNotNull());
-		this.uniqueKeyCheck.setSelection(this.targetColumn.isUniqueKey());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setWordData() {
+        notNullCheck.setSelection(targetColumn.isNotNull());
+        uniqueKeyCheck.setSelection(targetColumn.isUniqueKey());
 
-		if (this.targetColumn.getConstraint() != null) {
-			this.constraintText.setText(this.targetColumn.getConstraint());
-		}
+        if (targetColumn.getConstraint() != null) {
+            constraintText.setText(targetColumn.getConstraint());
+        }
 
-		if (this.targetColumn.getDefaultValue() != null) {
-			this.defaultText.setText(this.targetColumn.getDefaultValue());
-		}
+        if (targetColumn.getDefaultValue() != null) {
+            defaultText.setText(targetColumn.getDefaultValue());
+        }
 
-		super.setWordData();
-	}
+        super.setWordData();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void perfomeOK() {
-		super.perfomeOK();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void perfomeOK() {
+        super.perfomeOK();
 
-		this.returnColumn = new NormalColumn(this.returnWord,
-				notNullCheck.getSelection(), false,
-				uniqueKeyCheck.getSelection(), false, defaultText.getText(),
-				constraintText.getText(), null, null, null);
-	}
+        returnColumn = new NormalColumn(returnWord, notNullCheck.getSelection(), false, uniqueKeyCheck.getSelection(), false, defaultText.getText(), constraintText.getText(), null, null, null);
+    }
 
-	@Override
-	protected void setEnabledBySqlType() {
-		super.setEnabledBySqlType();
+    @Override
+    protected void setEnabledBySqlType() {
+        super.setEnabledBySqlType();
 
-		SqlType selectedType = SqlType.valueOf(diagram.getDatabase(),
-				typeCombo.getText());
+        final SqlType selectedType = SqlType.valueOf(diagram.getDatabase(), typeCombo.getText());
 
-		if (selectedType != null) {
-			String defaultValue = this.defaultText.getText();
-			this.defaultText.removeAll();
+        if (selectedType != null) {
+            final String defaultValue = defaultText.getText();
+            defaultText.removeAll();
 
-			if (selectedType.isTimestamp()) {
-				this.defaultText
-						.add(ResourceString
-								.getResourceString(ResourceString.KEY_DEFAULT_VALUE_CURRENT_DATE_TIME));
-				this.defaultText.setText(defaultValue);
+            if (selectedType.isTimestamp()) {
+                defaultText.add(ResourceString.getResourceString(ResourceString.KEY_DEFAULT_VALUE_CURRENT_DATE_TIME));
+                defaultText.setText(defaultValue);
 
-			} else if (selectedType.isFullTextIndexable()) {
-				this.defaultText
-						.add(ResourceString
-								.getResourceString(ResourceString.KEY_DEFAULT_VALUE_EMPTY_STRING));
-				this.defaultText.setText(defaultValue);
+            } else if (selectedType.isFullTextIndexable()) {
+                defaultText.add(ResourceString.getResourceString(ResourceString.KEY_DEFAULT_VALUE_EMPTY_STRING));
+                defaultText.setText(defaultValue);
 
-			} else {
-				if (!ResourceString
-						.getResourceString("label.current.date.time").equals(
-								defaultValue)
-						&& !ResourceString.getResourceString(
-								"label.empty.string").equals(defaultValue)) {
-					this.defaultText.setText(defaultValue);
-				}
-			}
-		}
-	}
+            } else {
+                if (!ResourceString.getResourceString("label.current.date.time").equals(defaultValue) && !ResourceString.getResourceString("label.empty.string").equals(defaultValue)) {
+                    defaultText.setText(defaultValue);
+                }
+            }
+        }
+    }
 
 }

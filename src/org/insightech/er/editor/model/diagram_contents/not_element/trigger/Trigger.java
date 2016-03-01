@@ -5,40 +5,42 @@ import org.insightech.er.editor.model.WithSchemaModel;
 
 public class Trigger extends WithSchemaModel implements ObjectModel {
 
-	private static final long serialVersionUID = -4766050732350578313L;
+    private static final long serialVersionUID = -4766050732350578313L;
 
-	private String sql;
+    private String sql;
 
-	private String description;
+    private String description;
 
-	public String getSql() {
-		return sql;
-	}
+    public String getSql() {
+        return sql;
+    }
 
-	public void setSql(String sql) {
-		this.sql = sql;
-	}
+    public void setSql(final String sql) {
+        this.sql = sql;
+    }
 
-	/**
-	 * description ‚ğæ“¾‚µ‚Ü‚·.
-	 * 
-	 * @return description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * description ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     * 
+     * @return description
+     */
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * description ‚ğİ’è‚µ‚Ü‚·.
-	 * 
-	 * @param description
-	 *            description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * description ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     * 
+     * @param description
+     *            description
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public String getObjectType() {
-		return "trigger";
-	}
+    @Override
+    public String getObjectType() {
+        return "trigger";
+    }
 }

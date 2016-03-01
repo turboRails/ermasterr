@@ -9,15 +9,13 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.AdvancedTabWr
 
 public class TableAdvancedTabWrapper extends AdvancedTabWrapper {
 
-	public TableAdvancedTabWrapper(AbstractTabbedDialog dialog,
-			TabFolder parent, ERTable table) {
-		super(dialog, parent, table);
-	}
+    public TableAdvancedTabWrapper(final AbstractTabbedDialog dialog, final TabFolder parent, final ERTable table) {
+        super(dialog, parent, table);
+    }
 
-	@Override
-	protected AdvancedComposite createAdvancedComposite() {
-		return EclipseDBManagerFactory.getEclipseDBManager(
-				this.tableView.getDiagram()).createAdvancedComposite(this);
-	}
+    @Override
+    protected AdvancedComposite createAdvancedComposite() {
+        return EclipseDBManagerFactory.getEclipseDBManager(tableView.getDiagram()).createAdvancedComposite(this);
+    }
 
 }

@@ -13,218 +13,215 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 public class TableLayout extends AbstractHintLayout {
 
-	private int colnum;
+    private int colnum;
 
-	private int separatorWidth;
+    private final int separatorWidth;
 
-	private List<IFigure> separators;
+    private final List<IFigure> separators;
 
-	public TableLayout(int colnum) {
-		super();
+    public TableLayout(final int colnum) {
+        super();
 
-		this.colnum = colnum;
-		if (this.colnum <= 0) {
-			this.colnum = 1;
-		}
+        this.colnum = colnum;
+        if (this.colnum <= 0) {
+            this.colnum = 1;
+        }
 
-		this.separators = new ArrayList<IFigure>();
-		this.separatorWidth = 1;
-	}
+        separators = new ArrayList<IFigure>();
+        separatorWidth = 1;
+    }
 
-	public void setSeparator() {
+    public void setSeparator() {
 
-	}
+    }
 
-	public void layout(IFigure parent) {
+    @Override
+    public void layout(final IFigure parent) {
 
-		List children = this.clearSeparator(parent);
+        final List children = clearSeparator(parent);
 
-		List<List<IFigure>> table = this.getTable(children);
-		int[] columnWidth = this.getColumnWidth(table);
-		int[] rowHeight = this.getRowHeight(table);
+        final List<List<IFigure>> table = getTable(children);
+        final int[] columnWidth = getColumnWidth(table);
+        final int[] rowHeight = getRowHeight(table);
 
-		Rectangle rect = parent.getBounds();
+        final Rectangle rect = parent.getBounds();
 
-		int x = rect.x + 1;
-		int y = rect.y + 1;
+        int x = rect.x + 1;
+        int y = rect.y + 1;
 
-		for (int i = 0; i < table.size(); i++) {
-			List<IFigure> tableRow = table.get(i);
+        for (int i = 0; i < table.size(); i++) {
+            final List<IFigure> tableRow = table.get(i);
 
-			for (int j = 0; j < tableRow.size(); j++) {
-				Rectangle childRect = new Rectangle(x, y, columnWidth[j],
-						rowHeight[i]);
+            for (int j = 0; j < tableRow.size(); j++) {
+                final Rectangle childRect = new Rectangle(x, y, columnWidth[j], rowHeight[i]);
 
-				IFigure figure = tableRow.get(j);
-				figure.setBounds(childRect);
+                final IFigure figure = tableRow.get(j);
+                figure.setBounds(childRect);
 
-				x += columnWidth[j];
+                x += columnWidth[j];
 
-				if (j != tableRow.size() - 1) {
-					Rectangle separetorRect = new Rectangle(x, y,
-							separatorWidth, rowHeight[i]);
-					this.addVerticalSeparator(parent, separetorRect);
+                if (j != tableRow.size() - 1) {
+                    final Rectangle separetorRect = new Rectangle(x, y, separatorWidth, rowHeight[i]);
+                    addVerticalSeparator(parent, separetorRect);
 
-					x += separatorWidth;
-				}
+                    x += separatorWidth;
+                }
 
-			}
+            }
 
-			x = rect.x + 1;
-			y += rowHeight[i];
+            x = rect.x + 1;
+            y += rowHeight[i];
 
-			if (i != table.size() - 1) {
-				Rectangle separetorRect = new Rectangle(x, y, rect.width,
-						separatorWidth);
+            if (i != table.size() - 1) {
+                final Rectangle separetorRect = new Rectangle(x, y, rect.width, separatorWidth);
 
-				this.addHorizontalSeparator(parent, separetorRect);
+                addHorizontalSeparator(parent, separetorRect);
 
-				y += separatorWidth;
-			}
-		}
-	}
+                y += separatorWidth;
+            }
+        }
+    }
 
-	private List<List<IFigure>> getTable(List children) {
-		int numChildren = children.size();
+    private List<List<IFigure>> getTable(final List children) {
+        final int numChildren = children.size();
 
-		List<List<IFigure>> table = new ArrayList<List<IFigure>>();
+        final List<List<IFigure>> table = new ArrayList<List<IFigure>>();
 
-		List<IFigure> row = null;
+        List<IFigure> row = null;
 
-		for (int i = 0; i < numChildren; i++) {
-			if (i % colnum == 0) {
-				row = new ArrayList<IFigure>();
-				table.add(row);
-			}
+        for (int i = 0; i < numChildren; i++) {
+            if (i % colnum == 0) {
+                row = new ArrayList<IFigure>();
+                table.add(row);
+            }
 
-			row.add((IFigure) children.get(i));
-		}
+            row.add((IFigure) children.get(i));
+        }
 
-		return table;
-	}
+        return table;
+    }
 
-	private int[] getColumnWidth(List<List<IFigure>> table) {
-		int[] columnWidth = new int[this.colnum];
+    private int[] getColumnWidth(final List<List<IFigure>> table) {
+        final int[] columnWidth = new int[colnum];
 
-		for (int i = 0; i < colnum; i++) {
-			for (List<IFigure> tableRow : table) {
-				if (tableRow.size() > i) {
-					IFigure figure = tableRow.get(i);
+        for (int i = 0; i < colnum; i++) {
+            for (final List<IFigure> tableRow : table) {
+                if (tableRow.size() > i) {
+                    final IFigure figure = tableRow.get(i);
 
-					int width = figure.getPreferredSize().width;
+                    final int width = figure.getPreferredSize().width;
 
-					if (width > columnWidth[i]) {
-						columnWidth[i] = (int) (width * 1.3);
-					}
-				}
-			}
-		}
+                    if (width > columnWidth[i]) {
+                        columnWidth[i] = (int) (width * 1.3);
+                    }
+                }
+            }
+        }
 
-		return columnWidth;
-	}
+        return columnWidth;
+    }
 
-	private int[] getRowHeight(List<List<IFigure>> table) {
-		int[] rowHeight = new int[table.size()];
+    private int[] getRowHeight(final List<List<IFigure>> table) {
+        final int[] rowHeight = new int[table.size()];
 
-		for (int i = 0; i < rowHeight.length; i++) {
-			for (IFigure cell : table.get(i)) {
-				int height = cell.getPreferredSize().height;
+        for (int i = 0; i < rowHeight.length; i++) {
+            for (final IFigure cell : table.get(i)) {
+                final int height = cell.getPreferredSize().height;
 
-				if (height > rowHeight[i]) {
-					rowHeight[i] = height;
-				}
-			}
-		}
+                if (height > rowHeight[i]) {
+                    rowHeight[i] = height;
+                }
+            }
+        }
 
-		return rowHeight;
-	}
+        return rowHeight;
+    }
 
-	private List<IFigure> getChildren(IFigure parent) {
-		List<IFigure> children = new ArrayList<IFigure>();
+    private List<IFigure> getChildren(final IFigure parent) {
+        final List<IFigure> children = new ArrayList<IFigure>();
 
-		for (Iterator iter = parent.getChildren().iterator(); iter.hasNext();) {
-			IFigure child = (IFigure) iter.next();
+        for (final Iterator iter = parent.getChildren().iterator(); iter.hasNext();) {
+            final IFigure child = (IFigure) iter.next();
 
-			if (!this.separators.contains(child)) {
-				children.add(child);
-			}
-		}
+            if (!separators.contains(child)) {
+                children.add(child);
+            }
+        }
 
-		return children;
-	}
+        return children;
+    }
 
-	private List clearSeparator(IFigure parent) {
-		for (Iterator iter = parent.getChildren().iterator(); iter.hasNext();) {
-			IFigure child = (IFigure) iter.next();
+    private List clearSeparator(final IFigure parent) {
+        for (final Iterator iter = parent.getChildren().iterator(); iter.hasNext();) {
+            final IFigure child = (IFigure) iter.next();
 
-			if (this.separators.contains(child)) {
-				iter.remove();
-			}
-		}
+            if (separators.contains(child)) {
+                iter.remove();
+            }
+        }
 
-		this.separators.clear();
+        separators.clear();
 
-		return parent.getChildren();
-	}
+        return parent.getChildren();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Dimension calculatePreferredSize(IFigure container, int wHint,
-			int hHint) {
-		List children = this.getChildren(container);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Dimension calculatePreferredSize(final IFigure container, final int wHint, final int hHint) {
+        final List children = getChildren(container);
 
-		List<List<IFigure>> table = this.getTable(children);
-		int[] columnWidth = this.getColumnWidth(table);
-		int[] rowHeight = this.getRowHeight(table);
+        final List<List<IFigure>> table = getTable(children);
+        final int[] columnWidth = getColumnWidth(table);
+        final int[] rowHeight = getRowHeight(table);
 
-		int width = 0;
-		for (int i = 0; i < columnWidth.length; i++) {
-			width += columnWidth[i];
-			if (i != columnWidth.length - 1) {
-				width += this.separatorWidth;
-			}
-		}
-		width++;
-		width++;
+        int width = 0;
+        for (int i = 0; i < columnWidth.length; i++) {
+            width += columnWidth[i];
+            if (i != columnWidth.length - 1) {
+                width += separatorWidth;
+            }
+        }
+        width++;
+        width++;
 
-		int height = 0;
-		for (int i = 0; i < rowHeight.length; i++) {
-			height += rowHeight[i];
-			if (i != rowHeight.length - 1) {
-				height += this.separatorWidth;
-			}
-		}
-		height++;
-		height++;
+        int height = 0;
+        for (int i = 0; i < rowHeight.length; i++) {
+            height += rowHeight[i];
+            if (i != rowHeight.length - 1) {
+                height += separatorWidth;
+            }
+        }
+        height++;
+        height++;
 
-		return new Dimension(width, height);
-	}
+        return new Dimension(width, height);
+    }
 
-	@SuppressWarnings("unchecked")
-	private void addVerticalSeparator(IFigure figure, Rectangle rect) {
-		Polyline separator = new Polyline();
-		separator.setLineWidth(separatorWidth);
-		separator.addPoint(new Point(rect.x, rect.y));
-		separator.addPoint(new Point(rect.x, rect.y + rect.height));
+    @SuppressWarnings("unchecked")
+    private void addVerticalSeparator(final IFigure figure, final Rectangle rect) {
+        final Polyline separator = new Polyline();
+        separator.setLineWidth(separatorWidth);
+        separator.addPoint(new Point(rect.x, rect.y));
+        separator.addPoint(new Point(rect.x, rect.y + rect.height));
 
-		figure.getChildren().add(separator);
-		separator.setParent(figure);
+        figure.getChildren().add(separator);
+        separator.setParent(figure);
 
-		this.separators.add(separator);
-	}
+        separators.add(separator);
+    }
 
-	@SuppressWarnings("unchecked")
-	private void addHorizontalSeparator(IFigure figure, Rectangle rect) {
-		Polyline separator = new Polyline();
-		separator.setLineWidth(separatorWidth);
-		separator.addPoint(new Point(rect.x, rect.y));
-		separator.addPoint(new Point(rect.x + rect.width, rect.y));
-		figure.getChildren().add(separator);
-		separator.setParent(figure);
+    @SuppressWarnings("unchecked")
+    private void addHorizontalSeparator(final IFigure figure, final Rectangle rect) {
+        final Polyline separator = new Polyline();
+        separator.setLineWidth(separatorWidth);
+        separator.addPoint(new Point(rect.x, rect.y));
+        separator.addPoint(new Point(rect.x + rect.width, rect.y));
+        figure.getChildren().add(separator);
+        separator.setParent(figure);
 
-		this.separators.add(separator);
-	}
+        separators.add(separator);
+    }
 
 }

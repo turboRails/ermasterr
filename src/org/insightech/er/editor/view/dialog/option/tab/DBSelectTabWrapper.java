@@ -18,98 +18,91 @@ import org.insightech.er.editor.view.dialog.option.OptionSettingDialog;
 
 public class DBSelectTabWrapper extends ValidatableTabWrapper {
 
-	private Combo databaseCombo;
+    private Combo databaseCombo;
 
-	private Settings settings;
+    private final Settings settings;
 
-	public DBSelectTabWrapper(OptionSettingDialog dialog, TabFolder parent,
-			Settings settings) {
-		super(dialog, parent, "label.database");
+    public DBSelectTabWrapper(final OptionSettingDialog dialog, final TabFolder parent, final Settings settings) {
+        super(dialog, parent, "label.database");
 
-		this.settings = settings;
-	}
+        this.settings = settings;
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
-		layout.numColumns = 2;
-	}
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
+        layout.numColumns = 2;
+    }
 
-	@Override
-	public void initComposite() {
+    @Override
+    public void initComposite() {
 
-		this.databaseCombo = CompositeFactory.createReadOnlyCombo(null, this,
-				"label.database");
-		this.databaseCombo.setVisibleItemCount(10);
+        databaseCombo = CompositeFactory.createReadOnlyCombo(null, this, "label.database");
+        databaseCombo.setVisibleItemCount(10);
 
-		for (String db : DBManagerFactory.getAllDBList()) {
-			this.databaseCombo.add(db);
-		}
+        for (final String db : DBManagerFactory.getAllDBList()) {
+            databaseCombo.add(db);
+        }
 
-		this.databaseCombo.setFocus();
-	}
+        databaseCombo.setFocus();
+    }
 
-	@Override
-	protected void addListener() {
-		super.addListener();
+    @Override
+    protected void addListener() {
+        super.addListener();
 
-		this.databaseCombo.addSelectionListener(new SelectionAdapter() {
+        databaseCombo.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				changeDatabase();
-			}
-		});
-	}
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                changeDatabase();
+            }
+        });
+    }
 
-	@Override
-	public void setData() {
-		for (int i = 0; i < this.databaseCombo.getItemCount(); i++) {
-			String database = this.databaseCombo.getItem(i);
-			if (database.equals(this.settings.getDatabase())) {
-				this.databaseCombo.select(i);
-				break;
-			}
-		}
-	}
+    @Override
+    public void setData() {
+        for (int i = 0; i < databaseCombo.getItemCount(); i++) {
+            final String database = databaseCombo.getItem(i);
+            if (database.equals(settings.getDatabase())) {
+                databaseCombo.select(i);
+                break;
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-		this.settings.setDatabase(this.databaseCombo.getText());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {
+        settings.setDatabase(databaseCombo.getText());
+    }
 
-	private void changeDatabase() {
-		MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getShell(), SWT.ICON_QUESTION
-				| SWT.OK | SWT.CANCEL);
-		messageBox.setText(ResourceString
-				.getResourceString("dialog.title.change.database"));
-		messageBox.setMessage(ResourceString
-				.getResourceString("dialog.message.change.database"));
+    private void changeDatabase() {
+        final MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
+        messageBox.setText(ResourceString.getResourceString("dialog.title.change.database"));
+        messageBox.setMessage(ResourceString.getResourceString("dialog.message.change.database"));
 
-		if (messageBox.open() == SWT.OK) {
-			String database = this.databaseCombo.getText();
-			this.settings.setDatabase(database);
+        if (messageBox.open() == SWT.OK) {
+            final String database = databaseCombo.getText();
+            settings.setDatabase(database);
 
-			this.dialog.resetTabs();
+            dialog.resetTabs();
 
-		} else {
-			this.setData();
-		}
-	}
+        } else {
+            this.setData();
+        }
+    }
 
-	@Override
-	public void setInitFocus() {
-		this.databaseCombo.setFocus();
-	}
+    @Override
+    public void setInitFocus() {
+        databaseCombo.setFocus();
+    }
 
-	@Override
-	public void perfomeOK() {
-	}
+    @Override
+    public void perfomeOK() {}
 }

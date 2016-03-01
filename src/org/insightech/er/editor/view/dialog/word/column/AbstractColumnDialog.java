@@ -33,278 +33,270 @@ import org.insightech.er.util.Format;
 
 public abstract class AbstractColumnDialog extends AbstractWordDialog {
 
-	protected Combo wordCombo;
+    protected Combo wordCombo;
 
-	private Text wordFilterText;
+    private Text wordFilterText;
 
-	protected CopyColumn targetColumn;
+    protected CopyColumn targetColumn;
 
-	protected NormalColumn returnColumn;
+    protected NormalColumn returnColumn;
 
-	protected Word returnWord;
+    protected Word returnWord;
 
-	private List<Word> wordList;
+    private List<Word> wordList;
 
-	protected boolean foreignKey;
+    protected boolean foreignKey;
 
-	protected boolean isRefered;
+    protected boolean isRefered;
 
-	public AbstractColumnDialog(Shell parentShell, ERDiagram diagram) {
-		super(parentShell, diagram);
-	}
+    public AbstractColumnDialog(final Shell parentShell, final ERDiagram diagram) {
+        super(parentShell, diagram);
+    }
 
-	public void setTargetColumn(CopyColumn targetColumn, boolean foreignKey,
-			boolean isRefered) {
-		this.targetColumn = targetColumn;
-		this.foreignKey = foreignKey;
-		this.isRefered = isRefered;
+    public void setTargetColumn(final CopyColumn targetColumn, final boolean foreignKey, final boolean isRefered) {
+        this.targetColumn = targetColumn;
+        this.foreignKey = foreignKey;
+        this.isRefered = isRefered;
 
-		if (this.targetColumn == null) {
-			this.setAdd(true);
-		} else {
-			this.setAdd(false);
-		}
-	}
+        if (this.targetColumn == null) {
+            setAdd(true);
+        } else {
+            setAdd(false);
+        }
+    }
 
-	private void createWordFilter(Composite composite) {
-		Composite filterComposite = new Composite(composite, SWT.NONE);
+    private void createWordFilter(final Composite composite) {
+        final Composite filterComposite = new Composite(composite, SWT.NONE);
 
-		GridData gridData = new GridData();
-		gridData.horizontalSpan = 4;
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
+        final GridData gridData = new GridData();
+        gridData.horizontalSpan = 4;
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
 
-		filterComposite.setLayoutData(gridData);
+        filterComposite.setLayoutData(gridData);
 
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
 
-		filterComposite.setLayout(layout);
+        filterComposite.setLayout(layout);
 
-		FontData fontData = Display.getCurrent().getSystemFont().getFontData()[0];
-		Font font = Resources.getFont(fontData.getName(), 7, SWT.NORMAL);
+        final FontData fontData = Display.getCurrent().getSystemFont().getFontData()[0];
+        final Font font = Resources.getFont(fontData.getName(), 7, SWT.NORMAL);
 
-		Label label = new Label(filterComposite, SWT.NONE);
-		label.setText(ResourceString.getResourceString("label.filter"));
-		label.setFont(font);
+        final Label label = new Label(filterComposite, SWT.NONE);
+        label.setText(ResourceString.getResourceString("label.filter"));
+        label.setFont(font);
 
-		GridData textGridData = new GridData();
-		textGridData.widthHint = 50;
+        final GridData textGridData = new GridData();
+        textGridData.widthHint = 50;
 
-		this.wordFilterText = new Text(filterComposite, SWT.BORDER);
-		this.wordFilterText.setLayoutData(textGridData);
-		this.wordFilterText.setFont(font);
-	}
+        wordFilterText = new Text(filterComposite, SWT.BORDER);
+        wordFilterText.setLayoutData(textGridData);
+        wordFilterText.setFont(font);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initializeComposite(Composite composite) {
-		int numColumns = this.getCompositeNumColumns();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initializeComposite(final Composite composite) {
+        final int numColumns = getCompositeNumColumns();
 
-		this.wordCombo = CompositeFactory.createReadOnlyCombo(null, composite,
-				"label.word", numColumns - 1 - 4, WIDTH);
-		this.createWordFilter(composite);
-		this.wordCombo.setVisibleItemCount(20);
+        wordCombo = CompositeFactory.createReadOnlyCombo(null, composite, "label.word", numColumns - 1 - 4, WIDTH);
+        createWordFilter(composite);
+        wordCombo.setVisibleItemCount(20);
 
-		this.wordCombo.addSelectionListener(new SelectionAdapter() {
+        wordCombo.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				int index = wordCombo.getSelectionIndex();
-				if (index != 0) {
-					Word word = wordList.get(index - 1);
-					setWordData(word);
-				}
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent event) {
+                final int index = wordCombo.getSelectionIndex();
+                if (index != 0) {
+                    final Word word = wordList.get(index - 1);
+                    setWordData(word);
+                }
 
-				validate();
-				setEnabledBySqlType();
-			}
+                validate();
+                setEnabledBySqlType();
+            }
 
-		});
+        });
 
-		super.initializeComposite(composite);
-	}
+        super.initializeComposite(composite);
+    }
 
-	@Override
-	protected void initData() {
-		super.initData();
+    @Override
+    protected void initData() {
+        super.initData();
 
-		this.initializeWordCombo(null);
-	}
+        initializeWordCombo(null);
+    }
 
-	private void setWordData(Word word) {
-		this.setData(word.getPhysicalName(), word.getLogicalName(),
-				word.getType(), word.getTypeData(), word.getDescription());
-	}
+    private void setWordData(final Word word) {
+        this.setData(word.getPhysicalName(), word.getLogicalName(), word.getType(), word.getTypeData(), word.getDescription());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void setWordData() {
-		this.setData(this.targetColumn.getPhysicalName(),
-				this.targetColumn.getLogicalName(),
-				this.targetColumn.getType(), this.targetColumn.getTypeData(),
-				this.targetColumn.getDescription());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setWordData() {
+        this.setData(targetColumn.getPhysicalName(), targetColumn.getLogicalName(), targetColumn.getType(), targetColumn.getTypeData(), targetColumn.getDescription());
 
-		this.setWordValue();
-	}
+        setWordValue();
+    }
 
-	private void initializeWordCombo(String filterString) {
-		this.wordCombo.removeAll();
+    private void initializeWordCombo(final String filterString) {
+        wordCombo.removeAll();
 
-		this.wordCombo.add("");
+        wordCombo.add("");
 
-		this.wordList = this.diagram.getDiagramContents().getDictionary()
-				.getWordList();
+        wordList = diagram.getDiagramContents().getDictionary().getWordList();
 
-		for (Iterator<Word> iter = this.wordList.iterator(); iter.hasNext();) {
-			Word word = iter.next();
+        for (final Iterator<Word> iter = wordList.iterator(); iter.hasNext();) {
+            final Word word = iter.next();
 
-			String name = Format.null2blank(word.getLogicalName());
+            final String name = Format.null2blank(word.getLogicalName());
 
-			if (filterString != null && name.indexOf(filterString) == -1) {
-				iter.remove();
+            if (filterString != null && name.indexOf(filterString) == -1) {
+                iter.remove();
 
-			} else {
-				this.wordCombo.add(name);
+            } else {
+                wordCombo.add(name);
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	private void setWordValue() {
-		Word word = this.targetColumn.getWord();
-		while (word instanceof CopyWord) {
-			word = ((CopyWord) word).getOriginal();
-		}
+    private void setWordValue() {
+        Word word = targetColumn.getWord();
+        while (word instanceof CopyWord) {
+            word = ((CopyWord) word).getOriginal();
+        }
 
-		if (word != null) {
-			int index = wordList.indexOf(word);
+        if (word != null) {
+            final int index = wordList.indexOf(word);
 
-			this.wordCombo.select(index + 1);
-		}
-	}
+            wordCombo.select(index + 1);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void perfomeOK() {
-		String text = lengthText.getText();
-		Integer length = null;
-		if (!text.equals("")) {
-			int len = Integer.parseInt(text);
-			length = Integer.valueOf(len);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void perfomeOK() {
+        String text = lengthText.getText();
+        Integer length = null;
+        if (!text.equals("")) {
+            final int len = Integer.parseInt(text);
+            length = Integer.valueOf(len);
+        }
 
-		text = decimalText.getText();
+        text = decimalText.getText();
 
-		Integer decimal = null;
-		if (!text.equals("")) {
-			int len = Integer.parseInt(text);
-			decimal = Integer.valueOf(len);
-		}
+        Integer decimal = null;
+        if (!text.equals("")) {
+            final int len = Integer.parseInt(text);
+            decimal = Integer.valueOf(len);
+        }
 
-		boolean array = false;
-		Integer arrayDimension = null;
+        boolean array = false;
+        Integer arrayDimension = null;
 
-		if (this.arrayDimensionText != null) {
-			text = arrayDimensionText.getText();
+        if (arrayDimensionText != null) {
+            text = arrayDimensionText.getText();
 
-			if (!text.equals("")) {
-				int len = Integer.parseInt(text);
-				arrayDimension = Integer.valueOf(len);
-			}
+            if (!text.equals("")) {
+                final int len = Integer.parseInt(text);
+                arrayDimension = Integer.valueOf(len);
+            }
 
-			array = this.arrayCheck.getSelection();
-		}
+            array = arrayCheck.getSelection();
+        }
 
-		boolean unsigned = false;
+        boolean unsigned = false;
 
-		if (this.unsignedCheck != null) {
-			unsigned = this.unsignedCheck.getSelection();
-		}
+        if (unsignedCheck != null) {
+            unsigned = unsignedCheck.getSelection();
+        }
 
-		boolean zerofill = false;
+        boolean zerofill = false;
 
-		if (this.zerofillCheck != null) {
-			zerofill = this.zerofillCheck.getSelection();
-		}
+        if (zerofillCheck != null) {
+            zerofill = zerofillCheck.getSelection();
+        }
 
-		boolean binary = false;
+        boolean binary = false;
 
-		if (this.binaryCheck != null) {
-			binary = this.binaryCheck.getSelection();
-		}
+        if (binaryCheck != null) {
+            binary = binaryCheck.getSelection();
+        }
 
-		boolean charSemantics = false;
+        boolean charSemantics = false;
 
-		if (this.charSemanticsRadio != null) {
-			charSemantics = this.charSemanticsRadio.getSelection();
-		}
+        if (charSemanticsRadio != null) {
+            charSemantics = charSemanticsRadio.getSelection();
+        }
 
-		String physicalName = physicalNameText.getText();
-		String logicalName = logicalNameText.getText();
-		String description = descriptionText.getText();
-		String args = null;
+        final String physicalName = physicalNameText.getText();
+        final String logicalName = logicalNameText.getText();
+        final String description = descriptionText.getText();
+        String args = null;
 
-		if (argsText != null) {
-			args = argsText.getText();
-		}
+        if (argsText != null) {
+            args = argsText.getText();
+        }
 
-		String database = this.diagram.getDatabase();
+        final String database = diagram.getDatabase();
 
-		SqlType selectedType = SqlType.valueOf(database, typeCombo.getText());
+        final SqlType selectedType = SqlType.valueOf(database, typeCombo.getText());
 
-		TypeData typeData = new TypeData(length, decimal, array,
-				arrayDimension, unsigned, zerofill, binary, args, charSemantics);
+        final TypeData typeData = new TypeData(length, decimal, array, arrayDimension, unsigned, zerofill, binary, args, charSemantics);
 
-		int wordIndex = this.wordCombo.getSelectionIndex();
+        final int wordIndex = wordCombo.getSelectionIndex();
 
-		CopyWord word = null;
-		if (wordIndex > 0) {
-			word = new CopyWord(wordList.get(wordIndex - 1));
+        CopyWord word = null;
+        if (wordIndex > 0) {
+            word = new CopyWord(wordList.get(wordIndex - 1));
 
-			if (!"".equals(physicalName)) {
-				word.setPhysicalName(physicalName);
-			}
-			if (!"".equals(logicalName)) {
-				word.setLogicalName(logicalName);
-			}
-			word.setDescription(description);
+            if (!"".equals(physicalName)) {
+                word.setPhysicalName(physicalName);
+            }
+            if (!"".equals(logicalName)) {
+                word.setLogicalName(logicalName);
+            }
+            word.setDescription(description);
 
-			word.setType(selectedType, typeData, database);
+            word.setType(selectedType, typeData, database);
 
-		} else {
-			word = new CopyWord(new Word(physicalName, logicalName,
-					selectedType, typeData, description, database));
-		}
+        } else {
+            word = new CopyWord(new Word(physicalName, logicalName, selectedType, typeData, description, database));
+        }
 
-		this.returnWord = word;
-	}
+        returnWord = word;
+    }
 
-	public NormalColumn getColumn() {
-		return this.returnColumn;
-	}
+    public NormalColumn getColumn() {
+        return returnColumn;
+    }
 
-	@Override
-	protected void addListener() {
-		super.addListener();
+    @Override
+    protected void addListener() {
+        super.addListener();
 
-		this.wordFilterText.addModifyListener(new ModifyListener() {
+        wordFilterText.addModifyListener(new ModifyListener() {
 
-			public void modifyText(ModifyEvent modifyevent) {
-				String filterString = wordFilterText.getText();
-				initializeWordCombo(filterString);
-			}
+            @Override
+            public void modifyText(final ModifyEvent modifyevent) {
+                final String filterString = wordFilterText.getText();
+                initializeWordCombo(filterString);
+            }
 
-		});
-	}
+        });
+    }
 
 }

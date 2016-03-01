@@ -9,89 +9,91 @@ import org.insightech.er.editor.model.AbstractModel;
 import org.insightech.er.editor.model.AbstractObjectModel;
 import org.insightech.er.editor.model.ObjectListModel;
 
-public abstract class ObjectSet<T extends AbstractObjectModel> extends
-		AbstractModel implements ObjectListModel, Iterable<T> {
+public abstract class ObjectSet<T extends AbstractObjectModel> extends AbstractModel implements ObjectListModel, Iterable<T> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private List<T> objectList;
+    private List<T> objectList;
 
-	public ObjectSet() {
-		this.objectList = new ArrayList<T>();
-	}
-	
-	public void sort() {
-		Collections.sort(this.objectList);
-	}
+    public ObjectSet() {
+        this.objectList = new ArrayList<T>();
+    }
 
-	public void clear() {
-		this.objectList.clear();
-	}
+    public void sort() {
+        Collections.sort(this.objectList);
+    }
 
-	public void addObject(T object) {
-		this.objectList.add(object);
-	}
+    public void clear() {
+        this.objectList.clear();
+    }
 
-	public int remove(T object) {
-		int index = this.objectList.indexOf(object);
-		this.objectList.remove(index);
+    public void addObject(final T object) {
+        this.objectList.add(object);
+    }
 
-		return index;
-	}
+    public int remove(final T object) {
+        final int index = this.objectList.indexOf(object);
+        this.objectList.remove(index);
 
-	public boolean contains(String name) {
-		for (T object : objectList) {
-			if (name.equalsIgnoreCase(object.getName())) {
-				return true;
-			}
-		}
+        return index;
+    }
 
-		return false;
-	}
+    public boolean contains(final String name) {
+        for (final T object : objectList) {
+            if (name.equalsIgnoreCase(object.getName())) {
+                return true;
+            }
+        }
 
-	public T get(String name) {
-		for (T object : objectList) {
-			if (name.equalsIgnoreCase(object.getName())) {
-				return object;
-			}
-		}
+        return false;
+    }
 
-		return null;
-	}
+    public T get(final String name) {
+        for (final T object : objectList) {
+            if (name.equalsIgnoreCase(object.getName())) {
+                return object;
+            }
+        }
 
-	public List<T> getObjectList() {
-		return this.objectList;
-	}
+        return null;
+    }
 
-	public Iterator<T> iterator() {
-		return this.objectList.iterator();
-	}
+    public List<T> getObjectList() {
+        return this.objectList;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public ObjectSet<T> clone() {
-		ObjectSet<T> objectSet = (ObjectSet<T>) super.clone();
-		List<T> newObjectList = new ArrayList<T>();
+    @Override
+    public Iterator<T> iterator() {
+        return this.objectList.iterator();
+    }
 
-		for (T object : this.objectList) {
-			T newObject = (T) object.clone();
-			newObjectList.add(newObject);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public ObjectSet<T> clone() {
+        final ObjectSet<T> objectSet = (ObjectSet<T>) super.clone();
+        final List<T> newObjectList = new ArrayList<T>();
 
-		objectSet.objectList = newObjectList;
+        for (final T object : this.objectList) {
+            final T newObject = (T) object.clone();
+            newObjectList.add(newObject);
+        }
 
-		return objectSet;
-	}
+        objectSet.objectList = newObjectList;
 
-	public String getObjectType() {
-		return "list";
-	}
+        return objectSet;
+    }
 
-	public String getDescription() {
-		return "";
-	}
+    @Override
+    public String getObjectType() {
+        return "list";
+    }
+
+    @Override
+    public String getDescription() {
+        return "";
+    }
 
 }

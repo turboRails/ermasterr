@@ -6,36 +6,36 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ChangeOutlineViewOrderByCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private int oldViewOrderBy;
+    private final int oldViewOrderBy;
 
-	private int newViewOrderBy;
+    private final int newViewOrderBy;
 
-	private Settings settings;
+    private final Settings settings;
 
-	public ChangeOutlineViewOrderByCommand(ERDiagram diagram, int viewOrderBy) {
-		this.diagram = diagram;
-		this.settings = this.diagram.getDiagramContents().getSettings();
-		this.newViewOrderBy = viewOrderBy;
-		this.oldViewOrderBy = this.settings.getViewOrderBy();
-	}
+    public ChangeOutlineViewOrderByCommand(final ERDiagram diagram, final int viewOrderBy) {
+        this.diagram = diagram;
+        settings = this.diagram.getDiagramContents().getSettings();
+        newViewOrderBy = viewOrderBy;
+        oldViewOrderBy = settings.getViewOrderBy();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.settings.setViewOrderBy(this.newViewOrderBy);
-		this.diagram.refreshOutline();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        settings.setViewOrderBy(newViewOrderBy);
+        diagram.refreshOutline();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.settings.setViewOrderBy(this.oldViewOrderBy);
-		this.diagram.refreshOutline();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        settings.setViewOrderBy(oldViewOrderBy);
+        diagram.refreshOutline();
+    }
 }

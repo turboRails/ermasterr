@@ -30,250 +30,240 @@ import org.insightech.er.editor.model.diagram_contents.not_element.trigger.Trigg
 
 public class ImportTableCommand extends AbstractCreateElementCommand {
 
-	private static final int AUTO_GRAPH_LIMIT = 100;
+    private static final int AUTO_GRAPH_LIMIT = 100;
 
-	private static final int ORIGINAL_X = 20;
-	private static final int ORIGINAL_Y = 20;
+    private static final int ORIGINAL_X = 20;
+    private static final int ORIGINAL_Y = 20;
 
-	private static final int DISTANCE_X = 300;
-	private static final int DISTANCE_Y = 300;
+    private static final int DISTANCE_X = 300;
+    private static final int DISTANCE_Y = 300;
 
-	private SequenceSet sequenceSet;
+    private final SequenceSet sequenceSet;
 
-	private TriggerSet triggerSet;
+    private final TriggerSet triggerSet;
 
-	private TablespaceSet tablespaceSet;
+    private final TablespaceSet tablespaceSet;
 
-	private GroupSet columnGroupSet;
+    private final GroupSet columnGroupSet;
 
-	private List<NodeElement> nodeElementList;
+    private final List<NodeElement> nodeElementList;
 
-	private List<Sequence> sequences;
+    private final List<Sequence> sequences;
 
-	private List<Trigger> triggers;
+    private final List<Trigger> triggers;
 
-	private List<Tablespace> tablespaces;
+    private final List<Tablespace> tablespaces;
 
-	private List<ColumnGroup> columnGroups;
+    private final List<ColumnGroup> columnGroups;
 
-	public ImportTableCommand(ERDiagram diagram,
-			List<NodeElement> nodeElementList, List<Sequence> sequences,
-			List<Trigger> triggers, List<Tablespace> tablespaces,
-			List<ColumnGroup> columnGroups) {
-		super(diagram);
+    public ImportTableCommand(final ERDiagram diagram, final List<NodeElement> nodeElementList, final List<Sequence> sequences, final List<Trigger> triggers, final List<Tablespace> tablespaces, final List<ColumnGroup> columnGroups) {
+        super(diagram);
 
-		this.nodeElementList = nodeElementList;
-		this.sequences = sequences;
-		this.triggers = triggers;
-		this.tablespaces = tablespaces;
-		this.columnGroups = columnGroups;
+        this.nodeElementList = nodeElementList;
+        this.sequences = sequences;
+        this.triggers = triggers;
+        this.tablespaces = tablespaces;
+        this.columnGroups = columnGroups;
 
-		DiagramContents diagramContents = this.diagram.getDiagramContents();
+        final DiagramContents diagramContents = this.diagram.getDiagramContents();
 
-		this.sequenceSet = diagramContents.getSequenceSet();
-		this.triggerSet = diagramContents.getTriggerSet();
-		this.tablespaceSet = diagramContents.getTablespaceSet();
-		this.columnGroupSet = diagramContents.getGroups();
+        sequenceSet = diagramContents.getSequenceSet();
+        triggerSet = diagramContents.getTriggerSet();
+        tablespaceSet = diagramContents.getTablespaceSet();
+        columnGroupSet = diagramContents.getGroups();
 
-		this.decideLocation();
-	}
+        decideLocation();
+    }
 
-	@SuppressWarnings("unchecked")
-	private void decideLocation() {
+    @SuppressWarnings("unchecked")
+    private void decideLocation() {
 
-		if (this.nodeElementList.size() < AUTO_GRAPH_LIMIT) {
-			DirectedGraph graph = new DirectedGraph();
+        if (nodeElementList.size() < AUTO_GRAPH_LIMIT) {
+            final DirectedGraph graph = new DirectedGraph();
 
-			Map<NodeElement, Node> nodeElementNodeMap = new HashMap<NodeElement, Node>();
+            final Map<NodeElement, Node> nodeElementNodeMap = new HashMap<NodeElement, Node>();
 
-			int fontSize = this.diagram.getFontSize();
+            final int fontSize = diagram.getFontSize();
 
-			Insets insets = new Insets(5 * fontSize, 10 * fontSize,
-					35 * fontSize, 20 * fontSize);
+            final Insets insets = new Insets(5 * fontSize, 10 * fontSize, 35 * fontSize, 20 * fontSize);
 
-			for (NodeElement nodeElement : this.nodeElementList) {
-				Node node = new Node();
+            for (final NodeElement nodeElement : nodeElementList) {
+                final Node node = new Node();
 
-				node.setPadding(insets);
-				graph.nodes.add(node);
-				nodeElementNodeMap.put(nodeElement, node);
-			}
+                node.setPadding(insets);
+                graph.nodes.add(node);
+                nodeElementNodeMap.put(nodeElement, node);
+            }
 
-			for (NodeElement nodeElement : this.nodeElementList) {
-				for (ConnectionElement outgoing : nodeElement.getOutgoings()) {
-					Node sourceNode = nodeElementNodeMap.get(outgoing
-							.getSource());
-					Node targetNode = nodeElementNodeMap.get(outgoing
-							.getTarget());
-					if (sourceNode != targetNode) {
-						Edge edge = new Edge(sourceNode, targetNode);
-						graph.edges.add(edge);
-					}
-				}
-			}
+            for (final NodeElement nodeElement : nodeElementList) {
+                for (final ConnectionElement outgoing : nodeElement.getOutgoings()) {
+                    final Node sourceNode = nodeElementNodeMap.get(outgoing.getSource());
+                    final Node targetNode = nodeElementNodeMap.get(outgoing.getTarget());
+                    if (sourceNode != targetNode) {
+                        final Edge edge = new Edge(sourceNode, targetNode);
+                        graph.edges.add(edge);
+                    }
+                }
+            }
 
-			DirectedGraphLayout layout = new DirectedGraphLayout();
+            final DirectedGraphLayout layout = new DirectedGraphLayout();
 
-			layout.visit(graph);
+            layout.visit(graph);
 
-			for (NodeElement nodeElement : nodeElementNodeMap.keySet()) {
-				Node node = nodeElementNodeMap.get(nodeElement);
+            for (final NodeElement nodeElement : nodeElementNodeMap.keySet()) {
+                final Node node = nodeElementNodeMap.get(nodeElement);
 
-				if (nodeElement.getWidth() == 0) {
-					nodeElement
-							.setLocation(new Location(node.x, node.y, -1, -1));
-				}
-			}
+                if (nodeElement.getWidth() == 0) {
+                    nodeElement.setLocation(new Location(node.x, node.y, -1, -1));
+                }
+            }
 
-		} else {
-			int numX = (int) Math.sqrt(this.nodeElementList.size());
+        } else {
+            final int numX = (int) Math.sqrt(nodeElementList.size());
 
-			int x = ORIGINAL_X;
-			int y = ORIGINAL_Y;
+            int x = ORIGINAL_X;
+            int y = ORIGINAL_Y;
 
-			for (NodeElement nodeElement : this.nodeElementList) {
-				if (nodeElement.getWidth() == 0) {
-					nodeElement.setLocation(new Location(x, y, -1, -1));
+            for (final NodeElement nodeElement : nodeElementList) {
+                if (nodeElement.getWidth() == 0) {
+                    nodeElement.setLocation(new Location(x, y, -1, -1));
 
-					x += DISTANCE_X;
-					if (x > DISTANCE_X * numX) {
-						x = ORIGINAL_X;
-						y += DISTANCE_Y;
-					}
-				}
-			}
-		}
-	}
+                    x += DISTANCE_X;
+                    if (x > DISTANCE_X * numX) {
+                        x = ORIGINAL_X;
+                        y += DISTANCE_Y;
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.diagram.getEditor().getActiveEditor().removeSelection();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        diagram.getEditor().getActiveEditor().removeSelection();
 
-		if (this.columnGroups != null) {
-			for (ColumnGroup columnGroup : columnGroups) {
-				this.columnGroupSet.add(columnGroup);
-			}
-		}
+        if (columnGroups != null) {
+            for (final ColumnGroup columnGroup : columnGroups) {
+                columnGroupSet.add(columnGroup);
+            }
+        }
 
-		for (NodeElement nodeElement : this.nodeElementList) {
-			this.diagram.addNewContent(nodeElement);
-			this.addToCategory(nodeElement);
+        for (final NodeElement nodeElement : nodeElementList) {
+            diagram.addNewContent(nodeElement);
+            addToCategory(nodeElement);
 
-			if (nodeElement instanceof TableView) {
-				for (NormalColumn normalColumn : ((TableView) nodeElement)
-						.getNormalColumns()) {
-					if (normalColumn.isForeignKey()) {
-						for (Relation relation : normalColumn.getRelationList()) {
-							if (relation.getSourceTableView() == nodeElement) {
-								this.setSelfRelation(relation);
-							}
-						}
-					}
-				}
-			}
-		}
+            if (nodeElement instanceof TableView) {
+                for (final NormalColumn normalColumn : ((TableView) nodeElement).getNormalColumns()) {
+                    if (normalColumn.isForeignKey()) {
+                        for (final Relation relation : normalColumn.getRelationList()) {
+                            if (relation.getSourceTableView() == nodeElement) {
+                                setSelfRelation(relation);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		for (Sequence sequence : sequences) {
-			this.sequenceSet.addObject(sequence);
-		}
+        for (final Sequence sequence : sequences) {
+            sequenceSet.addObject(sequence);
+        }
 
-		for (Trigger trigger : triggers) {
-			this.triggerSet.addObject(trigger);
-		}
+        for (final Trigger trigger : triggers) {
+            triggerSet.addObject(trigger);
+        }
 
-		for (Tablespace tablespace : tablespaces) {
-			this.tablespaceSet.addObject(tablespace);
-		}
+        for (final Tablespace tablespace : tablespaces) {
+            tablespaceSet.addObject(tablespace);
+        }
 
-		this.diagram.refreshChildren();
-		this.diagram.refreshOutline();
-		
-		if (this.category != null) {
-			this.category.refresh();
-		}
-	}
+        diagram.refreshChildren();
+        diagram.refreshOutline();
 
-	private void setSelfRelation(Relation relation) {
-		boolean anotherSelfRelation = false;
+        if (category != null) {
+            category.refresh();
+        }
+    }
 
-		TableView sourceTable = relation.getSourceTableView();
-		for (Relation otherRelation : sourceTable.getOutgoingRelations()) {
-			if (otherRelation == relation) {
-				continue;
-			}
-			if (otherRelation.getSource() == otherRelation.getTarget()) {
-				anotherSelfRelation = true;
-				break;
-			}
-		}
+    private void setSelfRelation(final Relation relation) {
+        boolean anotherSelfRelation = false;
 
-		int rate = 0;
+        final TableView sourceTable = relation.getSourceTableView();
+        for (final Relation otherRelation : sourceTable.getOutgoingRelations()) {
+            if (otherRelation == relation) {
+                continue;
+            }
+            if (otherRelation.getSource() == otherRelation.getTarget()) {
+                anotherSelfRelation = true;
+                break;
+            }
+        }
 
-		if (anotherSelfRelation) {
-			rate = 50;
+        int rate = 0;
 
-		} else {
-			rate = 100;
-		}
+        if (anotherSelfRelation) {
+            rate = 50;
 
-		Bendpoint bendpoint0 = new Bendpoint(rate, rate);
-		bendpoint0.setRelative(true);
+        } else {
+            rate = 100;
+        }
 
-		int xp = 100 - (rate / 2);
-		int yp = 100 - (rate / 2);
+        final Bendpoint bendpoint0 = new Bendpoint(rate, rate);
+        bendpoint0.setRelative(true);
 
-		relation.setSourceLocationp(100, yp);
-		relation.setTargetLocationp(xp, 100);
+        final int xp = 100 - (rate / 2);
+        final int yp = 100 - (rate / 2);
 
-		relation.addBendpoint(0, bendpoint0);
-	}
+        relation.setSourceLocationp(100, yp);
+        relation.setTargetLocationp(xp, 100);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.diagram.getEditor().getActiveEditor().removeSelection();
+        relation.addBendpoint(0, bendpoint0);
+    }
 
-		for (NodeElement nodeElement : this.nodeElementList) {
-			this.diagram.removeContent(nodeElement);
-			this.removeFromCategory(nodeElement);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        diagram.getEditor().getActiveEditor().removeSelection();
 
-			if (nodeElement instanceof TableView) {
-				for (NormalColumn normalColumn : ((TableView) nodeElement)
-						.getNormalColumns()) {
-					this.diagram.getDiagramContents().getDictionary()
-							.remove(normalColumn);
-				}
-			}
-		}
+        for (final NodeElement nodeElement : nodeElementList) {
+            diagram.removeContent(nodeElement);
+            removeFromCategory(nodeElement);
 
-		for (Sequence sequence : sequences) {
-			this.sequenceSet.remove(sequence);
-		}
+            if (nodeElement instanceof TableView) {
+                for (final NormalColumn normalColumn : ((TableView) nodeElement).getNormalColumns()) {
+                    diagram.getDiagramContents().getDictionary().remove(normalColumn);
+                }
+            }
+        }
 
-		for (Trigger trigger : triggers) {
-			this.triggerSet.remove(trigger);
-		}
+        for (final Sequence sequence : sequences) {
+            sequenceSet.remove(sequence);
+        }
 
-		for (Tablespace tablespace : tablespaces) {
-			this.tablespaceSet.remove(tablespace);
-		}
+        for (final Trigger trigger : triggers) {
+            triggerSet.remove(trigger);
+        }
 
-		if (this.columnGroups != null) {
-			for (ColumnGroup columnGroup : columnGroups) {
-				this.columnGroupSet.remove(columnGroup);
-			}
-		}
+        for (final Tablespace tablespace : tablespaces) {
+            tablespaceSet.remove(tablespace);
+        }
 
-		this.diagram.refreshChildren();
-		this.diagram.refreshOutline();
-		
-		if (this.category != null) {
-			this.category.refresh();
-		}
-	}
+        if (columnGroups != null) {
+            for (final ColumnGroup columnGroup : columnGroups) {
+                columnGroupSet.remove(columnGroup);
+            }
+        }
+
+        diagram.refreshChildren();
+        diagram.refreshOutline();
+
+        if (category != null) {
+            category.refresh();
+        }
+    }
 }

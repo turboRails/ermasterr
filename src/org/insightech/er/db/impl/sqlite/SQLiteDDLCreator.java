@@ -13,125 +13,119 @@ import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Ta
 
 public class SQLiteDDLCreator extends DDLCreator {
 
-	public SQLiteDDLCreator(ERDiagram diagram, Category targetCategory,
-			boolean semicolon) {
-		super(diagram, targetCategory, semicolon);
-	}
+    public SQLiteDDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        super(diagram, targetCategory, semicolon);
+    }
 
-	@Override
-	protected String getDDL(Tablespace tablespace) {
-		return null;
-	}
+    @Override
+    protected String getDDL(final Tablespace tablespace) {
+        return null;
+    }
 
-	@Override
-	protected String getColulmnDDL(NormalColumn normalColumn) {
-		StringBuilder ddl = new StringBuilder();
+    @Override
+    protected String getColulmnDDL(final NormalColumn normalColumn) {
+        final StringBuilder ddl = new StringBuilder();
 
-		ddl.append(super.getColulmnDDL(normalColumn));
+        ddl.append(super.getColulmnDDL(normalColumn));
 
-		if (normalColumn.isAutoIncrement()) {
-			ddl.append(" PRIMARY KEY AUTOINCREMENT");
-		}
+        if (normalColumn.isAutoIncrement()) {
+            ddl.append(" PRIMARY KEY AUTOINCREMENT");
+        }
 
-		return ddl.toString();
-	}
+        return ddl.toString();
+    }
 
-	@Override
-	protected String getPrimaryKeyDDL(ERTable table) {
-		boolean isAutoIncrement = false;
+    @Override
+    protected String getPrimaryKeyDDL(final ERTable table) {
+        boolean isAutoIncrement = false;
 
-		for (NormalColumn column : table.getNormalColumns()) {
-			isAutoIncrement = column.isAutoIncrement();
+        for (final NormalColumn column : table.getNormalColumns()) {
+            isAutoIncrement = column.isAutoIncrement();
 
-			if (isAutoIncrement) {
-				break;
-			}
-		}
+            if (isAutoIncrement) {
+                break;
+            }
+        }
 
-		StringBuilder ddl = new StringBuilder();
+        final StringBuilder ddl = new StringBuilder();
 
-		if (!isAutoIncrement) {
-			ddl.append(super.getPrimaryKeyDDL(table));
-		}
+        if (!isAutoIncrement) {
+            ddl.append(super.getPrimaryKeyDDL(table));
+        }
 
-		for (Relation relation : table.getIncomingRelations()) {
-			ddl.append("," + LF() + "\tFOREIGN KEY (");
+        for (final Relation relation : table.getIncomingRelations()) {
+            ddl.append("," + LF() + "\tFOREIGN KEY (");
 
-			boolean first = true;
+            boolean first = true;
 
-			for (NormalColumn column : relation.getForeignKeyColumns()) {
-				if (!first) {
-					ddl.append(", ");
+            for (final NormalColumn column : relation.getForeignKeyColumns()) {
+                if (!first) {
+                    ddl.append(", ");
 
-				}
-				ddl.append(filterName(column.getPhysicalName()));
-				first = false;
-			}
+                }
+                ddl.append(filterName(column.getPhysicalName()));
+                first = false;
+            }
 
-			ddl.append(")" + LF());
-			ddl.append("\tREFERENCES ");
-			ddl.append(filterName(relation.getSourceTableView()
-					.getNameWithSchema(this.getDiagram().getDatabase())));
-			ddl.append(" (");
+            ddl.append(")" + LF());
+            ddl.append("\tREFERENCES ");
+            ddl.append(filterName(relation.getSourceTableView().getNameWithSchema(getDiagram().getDatabase())));
+            ddl.append(" (");
 
-			first = true;
+            first = true;
 
-			for (NormalColumn foreignKeyColumn : relation
-					.getForeignKeyColumns()) {
-				if (!first) {
-					ddl.append(", ");
+            for (final NormalColumn foreignKeyColumn : relation.getForeignKeyColumns()) {
+                if (!first) {
+                    ddl.append(", ");
 
-				}
+                }
 
-				ddl.append(filterName(foreignKeyColumn.getReferencedColumn(
-						relation).getPhysicalName()));
-				first = false;
-			}
+                ddl.append(filterName(foreignKeyColumn.getReferencedColumn(relation).getPhysicalName()));
+                first = false;
+            }
 
-			ddl.append(")");
-		}
+            ddl.append(")");
+        }
 
-		return ddl.toString();
-	}
+        return ddl.toString();
+    }
 
-	@Override
-	protected Iterable<ERTable> getTablesForCreateDDL() {
-		LinkedHashSet<ERTable> results = new LinkedHashSet<ERTable>();
+    @Override
+    protected Iterable<ERTable> getTablesForCreateDDL() {
+        final LinkedHashSet<ERTable> results = new LinkedHashSet<ERTable>();
 
-		for (ERTable table : this.getDiagram().getDiagramContents()
-				.getContents().getTableSet()) {
-			if (!results.contains(table)) {
-				this.getReferedTables(results, table);
-				results.add(table);
-			}
-		}
+        for (final ERTable table : getDiagram().getDiagramContents().getContents().getTableSet()) {
+            if (!results.contains(table)) {
+                getReferedTables(results, table);
+                results.add(table);
+            }
+        }
 
-		return results;
-	}
+        return results;
+    }
 
-	private void getReferedTables(LinkedHashSet<ERTable> referedTables,
-			ERTable table) {
-		for (NodeElement nodeElement : table.getReferedElementList()) {
-			if (nodeElement instanceof ERTable) {
-				if (nodeElement != table) {
-					ERTable referedTable = (ERTable) nodeElement;
-					if (!referedTables.contains(referedTable)) {
-						this.getReferedTables(referedTables, referedTable);
-						referedTables.add(referedTable);
-					}
-				}
-			}
-		}
-	}
+    private void getReferedTables(final LinkedHashSet<ERTable> referedTables, final ERTable table) {
+        for (final NodeElement nodeElement : table.getReferedElementList()) {
+            if (nodeElement instanceof ERTable) {
+                if (nodeElement != table) {
+                    final ERTable referedTable = (ERTable) nodeElement;
+                    if (!referedTables.contains(referedTable)) {
+                        getReferedTables(referedTables, referedTable);
+                        referedTables.add(referedTable);
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	protected String getCreateForeignKeys(ERDiagram diagram) {
-		return "";
-	}
+    @Override
+    protected String getCreateForeignKeys(final ERDiagram diagram) {
+        return "";
+    }
 
-	@Override
-	protected String filterName(String name) {
-		return "[" + super.filterName(name) + "]";
-	}
+    @Override
+    protected String filterName(final String name) {
+        return "[" + super.filterName(name) + "]";
+    }
 
 }

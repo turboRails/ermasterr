@@ -8,182 +8,184 @@ import org.insightech.er.editor.model.ObjectModel;
 import org.insightech.er.editor.model.diagram_contents.element.node.table.ERTable;
 import org.insightech.er.editor.model.diagram_contents.element.node.table.column.NormalColumn;
 
-public class Index extends AbstractModel implements ObjectModel,
-		Comparable<Index> {
+public class Index extends AbstractModel implements ObjectModel, Comparable<Index> {
 
-	private static final long serialVersionUID = -6734284409681329690L;
+    private static final long serialVersionUID = -6734284409681329690L;
 
-	private String name;
+    private String name;
 
-	private boolean nonUnique;
+    private boolean nonUnique;
 
-	private boolean fullText;
+    private boolean fullText;
 
-	private String type;
+    private String type;
 
-	private String description;
+    private String description;
 
-	private List<Boolean> descs;
+    private List<Boolean> descs;
 
-	private List<NormalColumn> columns;
+    private List<NormalColumn> columns;
 
-	private List<String> columnNames;
+    private List<String> columnNames;
 
-	private ERTable table;
+    private ERTable table;
 
-	public Index(ERTable table, String name, boolean nonUnique, String type,
-			String description) {
-		this.table = table;
+    public Index(final ERTable table, final String name, final boolean nonUnique, final String type, final String description) {
+        this.table = table;
 
-		this.nonUnique = nonUnique;
-		this.type = type;
-		this.description = description;
+        this.nonUnique = nonUnique;
+        this.type = type;
+        this.description = description;
 
-		this.descs = new ArrayList<Boolean>();
+        descs = new ArrayList<Boolean>();
 
-		this.columns = new ArrayList<NormalColumn>();
-		this.columnNames = new ArrayList<String>();
+        columns = new ArrayList<NormalColumn>();
+        columnNames = new ArrayList<String>();
 
-		this.name = name;
-	}
+        this.name = name;
+    }
 
-	public void setDescs(List<Boolean> descs) {
-		this.descs = descs;
-	}
+    public void setDescs(final List<Boolean> descs) {
+        this.descs = descs;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setNonUnique(boolean nonUnique) {
-		this.nonUnique = nonUnique;
-	}
+    public void setNonUnique(final boolean nonUnique) {
+        this.nonUnique = nonUnique;
+    }
 
-	public void setColumns(List<NormalColumn> columns) {
-		this.columns = columns;
-	}
+    public void setColumns(final List<NormalColumn> columns) {
+        this.columns = columns;
+    }
 
-	public void addColumn(NormalColumn column) {
-		this.columns.add(column);
-	}
+    public void addColumn(final NormalColumn column) {
+        columns.add(column);
+    }
 
-	public void addColumn(NormalColumn column, Boolean desc) {
-		this.columns.add(column);
-		this.descs.add(desc);
-	}
+    public void addColumn(final NormalColumn column, final Boolean desc) {
+        columns.add(column);
+        descs.add(desc);
+    }
 
-	public List<NormalColumn> getColumns() {
-		List<NormalColumn> list = new ArrayList<NormalColumn>();
+    public List<NormalColumn> getColumns() {
+        final List<NormalColumn> list = new ArrayList<NormalColumn>();
 
-		for (int i=0; i<this.columns.size(); i++) {
-			NormalColumn column = this.columns.get(i);
-			
-			if (this.table.getExpandedColumns().contains(column)) {
-				list.add(column);
-			}
-		}
-		
-		return list;
-	}
+        for (int i = 0; i < columns.size(); i++) {
+            final NormalColumn column = columns.get(i);
 
-	public void clearColumns() {
-		this.columns.clear();
-		this.descs.clear();
-		this.columnNames.clear();
-	}
-	
-	public boolean isNonUnique() {
-		return nonUnique;
-	}
+            if (table.getExpandedColumns().contains(column)) {
+                list.add(column);
+            }
+        }
 
-	public List<String> getColumnNames() {
-		return this.columnNames;
-	}
+        return list;
+    }
 
-	public void addColumnName(String columnName, Boolean desc) {
-		this.columnNames.add(columnName);
-		this.descs.add(desc);
-	}
+    public void clearColumns() {
+        columns.clear();
+        descs.clear();
+        columnNames.clear();
+    }
 
-	public List<Boolean> getDescs() {
-		List<Boolean> list = new ArrayList<Boolean>();
+    public boolean isNonUnique() {
+        return nonUnique;
+    }
 
-		for (int i=0; i<this.columns.size(); i++) {
-			NormalColumn column = this.columns.get(i);
-			
-			if (this.table.getExpandedColumns().contains(column)) {
-				list.add(this.descs.get(i));
-			}
-		}
-		
-		return list;
-	}
+    public List<String> getColumnNames() {
+        return columnNames;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void addColumnName(final String columnName, final Boolean desc) {
+        columnNames.add(columnName);
+        descs.add(desc);
+    }
 
-	public boolean isFullText() {
-		return fullText;
-	}
+    public List<Boolean> getDescs() {
+        final List<Boolean> list = new ArrayList<Boolean>();
 
-	public void setFullText(boolean fullText) {
-		this.fullText = fullText;
-	}
+        for (int i = 0; i < columns.size(); i++) {
+            final NormalColumn column = columns.get(i);
 
-	public String getType() {
-		return type;
-	}
+            if (table.getExpandedColumns().contains(column)) {
+                list.add(descs.get(i));
+            }
+        }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+        return list;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Index clone() {
-		Index clone = (Index) super.clone();
+    @Override
+    public String getName() {
+        return name;
+    }
 
-		List<Boolean> cloneDescs = new ArrayList<Boolean>();
-		for (Boolean desc : this.descs) {
-			cloneDescs.add(desc);
-		}
+    public boolean isFullText() {
+        return fullText;
+    }
 
-		clone.descs = cloneDescs;
+    public void setFullText(final boolean fullText) {
+        this.fullText = fullText;
+    }
 
-		List<String> cloneColumnNames = new ArrayList<String>();
-		for (String columnName : this.columnNames) {
-			cloneColumnNames.add(columnName);
-		}
+    public String getType() {
+        return type;
+    }
 
-		clone.columnNames = cloneColumnNames;
+    public void setType(final String type) {
+        this.type = type;
+    }
 
-		return clone;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Index clone() {
+        final Index clone = (Index) super.clone();
 
-	public int compareTo(Index other) {
-		return this.name.toUpperCase().compareTo(other.name.toUpperCase());
-	}
+        final List<Boolean> cloneDescs = new ArrayList<Boolean>();
+        for (final Boolean desc : descs) {
+            cloneDescs.add(desc);
+        }
 
-	public ERTable getTable() {
-		return table;
-	}
+        clone.descs = cloneDescs;
 
-	protected void setTable(ERTable table) {
-		this.table = table;
-	}
+        final List<String> cloneColumnNames = new ArrayList<String>();
+        for (final String columnName : columnNames) {
+            cloneColumnNames.add(columnName);
+        }
 
-	public String getDescription() {
-		return description;
-	}
+        clone.columnNames = cloneColumnNames;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+        return clone;
+    }
 
-	public String getObjectType() {
-		return "index";
-	}
+    @Override
+    public int compareTo(final Index other) {
+        return name.toUpperCase().compareTo(other.name.toUpperCase());
+    }
+
+    public ERTable getTable() {
+        return table;
+    }
+
+    protected void setTable(final ERTable table) {
+        this.table = table;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getObjectType() {
+        return "index";
+    }
 }

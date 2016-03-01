@@ -14,64 +14,51 @@ import org.insightech.er.util.POIUtils;
 
 public class AllSequencesSheetGenerator extends SequenceSheetGenerator {
 
-	@Override
-	public void generate(ProgressMonitor monitor, HSSFWorkbook workbook,
-			int sheetNo, boolean useLogicalNameAsSheetName,
-			Map<String, Integer> sheetNameMap,
-			Map<String, ObjectModel> sheetObjectMap, ERDiagram diagram,
-			Map<String, LoopDefinition> loopDefinitionMap)
-			throws InterruptedException {
+    @Override
+    public void generate(final ProgressMonitor monitor, final HSSFWorkbook workbook, final int sheetNo, final boolean useLogicalNameAsSheetName, final Map<String, Integer> sheetNameMap, final Map<String, ObjectModel> sheetObjectMap, final ERDiagram diagram, final Map<String, LoopDefinition> loopDefinitionMap) throws InterruptedException {
 
-		LoopDefinition loopDefinition = loopDefinitionMap.get(this
-				.getTemplateSheetName());
+        final LoopDefinition loopDefinition = loopDefinitionMap.get(getTemplateSheetName());
 
-		HSSFSheet newSheet = createNewSheet(workbook, sheetNo,
-				loopDefinition.sheetName, sheetNameMap);
+        final HSSFSheet newSheet = createNewSheet(workbook, sheetNo, loopDefinition.sheetName, sheetNameMap);
 
-		String sheetName = workbook.getSheetName(workbook
-				.getSheetIndex(newSheet));
+        final String sheetName = workbook.getSheetName(workbook.getSheetIndex(newSheet));
 
-		sheetObjectMap.put(sheetName, diagram.getDiagramContents()
-				.getSequenceSet());
+        sheetObjectMap.put(sheetName, diagram.getDiagramContents().getSequenceSet());
 
-		HSSFSheet oldSheet = workbook.getSheetAt(sheetNo);
+        final HSSFSheet oldSheet = workbook.getSheetAt(sheetNo);
 
-		boolean first = true;
+        boolean first = true;
 
-		for (Sequence sequence : diagram.getDiagramContents().getSequenceSet()) {
-			monitor.subTaskWithCounter(sheetName + " - " + sequence.getName());
+        for (final Sequence sequence : diagram.getDiagramContents().getSequenceSet()) {
+            monitor.subTaskWithCounter(sheetName + " - " + sequence.getName());
 
-			if (first) {
-				first = false;
+            if (first) {
+                first = false;
 
-			} else {
-				POIUtils.copyRow(oldSheet, newSheet,
-						loopDefinition.startLine - 1, oldSheet.getLastRowNum(),
-						newSheet.getLastRowNum() + loopDefinition.spaceLine + 1);
-			}
+            } else {
+                POIUtils.copyRow(oldSheet, newSheet, loopDefinition.startLine - 1, oldSheet.getLastRowNum(), newSheet.getLastRowNum() + loopDefinition.spaceLine + 1);
+            }
 
-			this.setSequenceData(workbook, newSheet, sequence, diagram);
+            setSequenceData(workbook, newSheet, sequence, diagram);
 
-			newSheet.setRowBreak(newSheet.getLastRowNum()
-					+ loopDefinition.spaceLine);
+            newSheet.setRowBreak(newSheet.getLastRowNum() + loopDefinition.spaceLine);
 
-			monitor.worked(1);
-		}
+            monitor.worked(1);
+        }
 
-		if (first) {
-			for (int i = loopDefinition.startLine - 1; i <= newSheet
-					.getLastRowNum(); i++) {
-				HSSFRow row = newSheet.getRow(i);
-				if (row != null) {
-					newSheet.removeRow(row);
-				}
-			}
-		}
-	}
+        if (first) {
+            for (int i = loopDefinition.startLine - 1; i <= newSheet.getLastRowNum(); i++) {
+                final HSSFRow row = newSheet.getRow(i);
+                if (row != null) {
+                    newSheet.removeRow(row);
+                }
+            }
+        }
+    }
 
-	@Override
-	public String getTemplateSheetName() {
-		return "all_sequences_template";
-	}
+    @Override
+    public String getTemplateSheetName() {
+        return "all_sequences_template";
+    }
 
 }

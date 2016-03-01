@@ -2,36 +2,39 @@ package org.insightech.er.editor.model.progress_monitor;
 
 public class EmptyProgressMonitor implements ProgressMonitor {
 
-	public EmptyProgressMonitor() {
-	}
+    public EmptyProgressMonitor() {}
 
-	public void beginTask(String message, int counter) {
-	}
+    @Override
+    public void beginTask(final String message, final int counter) {}
 
-	public void worked(int counter) {
-	}
+    @Override
+    public void worked(final int counter) {}
 
-	public boolean isCanceled() {
-		return false;
-	}
+    @Override
+    public boolean isCanceled() {
+        return false;
+    }
 
-	public void done() {
-	}
+    @Override
+    public void done() {}
 
-	public void subTask(String message) {
-	}
+    @Override
+    public void subTask(final String message) {}
 
-	public int getTotalCount() {
-		return 0;
-	}
+    @Override
+    public int getTotalCount() {
+        return 0;
+    }
 
-	public int getCurrentCount() {
-		return 0;
-	}
+    @Override
+    public int getCurrentCount() {
+        return 0;
+    }
 
-	public void subTaskWithCounter(String message) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void subTaskWithCounter(final String message) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

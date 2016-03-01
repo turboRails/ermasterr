@@ -9,77 +9,78 @@ import org.insightech.er.editor.model.AbstractModel;
 
 public class GroupSet extends AbstractModel implements Iterable<ColumnGroup> {
 
-	private static final long serialVersionUID = 6192280105150073360L;
+    private static final long serialVersionUID = 6192280105150073360L;
 
-	private String database;
+    private String database;
 
-	private List<ColumnGroup> groups;
+    private final List<ColumnGroup> groups;
 
-	public GroupSet() {
-		this.groups = new ArrayList<ColumnGroup>();
-	}
+    public GroupSet() {
+        groups = new ArrayList<ColumnGroup>();
+    }
 
-	public void sort() {
-		Collections.sort(this.groups);
-	}
+    public void sort() {
+        Collections.sort(groups);
+    }
 
-	public void add(ColumnGroup group) {
-		this.groups.add(group);
-	}
+    public void add(final ColumnGroup group) {
+        groups.add(group);
+    }
 
-	public void remove(ColumnGroup group) {
-		this.groups.remove(group);
-	}
+    public void remove(final ColumnGroup group) {
+        groups.remove(group);
+    }
 
-	public Iterator<ColumnGroup> iterator() {
-		return this.groups.iterator();
-	}
+    @Override
+    public Iterator<ColumnGroup> iterator() {
+        return groups.iterator();
+    }
 
-	public List<ColumnGroup> getGroupList() {
-		return this.groups;
-	}
+    public List<ColumnGroup> getGroupList() {
+        return groups;
+    }
 
-	public void clear() {
-		this.groups.clear();
-	}
+    public void clear() {
+        groups.clear();
+    }
 
-	public boolean contains(ColumnGroup group) {
-		return this.groups.contains(group);
-	}
+    public boolean contains(final ColumnGroup group) {
+        return groups.contains(group);
+    }
 
-	public ColumnGroup get(int index) {
-		return this.groups.get(index);
-	}
+    public ColumnGroup get(final int index) {
+        return groups.get(index);
+    }
 
-	public ColumnGroup find(ColumnGroup group) {
-		int index = this.groups.indexOf(group);
+    public ColumnGroup find(final ColumnGroup group) {
+        final int index = groups.indexOf(group);
 
-		if (index != -1) {
-			return this.groups.get(this.groups.indexOf(group));
-		}
+        if (index != -1) {
+            return groups.get(groups.indexOf(group));
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public ColumnGroup findSame(ColumnGroup group) {
-		for (ColumnGroup columnGroup : this.groups) {
-			if (columnGroup == group) {
-				return columnGroup;
-			}
-		}
+    public ColumnGroup findSame(final ColumnGroup group) {
+        for (final ColumnGroup columnGroup : groups) {
+            if (columnGroup == group) {
+                return columnGroup;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public int indexOf(ColumnGroup group) {
-		return this.groups.indexOf(group);
-	}
+    public int indexOf(final ColumnGroup group) {
+        return groups.indexOf(group);
+    }
 
-	public String getDatabase() {
-		return database;
-	}
+    public String getDatabase() {
+        return database;
+    }
 
-	public void setDatabase(String database) {
-		this.database = database;
-	}
+    public void setDatabase(final String database) {
+        this.database = database;
+    }
 }

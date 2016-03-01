@@ -21,162 +21,147 @@ import org.insightech.er.editor.model.StringObjectModel;
 
 public class SelectImportedSchemaDialog extends AbstractDialog {
 
-	private ContainerCheckedTreeViewer viewer;
+    private ContainerCheckedTreeViewer viewer;
 
-	private List<String> schemaList;
+    private final List<String> schemaList;
 
-	private List<String> selectedSchemaList;
+    private final List<String> selectedSchemaList;
 
-	private List<String> resultSelectedSchemas;
+    private final List<String> resultSelectedSchemas;
 
-	private String importDB;
+    private final String importDB;
 
-	public SelectImportedSchemaDialog(Shell parentShell, ERDiagram diagram,
-			String importDB, List<String> schemaList,
-			List<String> selectedSchemaList) {
-		super(parentShell);
+    public SelectImportedSchemaDialog(final Shell parentShell, final ERDiagram diagram, final String importDB, final List<String> schemaList, final List<String> selectedSchemaList) {
+        super(parentShell);
 
-		this.schemaList = schemaList;
-		this.selectedSchemaList = selectedSchemaList;
-		this.resultSelectedSchemas = new ArrayList<String>();
-		this.importDB = importDB;
-	}
+        this.schemaList = schemaList;
+        this.selectedSchemaList = selectedSchemaList;
+        resultSelectedSchemas = new ArrayList<String>();
+        this.importDB = importDB;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite composite) {
-		this.createObjectListComposite(composite);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite composite) {
+        createObjectListComposite(composite);
+    }
 
-	private void createObjectListComposite(Composite parent) {
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
+    private void createObjectListComposite(final Composite parent) {
+        final GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
 
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
-		gridLayout.verticalSpacing = 20;
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 3;
+        gridLayout.verticalSpacing = 20;
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(gridLayout);
-		composite.setLayoutData(gridData);
+        final Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(gridLayout);
+        composite.setLayoutData(gridData);
 
-		this.viewer = CompositeFactory.createCheckedTreeViewer(this, composite,
-				300, 1);
-	}
+        viewer = CompositeFactory.createCheckedTreeViewer(this, composite, 300, 1);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		this.createButton(parent, IDialogConstants.BACK_ID,
-				IDialogConstants.BACK_LABEL, false);
-		this.createButton(parent, IDialogConstants.OK_ID,
-				IDialogConstants.NEXT_LABEL, true);
-		this.createButton(parent, IDialogConstants.CANCEL_ID,
-				IDialogConstants.CANCEL_LABEL, false);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createButtonsForButtonBar(final Composite parent) {
+        createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false);
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.NEXT_LABEL, true);
+        createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void perfomeOK() throws InputException {
-		Object[] selectedNodes = this.viewer.getCheckedElements();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void perfomeOK() throws InputException {
+        final Object[] selectedNodes = viewer.getCheckedElements();
 
-		this.resultSelectedSchemas.clear();
+        resultSelectedSchemas.clear();
 
-		for (int i = 0; i < selectedNodes.length; i++) {
-			Object value = ((TreeNode) selectedNodes[i]).getValue();
-			if (value instanceof String) {
-				resultSelectedSchemas.add((String) value);
-			}
-		}
-	}
+        for (int i = 0; i < selectedNodes.length; i++) {
+            final Object value = ((TreeNode) selectedNodes[i]).getValue();
+            if (value instanceof String) {
+                resultSelectedSchemas.add((String) value);
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getErrorMessage() {
-		if (this.viewer.getCheckedElements().length == 0) {
-			return "error.import.schema.empty";
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getErrorMessage() {
+        if (viewer.getCheckedElements().length == 0) {
+            return "error.import.schema.empty";
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected String getTitle() {
-		return "dialog.title.select.import.schema";
-	}
+    @Override
+    protected String getTitle() {
+        return "dialog.title.select.import.schema";
+    }
 
-	@Override
-	protected void setData() {
-		List<TreeNode> treeNodeList = this.createTreeNodeList();
+    @Override
+    protected void setData() {
+        final List<TreeNode> treeNodeList = createTreeNodeList();
 
-		TreeNode[] treeNodes = treeNodeList.toArray(new TreeNode[treeNodeList
-				.size()]);
-		this.viewer.setInput(treeNodes);
+        final TreeNode[] treeNodes = treeNodeList.toArray(new TreeNode[treeNodeList.size()]);
+        viewer.setInput(treeNodes);
 
-		List<TreeNode> checkedList = new ArrayList<TreeNode>();
+        final List<TreeNode> checkedList = new ArrayList<TreeNode>();
 
-		TreeNode[] schemaNodes = treeNodes[0].getChildren();
+        final TreeNode[] schemaNodes = treeNodes[0].getChildren();
 
-		if (this.selectedSchemaList.isEmpty()) {
-			for (TreeNode schemaNode : schemaNodes) {
-				if (!DBManagerFactory
-						.getDBManager(this.importDB)
-						.getSystemSchemaList()
-						.contains(
-								String.valueOf(schemaNode.getValue())
-										.toLowerCase())) {
-					checkedList.add(schemaNode);
-				}
-			}
+        if (selectedSchemaList.isEmpty()) {
+            for (final TreeNode schemaNode : schemaNodes) {
+                if (!DBManagerFactory.getDBManager(importDB).getSystemSchemaList().contains(String.valueOf(schemaNode.getValue()).toLowerCase())) {
+                    checkedList.add(schemaNode);
+                }
+            }
 
-		} else {
-			for (TreeNode schemaNode : schemaNodes) {
-				if (this.selectedSchemaList.contains(schemaNode.getValue())) {
-					checkedList.add(schemaNode);
-				}
-			}
+        } else {
+            for (final TreeNode schemaNode : schemaNodes) {
+                if (selectedSchemaList.contains(schemaNode.getValue())) {
+                    checkedList.add(schemaNode);
+                }
+            }
 
-		}
+        }
 
-		this.viewer.setCheckedElements(checkedList
-				.toArray(new TreeNode[checkedList.size()]));
+        viewer.setCheckedElements(checkedList.toArray(new TreeNode[checkedList.size()]));
 
-		this.viewer.expandAll();
-	}
+        viewer.expandAll();
+    }
 
-	protected List<TreeNode> createTreeNodeList() {
+    protected List<TreeNode> createTreeNodeList() {
 
-		List<TreeNode> treeNodeList = new ArrayList<TreeNode>();
+        final List<TreeNode> treeNodeList = new ArrayList<TreeNode>();
 
-		TreeNode topNode = new TreeNode(new StringObjectModel(
-				ResourceString.getResourceString("label.schema")));
-		treeNodeList.add(topNode);
+        final TreeNode topNode = new TreeNode(new StringObjectModel(ResourceString.getResourceString("label.schema")));
+        treeNodeList.add(topNode);
 
-		List<TreeNode> schemaNodeList = new ArrayList<TreeNode>();
+        final List<TreeNode> schemaNodeList = new ArrayList<TreeNode>();
 
-		for (String schemaName : schemaList) {
-			TreeNode schemaNode = new TreeNode(schemaName);
-			schemaNode.setParent(topNode);
-			schemaNodeList.add(schemaNode);
-		}
+        for (final String schemaName : schemaList) {
+            final TreeNode schemaNode = new TreeNode(schemaName);
+            schemaNode.setParent(topNode);
+            schemaNodeList.add(schemaNode);
+        }
 
-		topNode.setChildren(schemaNodeList.toArray(new TreeNode[schemaNodeList
-				.size()]));
+        topNode.setChildren(schemaNodeList.toArray(new TreeNode[schemaNodeList.size()]));
 
-		return treeNodeList;
-	}
+        return treeNodeList;
+    }
 
-	public List<String> getSelectedSchemas() {
-		return this.resultSelectedSchemas;
-	}
+    public List<String> getSelectedSchemas() {
+        return resultSelectedSchemas;
+    }
 
 }

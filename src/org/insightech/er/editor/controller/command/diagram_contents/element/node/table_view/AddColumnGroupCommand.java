@@ -6,39 +6,38 @@ import org.insightech.er.editor.model.diagram_contents.not_element.group.ColumnG
 
 public class AddColumnGroupCommand extends AbstractCommand {
 
-	private TableView tableView;
+    private final TableView tableView;
 
-	private ColumnGroup columnGroup;
+    private final ColumnGroup columnGroup;
 
-	private int index;
+    private final int index;
 
-	public AddColumnGroupCommand(TableView tableView, ColumnGroup columnGroup,
-			int index) {
-		this.tableView = tableView;
-		this.columnGroup = columnGroup;
-		this.index = index;
-	}
+    public AddColumnGroupCommand(final TableView tableView, final ColumnGroup columnGroup, final int index) {
+        this.tableView = tableView;
+        this.columnGroup = columnGroup;
+        this.index = index;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		if (this.index != -1) {
-			this.tableView.addColumn(index, columnGroup);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        if (index != -1) {
+            tableView.addColumn(index, columnGroup);
+        }
 
-		this.tableView.refresh();
-	}
+        tableView.refresh();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.tableView.removeColumn(columnGroup);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        tableView.removeColumn(columnGroup);
 
-		this.tableView.refresh();
-	}
+        tableView.refresh();
+    }
 
 }

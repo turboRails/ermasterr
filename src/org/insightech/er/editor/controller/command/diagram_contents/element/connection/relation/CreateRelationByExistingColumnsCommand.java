@@ -17,173 +17,158 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.column
 import org.insightech.er.editor.model.diagram_contents.not_element.dictionary.Word;
 import org.insightech.er.editor.view.dialog.element.relation.RelationByExistingColumnsDialog;
 
-public class CreateRelationByExistingColumnsCommand extends
-		AbstractCreateRelationCommand {
+public class CreateRelationByExistingColumnsCommand extends AbstractCreateRelationCommand {
 
-	private Relation relation;
+    private Relation relation;
 
-	private List<NormalColumn> referencedColumnList;
+    private List<NormalColumn> referencedColumnList;
 
-	private List<NormalColumn> foreignKeyColumnList;
+    private List<NormalColumn> foreignKeyColumnList;
 
-	private List<Boolean> notNullList;
+    private final List<Boolean> notNullList;
 
-	private boolean notNull;
+    private boolean notNull;
 
-	private boolean unique;
+    private boolean unique;
 
-	private List<Word> wordList;
+    private final List<Word> wordList;
 
-	public CreateRelationByExistingColumnsCommand() {
-		super();
-		this.wordList = new ArrayList<Word>();
-		this.notNullList = new ArrayList<Boolean>();
-	}
+    public CreateRelationByExistingColumnsCommand() {
+        super();
+        wordList = new ArrayList<Word>();
+        notNullList = new ArrayList<Boolean>();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		ERTable sourceTable = (ERTable) this.source.getModel();
-		TableView targetTable = (TableView) this.target.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        final ERTable sourceTable = (ERTable) source.getModel();
+        final TableView targetTable = (TableView) target.getModel();
 
-		this.relation.setSource(sourceTable);
-		this.relation.setTargetWithoutForeignKey(targetTable);
+        relation.setSource(sourceTable);
+        relation.setTargetWithoutForeignKey(targetTable);
 
-		for (int i = 0; i < foreignKeyColumnList.size(); i++) {
-			NormalColumn foreignKeyColumn = foreignKeyColumnList.get(i);
+        for (int i = 0; i < foreignKeyColumnList.size(); i++) {
+            final NormalColumn foreignKeyColumn = foreignKeyColumnList.get(i);
 
-			this.wordList.add(foreignKeyColumn.getWord());
+            wordList.add(foreignKeyColumn.getWord());
 
-			sourceTable.getDiagram().getDiagramContents().getDictionary()
-					.remove(foreignKeyColumn);
+            sourceTable.getDiagram().getDiagramContents().getDictionary().remove(foreignKeyColumn);
 
-			foreignKeyColumn.addReference(referencedColumnList.get(i),
-					this.relation);
-			foreignKeyColumn.setWord(null);
+            foreignKeyColumn.addReference(referencedColumnList.get(i), relation);
+            foreignKeyColumn.setWord(null);
 
-			foreignKeyColumn.setNotNull(this.notNull);
-		}
+            foreignKeyColumn.setNotNull(notNull);
+        }
 
-		this.relation.getSource().refreshSourceConnections();
-		this.relation.getTarget().refresh();
+        relation.getSource().refreshSourceConnections();
+        relation.getTarget().refresh();
 
-		// targetTable.setDirty();
-	}
+        // targetTable.setDirty();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		ERTable sourceTable = (ERTable) source.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        final ERTable sourceTable = (ERTable) source.getModel();
 
-		this.relation.setSource(null);
-		this.relation.setTargetWithoutForeignKey(null);
+        relation.setSource(null);
+        relation.setTargetWithoutForeignKey(null);
 
-		for (int i = 0; i < foreignKeyColumnList.size(); i++) {
-			NormalColumn foreignKeyColumn = foreignKeyColumnList.get(i);
+        for (int i = 0; i < foreignKeyColumnList.size(); i++) {
+            final NormalColumn foreignKeyColumn = foreignKeyColumnList.get(i);
 
-			foreignKeyColumn.setNotNull(this.notNullList.get(i));
-			foreignKeyColumn.removeReference(this.relation);
-			foreignKeyColumn.setWord(wordList.get(i));
+            foreignKeyColumn.setNotNull(notNullList.get(i));
+            foreignKeyColumn.removeReference(relation);
+            foreignKeyColumn.setWord(wordList.get(i));
 
-			sourceTable.getDiagram().getDiagramContents().getDictionary()
-					.add(foreignKeyColumn);
-		}
+            sourceTable.getDiagram().getDiagramContents().getDictionary().add(foreignKeyColumn);
+        }
 
-		// targetTable.setDirty();
+        // targetTable.setDirty();
 
-		this.getSourceModel().refreshSourceConnections();
-		this.getTargetModel().refresh();
-	}
+        getSourceModel().refreshSourceConnections();
+        getTargetModel().refresh();
+    }
 
-	public boolean selectColumns() {
-		if (this.target == null) {
-			return false;
-		}
+    public boolean selectColumns() {
+        if (target == null) {
+            return false;
+        }
 
-		ERTable sourceTable = (ERTable) this.source.getModel();
-		TableView targetTable = (TableView) this.target.getModel();
+        final ERTable sourceTable = (ERTable) source.getModel();
+        final TableView targetTable = (TableView) target.getModel();
 
-		Map<NormalColumn, List<NormalColumn>> referencedMap = new HashMap<NormalColumn, List<NormalColumn>>();
-		Map<Relation, Set<NormalColumn>> foreignKeySetMap = new HashMap<Relation, Set<NormalColumn>>();
+        final Map<NormalColumn, List<NormalColumn>> referencedMap = new HashMap<NormalColumn, List<NormalColumn>>();
+        final Map<Relation, Set<NormalColumn>> foreignKeySetMap = new HashMap<Relation, Set<NormalColumn>>();
 
-		for (NormalColumn normalColumn : targetTable.getNormalColumns()) {
-			NormalColumn rootReferencedColumn = normalColumn
-					.getRootReferencedColumn();
-			if (rootReferencedColumn != null) {
-				List<NormalColumn> foreignKeyList = referencedMap
-						.get(rootReferencedColumn);
+        for (final NormalColumn normalColumn : targetTable.getNormalColumns()) {
+            final NormalColumn rootReferencedColumn = normalColumn.getRootReferencedColumn();
+            if (rootReferencedColumn != null) {
+                List<NormalColumn> foreignKeyList = referencedMap.get(rootReferencedColumn);
 
-				if (foreignKeyList == null) {
-					foreignKeyList = new ArrayList<NormalColumn>();
-					referencedMap.put(rootReferencedColumn, foreignKeyList);
-				}
+                if (foreignKeyList == null) {
+                    foreignKeyList = new ArrayList<NormalColumn>();
+                    referencedMap.put(rootReferencedColumn, foreignKeyList);
+                }
 
-				foreignKeyList.add(normalColumn);
+                foreignKeyList.add(normalColumn);
 
-				for (Relation relation : normalColumn.getRelationList()) {
-					Set<NormalColumn> foreignKeySet = foreignKeySetMap
-							.get(relation);
-					if (foreignKeySet == null) {
-						foreignKeySet = new HashSet<NormalColumn>();
-						foreignKeySetMap.put(relation, foreignKeySet);
-					}
+                for (final Relation relation : normalColumn.getRelationList()) {
+                    Set<NormalColumn> foreignKeySet = foreignKeySetMap.get(relation);
+                    if (foreignKeySet == null) {
+                        foreignKeySet = new HashSet<NormalColumn>();
+                        foreignKeySetMap.put(relation, foreignKeySet);
+                    }
 
-					foreignKeySet.add(normalColumn);
-				}
-			}
-		}
+                    foreignKeySet.add(normalColumn);
+                }
+            }
+        }
 
-		List<NormalColumn> candidateForeignKeyColumns = new ArrayList<NormalColumn>();
+        final List<NormalColumn> candidateForeignKeyColumns = new ArrayList<NormalColumn>();
 
-		for (NormalColumn column : targetTable.getNormalColumns()) {
-			if (!column.isForeignKey()) {
-				candidateForeignKeyColumns.add(column);
-			}
-		}
+        for (final NormalColumn column : targetTable.getNormalColumns()) {
+            if (!column.isForeignKey()) {
+                candidateForeignKeyColumns.add(column);
+            }
+        }
 
-		if (candidateForeignKeyColumns.isEmpty()) {
-			ERDiagramActivator
-					.showErrorDialog("error.no.candidate.of.foreign.key.exist");
-			return false;
-		}
+        if (candidateForeignKeyColumns.isEmpty()) {
+            ERDiagramActivator.showErrorDialog("error.no.candidate.of.foreign.key.exist");
+            return false;
+        }
 
-		RelationByExistingColumnsDialog dialog = new RelationByExistingColumnsDialog(
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				sourceTable, candidateForeignKeyColumns, referencedMap,
-				foreignKeySetMap);
+        final RelationByExistingColumnsDialog dialog = new RelationByExistingColumnsDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), sourceTable, candidateForeignKeyColumns, referencedMap, foreignKeySetMap);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			this.notNull = false;
-			this.unique = false;
-			this.notNullList.clear();
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            notNull = false;
+            unique = false;
+            notNullList.clear();
 
-			for (NormalColumn foreignKeyColumn : dialog
-					.getForeignKeyColumnList()) {
-				this.notNullList.add(foreignKeyColumn.isNotNull());
+            for (final NormalColumn foreignKeyColumn : dialog.getForeignKeyColumnList()) {
+                notNullList.add(foreignKeyColumn.isNotNull());
 
-				if (foreignKeyColumn.isNotNull()) {
-					this.notNull = true;
-				}
-				if (foreignKeyColumn.isUniqueKey()
-						|| foreignKeyColumn.isSinglePrimaryKey()) {
-					this.unique = true;
-				}
-			}
+                if (foreignKeyColumn.isNotNull()) {
+                    notNull = true;
+                }
+                if (foreignKeyColumn.isUniqueKey() || foreignKeyColumn.isSinglePrimaryKey()) {
+                    unique = true;
+                }
+            }
 
-			this.relation = new Relation(dialog.isReferenceForPK(),
-					dialog.getReferencedComplexUniqueKey(),
-					dialog.getReferencedColumn(), this.notNull, this.unique);
-			this.referencedColumnList = dialog.getReferencedColumnList();
-			this.foreignKeyColumnList = dialog.getForeignKeyColumnList();
+            relation = new Relation(dialog.isReferenceForPK(), dialog.getReferencedComplexUniqueKey(), dialog.getReferencedColumn(), notNull, unique);
+            referencedColumnList = dialog.getReferencedColumnList();
+            foreignKeyColumnList = dialog.getForeignKeyColumnList();
 
-		} else {
-			return false;
-		}
+        } else {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

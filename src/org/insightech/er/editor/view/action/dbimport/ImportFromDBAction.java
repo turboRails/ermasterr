@@ -28,179 +28,151 @@ import org.insightech.er.editor.view.dialog.dbimport.SelectImportedSchemaDialog;
 
 public class ImportFromDBAction extends AbstractImportAction {
 
-	public static final String ID = ImportFromDBAction.class.getName();
+    public static final String ID = ImportFromDBAction.class.getName();
 
-	private DBSetting dbSetting;
+    private DBSetting dbSetting;
 
-	public ImportFromDBAction(ERDiagramEditor editor) {
-		super(ID, ResourceString.getResourceString("action.title.import.db"),
-				editor);
-		this.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.DATABASE));
-	}
+    public ImportFromDBAction(final ERDiagramEditor editor) {
+        super(ID, ResourceString.getResourceString("action.title.import.db"), editor);
+        setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.DATABASE));
+    }
 
-	protected AbstractSelectImportedObjectDialog createSelectImportedObjectDialog(
-			DBObjectSet dbObjectSet) {
-		ERDiagram diagram = this.getDiagram();
+    protected AbstractSelectImportedObjectDialog createSelectImportedObjectDialog(final DBObjectSet dbObjectSet) {
+        final ERDiagram diagram = getDiagram();
 
-		return new SelectImportedObjectFromDBDialog(PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getShell(), diagram, dbObjectSet,
-				this.getEditorPart());
-	}
+        return new SelectImportedObjectFromDBDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram, dbObjectSet, getEditorPart());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) throws Exception {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) throws Exception {
+        final ERDiagram diagram = getDiagram();
 
-		int step = 0;
+        int step = 0;
 
-		ImportDBSettingDialog settingDialog = null;
-		SelectImportedSchemaDialog selectDialog = null;
-		PreImportFromDBManager preTableImportManager = null;
-		AbstractSelectImportedObjectDialog importDialog = null;
+        ImportDBSettingDialog settingDialog = null;
+        SelectImportedSchemaDialog selectDialog = null;
+        PreImportFromDBManager preTableImportManager = null;
+        AbstractSelectImportedObjectDialog importDialog = null;
 
-		DBManager manager = null;
-		Connection con = null;
-		List<String> selectedSchemaList = new ArrayList<String>();
-		int dialogResult = -1;
+        DBManager manager = null;
+        Connection con = null;
+        List<String> selectedSchemaList = new ArrayList<String>();
+        int dialogResult = -1;
 
-		try {
-			while (true) {
-				if (step == 0) {
-					settingDialog = new ImportDBSettingDialog(PlatformUI
-							.getWorkbench().getActiveWorkbenchWindow()
-							.getShell(), diagram);
-					dialogResult = settingDialog.open();
+        try {
+            while (true) {
+                if (step == 0) {
+                    settingDialog = new ImportDBSettingDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram);
+                    dialogResult = settingDialog.open();
 
-				} else if (step == 1) {
-					if (dialogResult == IDialogConstants.OK_ID) {
-						this.dbSetting = settingDialog.getDbSetting();
-						manager = DBManagerFactory.getDBManager(this.dbSetting
-								.getDbsystem());
-						if (con != null) {
-							con.close();
-							con = null;
-						}
-						con = dbSetting.connect();
-					}
+                } else if (step == 1) {
+                    if (dialogResult == IDialogConstants.OK_ID) {
+                        dbSetting = settingDialog.getDbSetting();
+                        manager = DBManagerFactory.getDBManager(dbSetting.getDbsystem());
+                        if (con != null) {
+                            con.close();
+                            con = null;
+                        }
+                        con = dbSetting.connect();
+                    }
 
-				} else if (step == 2) {
-					List<String> schemaList = manager.getImportSchemaList(con);
+                } else if (step == 2) {
+                    final List<String> schemaList = manager.getImportSchemaList(con);
 
-					if (!schemaList.isEmpty()) {
-						selectDialog = new SelectImportedSchemaDialog(
-								PlatformUI.getWorkbench()
-										.getActiveWorkbenchWindow().getShell(),
-								diagram, this.dbSetting.getDbsystem(),
-								schemaList, selectedSchemaList);
+                    if (!schemaList.isEmpty()) {
+                        selectDialog = new SelectImportedSchemaDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram, dbSetting.getDbsystem(), schemaList, selectedSchemaList);
 
-						dialogResult = selectDialog.open();
+                        dialogResult = selectDialog.open();
 
-						selectedSchemaList = selectDialog.getSelectedSchemas();
+                        selectedSchemaList = selectDialog.getSelectedSchemas();
 
-					} else {
-						selectedSchemaList.clear();
-					}
+                    } else {
+                        selectedSchemaList.clear();
+                    }
 
-				} else if (step == 3) {
-					if (dialogResult == IDialogConstants.OK_ID) {
-						ProgressMonitorDialog dialog = new ProgressMonitorDialog(
-								PlatformUI.getWorkbench()
-										.getActiveWorkbenchWindow().getShell());
+                } else if (step == 3) {
+                    if (dialogResult == IDialogConstants.OK_ID) {
+                        final ProgressMonitorDialog dialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 
-						preTableImportManager = manager
-								.getPreTableImportManager();
-						preTableImportManager.init(con, this.dbSetting,
-								diagram, selectedSchemaList);
+                        preTableImportManager = manager.getPreTableImportManager();
+                        preTableImportManager.init(con, dbSetting, diagram, selectedSchemaList);
 
-						try {
-							dialog.run(true, true, preTableImportManager);
+                        try {
+                            dialog.run(true, true, preTableImportManager);
 
-							Exception e = preTableImportManager.getException();
-							if (e != null) {
-								ERDiagramActivator.showMessageDialog(e.getMessage());
-								throw new InputException("error.jdbc.version");
+                            final Exception e = preTableImportManager.getException();
+                            if (e != null) {
+                                ERDiagramActivator.showMessageDialog(e.getMessage());
+                                throw new InputException("error.jdbc.version");
 
-							}
+                            }
 
-							dialogResult = IDialogConstants.OK_ID;
+                            dialogResult = IDialogConstants.OK_ID;
 
-						} catch (InterruptedException e1) {
-							dialogResult = IDialogConstants.BACK_ID;
-						}
-					}
+                        } catch (final InterruptedException e1) {
+                            dialogResult = IDialogConstants.BACK_ID;
+                        }
+                    }
 
-				} else if (step == 4) {
-					DBObjectSet dbObjectSet = preTableImportManager
-							.getImportObjects();
+                } else if (step == 4) {
+                    final DBObjectSet dbObjectSet = preTableImportManager.getImportObjects();
 
-					importDialog = this
-							.createSelectImportedObjectDialog(dbObjectSet);
+                    importDialog = createSelectImportedObjectDialog(dbObjectSet);
 
-					dialogResult = importDialog.open();
+                    dialogResult = importDialog.open();
 
-				} else if (step == 5) {
-					ProgressMonitorDialog dialog = new ProgressMonitorDialog(
-							PlatformUI.getWorkbench()
-									.getActiveWorkbenchWindow().getShell());
-					ImportFromDBManagerEclipseBase tableImportManager = (ImportFromDBManagerEclipseBase) manager
-							.getTableImportManager();
-					tableImportManager.init(con, this.dbSetting, diagram,
-							importDialog.getSelectedDbObjects(),
-							importDialog.isUseCommentAsLogicalName(),
-							importDialog.isMergeWord());
+                } else if (step == 5) {
+                    final ProgressMonitorDialog dialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+                    final ImportFromDBManagerEclipseBase tableImportManager = (ImportFromDBManagerEclipseBase) manager.getTableImportManager();
+                    tableImportManager.init(con, dbSetting, diagram, importDialog.getSelectedDbObjects(), importDialog.isUseCommentAsLogicalName(), importDialog.isMergeWord());
 
-					try {
-						dialog.run(true, true, tableImportManager);
+                    try {
+                        dialog.run(true, true, tableImportManager);
 
-						Exception e1 = tableImportManager.getException();
-						if (e1 != null) {
-							throw e1;
+                        final Exception e1 = tableImportManager.getException();
+                        if (e1 != null) {
+                            throw e1;
 
-						} else {
-							this.importedNodeElements = new ArrayList<NodeElement>();
+                        } else {
+                            importedNodeElements = new ArrayList<NodeElement>();
 
-							this.importedNodeElements.addAll(tableImportManager
-									.getImportedTables());
-							this.importedNodeElements.addAll(tableImportManager
-									.getImportedViews());
-							this.importedSequences = tableImportManager
-									.getImportedSequences();
-							this.importedTriggers = tableImportManager
-									.getImportedTriggers();
-							this.importedTablespaces = tableImportManager
-									.getImportedTablespaces();
+                            importedNodeElements.addAll(tableImportManager.getImportedTables());
+                            importedNodeElements.addAll(tableImportManager.getImportedViews());
+                            importedSequences = tableImportManager.getImportedSequences();
+                            importedTriggers = tableImportManager.getImportedTriggers();
+                            importedTablespaces = tableImportManager.getImportedTablespaces();
 
-							this.showData();
-							break;
-						}
+                            showData();
+                            break;
+                        }
 
-					} catch (InterruptedException e1) {
-						dialogResult = IDialogConstants.BACK_ID;
-					}
+                    } catch (final InterruptedException e1) {
+                        dialogResult = IDialogConstants.BACK_ID;
+                    }
 
-				} else {
-					break;
-				}
+                } else {
+                    break;
+                }
 
-				if (dialogResult == IDialogConstants.OK_ID) {
-					step++;
+                if (dialogResult == IDialogConstants.OK_ID) {
+                    step++;
 
-				} else if (dialogResult == IDialogConstants.BACK_ID) {
-					step--;
+                } else if (dialogResult == IDialogConstants.BACK_ID) {
+                    step--;
 
-				} else {
-					break;
-				}
-			}
+                } else {
+                    break;
+                }
+            }
 
-		} finally {
-			if (con != null) {
-				con.close();
-			}
-		}
+        } finally {
+            if (con != null) {
+                con.close();
+            }
+        }
 
-	}
+    }
 }

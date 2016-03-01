@@ -6,46 +6,43 @@ import org.insightech.er.editor.model.diagram_contents.element.node.image.Insert
 
 public class ChangeInsertedImagePropertyCommand extends AbstractCommand {
 
-	protected InsertedImage insertedImage;
+    protected InsertedImage insertedImage;
 
-	protected InsertedImage oldInsertedImage;
+    protected InsertedImage oldInsertedImage;
 
-	protected InsertedImage newInsertedImage;
+    protected InsertedImage newInsertedImage;
 
-	public ChangeInsertedImagePropertyCommand(ERDiagram diagram,
-			InsertedImage insertedImage, InsertedImage newInsertedImage, InsertedImage oldInsertedImage) {
-		this.insertedImage = insertedImage;
-		this.oldInsertedImage = oldInsertedImage;
-		this.newInsertedImage = newInsertedImage;
-	}
+    public ChangeInsertedImagePropertyCommand(final ERDiagram diagram, final InsertedImage insertedImage, final InsertedImage newInsertedImage, final InsertedImage oldInsertedImage) {
+        this.insertedImage = insertedImage;
+        this.oldInsertedImage = oldInsertedImage;
+        this.newInsertedImage = newInsertedImage;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.insertedImage.setHue(this.newInsertedImage.getHue());
-		this.insertedImage.setSaturation(this.newInsertedImage.getSaturation());
-		this.insertedImage.setBrightness(this.newInsertedImage.getBrightness());
-		this.insertedImage.setFixAspectRatio(this.newInsertedImage
-				.isFixAspectRatio());
-		this.insertedImage.setAlpha(this.newInsertedImage.getAlpha());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        insertedImage.setHue(newInsertedImage.getHue());
+        insertedImage.setSaturation(newInsertedImage.getSaturation());
+        insertedImage.setBrightness(newInsertedImage.getBrightness());
+        insertedImage.setFixAspectRatio(newInsertedImage.isFixAspectRatio());
+        insertedImage.setAlpha(newInsertedImage.getAlpha());
 
-		this.insertedImage.refresh();
-	}
+        insertedImage.refresh();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.insertedImage.setHue(this.oldInsertedImage.getHue());
-		this.insertedImage.setSaturation(this.oldInsertedImage.getSaturation());
-		this.insertedImage.setBrightness(this.oldInsertedImage.getBrightness());
-		this.insertedImage.setFixAspectRatio(this.oldInsertedImage
-				.isFixAspectRatio());
-		this.insertedImage.setAlpha(this.oldInsertedImage.getAlpha());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        insertedImage.setHue(oldInsertedImage.getHue());
+        insertedImage.setSaturation(oldInsertedImage.getSaturation());
+        insertedImage.setBrightness(oldInsertedImage.getBrightness());
+        insertedImage.setFixAspectRatio(oldInsertedImage.isFixAspectRatio());
+        insertedImage.setAlpha(oldInsertedImage.getAlpha());
 
-		this.insertedImage.refreshVisuals();
-	}
+        insertedImage.refreshVisuals();
+    }
 }

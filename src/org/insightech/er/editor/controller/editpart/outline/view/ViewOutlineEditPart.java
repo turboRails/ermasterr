@@ -19,105 +19,99 @@ import org.insightech.er.editor.model.diagram_contents.element.node.view.View;
 import org.insightech.er.editor.model.settings.Settings;
 import org.insightech.er.editor.view.dialog.element.view.ViewDialog;
 
-public class ViewOutlineEditPart extends AbstractOutlineEditPart implements
-		DeleteableEditPart {
+public class ViewOutlineEditPart extends AbstractOutlineEditPart implements DeleteableEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		View model = (View) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        final View model = (View) getModel();
 
-		ERDiagram diagram = (ERDiagram) this.getRoot().getContents().getModel();
+        final ERDiagram diagram = (ERDiagram) getRoot().getContents().getModel();
 
-		String name = null;
+        String name = null;
 
-		int viewMode = diagram.getDiagramContents().getSettings()
-				.getOutlineViewMode();
+        final int viewMode = diagram.getDiagramContents().getSettings().getOutlineViewMode();
 
-		if (viewMode == Settings.VIEW_MODE_PHYSICAL) {
-			if (model.getPhysicalName() != null) {
-				name = model.getPhysicalName();
+        if (viewMode == Settings.VIEW_MODE_PHYSICAL) {
+            if (model.getPhysicalName() != null) {
+                name = model.getPhysicalName();
 
-			} else {
-				name = "";
-			}
+            } else {
+                name = "";
+            }
 
-		} else if (viewMode == Settings.VIEW_MODE_LOGICAL) {
-			if (model.getLogicalName() != null) {
-				name = model.getLogicalName();
+        } else if (viewMode == Settings.VIEW_MODE_LOGICAL) {
+            if (model.getLogicalName() != null) {
+                name = model.getLogicalName();
 
-			} else {
-				name = "";
-			}
+            } else {
+                name = "";
+            }
 
-		} else {
-			if (model.getLogicalName() != null) {
-				name = model.getLogicalName();
+        } else {
+            if (model.getLogicalName() != null) {
+                name = model.getLogicalName();
 
-			} else {
-				name = "";
-			}
+            } else {
+                name = "";
+            }
 
-			name += "/";
+            name += "/";
 
-			if (model.getPhysicalName() != null) {
-				name += model.getPhysicalName();
+            if (model.getPhysicalName() != null) {
+                name += model.getPhysicalName();
 
-			}
-		}
+            }
+        }
 
-		this.setWidgetText(diagram.filter(name));
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.VIEW));
-	}
+        setWidgetText(diagram.filter(name));
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.VIEW));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		View view = (View) this.getModel();
-		ERDiagram diagram = (ERDiagram) this.getRoot().getContents().getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        final View view = (View) getModel();
+        final ERDiagram diagram = (ERDiagram) getRoot().getContents().getModel();
 
-		if (request.getType().equals(RequestConstants.REQ_OPEN)) {
-			View copyView = view.copyData();
+        if (request.getType().equals(RequestConstants.REQ_OPEN)) {
+            final View copyView = view.copyData();
 
-			ViewDialog dialog = new ViewDialog(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), this.getViewer(),
-					copyView);
+            final ViewDialog dialog = new ViewDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), getViewer(), copyView);
 
-			if (dialog.open() == IDialogConstants.OK_ID) {
-				CompoundCommand command = ViewEditPart
-						.createChangeViewPropertyCommand(diagram, view,
-								copyView);
+            if (dialog.open() == IDialogConstants.OK_ID) {
+                final CompoundCommand command = ViewEditPart.createChangeViewPropertyCommand(diagram, view, copyView);
 
-				this.execute(command.unwrap());
-			}
-		}
+                execute(command.unwrap());
+            }
+        }
 
-		super.performRequest(request);
-	}
+        super.performRequest(request);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new NodeElementComponentEditPolicy());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new NodeElementComponentEditPolicy());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DragTracker getDragTracker(Request req) {
-		return new SelectEditPartTracker(this);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DragTracker getDragTracker(final Request req) {
+        return new SelectEditPartTracker(this);
+    }
 
-	public boolean isDeleteable() {
-		return true;
-	}
+    @Override
+    public boolean isDeleteable() {
+        return true;
+    }
 
 }

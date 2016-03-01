@@ -10,66 +10,63 @@ import org.insightech.er.editor.model.dbexport.html.part_generator.ImagePartGene
 import org.insightech.er.editor.model.diagram_contents.element.node.category.Category;
 import org.insightech.er.editor.model.diagram_contents.element.node.table.TableView;
 
-public class CategoryHtmlReportPageGenerator extends
-		AbstractHtmlReportPageGenerator {
+public class CategoryHtmlReportPageGenerator extends AbstractHtmlReportPageGenerator {
 
-	public CategoryHtmlReportPageGenerator(Map<Object, Integer> idMap) {
-		super(idMap);
-	}
+    public CategoryHtmlReportPageGenerator(final Map<Object, Integer> idMap) {
+        super(idMap);
+    }
 
-	public String getType() {
-		return "category";
-	}
+    @Override
+    public String getType() {
+        return "category";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Object> getObjectList(ERDiagram diagram) {
-		List list = diagram.getDiagramContents().getSettings()
-				.getCategorySetting().getSelectedCategories();
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Object> getObjectList(final ERDiagram diagram) {
+        final List list = diagram.getDiagramContents().getSettings().getCategorySetting().getSelectedCategories();
 
-		return list;
-	}
+        return list;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String[] getContentArgs(ERDiagram diagram, Object object)
-			throws IOException {
-		Category category = (Category) object;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String[] getContentArgs(final ERDiagram diagram, final Object object) throws IOException {
+        final Category category = (Category) object;
 
-		List<TableView> usedTableList = category.getTableViewContents();
+        final List<TableView> usedTableList = category.getTableViewContents();
 
-		String usedTableTable = this.generateUsedTableTable(usedTableList);
+        final String usedTableTable = generateUsedTableTable(usedTableList);
 
-		String imagePart = "";
+        String imagePart = "";
 
-		if (this.imageInfoSet != null) {
-			ImagePartGenerator imagePartGenerator = new ImagePartGenerator(
-					this.idMap);
+        if (imageInfoSet != null) {
+            final ImagePartGenerator imagePartGenerator = new ImagePartGenerator(idMap);
 
-			imagePart = imagePartGenerator.generateImage(
-					this.imageInfoSet.getImageInfo(category), "../");
-		}
+            imagePart = imagePartGenerator.generateImage(imageInfoSet.getImageInfo(category), "../");
+        }
 
-		return new String[] { imagePart, usedTableTable };
-	}
+        return new String[] {imagePart, usedTableTable};
+    }
 
-	public String getObjectName(Object object) {
-		Category category = (Category) object;
+    @Override
+    public String getObjectName(final Object object) {
+        final Category category = (Category) object;
 
-		return category.getName();
-	}
+        return category.getName();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getObjectSummary(Object object) {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getObjectSummary(final Object object) {
+        return null;
+    }
 
 }

@@ -21,82 +21,78 @@ import org.insightech.er.util.Format;
 
 public class RelationOutlineEditPart extends AbstractOutlineEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		Relation model = (Relation) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        final Relation model = (Relation) getModel();
 
-		ERDiagram diagram = (ERDiagram) this.getRoot().getContents().getModel();
+        final ERDiagram diagram = (ERDiagram) getRoot().getContents().getModel();
 
-		int viewMode = diagram.getDiagramContents().getSettings()
-				.getOutlineViewMode();
+        final int viewMode = diagram.getDiagramContents().getSettings().getOutlineViewMode();
 
-		boolean first = true;
-		StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        final StringBuilder sb = new StringBuilder();
 
-		for (NormalColumn foreignKeyColumn : model.getForeignKeyColumns()) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
+        for (final NormalColumn foreignKeyColumn : model.getForeignKeyColumns()) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(", ");
+            }
 
-			if (viewMode == Settings.VIEW_MODE_PHYSICAL) {
-				sb.append(Format.null2blank(foreignKeyColumn.getPhysicalName()));
+            if (viewMode == Settings.VIEW_MODE_PHYSICAL) {
+                sb.append(Format.null2blank(foreignKeyColumn.getPhysicalName()));
 
-			} else if (viewMode == Settings.VIEW_MODE_LOGICAL) {
-				sb.append(Format.null2blank(foreignKeyColumn.getLogicalName()));
+            } else if (viewMode == Settings.VIEW_MODE_LOGICAL) {
+                sb.append(Format.null2blank(foreignKeyColumn.getLogicalName()));
 
-			} else {
-				sb.append(Format.null2blank(foreignKeyColumn.getLogicalName()));
-				sb.append("/");
-				sb.append(Format.null2blank(foreignKeyColumn.getPhysicalName()));
-			}
-		}
+            } else {
+                sb.append(Format.null2blank(foreignKeyColumn.getLogicalName()));
+                sb.append("/");
+                sb.append(Format.null2blank(foreignKeyColumn.getPhysicalName()));
+            }
+        }
 
-		this.setWidgetText(sb.toString());
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.FOREIGN_KEY));
-	}
+        setWidgetText(sb.toString());
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.FOREIGN_KEY));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.CONNECTION_ROLE,
-				new RelationEditPolicy());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.CONNECTION_ROLE, new RelationEditPolicy());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		Relation relation = (Relation) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        final Relation relation = (Relation) getModel();
 
-		if (request.getType().equals(RequestConstants.REQ_OPEN)) {
-			Relation copy = relation.copy();
+        if (request.getType().equals(RequestConstants.REQ_OPEN)) {
+            final Relation copy = relation.copy();
 
-			RelationDialog dialog = new RelationDialog(PlatformUI
-					.getWorkbench().getActiveWorkbenchWindow().getShell(), copy);
+            final RelationDialog dialog = new RelationDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), copy);
 
-			if (dialog.open() == IDialogConstants.OK_ID) {
-				ChangeRelationPropertyCommand command = new ChangeRelationPropertyCommand(
-						relation, copy);
-				this.execute(command);
-			}
-		}
+            if (dialog.open() == IDialogConstants.OK_ID) {
+                final ChangeRelationPropertyCommand command = new ChangeRelationPropertyCommand(relation, copy);
+                execute(command);
+            }
+        }
 
-		super.performRequest(request);
-	}
+        super.performRequest(request);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DragTracker getDragTracker(Request req) {
-		return new SelectEditPartTracker(this);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DragTracker getDragTracker(final Request req) {
+        return new SelectEditPartTracker(this);
+    }
 }

@@ -10,24 +10,24 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.ERTabl
 
 public class ERDiagramPropertySourceProvider implements IPropertySourceProvider {
 
-	private ERDiagramMultiPageEditor editor;
+    private final ERDiagramMultiPageEditor editor;
 
-	public ERDiagramPropertySourceProvider(ERDiagramMultiPageEditor editor) {
-		this.editor = editor;
-	}
+    public ERDiagramPropertySourceProvider(final ERDiagramMultiPageEditor editor) {
+        this.editor = editor;
+    }
 
-	public IPropertySource getPropertySource(Object object) {
-		if (object instanceof ERDiagramEditPart) {
-			ERDiagram diagram = (ERDiagram) ((ERDiagramEditPart) object)
-					.getModel();
-			return new ERDiagramPropertySource(this.editor, diagram);
+    @Override
+    public IPropertySource getPropertySource(final Object object) {
+        if (object instanceof ERDiagramEditPart) {
+            final ERDiagram diagram = (ERDiagram) ((ERDiagramEditPart) object).getModel();
+            return new ERDiagramPropertySource(editor, diagram);
 
-		} else if (object instanceof ERTableEditPart) {
-			ERTable table = (ERTable) ((ERTableEditPart) object).getModel();
-			return new ERTablePropertySource(this.editor, table);
+        } else if (object instanceof ERTableEditPart) {
+            final ERTable table = (ERTable) ((ERTableEditPart) object).getModel();
+            return new ERTablePropertySource(editor, table);
 
-		}
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

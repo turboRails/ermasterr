@@ -10,24 +10,22 @@ import org.insightech.er.editor.view.action.AbstractBaseAction;
 
 public class ChangeFreeLayoutAction extends AbstractBaseAction {
 
-	public static final String ID = ChangeFreeLayoutAction.class.getName();
+    public static final String ID = ChangeFreeLayoutAction.class.getName();
 
-	public ChangeFreeLayoutAction(ERDiagramEditor editor) {
-		super(ID, null, IAction.AS_CHECK_BOX, editor);
-		this.setText(ResourceString
-				.getResourceString("action.title.category.free.layout"));
-	}
+    public ChangeFreeLayoutAction(final ERDiagramEditor editor) {
+        super(ID, null, IAction.AS_CHECK_BOX, editor);
+        setText(ResourceString.getResourceString("action.title.category.free.layout"));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        final ERDiagram diagram = getDiagram();
 
-		ChangeFreeLayoutCommand command = new ChangeFreeLayoutCommand(diagram,
-				this.isChecked());
+        final ChangeFreeLayoutCommand command = new ChangeFreeLayoutCommand(diagram, isChecked());
 
-		this.execute(command);
-	}
+        this.execute(command);
+    }
 }

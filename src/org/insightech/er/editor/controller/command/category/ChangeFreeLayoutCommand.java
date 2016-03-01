@@ -6,36 +6,35 @@ import org.insightech.er.editor.model.settings.CategorySetting;
 
 public class ChangeFreeLayoutCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private boolean oldFreeLayout;
+    private final boolean oldFreeLayout;
 
-	private boolean newFreeLayout;
+    private final boolean newFreeLayout;
 
-	private CategorySetting categorySettings;
+    private final CategorySetting categorySettings;
 
-	public ChangeFreeLayoutCommand(ERDiagram diagram, boolean isFreeLayout) {
-		this.diagram = diagram;
-		this.categorySettings = this.diagram.getDiagramContents().getSettings()
-				.getCategorySetting();
+    public ChangeFreeLayoutCommand(final ERDiagram diagram, final boolean isFreeLayout) {
+        this.diagram = diagram;
+        categorySettings = this.diagram.getDiagramContents().getSettings().getCategorySetting();
 
-		this.newFreeLayout = isFreeLayout;
-		this.oldFreeLayout = this.categorySettings.isFreeLayout();
-	}
+        newFreeLayout = isFreeLayout;
+        oldFreeLayout = categorySettings.isFreeLayout();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.categorySettings.setFreeLayout(this.newFreeLayout);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        categorySettings.setFreeLayout(newFreeLayout);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.categorySettings.setFreeLayout(this.oldFreeLayout);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        categorySettings.setFreeLayout(oldFreeLayout);
+    }
 }

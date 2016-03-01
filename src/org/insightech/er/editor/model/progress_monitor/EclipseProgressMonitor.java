@@ -4,54 +4,61 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class EclipseProgressMonitor implements ProgressMonitor {
 
-	private IProgressMonitor progressMonitor;
+    private final IProgressMonitor progressMonitor;
 
-	private int totalCount;
+    private int totalCount;
 
-	private int currentCount;
+    private int currentCount;
 
-	public EclipseProgressMonitor(IProgressMonitor progressMonitor) {
-		this.progressMonitor = progressMonitor;
-	}
+    public EclipseProgressMonitor(final IProgressMonitor progressMonitor) {
+        this.progressMonitor = progressMonitor;
+    }
 
-	public void beginTask(String message, int totalCount) {
-		this.totalCount = totalCount;
-		this.progressMonitor.beginTask(message, totalCount);
-	}
+    @Override
+    public void beginTask(final String message, final int totalCount) {
+        this.totalCount = totalCount;
+        progressMonitor.beginTask(message, totalCount);
+    }
 
-	public void worked(int count) throws InterruptedException {
-		this.currentCount += count;
+    @Override
+    public void worked(final int count) throws InterruptedException {
+        currentCount += count;
 
-		this.progressMonitor.worked(count);
+        progressMonitor.worked(count);
 
-		if (this.isCanceled()) {
-			throw new InterruptedException("Cancel has been requested.");
-		}
-	}
+        if (isCanceled()) {
+            throw new InterruptedException("Cancel has been requested.");
+        }
+    }
 
-	public boolean isCanceled() {
-		return this.progressMonitor.isCanceled();
-	}
+    @Override
+    public boolean isCanceled() {
+        return progressMonitor.isCanceled();
+    }
 
-	public void done() {
-		this.progressMonitor.done();
-	}
+    @Override
+    public void done() {
+        progressMonitor.done();
+    }
 
-	public void subTask(String message) {
-		this.progressMonitor.subTask(message);
-	}
+    @Override
+    public void subTask(final String message) {
+        progressMonitor.subTask(message);
+    }
 
-	public void subTaskWithCounter(String message) {
-		this.subTask("(" + this.getCurrentCount() + "/" + this.getTotalCount()
-				+ ") " + message);
-	}
+    @Override
+    public void subTaskWithCounter(final String message) {
+        subTask("(" + getCurrentCount() + "/" + getTotalCount() + ") " + message);
+    }
 
-	public int getTotalCount() {
-		return this.totalCount;
-	}
+    @Override
+    public int getTotalCount() {
+        return totalCount;
+    }
 
-	public int getCurrentCount() {
-		return this.currentCount;
-	}
+    @Override
+    public int getCurrentCount() {
+        return currentCount;
+    }
 
 }

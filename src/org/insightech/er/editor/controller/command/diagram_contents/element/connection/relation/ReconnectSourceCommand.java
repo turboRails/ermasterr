@@ -5,42 +5,42 @@ import org.insightech.er.editor.model.diagram_contents.element.connection.Connec
 
 public class ReconnectSourceCommand extends AbstractCommand {
 
-	private ConnectionElement connection;
+    private final ConnectionElement connection;
 
-	int xp;
+    int xp;
 
-	int yp;
+    int yp;
 
-	int oldXp;
+    int oldXp;
 
-	int oldYp;
+    int oldYp;
 
-	public ReconnectSourceCommand(ConnectionElement connection, int xp, int yp) {
-		this.connection = connection;
+    public ReconnectSourceCommand(final ConnectionElement connection, final int xp, final int yp) {
+        this.connection = connection;
 
-		this.xp = xp;
-		this.yp = yp;
-	}
+        this.xp = xp;
+        this.yp = yp;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.oldXp = this.connection.getSourceXp();
-		this.oldYp = this.connection.getSourceYp();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        oldXp = connection.getSourceXp();
+        oldYp = connection.getSourceYp();
 
-		this.connection.setSourceLocationp(this.xp, this.yp);
-		this.connection.refreshVisuals();
-	}
+        connection.setSourceLocationp(xp, yp);
+        connection.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.connection.setSourceLocationp(this.oldXp, this.oldYp);
-		this.connection.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        connection.setSourceLocationp(oldXp, oldYp);
+        connection.refreshVisuals();
+    }
 
 }

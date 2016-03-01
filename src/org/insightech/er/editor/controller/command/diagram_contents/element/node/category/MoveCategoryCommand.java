@@ -18,209 +18,185 @@ import org.insightech.er.editor.model.diagram_contents.element.node.model_proper
 
 public class MoveCategoryCommand extends MoveElementCommand {
 
-	private boolean move;
+    private final boolean move;
 
-	private List<NodeElement> nodeElementList;
+    private final List<NodeElement> nodeElementList;
 
-	private Map<NodeElement, Rectangle> nodeElementOldLocationMap;
+    private Map<NodeElement, Rectangle> nodeElementOldLocationMap;
 
-	private Category category;
+    private final Category category;
 
-	private int diffX;
+    private int diffX;
 
-	private int diffY;
+    private int diffY;
 
-	private Map<ConnectionElement, List<Bendpoint>> bendpointListMap;
+    private Map<ConnectionElement, List<Bendpoint>> bendpointListMap;
 
-	private List<NodeElement> newlyAddedNodeElementList;
+    private final List<NodeElement> newlyAddedNodeElementList;
 
-	public MoveCategoryCommand(ERDiagram diagram, int x, int y, int width,
-			int height, Category category, List<Category> otherCategories,
-			boolean move) {
-		super(diagram, null, x, y, width, height, category);
+    public MoveCategoryCommand(final ERDiagram diagram, int x, int y, int width, int height, final Category category, final List<Category> otherCategories, final boolean move) {
+        super(diagram, null, x, y, width, height, category);
 
-		this.nodeElementList = new ArrayList<NodeElement>(
-				category.getContents());
-		this.category = category;
-		this.move = move;
-		this.newlyAddedNodeElementList = new ArrayList<NodeElement>();
+        nodeElementList = new ArrayList<NodeElement>(category.getContents());
+        this.category = category;
+        this.move = move;
+        newlyAddedNodeElementList = new ArrayList<NodeElement>();
 
-		if (!this.move) {
-			for (NodeElement nodeElement : this.nodeElementList) {
-				int nodeElementX = nodeElement.getX();
-				int nodeElementY = nodeElement.getY();
-				int nodeElementWidth = nodeElement.getWidth();
-				int nodeElementHeight = nodeElement.getHeight();
+        if (!this.move) {
+            for (final NodeElement nodeElement : nodeElementList) {
+                final int nodeElementX = nodeElement.getX();
+                final int nodeElementY = nodeElement.getY();
+                int nodeElementWidth = nodeElement.getWidth();
+                int nodeElementHeight = nodeElement.getHeight();
 
-				if (x > nodeElementX) {
-					nodeElementWidth += x - nodeElementX;
-					x = nodeElementX;
-				}
-				if (y > nodeElementY) {
-					nodeElementHeight += y - nodeElementY;
-					y = nodeElementY;
-				}
+                if (x > nodeElementX) {
+                    nodeElementWidth += x - nodeElementX;
+                    x = nodeElementX;
+                }
+                if (y > nodeElementY) {
+                    nodeElementHeight += y - nodeElementY;
+                    y = nodeElementY;
+                }
 
-				if (nodeElementX - x + nodeElementWidth > width) {
-					width = nodeElementX - x + nodeElementWidth;
-				}
+                if (nodeElementX - x + nodeElementWidth > width) {
+                    width = nodeElementX - x + nodeElementWidth;
+                }
 
-				if (nodeElementY - y + nodeElementHeight > height) {
-					height = nodeElementY - y + nodeElementHeight;
-				}
+                if (nodeElementY - y + nodeElementHeight > height) {
+                    height = nodeElementY - y + nodeElementHeight;
+                }
 
-			}
+            }
 
-			this.setNewRectangle(x, y, width, height);
+            setNewRectangle(x, y, width, height);
 
-		} else {
-			this.nodeElementOldLocationMap = new HashMap<NodeElement, Rectangle>();
-			this.diffX = x - category.getX();
-			this.diffY = y - category.getY();
+        } else {
+            nodeElementOldLocationMap = new HashMap<NodeElement, Rectangle>();
+            diffX = x - category.getX();
+            diffY = y - category.getY();
 
-			for (Iterator<NodeElement> iter = this.nodeElementList.iterator(); iter
-					.hasNext();) {
-				NodeElement nodeElement = iter.next();
-				for (Category otherCategory : otherCategories) {
-					if (otherCategory.contains(nodeElement)) {
-						iter.remove();
-						break;
-					}
-				}
-			}
+            for (final Iterator<NodeElement> iter = nodeElementList.iterator(); iter.hasNext();) {
+                final NodeElement nodeElement = iter.next();
+                for (final Category otherCategory : otherCategories) {
+                    if (otherCategory.contains(nodeElement)) {
+                        iter.remove();
+                        break;
+                    }
+                }
+            }
 
-			for (NodeElement nodeElement : this.nodeElementList) {
-				this.nodeElementOldLocationMap
-						.put(nodeElement, new Rectangle(nodeElement.getX(),
-								nodeElement.getY(), nodeElement.getWidth(),
-								nodeElement.getHeight()));
-			}
-		}
-	}
+            for (final NodeElement nodeElement : nodeElementList) {
+                nodeElementOldLocationMap.put(nodeElement, new Rectangle(nodeElement.getX(), nodeElement.getY(), nodeElement.getWidth(), nodeElement.getHeight()));
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		if (this.move) {
-			this.bendpointListMap = new HashMap<ConnectionElement, List<Bendpoint>>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        if (move) {
+            bendpointListMap = new HashMap<ConnectionElement, List<Bendpoint>>();
 
-			for (NodeElement nodeElement : this.nodeElementList) {
-				nodeElement.setLocation(new Location(
-						nodeElement.getX() + diffX, nodeElement.getY() + diffY,
-						nodeElement.getWidth(), nodeElement.getHeight()));
-				this.moveBendpoints(nodeElement);
+            for (final NodeElement nodeElement : nodeElementList) {
+                nodeElement.setLocation(new Location(nodeElement.getX() + diffX, nodeElement.getY() + diffY, nodeElement.getWidth(), nodeElement.getHeight()));
+                moveBendpoints(nodeElement);
 
-				nodeElement.refreshVisuals();
-				for (ConnectionElement connectionElement : this.bendpointListMap
-						.keySet()) {
-					connectionElement.refreshBendpoint();
-				}
-			}
+                nodeElement.refreshVisuals();
+                for (final ConnectionElement connectionElement : bendpointListMap.keySet()) {
+                    connectionElement.refreshBendpoint();
+                }
+            }
 
-		} else {
-			this.addNodeToCategory();
-		}
+        } else {
+            addNodeToCategory();
+        }
 
-		super.doExecute();
-	}
+        super.doExecute();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		if (this.move) {
-			for (NodeElement nodeElement : this.nodeElementList) {
-				Rectangle rectangle = this.nodeElementOldLocationMap
-						.get(nodeElement);
-				nodeElement.setLocation(new Location(rectangle.x, rectangle.y,
-						rectangle.width, rectangle.height));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        if (move) {
+            for (final NodeElement nodeElement : nodeElementList) {
+                final Rectangle rectangle = nodeElementOldLocationMap.get(nodeElement);
+                nodeElement.setLocation(new Location(rectangle.x, rectangle.y, rectangle.width, rectangle.height));
 
-				nodeElement.refreshVisuals();
-			}
+                nodeElement.refreshVisuals();
+            }
 
-			this.restoreBendpoints();
+            restoreBendpoints();
 
-			for (ConnectionElement connectionElement : this.bendpointListMap
-					.keySet()) {
-				connectionElement.refreshBendpoint();
-			}
+            for (final ConnectionElement connectionElement : bendpointListMap.keySet()) {
+                connectionElement.refreshBendpoint();
+            }
 
-		} else {
-			for (NodeElement nodeElement : this.newlyAddedNodeElementList) {
-				this.category.getContents().remove(nodeElement);
-			}
-		}
+        } else {
+            for (final NodeElement nodeElement : newlyAddedNodeElementList) {
+                category.getContents().remove(nodeElement);
+            }
+        }
 
-		super.doUndo();
-	}
+        super.doUndo();
+    }
 
-	private void moveBendpoints(NodeElement source) {
-		for (ConnectionElement connectionElement : source.getOutgoings()) {
-			NodeElement target = connectionElement.getTarget();
+    private void moveBendpoints(final NodeElement source) {
+        for (final ConnectionElement connectionElement : source.getOutgoings()) {
+            final NodeElement target = connectionElement.getTarget();
 
-			if (this.category.contains(target)) {
-				List<Bendpoint> bendpointList = connectionElement
-						.getBendpoints();
+            if (category.contains(target)) {
+                final List<Bendpoint> bendpointList = connectionElement.getBendpoints();
 
-				List<Bendpoint> oldBendpointList = new ArrayList<Bendpoint>();
+                final List<Bendpoint> oldBendpointList = new ArrayList<Bendpoint>();
 
-				for (int index = 0; index < bendpointList.size(); index++) {
-					Bendpoint oldBendPoint = bendpointList.get(index);
+                for (int index = 0; index < bendpointList.size(); index++) {
+                    final Bendpoint oldBendPoint = bendpointList.get(index);
 
-					if (oldBendPoint.isRelative()) {
-						break;
-					}
+                    if (oldBendPoint.isRelative()) {
+                        break;
+                    }
 
-					Bendpoint newBendpoint = new Bendpoint(oldBendPoint.getX()
-							+ this.diffX, oldBendPoint.getY() + this.diffY);
-					connectionElement.replaceBendpoint(index, newBendpoint);
+                    final Bendpoint newBendpoint = new Bendpoint(oldBendPoint.getX() + diffX, oldBendPoint.getY() + diffY);
+                    connectionElement.replaceBendpoint(index, newBendpoint);
 
-					oldBendpointList.add(oldBendPoint);
-				}
+                    oldBendpointList.add(oldBendPoint);
+                }
 
-				this.bendpointListMap.put(connectionElement, oldBendpointList);
-			}
-		}
-	}
+                bendpointListMap.put(connectionElement, oldBendpointList);
+            }
+        }
+    }
 
-	private void restoreBendpoints() {
-		for (ConnectionElement connectionElement : this.bendpointListMap
-				.keySet()) {
-			List<Bendpoint> oldBendpointList = this.bendpointListMap
-					.get(connectionElement);
+    private void restoreBendpoints() {
+        for (final ConnectionElement connectionElement : bendpointListMap.keySet()) {
+            final List<Bendpoint> oldBendpointList = bendpointListMap.get(connectionElement);
 
-			for (int index = 0; index < oldBendpointList.size(); index++) {
-				connectionElement.replaceBendpoint(index,
-						oldBendpointList.get(index));
-			}
-		}
-	}
+            for (int index = 0; index < oldBendpointList.size(); index++) {
+                connectionElement.replaceBendpoint(index, oldBendpointList.get(index));
+            }
+        }
+    }
 
-	private void addNodeToCategory() {
-		for (NodeElement nodeElement : this.diagram.getDiagramContents()
-				.getContents().getNodeElementList()) {
-			if (nodeElement instanceof ModelProperties) {
-				continue;
-			}
+    private void addNodeToCategory() {
+        for (final NodeElement nodeElement : diagram.getDiagramContents().getContents().getNodeElementList()) {
+            if (nodeElement instanceof ModelProperties) {
+                continue;
+            }
 
-			if (this.nodeElementList.contains(nodeElement)) {
-				continue;
-			}
+            if (nodeElementList.contains(nodeElement)) {
+                continue;
+            }
 
-			Location actualLocation = nodeElement.getActualLocation();
+            final Location actualLocation = nodeElement.getActualLocation();
 
-			if (actualLocation.x >= this.x
-					&& actualLocation.y >= this.y
-					&& actualLocation.x + actualLocation.width <= this.x
-							+ this.width
-					&& actualLocation.y + actualLocation.height <= this.y
-							+ this.height) {
-				this.category.getContents().add(nodeElement);
-				this.newlyAddedNodeElementList.add(nodeElement);
-			}
-		}
-	}
+            if (actualLocation.x >= x && actualLocation.y >= y && actualLocation.x + actualLocation.width <= x + width && actualLocation.y + actualLocation.height <= y + height) {
+                category.getContents().add(nodeElement);
+                newlyAddedNodeElementList.add(nodeElement);
+            }
+        }
+    }
 }

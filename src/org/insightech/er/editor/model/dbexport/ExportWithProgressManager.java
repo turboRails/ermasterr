@@ -7,10 +7,10 @@ import org.insightech.er.editor.model.progress_monitor.ProgressMonitor;
 
 public interface ExportWithProgressManager {
 
-	public void init(ERDiagram diagram, File projectDir) throws Exception;
+    public void init(ERDiagram diagram, File projectDir) throws Exception;
 
-	public void run(ProgressMonitor progressMonitor) throws Exception;
+    public void run(ProgressMonitor progressMonitor) throws Exception;
 
-	public File getOutputFileOrDir();
+    public File getOutputFileOrDir();
 
 }

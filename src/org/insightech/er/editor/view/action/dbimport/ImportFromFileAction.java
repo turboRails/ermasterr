@@ -53,323 +53,289 @@ import org.insightech.er.editor.view.dialog.dbimport.SelectImportedObjectFromFil
 
 public class ImportFromFileAction extends AbstractImportAction {
 
-	public static final String ID = ImportFromFileAction.class.getName();
+    public static final String ID = ImportFromFileAction.class.getName();
 
-	private ERDiagram loadedDiagram;
+    private ERDiagram loadedDiagram;
 
-	public ImportFromFileAction(ERDiagramEditor editor) {
-		super(ID, ResourceString.getResourceString("action.title.import.file"),
-				editor);
-		this.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.TABLE));
-	}
-
-	protected DBObjectSet preImport() throws Exception {
-		String fileName = this.getLoadFilePath(this.getEditorPart());
-		if (fileName == null) {
-			return null;
-		}
-
-		Persistent persistent = Persistent.getInstance();
-
-		Path path = new Path(fileName);
-
-		InputStream in = null;
-
-		try {
-			IFile file = ResourcesPlugin.getWorkspace().getRoot()
-					.getFileForLocation(path);
-
-			if (file == null || !file.exists()) {
-				File realFile = path.toFile();
-				if (realFile == null || !realFile.exists()) {
-					ERDiagramActivator.showErrorDialog("error.import.file");
-					return null;
-				}
-
-				in = new FileInputStream(realFile);
-
-			} else {
-				if (!file.isSynchronized(IResource.DEPTH_ONE)) {
-					file.refreshLocal(IResource.DEPTH_ONE,
-							new NullProgressMonitor());
-				}
-
-				in = file.getContents();
-			}
-
-			this.loadedDiagram = persistent.load(in);
-
-		} finally {
-			in.close();
-		}
-
-		return this.getAllObjects(loadedDiagram);
-	}
-
-	protected AbstractSelectImportedObjectDialog createSelectImportedObjectDialog(
-			DBObjectSet dbObjectSet) {
-		ERDiagram diagram = this.getDiagram();
-
-		return new SelectImportedObjectFromFileDialog(PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getShell(), diagram, dbObjectSet);
-	}
-
-	protected String getLoadFilePath(IEditorPart editorPart) {
-
-		FileDialog fileDialog = new FileDialog(editorPart.getEditorSite()
-				.getShell(), SWT.OPEN);
-
-		fileDialog.setFilterPath(this.getBasePath());
-
-		String[] filterExtensions = this.getFilterExtensions();
-		fileDialog.setFilterExtensions(filterExtensions);
-
-		return fileDialog.open();
-	}
-
-	protected String[] getFilterExtensions() {
-		return new String[] { "*.erm" };
-	}
-
-	private DBObjectSet getAllObjects(ERDiagram loadedDiagram) {
-		DBObjectSet dbObjects = new DBObjectSet();
-
-		for (ERTable table : loadedDiagram.getDiagramContents().getContents()
-				.getTableSet()) {
-			DBObject dbObject = new DBObject(table.getTableViewProperties()
-					.getSchema(), table.getName(), DBObject.TYPE_TABLE);
-			dbObject.setModel(table);
-			dbObjects.add(dbObject);
-		}
+    public ImportFromFileAction(final ERDiagramEditor editor) {
+        super(ID, ResourceString.getResourceString("action.title.import.file"), editor);
+        setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.TABLE));
+    }
 
-		for (View view : loadedDiagram.getDiagramContents().getContents()
-				.getViewSet()) {
-			DBObject dbObject = new DBObject(view.getTableViewProperties()
-					.getSchema(), view.getName(), DBObject.TYPE_VIEW);
-			dbObject.setModel(view);
-			dbObjects.add(dbObject);
-		}
+    protected DBObjectSet preImport() throws Exception {
+        final String fileName = getLoadFilePath(getEditorPart());
+        if (fileName == null) {
+            return null;
+        }
 
-		for (Note note : loadedDiagram.getDiagramContents().getContents()
-				.getNoteSet()) {
-			DBObject dbObject = new DBObject(null, note.getName(),
-					DBObject.TYPE_NOTE);
-			dbObject.setModel(note);
-			dbObjects.add(dbObject);
-		}
+        final Persistent persistent = Persistent.getInstance();
 
-		for (Sequence sequence : loadedDiagram.getDiagramContents()
-				.getSequenceSet()) {
-			DBObject dbObject = new DBObject(sequence.getSchema(),
-					sequence.getName(), DBObject.TYPE_SEQUENCE);
-			dbObject.setModel(sequence);
-			dbObjects.add(dbObject);
-		}
-
-		for (Trigger trigger : loadedDiagram.getDiagramContents()
-				.getTriggerSet()) {
-			DBObject dbObject = new DBObject(trigger.getSchema(),
-					trigger.getName(), DBObject.TYPE_TRIGGER);
-			dbObject.setModel(trigger);
-			dbObjects.add(dbObject);
-		}
+        final Path path = new Path(fileName);
 
-		for (Tablespace tablespace : loadedDiagram.getDiagramContents()
-				.getTablespaceSet()) {
-			DBObject dbObject = new DBObject(null, tablespace.getName(),
-					DBObject.TYPE_TABLESPACE);
-			dbObject.setModel(tablespace);
-			dbObjects.add(dbObject);
-		}
+        InputStream in = null;
 
-		for (ColumnGroup columnGroup : loadedDiagram.getDiagramContents()
-				.getGroups()) {
-			DBObject dbObject = new DBObject(null, columnGroup.getName(),
-					DBObject.TYPE_GROUP);
-			dbObject.setModel(columnGroup);
-			dbObjects.add(dbObject);
-		}
-
-		return dbObjects;
-	}
-
-	protected void loadData(List<DBObject> selectedObjectList,
-			boolean useCommentAsLogicalName, boolean mergeWord,
-			boolean mergeGroup) {
-
-		Set<AbstractModel> selectedSets = new HashSet<AbstractModel>();
-		for (DBObject dbObject : selectedObjectList) {
-			selectedSets.add(dbObject.getModel());
-		}
-
-		DiagramContents contents = loadedDiagram.getDiagramContents();
-
-		GroupSet columnGroupSet = contents.getGroups();
-
-		for (Iterator<ColumnGroup> iter = columnGroupSet.iterator(); iter
-				.hasNext();) {
-			ColumnGroup columnGroup = iter.next();
-
-			if (!selectedSets.contains(columnGroup)) {
-				iter.remove();
-			}
-		}
-
-		this.importedColumnGroups = columnGroupSet.getGroupList();
-
-		SequenceSet sequenceSet = contents.getSequenceSet();
-
-		for (Iterator<Sequence> iter = sequenceSet.iterator(); iter.hasNext();) {
-			Sequence sequence = iter.next();
-
-			if (!selectedSets.contains(sequence)) {
-				iter.remove();
-			}
-		}
-
-		this.importedSequences = sequenceSet.getObjectList();
-
-		TriggerSet triggerSet = contents.getTriggerSet();
-
-		for (Iterator<Trigger> iter = triggerSet.iterator(); iter.hasNext();) {
-			Trigger trigger = iter.next();
-
-			if (!selectedSets.contains(trigger)) {
-				iter.remove();
-			}
-		}
-
-		this.importedTriggers = triggerSet.getObjectList();
-
-		TablespaceSet tablespaceSet = contents.getTablespaceSet();
-
-		for (Iterator<Tablespace> iter = tablespaceSet.iterator(); iter
-				.hasNext();) {
-			Tablespace tablespace = iter.next();
-
-			if (!selectedSets.contains(tablespace)) {
-				iter.remove();
-			}
-		}
-
-		this.importedTablespaces = tablespaceSet.getObjectList();
-
-		NodeSet nodeSet = contents.getContents();
-		List<NodeElement> nodeElementList = nodeSet.getNodeElementList();
-
-		for (Iterator<NodeElement> iter = nodeElementList.iterator(); iter
-				.hasNext();) {
-			NodeElement nodeElement = iter.next();
-
-			if (!selectedSets.contains(nodeElement)) {
-				iter.remove();
-			}
-		}
-
-		NodeSet selectedNodeSet = new NodeSet();
-
-		UniqueWordDictionary dictionary = new UniqueWordDictionary();
-
-		if (mergeWord) {
-			dictionary.init(this.getDiagram());
-		}
-
-		for (NodeElement nodeElement : nodeElementList) {
-			if (mergeWord) {
-				if (nodeElement instanceof TableView) {
-					TableView tableView = (TableView) nodeElement;
-
-					for (NormalColumn normalColumn : tableView
-							.getNormalColumns()) {
-						Word word = normalColumn.getWord();
-						if (word != null) {
-							Word replaceWord = dictionary.getUniqueWord(word,
-									false);
-
-							if (replaceWord != null) {
-								normalColumn.setWord(replaceWord);
-							}
-						}
-					}
-				}
-			}
-
-			selectedNodeSet.addNodeElement(nodeElement);
-		}
-
-		for (NodeElement nodeElement : selectedNodeSet) {
-			if (nodeElement instanceof TableView) {
-				TableView tableView = (TableView) nodeElement;
-
-				for (Iterator<Column> iter = tableView.getColumns().iterator(); iter
-						.hasNext();) {
-					Column column = iter.next();
-
-					if (column instanceof ColumnGroup) {
-						if (!this.importedColumnGroups.contains(column)) {
-							iter.remove();
-						}
-					}
-				}
-			}
-		}
-
-		if (mergeGroup) {
-			this.mergeGroup(selectedNodeSet);
-		}
-
-		CopyManager copyManager = new CopyManager(null);
-		NodeSet copyList = copyManager.copyNodeElementList(selectedNodeSet);
-
-		this.importedNodeElements = copyList.getNodeElementList();
-	}
-
-	private void mergeGroup(NodeSet selectedNodeSet) {
-		GroupSet currentGroupSet = this.getDiagram().getDiagramContents()
-				.getGroups();
-
-		for (Iterator<ColumnGroup> iter = this.importedColumnGroups.iterator(); iter
-				.hasNext();) {
-			ColumnGroup columnGroup = iter.next();
-
-			ColumnGroup replaceColumnGroup = currentGroupSet.find(columnGroup);
-
-			if (replaceColumnGroup != null) {
-				iter.remove();
-
-				for (NodeElement nodeElement : selectedNodeSet) {
-					if (nodeElement instanceof TableView) {
-						TableView tableView = (TableView) nodeElement;
-						tableView.replaceColumnGroup(columnGroup,
-								replaceColumnGroup);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) throws Exception {
-		DBObjectSet dbObjectSet = this.preImport();
-
-		if (dbObjectSet != null) {
-			AbstractSelectImportedObjectDialog importDialog = this
-					.createSelectImportedObjectDialog(dbObjectSet);
-
-			int result = importDialog.open();
-
-			if (result == IDialogConstants.OK_ID) {
-				this.loadData(importDialog.getSelectedDbObjects(),
-						importDialog.isUseCommentAsLogicalName(),
-						importDialog.isMergeWord(), importDialog.isMergeGroup());
-				this.showData();
-
-			} else if (result == IDialogConstants.BACK_ID) {
-				this.execute(event);
-			}
-		}
-	}
+        try {
+            final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+
+            if (file == null || !file.exists()) {
+                final File realFile = path.toFile();
+                if (realFile == null || !realFile.exists()) {
+                    ERDiagramActivator.showErrorDialog("error.import.file");
+                    return null;
+                }
+
+                in = new FileInputStream(realFile);
+
+            } else {
+                if (!file.isSynchronized(IResource.DEPTH_ONE)) {
+                    file.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
+                }
+
+                in = file.getContents();
+            }
+
+            loadedDiagram = persistent.load(in);
+
+        } finally {
+            in.close();
+        }
+
+        return getAllObjects(loadedDiagram);
+    }
+
+    protected AbstractSelectImportedObjectDialog createSelectImportedObjectDialog(final DBObjectSet dbObjectSet) {
+        final ERDiagram diagram = getDiagram();
+
+        return new SelectImportedObjectFromFileDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram, dbObjectSet);
+    }
+
+    protected String getLoadFilePath(final IEditorPart editorPart) {
+
+        final FileDialog fileDialog = new FileDialog(editorPart.getEditorSite().getShell(), SWT.OPEN);
+
+        fileDialog.setFilterPath(getBasePath());
+
+        final String[] filterExtensions = getFilterExtensions();
+        fileDialog.setFilterExtensions(filterExtensions);
+
+        return fileDialog.open();
+    }
+
+    protected String[] getFilterExtensions() {
+        return new String[] {"*.erm"};
+    }
+
+    private DBObjectSet getAllObjects(final ERDiagram loadedDiagram) {
+        final DBObjectSet dbObjects = new DBObjectSet();
+
+        for (final ERTable table : loadedDiagram.getDiagramContents().getContents().getTableSet()) {
+            final DBObject dbObject = new DBObject(table.getTableViewProperties().getSchema(), table.getName(), DBObject.TYPE_TABLE);
+            dbObject.setModel(table);
+            dbObjects.add(dbObject);
+        }
+
+        for (final View view : loadedDiagram.getDiagramContents().getContents().getViewSet()) {
+            final DBObject dbObject = new DBObject(view.getTableViewProperties().getSchema(), view.getName(), DBObject.TYPE_VIEW);
+            dbObject.setModel(view);
+            dbObjects.add(dbObject);
+        }
+
+        for (final Note note : loadedDiagram.getDiagramContents().getContents().getNoteSet()) {
+            final DBObject dbObject = new DBObject(null, note.getName(), DBObject.TYPE_NOTE);
+            dbObject.setModel(note);
+            dbObjects.add(dbObject);
+        }
+
+        for (final Sequence sequence : loadedDiagram.getDiagramContents().getSequenceSet()) {
+            final DBObject dbObject = new DBObject(sequence.getSchema(), sequence.getName(), DBObject.TYPE_SEQUENCE);
+            dbObject.setModel(sequence);
+            dbObjects.add(dbObject);
+        }
+
+        for (final Trigger trigger : loadedDiagram.getDiagramContents().getTriggerSet()) {
+            final DBObject dbObject = new DBObject(trigger.getSchema(), trigger.getName(), DBObject.TYPE_TRIGGER);
+            dbObject.setModel(trigger);
+            dbObjects.add(dbObject);
+        }
+
+        for (final Tablespace tablespace : loadedDiagram.getDiagramContents().getTablespaceSet()) {
+            final DBObject dbObject = new DBObject(null, tablespace.getName(), DBObject.TYPE_TABLESPACE);
+            dbObject.setModel(tablespace);
+            dbObjects.add(dbObject);
+        }
+
+        for (final ColumnGroup columnGroup : loadedDiagram.getDiagramContents().getGroups()) {
+            final DBObject dbObject = new DBObject(null, columnGroup.getName(), DBObject.TYPE_GROUP);
+            dbObject.setModel(columnGroup);
+            dbObjects.add(dbObject);
+        }
+
+        return dbObjects;
+    }
+
+    protected void loadData(final List<DBObject> selectedObjectList, final boolean useCommentAsLogicalName, final boolean mergeWord, final boolean mergeGroup) {
+
+        final Set<AbstractModel> selectedSets = new HashSet<AbstractModel>();
+        for (final DBObject dbObject : selectedObjectList) {
+            selectedSets.add(dbObject.getModel());
+        }
+
+        final DiagramContents contents = loadedDiagram.getDiagramContents();
+
+        final GroupSet columnGroupSet = contents.getGroups();
+
+        for (final Iterator<ColumnGroup> iter = columnGroupSet.iterator(); iter.hasNext();) {
+            final ColumnGroup columnGroup = iter.next();
+
+            if (!selectedSets.contains(columnGroup)) {
+                iter.remove();
+            }
+        }
+
+        importedColumnGroups = columnGroupSet.getGroupList();
+
+        final SequenceSet sequenceSet = contents.getSequenceSet();
+
+        for (final Iterator<Sequence> iter = sequenceSet.iterator(); iter.hasNext();) {
+            final Sequence sequence = iter.next();
+
+            if (!selectedSets.contains(sequence)) {
+                iter.remove();
+            }
+        }
+
+        importedSequences = sequenceSet.getObjectList();
+
+        final TriggerSet triggerSet = contents.getTriggerSet();
+
+        for (final Iterator<Trigger> iter = triggerSet.iterator(); iter.hasNext();) {
+            final Trigger trigger = iter.next();
+
+            if (!selectedSets.contains(trigger)) {
+                iter.remove();
+            }
+        }
+
+        importedTriggers = triggerSet.getObjectList();
+
+        final TablespaceSet tablespaceSet = contents.getTablespaceSet();
+
+        for (final Iterator<Tablespace> iter = tablespaceSet.iterator(); iter.hasNext();) {
+            final Tablespace tablespace = iter.next();
+
+            if (!selectedSets.contains(tablespace)) {
+                iter.remove();
+            }
+        }
+
+        importedTablespaces = tablespaceSet.getObjectList();
+
+        final NodeSet nodeSet = contents.getContents();
+        final List<NodeElement> nodeElementList = nodeSet.getNodeElementList();
+
+        for (final Iterator<NodeElement> iter = nodeElementList.iterator(); iter.hasNext();) {
+            final NodeElement nodeElement = iter.next();
+
+            if (!selectedSets.contains(nodeElement)) {
+                iter.remove();
+            }
+        }
+
+        final NodeSet selectedNodeSet = new NodeSet();
+
+        final UniqueWordDictionary dictionary = new UniqueWordDictionary();
+
+        if (mergeWord) {
+            dictionary.init(getDiagram());
+        }
+
+        for (final NodeElement nodeElement : nodeElementList) {
+            if (mergeWord) {
+                if (nodeElement instanceof TableView) {
+                    final TableView tableView = (TableView) nodeElement;
+
+                    for (final NormalColumn normalColumn : tableView.getNormalColumns()) {
+                        final Word word = normalColumn.getWord();
+                        if (word != null) {
+                            final Word replaceWord = dictionary.getUniqueWord(word, false);
+
+                            if (replaceWord != null) {
+                                normalColumn.setWord(replaceWord);
+                            }
+                        }
+                    }
+                }
+            }
+
+            selectedNodeSet.addNodeElement(nodeElement);
+        }
+
+        for (final NodeElement nodeElement : selectedNodeSet) {
+            if (nodeElement instanceof TableView) {
+                final TableView tableView = (TableView) nodeElement;
+
+                for (final Iterator<Column> iter = tableView.getColumns().iterator(); iter.hasNext();) {
+                    final Column column = iter.next();
+
+                    if (column instanceof ColumnGroup) {
+                        if (!importedColumnGroups.contains(column)) {
+                            iter.remove();
+                        }
+                    }
+                }
+            }
+        }
+
+        if (mergeGroup) {
+            mergeGroup(selectedNodeSet);
+        }
+
+        final CopyManager copyManager = new CopyManager(null);
+        final NodeSet copyList = copyManager.copyNodeElementList(selectedNodeSet);
+
+        importedNodeElements = copyList.getNodeElementList();
+    }
+
+    private void mergeGroup(final NodeSet selectedNodeSet) {
+        final GroupSet currentGroupSet = getDiagram().getDiagramContents().getGroups();
+
+        for (final Iterator<ColumnGroup> iter = importedColumnGroups.iterator(); iter.hasNext();) {
+            final ColumnGroup columnGroup = iter.next();
+
+            final ColumnGroup replaceColumnGroup = currentGroupSet.find(columnGroup);
+
+            if (replaceColumnGroup != null) {
+                iter.remove();
+
+                for (final NodeElement nodeElement : selectedNodeSet) {
+                    if (nodeElement instanceof TableView) {
+                        final TableView tableView = (TableView) nodeElement;
+                        tableView.replaceColumnGroup(columnGroup, replaceColumnGroup);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) throws Exception {
+        final DBObjectSet dbObjectSet = preImport();
+
+        if (dbObjectSet != null) {
+            final AbstractSelectImportedObjectDialog importDialog = createSelectImportedObjectDialog(dbObjectSet);
+
+            final int result = importDialog.open();
+
+            if (result == IDialogConstants.OK_ID) {
+                loadData(importDialog.getSelectedDbObjects(), importDialog.isUseCommentAsLogicalName(), importDialog.isMergeWord(), importDialog.isMergeGroup());
+                showData();
+
+            } else if (result == IDialogConstants.BACK_ID) {
+                this.execute(event);
+            }
+        }
+    }
 }

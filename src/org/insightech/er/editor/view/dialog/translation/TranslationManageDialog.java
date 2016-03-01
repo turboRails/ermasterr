@@ -27,174 +27,168 @@ import org.insightech.er.editor.model.settings.TranslationSetting;
 
 public class TranslationManageDialog extends AbstractDialog {
 
-	private static final int BUTTON_WIDTH = 60;
+    private static final int BUTTON_WIDTH = 60;
 
-	private Table dictionaryTable = null;
+    private Table dictionaryTable = null;
 
-	private TranslationSetting translationSettings;
+    private final TranslationSetting translationSettings;
 
-	private Map<String, TableEditor> translationCheckMap;
+    private Map<String, TableEditor> translationCheckMap;
 
-	private Button useButton;
+    private Button useButton;
 
-	private List<String> allTranslations;
+    private final List<String> allTranslations;
 
-	public TranslationManageDialog(Shell parentShell, Settings settings,
-			ERDiagram diagram) {
-		super(parentShell);
+    public TranslationManageDialog(final Shell parentShell, final Settings settings, final ERDiagram diagram) {
+        super(parentShell);
 
-		this.translationSettings = settings.getTranslationSetting();
-		this.allTranslations = this.translationSettings.getAllTranslations();
-	}
+        translationSettings = settings.getTranslationSetting();
+        allTranslations = translationSettings.getAllTranslations();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite composite) {
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite composite) {
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 1;
 
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
+        final GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
 
-		Group group = new Group(composite, SWT.NONE);
-		group.setLayoutData(gridData);
-		group.setText(ResourceString
-				.getResourceString("label.translation.message"));
-		group.setLayout(gridLayout);
+        final Group group = new Group(composite, SWT.NONE);
+        group.setLayoutData(gridData);
+        group.setText(ResourceString.getResourceString("label.translation.message"));
+        group.setLayout(gridLayout);
 
-		this.useButton = new Button(group, SWT.CHECK);
-		this.useButton.setText(ResourceString
-				.getResourceString("label.translation.use"));
+        useButton = new Button(group, SWT.CHECK);
+        useButton.setText(ResourceString.getResourceString("label.translation.use"));
 
-		GridData tableGridData = new GridData();
-		tableGridData.heightHint = 200;
-		tableGridData.horizontalSpan = 1;
-		tableGridData.verticalSpan = 2;
-		tableGridData.horizontalAlignment = GridData.FILL;
-		tableGridData.grabExcessHorizontalSpace = true;
+        final GridData tableGridData = new GridData();
+        tableGridData.heightHint = 200;
+        tableGridData.horizontalSpan = 1;
+        tableGridData.verticalSpan = 2;
+        tableGridData.horizontalAlignment = GridData.FILL;
+        tableGridData.grabExcessHorizontalSpace = true;
 
-		this.dictionaryTable = new Table(group, SWT.BORDER | SWT.FULL_SELECTION);
-		this.dictionaryTable.setHeaderVisible(true);
-		this.dictionaryTable.setLayoutData(tableGridData);
-		this.dictionaryTable.setLinesVisible(true);
+        dictionaryTable = new Table(group, SWT.BORDER | SWT.FULL_SELECTION);
+        dictionaryTable.setHeaderVisible(true);
+        dictionaryTable.setLayoutData(tableGridData);
+        dictionaryTable.setLinesVisible(true);
 
-		GridData upButtonGridData = new GridData();
-		upButtonGridData.grabExcessHorizontalSpace = false;
-		upButtonGridData.verticalAlignment = GridData.END;
-		upButtonGridData.grabExcessVerticalSpace = true;
-		upButtonGridData.widthHint = BUTTON_WIDTH;
+        final GridData upButtonGridData = new GridData();
+        upButtonGridData.grabExcessHorizontalSpace = false;
+        upButtonGridData.verticalAlignment = GridData.END;
+        upButtonGridData.grabExcessVerticalSpace = true;
+        upButtonGridData.widthHint = BUTTON_WIDTH;
 
-		GridData downButtonGridData = new GridData();
-		downButtonGridData.grabExcessVerticalSpace = true;
-		downButtonGridData.verticalAlignment = GridData.BEGINNING;
-		downButtonGridData.widthHint = BUTTON_WIDTH;
+        final GridData downButtonGridData = new GridData();
+        downButtonGridData.grabExcessVerticalSpace = true;
+        downButtonGridData.verticalAlignment = GridData.BEGINNING;
+        downButtonGridData.widthHint = BUTTON_WIDTH;
 
-		GridData textGridData = new GridData();
-		textGridData.widthHint = 150;
+        final GridData textGridData = new GridData();
+        textGridData.widthHint = 150;
 
-		TableColumn tableColumn = new TableColumn(dictionaryTable, SWT.NONE);
-		tableColumn.setWidth(30);
-		tableColumn.setResizable(false);
-		TableColumn tableColumn1 = new TableColumn(dictionaryTable, SWT.NONE);
-		tableColumn1.setWidth(230);
-		tableColumn1.setResizable(false);
-		tableColumn1.setText(ResourceString
-				.getResourceString("label.translation.file.name"));
-	}
+        final TableColumn tableColumn = new TableColumn(dictionaryTable, SWT.NONE);
+        tableColumn.setWidth(30);
+        tableColumn.setResizable(false);
+        final TableColumn tableColumn1 = new TableColumn(dictionaryTable, SWT.NONE);
+        tableColumn1.setWidth(230);
+        tableColumn1.setResizable(false);
+        tableColumn1.setText(ResourceString.getResourceString("label.translation.file.name"));
+    }
 
-	private void setUse(boolean use) {
-		this.dictionaryTable.setEnabled(use);
-	}
+    private void setUse(final boolean use) {
+        dictionaryTable.setEnabled(use);
+    }
 
-	private void initTranslationTable() {
-		this.dictionaryTable.removeAll();
+    private void initTranslationTable() {
+        dictionaryTable.removeAll();
 
-		if (this.translationCheckMap != null) {
-			for (TableEditor editor : this.translationCheckMap.values()) {
-				editor.getEditor().dispose();
-				editor.dispose();
-			}
+        if (translationCheckMap != null) {
+            for (final TableEditor editor : translationCheckMap.values()) {
+                editor.getEditor().dispose();
+                editor.dispose();
+            }
 
-			this.translationCheckMap.clear();
-		} else {
-			this.translationCheckMap = new HashMap<String, TableEditor>();
-		}
+            translationCheckMap.clear();
+        } else {
+            translationCheckMap = new HashMap<String, TableEditor>();
+        }
 
-		for (String translation : this.allTranslations) {
-			TableItem tableItem = new TableItem(this.dictionaryTable, SWT.NONE);
+        for (final String translation : allTranslations) {
+            final TableItem tableItem = new TableItem(dictionaryTable, SWT.NONE);
 
-			Button selectCheckButton = new Button(this.dictionaryTable,
-					SWT.CHECK);
-			selectCheckButton.pack();
+            final Button selectCheckButton = new Button(dictionaryTable, SWT.CHECK);
+            selectCheckButton.pack();
 
-			TableEditor editor = new TableEditor(this.dictionaryTable);
+            final TableEditor editor = new TableEditor(dictionaryTable);
 
-			editor.minimumWidth = selectCheckButton.getSize().x;
-			editor.horizontalAlignment = SWT.CENTER;
-			editor.setEditor(selectCheckButton, tableItem, 0);
+            editor.minimumWidth = selectCheckButton.getSize().x;
+            editor.horizontalAlignment = SWT.CENTER;
+            editor.setEditor(selectCheckButton, tableItem, 0);
 
-			tableItem.setText(1, translation);
+            tableItem.setText(1, translation);
 
-			if (translationSettings.isSelected(translation)) {
-				selectCheckButton.setSelection(true);
-			}
+            if (translationSettings.isSelected(translation)) {
+                selectCheckButton.setSelection(true);
+            }
 
-			this.translationCheckMap.put(translation, editor);
-		}
-	}
+            translationCheckMap.put(translation, editor);
+        }
+    }
 
-	@Override
-	protected void addListener() {
-		this.useButton.addSelectionListener(new SelectionAdapter() {
+    @Override
+    protected void addListener() {
+        useButton.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setUse(useButton.getSelection());
-			}
-		});
-	}
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                setUse(useButton.getSelection());
+            }
+        });
+    }
 
-	@Override
-	protected String getTitle() {
-		return "label.translation";
-	}
+    @Override
+    protected String getTitle() {
+        return "label.translation";
+    }
 
-	@Override
-	protected void perfomeOK() throws InputException {
-		validatePage();
-	}
+    @Override
+    protected void perfomeOK() throws InputException {
+        validatePage();
+    }
 
-	@Override
-	protected void setData() {
-		this.initTranslationTable();
-		this.useButton.setSelection(this.translationSettings.isUse());
-		this.setUse(this.translationSettings.isUse());
-	}
+    @Override
+    protected void setData() {
+        initTranslationTable();
+        useButton.setSelection(translationSettings.isUse());
+        setUse(translationSettings.isUse());
+    }
 
-	@Override
-	protected String getErrorMessage() {
-		return null;
-	}
+    @Override
+    protected String getErrorMessage() {
+        return null;
+    }
 
-	public void validatePage() {
-		List<String> selectedTranslations = new ArrayList<String>();
+    public void validatePage() {
+        final List<String> selectedTranslations = new ArrayList<String>();
 
-		for (String translation : this.allTranslations) {
-			Button button = (Button) this.translationCheckMap.get(translation)
-					.getEditor();
+        for (final String translation : allTranslations) {
+            final Button button = (Button) translationCheckMap.get(translation).getEditor();
 
-			if (button.getSelection()) {
-				selectedTranslations.add(translation);
-			}
-		}
+            if (button.getSelection()) {
+                selectedTranslations.add(translation);
+            }
+        }
 
-		this.translationSettings.setSelectedTranslations(selectedTranslations);
-		this.translationSettings.setUse(this.useButton.getSelection());
-	}
+        translationSettings.setSelectedTranslations(selectedTranslations);
+        translationSettings.setUse(useButton.getSelection());
+    }
 }

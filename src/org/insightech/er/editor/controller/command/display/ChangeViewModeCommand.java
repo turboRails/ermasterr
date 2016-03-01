@@ -6,36 +6,36 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ChangeViewModeCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private int oldViewMode;
+    private final int oldViewMode;
 
-	private int newViewMode;
+    private final int newViewMode;
 
-	private Settings settings;
+    private final Settings settings;
 
-	public ChangeViewModeCommand(ERDiagram diagram, int viewMode) {
-		this.diagram = diagram;
-		this.settings = this.diagram.getDiagramContents().getSettings();
-		this.newViewMode = viewMode;
-		this.oldViewMode = this.settings.getViewMode();
-	}
+    public ChangeViewModeCommand(final ERDiagram diagram, final int viewMode) {
+        this.diagram = diagram;
+        settings = this.diagram.getDiagramContents().getSettings();
+        newViewMode = viewMode;
+        oldViewMode = settings.getViewMode();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.settings.setViewMode(this.newViewMode);
-		this.diagram.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        settings.setViewMode(newViewMode);
+        diagram.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.settings.setViewMode(this.oldViewMode);
-		this.diagram.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        settings.setViewMode(oldViewMode);
+        diagram.refreshVisuals();
+    }
 }

@@ -6,10 +6,9 @@ import org.insightech.er.editor.model.dbexport.db.PreTableExportManager;
 
 public class SQLitePreTableExportManager extends PreTableExportManager {
 
-	@Override
-	protected String dropForeignKeys() throws SQLException {
-		return "";
-	}
+    @Override
+    protected String dropForeignKeys() throws SQLException {
+        return "";
+    }
 
-	
 }

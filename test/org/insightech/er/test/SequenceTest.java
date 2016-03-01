@@ -10,41 +10,40 @@ import org.insightech.er.editor.view.dialog.dbimport.SelectImportedObjectFromDBD
 
 public class SequenceTest {
 
-	private Display display = new Display();
-	private Shell shell = new Shell(display);
+    private final Display display = new Display();
+    private final Shell shell = new Shell(display);
 
-	public static void main(String[] args) throws Exception {
-		new ERDiagramActivator();
-		new SequenceTest();
-	}
+    public static void main(final String[] args) throws Exception {
+        new ERDiagramActivator();
+        new SequenceTest();
+    }
 
-	public SequenceTest() {
-		initialize(shell);
+    public SequenceTest() {
+        initialize(shell);
 
-		// shell.open();
-		// while (!shell.isDisposed()) {
-		// if (!display.readAndDispatch())
-		// display.sleep();
-		// }
-		// display.dispose();
-	}
+        // shell.open();
+        // while (!shell.isDisposed()) {
+        // if (!display.readAndDispatch())
+        // display.sleep();
+        // }
+        // display.dispose();
+    }
 
-	private void initialize(Composite parent) {
-		DBObjectSet dbObjects = new DBObjectSet();
-		dbObjects.add(new DBObject("schema", "a", DBObject.TYPE_TABLE));
-		dbObjects.add(new DBObject("schema", "b", DBObject.TYPE_TABLE));
-		dbObjects.add(new DBObject("schema", "c", DBObject.TYPE_TABLE));
-		dbObjects.add(new DBObject("schema", "a", DBObject.TYPE_SEQUENCE));
-		dbObjects.add(new DBObject("schema", "b", DBObject.TYPE_SEQUENCE));
-		dbObjects.add(new DBObject("schema", "c", DBObject.TYPE_SEQUENCE));
-		dbObjects.add(new DBObject("schema", "a", DBObject.TYPE_VIEW));
-		dbObjects.add(new DBObject("schema", "b", DBObject.TYPE_VIEW));
-		dbObjects.add(new DBObject("schema", "c", DBObject.TYPE_VIEW));
+    private void initialize(final Composite parent) {
+        final DBObjectSet dbObjects = new DBObjectSet();
+        dbObjects.add(new DBObject("schema", "a", DBObject.TYPE_TABLE));
+        dbObjects.add(new DBObject("schema", "b", DBObject.TYPE_TABLE));
+        dbObjects.add(new DBObject("schema", "c", DBObject.TYPE_TABLE));
+        dbObjects.add(new DBObject("schema", "a", DBObject.TYPE_SEQUENCE));
+        dbObjects.add(new DBObject("schema", "b", DBObject.TYPE_SEQUENCE));
+        dbObjects.add(new DBObject("schema", "c", DBObject.TYPE_SEQUENCE));
+        dbObjects.add(new DBObject("schema", "a", DBObject.TYPE_VIEW));
+        dbObjects.add(new DBObject("schema", "b", DBObject.TYPE_VIEW));
+        dbObjects.add(new DBObject("schema", "c", DBObject.TYPE_VIEW));
 
-		SelectImportedObjectFromDBDialog dialog = new SelectImportedObjectFromDBDialog(
-				shell, null, dbObjects, null);
+        final SelectImportedObjectFromDBDialog dialog = new SelectImportedObjectFromDBDialog(shell, null, dbObjects, null);
 
-		dialog.open();
-	}
+        dialog.open();
+    }
 
 }

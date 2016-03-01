@@ -10,53 +10,51 @@ import org.insightech.er.editor.model.settings.Environment;
 
 public class Tablespace extends AbstractObjectModel {
 
-	private static final long serialVersionUID = 1861168804265437031L;
+    private static final long serialVersionUID = 1861168804265437031L;
 
-	private Map<Environment, TablespaceProperties> propertiesMap = new HashMap<Environment, TablespaceProperties>();
+    private Map<Environment, TablespaceProperties> propertiesMap = new HashMap<Environment, TablespaceProperties>();
 
-	public void copyTo(Tablespace to) {
-		to.setName(this.getName());
+    public void copyTo(final Tablespace to) {
+        to.setName(getName());
 
-		to.propertiesMap = new HashMap<Environment, TablespaceProperties>();
-		for (Map.Entry<Environment, TablespaceProperties> entry : this.propertiesMap
-				.entrySet()) {
-			to.propertiesMap.put(entry.getKey(), entry.getValue().clone());
-		}
-	}
+        to.propertiesMap = new HashMap<Environment, TablespaceProperties>();
+        for (final Map.Entry<Environment, TablespaceProperties> entry : propertiesMap.entrySet()) {
+            to.propertiesMap.put(entry.getKey(), entry.getValue().clone());
+        }
+    }
 
-	public TablespaceProperties getProperties(Environment environment,
-			ERDiagram diagram) {
-		return DBManagerFactory.getDBManager(diagram)
-				.checkTablespaceProperties(this.propertiesMap.get(environment));
-	}
+    public TablespaceProperties getProperties(final Environment environment, final ERDiagram diagram) {
+        return DBManagerFactory.getDBManager(diagram).checkTablespaceProperties(propertiesMap.get(environment));
+    }
 
-	public void putProperties(Environment environment,
-			TablespaceProperties tablespaceProperties) {
-		this.propertiesMap.put(environment, tablespaceProperties);
-	}
+    public void putProperties(final Environment environment, final TablespaceProperties tablespaceProperties) {
+        propertiesMap.put(environment, tablespaceProperties);
+    }
 
-	public Map<Environment, TablespaceProperties> getPropertiesMap() {
-		return propertiesMap;
-	}
+    public Map<Environment, TablespaceProperties> getPropertiesMap() {
+        return propertiesMap;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Tablespace clone() {
-		Tablespace clone = (Tablespace) super.clone();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Tablespace clone() {
+        final Tablespace clone = (Tablespace) super.clone();
 
-		this.copyTo(clone);
+        copyTo(clone);
 
-		return clone;
-	}
+        return clone;
+    }
 
-	public String getDescription() {
-		return "";
-	}
+    @Override
+    public String getDescription() {
+        return "";
+    }
 
-	public String getObjectType() {
-		return "tablespace";
-	}
+    @Override
+    public String getObjectType() {
+        return "tablespace";
+    }
 
 }

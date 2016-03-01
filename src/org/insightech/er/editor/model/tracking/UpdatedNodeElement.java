@@ -11,61 +11,61 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.column
 
 public class UpdatedNodeElement implements Serializable {
 
-	private static final long serialVersionUID = -1547406607441505291L;
+    private static final long serialVersionUID = -1547406607441505291L;
 
-	private NodeElement nodeElement;
+    private final NodeElement nodeElement;
 
-	private Set<Column> addedColumns;
+    private final Set<Column> addedColumns;
 
-	private Set<Column> updatedColumns;
+    private final Set<Column> updatedColumns;
 
-	private Set<Column> removedColumns;
+    private final Set<Column> removedColumns;
 
-	public UpdatedNodeElement(NodeElement nodeElement) {
-		this.nodeElement = nodeElement;
+    public UpdatedNodeElement(final NodeElement nodeElement) {
+        this.nodeElement = nodeElement;
 
-		this.addedColumns = new HashSet<Column>();
-		this.updatedColumns = new HashSet<Column>();
-		this.removedColumns = new HashSet<Column>();
-	}
+        addedColumns = new HashSet<Column>();
+        updatedColumns = new HashSet<Column>();
+        removedColumns = new HashSet<Column>();
+    }
 
-	public NodeElement getNodeElement() {
-		return nodeElement;
-	}
+    public NodeElement getNodeElement() {
+        return nodeElement;
+    }
 
-	public void setAddedColumns(Collection<NormalColumn> columns) {
-		this.addedColumns.clear();
-		this.addedColumns.addAll(columns);
-	}
+    public void setAddedColumns(final Collection<NormalColumn> columns) {
+        addedColumns.clear();
+        addedColumns.addAll(columns);
+    }
 
-	public void setUpdatedColumns(Collection<NormalColumn> columns) {
-		this.updatedColumns.clear();
-		this.updatedColumns.addAll(columns);
-	}
+    public void setUpdatedColumns(final Collection<NormalColumn> columns) {
+        updatedColumns.clear();
+        updatedColumns.addAll(columns);
+    }
 
-	public void setRemovedColumns(Collection<NormalColumn> columns) {
-		this.removedColumns.clear();
-		this.removedColumns.addAll(columns);
-	}
+    public void setRemovedColumns(final Collection<NormalColumn> columns) {
+        removedColumns.clear();
+        removedColumns.addAll(columns);
+    }
 
-	public boolean isAdded(Column column) {
-		if (this.addedColumns.contains(column)) {
-			return true;
-		}
+    public boolean isAdded(final Column column) {
+        if (addedColumns.contains(column)) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public boolean isUpdated(Column column) {
-		if (this.updatedColumns.contains(column)) {
-			return true;
-		}
+    public boolean isUpdated(final Column column) {
+        if (updatedColumns.contains(column)) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public Set<Column> getRemovedColumns() {
-		return removedColumns;
-	}
+    public Set<Column> getRemovedColumns() {
+        return removedColumns;
+    }
 
 }

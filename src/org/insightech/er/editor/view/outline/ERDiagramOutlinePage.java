@@ -39,159 +39,143 @@ import org.insightech.er.editor.view.drag_drop.ERDiagramTransferDragSourceListen
 
 public class ERDiagramOutlinePage extends ContentOutlinePage {
 
-	// ページをアウトラインとサムネイルに分離するコンポジット
-	private SashForm sash;
+    // ページをアウトラインとサムネイルに分離するコンポジット
+    private SashForm sash;
 
-	private TreeViewer viewer;
+    private final TreeViewer viewer;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private LightweightSystem lws;
+    private LightweightSystem lws;
 
-	private ScrollableThumbnail thumbnail;
+    private ScrollableThumbnail thumbnail;
 
-	private GraphicalViewer graphicalViewer;
+    private GraphicalViewer graphicalViewer;
 
-	private ActionRegistry outlineActionRegistory;
+    private final ActionRegistry outlineActionRegistory;
 
-	private ActionRegistry registry;
+    private ActionRegistry registry;
 
-	public ERDiagramOutlinePage(ERDiagram diagram) {
-		// GEFツリービューワを使用する
-		super(new TreeViewer());
+    public ERDiagramOutlinePage(final ERDiagram diagram) {
+        // GEFツリービューワを使用する
+        super(new TreeViewer());
 
-		this.viewer = (TreeViewer) this.getViewer();
-		this.diagram = diagram;
+        viewer = (TreeViewer) getViewer();
+        this.diagram = diagram;
 
-		this.outlineActionRegistory = new ActionRegistry();
-		this.registerAction(this.viewer, outlineActionRegistory);
-	}
+        outlineActionRegistory = new ActionRegistry();
+        registerAction(viewer, outlineActionRegistory);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void createControl(Composite parent) {
-		this.sash = new SashForm(parent, SWT.VERTICAL);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void createControl(final Composite parent) {
+        sash = new SashForm(parent, SWT.VERTICAL);
 
-		// コンストラクタで指定したビューワの作成
-		this.viewer.createControl(this.sash);
+        // コンストラクタで指定したビューワの作成
+        viewer.createControl(sash);
 
-		// EditPartFactory の設定
-		ERDiagramOutlineEditPartFactory editPartFactory = new ERDiagramOutlineEditPartFactory();
-		this.viewer.setEditPartFactory(editPartFactory);
+        // EditPartFactory の設定
+        final ERDiagramOutlineEditPartFactory editPartFactory = new ERDiagramOutlineEditPartFactory();
+        viewer.setEditPartFactory(editPartFactory);
 
-		// グラフィカル・エディタのルート・モデルをツリー・ビューワにも設定
-		this.viewer.setContents(this.diagram);
+        // グラフィカル・エディタのルート・モデルをツリー・ビューワにも設定
+        viewer.setContents(diagram);
 
-		Canvas canvas = new Canvas(this.sash, SWT.BORDER);
-		// サムネイル・フィギュアを配置する為の LightweightSystem
-		this.lws = new LightweightSystem(canvas);
+        final Canvas canvas = new Canvas(sash, SWT.BORDER);
+        // サムネイル・フィギュアを配置する為の LightweightSystem
+        lws = new LightweightSystem(canvas);
 
-		this.resetView(this.registry);
+        resetView(registry);
 
-		AbstractTransferDragSourceListener dragSourceListener = new ERDiagramTransferDragSourceListener(
-				this.viewer, TemplateTransfer.getInstance());
-		this.viewer.addDragSourceListener(dragSourceListener);
-		
-		this.diagram.refreshOutline();
-	}
+        final AbstractTransferDragSourceListener dragSourceListener = new ERDiagramTransferDragSourceListener(viewer, TemplateTransfer.getInstance());
+        viewer.addDragSourceListener(dragSourceListener);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Control getControl() {
-		// アウトライン・ビューをアクティブにした時にフォーカスが設定されるコントロールを返す
-		return sash;
-	}
+        diagram.refreshOutline();
+    }
 
-	private void showThumbnail() {
-		// RootEditPartのビューをソースとしてサムネイルを作成
-		ScalableFreeformRootEditPart editPart = (ScalableFreeformRootEditPart) this.graphicalViewer
-				.getRootEditPart();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Control getControl() {
+        // アウトライン・ビューをアクティブにした時にフォーカスが設定されるコントロールを返す
+        return sash;
+    }
 
-		if (this.thumbnail != null) {
-			this.thumbnail.deactivate();
-		}
+    private void showThumbnail() {
+        // RootEditPartのビューをソースとしてサムネイルを作成
+        final ScalableFreeformRootEditPart editPart = (ScalableFreeformRootEditPart) graphicalViewer.getRootEditPart();
 
-		this.thumbnail = new ScrollableThumbnail((Viewport) editPart
-				.getFigure());
-		this.thumbnail.setSource(editPart
-				.getLayer(LayerConstants.PRINTABLE_LAYERS));
+        if (thumbnail != null) {
+            thumbnail.deactivate();
+        }
 
-		this.lws.setContents(this.thumbnail);
+        thumbnail = new ScrollableThumbnail((Viewport) editPart.getFigure());
+        thumbnail.setSource(editPart.getLayer(LayerConstants.PRINTABLE_LAYERS));
 
-	}
+        lws.setContents(thumbnail);
 
-	private void initDropTarget() {
-		AbstractTransferDropTargetListener dropTargetListener = new ERDiagramOutlineTransferDropTargetListener(
-				this.graphicalViewer, TemplateTransfer.getInstance());
+    }
 
-		this.graphicalViewer.addDropTargetListener(dropTargetListener);
-	}
+    private void initDropTarget() {
+        final AbstractTransferDropTargetListener dropTargetListener = new ERDiagramOutlineTransferDropTargetListener(graphicalViewer, TemplateTransfer.getInstance());
 
-	public void setCategory(EditDomain editDomain,
-			GraphicalViewer graphicalViewer, MenuManager outlineMenuMgr,
-			ActionRegistry registry) {
-		this.graphicalViewer = graphicalViewer;
-		this.viewer.setContextMenu(outlineMenuMgr);
+        graphicalViewer.addDropTargetListener(dropTargetListener);
+    }
 
-		// エディット・ドメインの設定
-		this.viewer.setEditDomain(editDomain);
-		this.registry = registry;
+    public void setCategory(final EditDomain editDomain, final GraphicalViewer graphicalViewer, final MenuManager outlineMenuMgr, final ActionRegistry registry) {
+        this.graphicalViewer = graphicalViewer;
+        viewer.setContextMenu(outlineMenuMgr);
 
-		if (this.getSite() != null) {
-			this.resetView(registry);
-		}
-	}
+        // エディット・ドメインの設定
+        viewer.setEditDomain(editDomain);
+        this.registry = registry;
 
-	private void resetAction(ActionRegistry registry) {
-		// アウトライン・ページで有効にするアクション
-		IActionBars bars = this.getSite().getActionBars();
+        if (getSite() != null) {
+            resetView(registry);
+        }
+    }
 
-		String id = ActionFactory.UNDO.getId();
-		bars.setGlobalActionHandler(id, registry.getAction(id));
+    private void resetAction(final ActionRegistry registry) {
+        // アウトライン・ページで有効にするアクション
+        final IActionBars bars = getSite().getActionBars();
 
-		id = ActionFactory.REDO.getId();
-		bars.setGlobalActionHandler(id, registry.getAction(id));
+        String id = ActionFactory.UNDO.getId();
+        bars.setGlobalActionHandler(id, registry.getAction(id));
 
-		id = ActionFactory.DELETE.getId();
-		bars.setGlobalActionHandler(id, registry.getAction(id));
+        id = ActionFactory.REDO.getId();
+        bars.setGlobalActionHandler(id, registry.getAction(id));
 
-		bars.updateActionBars();
-	}
+        id = ActionFactory.DELETE.getId();
+        bars.setGlobalActionHandler(id, registry.getAction(id));
 
-	private void resetView(ActionRegistry registry) {
-		this.showThumbnail();
-		this.initDropTarget();
-		this.resetAction(registry);
-	}
+        bars.updateActionBars();
+    }
 
-	private void registerAction(TreeViewer treeViewer,
-			ActionRegistry actionRegistry) {
-		IAction[] actions = { new CreateIndexAction(treeViewer),
-				new CreateSequenceAction(treeViewer),
-				new CreateTriggerAction(treeViewer),
-				new CreateTablespaceAction(treeViewer),
-				new ChangeOutlineViewToPhysicalAction(treeViewer),
-				new ChangeOutlineViewToLogicalAction(treeViewer),
-				new ChangeOutlineViewToBothAction(treeViewer),
-				new ChangeOutlineViewOrderByPhysicalNameAction(treeViewer),
-				new ChangeOutlineViewOrderByLogicalNameAction(treeViewer) };
+    private void resetView(final ActionRegistry registry) {
+        showThumbnail();
+        initDropTarget();
+        resetAction(registry);
+    }
 
-		for (IAction action : actions) {
-			actionRegistry.registerAction(action);
-		}
-	}
+    private void registerAction(final TreeViewer treeViewer, final ActionRegistry actionRegistry) {
+        final IAction[] actions = {new CreateIndexAction(treeViewer), new CreateSequenceAction(treeViewer), new CreateTriggerAction(treeViewer), new CreateTablespaceAction(treeViewer), new ChangeOutlineViewToPhysicalAction(treeViewer), new ChangeOutlineViewToLogicalAction(treeViewer), new ChangeOutlineViewToBothAction(treeViewer), new ChangeOutlineViewOrderByPhysicalNameAction(treeViewer), new ChangeOutlineViewOrderByLogicalNameAction(treeViewer)};
 
-	public ActionRegistry getOutlineActionRegistory() {
-		return outlineActionRegistory;
-	}
+        for (final IAction action : actions) {
+            actionRegistry.registerAction(action);
+        }
+    }
 
-	@Override
-	public EditPartViewer getViewer() {
-		return super.getViewer();
-	}
+    public ActionRegistry getOutlineActionRegistory() {
+        return outlineActionRegistory;
+    }
+
+    @Override
+    public EditPartViewer getViewer() {
+        return super.getViewer();
+    }
 
 }

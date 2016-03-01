@@ -22,167 +22,158 @@ import org.insightech.er.util.Format;
 
 public class DirectTestDataTabWrapper extends ValidatableTabWrapper {
 
-	private TestDataDialog dialog;
+    private final TestDataDialog dialog;
 
-	private RowHeaderTable editColumnTable;
+    private RowHeaderTable editColumnTable;
 
-	private DirectTestData directTestData;
+    private DirectTestData directTestData;
 
-	private ERTable table;
+    private ERTable table;
 
-	public DirectTestDataTabWrapper(TestDataDialog dialog, TabFolder parent) {
-		super(dialog, parent, "label.testdata.direct.input");
+    public DirectTestDataTabWrapper(final TestDataDialog dialog, final TabFolder parent) {
+        super(dialog, parent, "label.testdata.direct.input");
 
-		this.dialog = dialog;
-	}
+        this.dialog = dialog;
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
-		layout.numColumns = 2;
-	}
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
+        layout.numColumns = 2;
+    }
 
-	@Override
-	public void initComposite() {
-		Text dummy = CompositeFactory.createNumText(dialog, this, "", 50);
-		dummy.setVisible(false);
+    @Override
+    public void initComposite() {
+        final Text dummy = CompositeFactory.createNumText(dialog, this, "", 50);
+        dummy.setVisible(false);
 
-		this.createEditTable(this);
-	}
+        createEditTable(this);
+    }
 
-	private void createEditTable(Composite composite) {
-		this.editColumnTable = CompositeFactory.createRowHeaderTable(composite,
-				TestDataDialog.TABLE_WIDTH, TestDataDialog.TABLE_HEIGHT, 75,
-				25, 2, false, true);
-		this.editColumnTable.setCellEditWorker(new CellEditWorker() {
+    private void createEditTable(final Composite composite) {
+        editColumnTable = CompositeFactory.createRowHeaderTable(composite, TestDataDialog.TABLE_WIDTH, TestDataDialog.TABLE_HEIGHT, 75, 25, 2, false, true);
+        editColumnTable.setCellEditWorker(new CellEditWorker() {
 
-			public void addNewRow() {
-				addNewRowToTable();
-			}
+            @Override
+            public void addNewRow() {
+                addNewRowToTable();
+            }
 
-			public void changeRowNum() {
-				dialog.resetTestDataNum();
-			}
+            @Override
+            public void changeRowNum() {
+                dialog.resetTestDataNum();
+            }
 
-			public boolean isModified(int row, int column) {
-				return false;
-			}
+            @Override
+            public boolean isModified(final int row, final int column) {
+                return false;
+            }
 
-		});
-	}
+        });
+    }
 
-	@Override
-	protected void setData() {
-	}
+    @Override
+    protected void setData() {}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-		this.saveTableData();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {
+        saveTableData();
+    }
 
-	@Override
-	public void setInitFocus() {
-	}
+    @Override
+    public void setInitFocus() {}
 
-	@Override
-	public void reset() {
-		saveTableData();
+    @Override
+    public void reset() {
+        saveTableData();
 
-		this.table = dialog.getTargetTable();
+        table = dialog.getTargetTable();
 
-		if (this.table != null) {
-			this.directTestData = dialog.getTestData().getTableTestDataMap()
-					.get(this.table).getDirectTestData();
+        if (table != null) {
+            directTestData = dialog.getTestData().getTableTestDataMap().get(table).getDirectTestData();
 
-			this.initTable();
+            initTable();
 
-		} else {
-			this.directTestData = null;
-			this.editColumnTable.removeData();
+        } else {
+            directTestData = null;
+            editColumnTable.removeData();
 
-		}
-	}
+        }
+    }
 
-	private void saveTableData() {
-		if (this.directTestData != null) {
-			List<Map<NormalColumn, String>> dataList = new ArrayList<Map<NormalColumn, String>>();
+    private void saveTableData() {
+        if (directTestData != null) {
+            final List<Map<NormalColumn, String>> dataList = new ArrayList<Map<NormalColumn, String>>();
 
-			List<NormalColumn> normalColumnList = this.table
-					.getExpandedColumns();
+            final List<NormalColumn> normalColumnList = table.getExpandedColumns();
 
-			for (int row = 0; row < this.editColumnTable.getItemCount() - 1; row++) {
-				Map<NormalColumn, String> data = new HashMap<NormalColumn, String>();
+            for (int row = 0; row < editColumnTable.getItemCount() - 1; row++) {
+                final Map<NormalColumn, String> data = new HashMap<NormalColumn, String>();
 
-				for (int column = 0; column < normalColumnList.size(); column++) {
-					NormalColumn normalColumn = normalColumnList.get(column);
-					String value = (String) this.editColumnTable.getValueAt(
-							row, column);
-					data.put(normalColumn, value);
-				}
+                for (int column = 0; column < normalColumnList.size(); column++) {
+                    final NormalColumn normalColumn = normalColumnList.get(column);
+                    final String value = (String) editColumnTable.getValueAt(row, column);
+                    data.put(normalColumn, value);
+                }
 
-				dataList.add(data);
-			}
+                dataList.add(data);
+            }
 
-			this.directTestData.setDataList(dataList);
-		}
-	}
+            directTestData.setDataList(dataList);
+        }
+    }
 
-	private void initTable() {
-		this.editColumnTable.setVisible(false);
+    private void initTable() {
+        editColumnTable.setVisible(false);
 
-		this.editColumnTable.removeData();
+        editColumnTable.removeData();
 
-		for (NormalColumn normalColumn : this.table.getExpandedColumns()) {
-			String name = normalColumn.getName();
-			String type = null;
+        for (final NormalColumn normalColumn : table.getExpandedColumns()) {
+            final String name = normalColumn.getName();
+            String type = null;
 
-			if (normalColumn.getType() == null) {
-				type = "";
+            if (normalColumn.getType() == null) {
+                type = "";
 
-			} else {
-				type = Format.formatType(normalColumn.getType(), normalColumn
-						.getTypeData(), this.dialog.getDiagram().getDatabase(),
-						true);
-			}
+            } else {
+                type = Format.formatType(normalColumn.getType(), normalColumn.getTypeData(), dialog.getDiagram().getDatabase(), true);
+            }
 
-			this.editColumnTable.addColumnHeader(name + "\r\n" + type, 100);
-		}
+            editColumnTable.addColumnHeader(name + "\r\n" + type, 100);
+        }
 
-		for (Map<NormalColumn, String> data : directTestData.getDataList()) {
-			this.addTableItem(data);
-		}
+        for (final Map<NormalColumn, String> data : directTestData.getDataList()) {
+            addTableItem(data);
+        }
 
-		this.addNewRowToTable();
+        addNewRowToTable();
 
-		this.editColumnTable.setVisible(true);
-	}
+        editColumnTable.setVisible(true);
+    }
 
-	private void addNewRowToTable() {
-		this.editColumnTable.addRow("+", null);
-	}
+    private void addNewRowToTable() {
+        editColumnTable.addRow("+", null);
+    }
 
-	private void addTableItem(Map<NormalColumn, String> data) {
-		List<NormalColumn> columns = this.table.getExpandedColumns();
+    private void addTableItem(final Map<NormalColumn, String> data) {
+        final List<NormalColumn> columns = table.getExpandedColumns();
 
-		String[] values = new String[columns.size()];
+        final String[] values = new String[columns.size()];
 
-		for (int i = 0; i < columns.size(); i++) {
-			values[i] = data.get(columns.get(i));
-		}
+        for (int i = 0; i < columns.size(); i++) {
+            values[i] = data.get(columns.get(i));
+        }
 
-		this.editColumnTable
-				.addRow(String.valueOf(this.editColumnTable.getItemCount() + 1),
-						values);
-	}
+        editColumnTable.addRow(String.valueOf(editColumnTable.getItemCount() + 1), values);
+    }
 
-	@Override
-	public void perfomeOK() {
-	}
+    @Override
+    public void perfomeOK() {}
 
-	public int getTestDataNum() {
-		return this.editColumnTable.getItemCount() - 1;
-	}
+    public int getTestDataNum() {
+        return editColumnTable.getItemCount() - 1;
+    }
 }

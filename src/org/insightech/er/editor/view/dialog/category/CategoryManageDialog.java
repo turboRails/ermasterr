@@ -35,490 +35,475 @@ import org.insightech.er.util.Format;
 
 public class CategoryManageDialog extends AbstractDialog {
 
-	private static final int GROUP_HEIGHT = 350;
+    private static final int GROUP_HEIGHT = 350;
 
-	private Table categoryTable = null;
+    private Table categoryTable = null;
 
-	private Table nodeTable = null;
+    private Table nodeTable = null;
 
-	private Button addCategoryButton;
+    private Button addCategoryButton;
 
-	private Button updateCategoryButton;
+    private Button updateCategoryButton;
 
-	private Button deleteCategoryButton;
+    private Button deleteCategoryButton;
 
-	private Text categoryNameText = null;
+    private Text categoryNameText = null;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private CategorySetting categorySettings;
+    private final CategorySetting categorySettings;
 
-	private Map<Category, TableEditor> categoryCheckMap;
+    private Map<Category, TableEditor> categoryCheckMap;
 
-	private Map<NodeElement, TableEditor> nodeCheckMap;
-
-	private Category targetCategory;
-
-	private Button upButton;
-
-	private Button downButton;
-
-	public CategoryManageDialog(Shell parentShell, Settings settings,
-			ERDiagram diagram) {
-		super(parentShell);
-
-		this.diagram = diagram;
-		this.categorySettings = settings.getCategorySetting();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite composite) {
-		this.createCategoryGroup(composite);
-		this.createNodeGroup(composite);
-	}
-
-	private void createCategoryGroup(Composite composite) {
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 4;
-		gridLayout.verticalSpacing = Resources.VERTICAL_SPACING;
-
-		Group group = new Group(composite, SWT.NONE);
-		group.setText(ResourceString
-				.getResourceString("label.category.message"));
-		group.setLayout(gridLayout);
-
-		GridData gridData = new GridData();
-		gridData.heightHint = GROUP_HEIGHT;
-		group.setLayoutData(gridData);
-
-		CompositeFactory.fillLine(group, 5);
-
-		GridData tableGridData = new GridData();
-		tableGridData.grabExcessVerticalSpace = true;
-		tableGridData.verticalAlignment = GridData.FILL;
-		tableGridData.horizontalSpan = 3;
-		tableGridData.verticalSpan = 2;
-
-		this.categoryTable = new Table(group, SWT.BORDER | SWT.FULL_SELECTION);
-		this.categoryTable.setHeaderVisible(true);
-		this.categoryTable.setLayoutData(tableGridData);
-		this.categoryTable.setLinesVisible(true);
-		
-		this.upButton = CompositeFactory.createUpButton(group);
-		this.downButton = CompositeFactory.createDownButton(group);
-		
-		this.categoryNameText = CompositeFactory.createText(this, group, null,
-				3, true, false);
-		CompositeFactory.filler(group, 1);
-
-		this.addCategoryButton = CompositeFactory.createSmallButton(group, "label.button.add");
-		this.updateCategoryButton = CompositeFactory.createSmallButton(group, "label.button.update");
-		this.deleteCategoryButton = CompositeFactory.createSmallButton(group, "label.button.delete");
-
-		TableColumn tableColumn = new TableColumn(categoryTable, SWT.NONE);
-		tableColumn.setWidth(30);
-		tableColumn.setResizable(false);
-		TableColumn tableColumn1 = new TableColumn(categoryTable, SWT.NONE);
-		tableColumn1.setWidth(230);
-		tableColumn1.setResizable(false);
-		tableColumn1.setText(ResourceString
-				.getResourceString("label.category.name"));
-	}
+    private Map<NodeElement, TableEditor> nodeCheckMap;
 
-	private void createNodeGroup(Composite composite) {
-		Group group = new Group(composite, SWT.NONE);
-		group.setLayout(new GridLayout());
-		group.setText(ResourceString
-				.getResourceString("label.category.object.message"));
+    private Category targetCategory;
 
-		GridData gridData = new GridData();
-		gridData.heightHint = GROUP_HEIGHT;
-		group.setLayoutData(gridData);
-
-		CompositeFactory.fillLine(group, 5);
-
-		GridData tableGridData = new GridData();
-		tableGridData.grabExcessVerticalSpace = true;
-		tableGridData.verticalAlignment = GridData.FILL;
-
-		this.nodeTable = new Table(group, SWT.BORDER | SWT.HIDE_SELECTION);
-		this.nodeTable.setHeaderVisible(true);
-		this.nodeTable.setLayoutData(tableGridData);
-		this.nodeTable.setLinesVisible(true);
-
-		TableColumn tableColumn2 = new TableColumn(this.nodeTable, SWT.NONE);
-		tableColumn2.setWidth(30);
-		tableColumn2.setResizable(false);
-		tableColumn2.setText("");
-		TableColumn tableColumn3 = new TableColumn(this.nodeTable, SWT.NONE);
-		tableColumn3.setWidth(80);
-		tableColumn3.setResizable(false);
-		tableColumn3.setText(ResourceString
-				.getResourceString("label.object.type"));
-		TableColumn tableColumn4 = new TableColumn(this.nodeTable, SWT.NONE);
-		tableColumn4.setWidth(200);
-		tableColumn4.setResizable(false);
-		tableColumn4.setText(ResourceString
-				.getResourceString("label.object.name"));
-	}
-
-	private void initCategoryTable() {
-		this.categoryTable.removeAll();
+    private Button upButton;
 
-		if (this.categoryCheckMap != null) {
-			for (TableEditor editor : this.categoryCheckMap.values()) {
-				editor.getEditor().dispose();
-				editor.dispose();
-			}
-
-			this.categoryCheckMap.clear();
-		} else {
-			this.categoryCheckMap = new HashMap<Category, TableEditor>();
-		}
-
-		for (Category category : categorySettings.getAllCategories()) {
-			TableItem tableItem = new TableItem(this.categoryTable, SWT.NONE);
-
-			Button selectCheckButton = new Button(this.categoryTable, SWT.CHECK);
-			selectCheckButton.pack();
-
-			TableEditor editor = new TableEditor(this.categoryTable);
-
-			editor.minimumWidth = selectCheckButton.getSize().x;
-			editor.horizontalAlignment = SWT.CENTER;
-			editor.setEditor(selectCheckButton, tableItem, 0);
-
-			tableItem.setText(1, category.getName());
-
-			if (categorySettings.isSelected(category)) {
-				selectCheckButton.setSelection(true);
-			}
-
-			this.categoryCheckMap.put(category, editor);
-
-			if (this.targetCategory == category) {
-				categoryTable.setSelection(tableItem);
-			}
-		}
-
-		if (this.targetCategory != null) {
-			initNodeList(targetCategory);
-			this.updateCategoryButton.setEnabled(true);
-			this.deleteCategoryButton.setEnabled(true);
-
-		} else {
-			deleteNodeList();
-			this.updateCategoryButton.setEnabled(false);
-			this.deleteCategoryButton.setEnabled(false);
-
-		}
-	}
-
-	private void initNodeTable() {
-		this.nodeTable.removeAll();
-
-		this.nodeCheckMap = new HashMap<NodeElement, TableEditor>();
-
-		for (NodeElement nodeElement : this.diagram.getDiagramContents()
-				.getContents()) {
-			TableItem tableItem = new TableItem(this.nodeTable, SWT.NONE);
-
-			Button selectCheckButton = new Button(this.nodeTable, SWT.CHECK);
-			selectCheckButton.pack();
-
-			TableEditor editor = new TableEditor(this.nodeTable);
-
-			editor.minimumWidth = selectCheckButton.getSize().x;
-			editor.horizontalAlignment = SWT.CENTER;
-			editor.setEditor(selectCheckButton, tableItem, 0);
-
-			tableItem.setText(
-					1,
-					ResourceString.getResourceString("label.object.type."
-							+ nodeElement.getObjectType()));
-			tableItem.setText(2, Format.null2blank(nodeElement.getName()));
-
-			this.nodeCheckMap.put(nodeElement, editor);
-		}
-	}
-
-	private void initNodeList(Category category) {
-		this.categoryNameText.setText(category.getName());
-
-		for (NodeElement nodeElement : this.nodeCheckMap.keySet()) {
-			Button selectCheckButton = (Button) this.nodeCheckMap.get(
-					nodeElement).getEditor();
-
-			if (category.contains(nodeElement)) {
-				selectCheckButton.setSelection(true);
-
-			} else {
-				selectCheckButton.setSelection(false);
-			}
-		}
-	}
-
-	private void deleteNodeList() {
-		this.categoryNameText.setText("");
+    private Button downButton;
 
-		this.nodeTable.removeAll();
+    public CategoryManageDialog(final Shell parentShell, final Settings settings, final ERDiagram diagram) {
+        super(parentShell);
 
-		if (this.nodeCheckMap != null) {
-			for (TableEditor editor : this.nodeCheckMap.values()) {
-				editor.getEditor().dispose();
-				editor.dispose();
-			}
+        this.diagram = diagram;
+        categorySettings = settings.getCategorySetting();
+    }
 
-			this.nodeCheckMap.clear();
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite composite) {
+        createCategoryGroup(composite);
+        createNodeGroup(composite);
+    }
 
-	@Override
-	protected void addListener() {
-		super.addListener();
+    private void createCategoryGroup(final Composite composite) {
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 4;
+        gridLayout.verticalSpacing = Resources.VERTICAL_SPACING;
 
-		this.categoryTable.addSelectionListener(new SelectionAdapter() {
+        final Group group = new Group(composite, SWT.NONE);
+        group.setText(ResourceString.getResourceString("label.category.message"));
+        group.setLayout(gridLayout);
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = categoryTable.getSelectionIndex();
-				if (index == -1) {
-					return;
-				}
+        final GridData gridData = new GridData();
+        gridData.heightHint = GROUP_HEIGHT;
+        group.setLayoutData(gridData);
 
-				validatePage();
+        CompositeFactory.fillLine(group, 5);
 
-				if (targetCategory == null) {
-					initNodeTable();
-					
-					updateCategoryButton.setEnabled(true);
-					deleteCategoryButton.setEnabled(true);
-				}
+        final GridData tableGridData = new GridData();
+        tableGridData.grabExcessVerticalSpace = true;
+        tableGridData.verticalAlignment = GridData.FILL;
+        tableGridData.horizontalSpan = 3;
+        tableGridData.verticalSpan = 2;
 
-				targetCategory = categorySettings.getAllCategories().get(index);
-				initNodeList(targetCategory);
-			}
-		});
+        categoryTable = new Table(group, SWT.BORDER | SWT.FULL_SELECTION);
+        categoryTable.setHeaderVisible(true);
+        categoryTable.setLayoutData(tableGridData);
+        categoryTable.setLinesVisible(true);
 
-		this.addCategoryButton.addSelectionListener(new SelectionAdapter() {
+        upButton = CompositeFactory.createUpButton(group);
+        downButton = CompositeFactory.createDownButton(group);
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String name = categoryNameText.getText().trim();
+        categoryNameText = CompositeFactory.createText(this, group, null, 3, true, false);
+        CompositeFactory.filler(group, 1);
 
-				if (name.equals("")) {
-					return;
-				}
+        addCategoryButton = CompositeFactory.createSmallButton(group, "label.button.add");
+        updateCategoryButton = CompositeFactory.createSmallButton(group, "label.button.update");
+        deleteCategoryButton = CompositeFactory.createSmallButton(group, "label.button.delete");
 
-				validatePage();
+        final TableColumn tableColumn = new TableColumn(categoryTable, SWT.NONE);
+        tableColumn.setWidth(30);
+        tableColumn.setResizable(false);
+        final TableColumn tableColumn1 = new TableColumn(categoryTable, SWT.NONE);
+        tableColumn1.setWidth(230);
+        tableColumn1.setResizable(false);
+        tableColumn1.setText(ResourceString.getResourceString("label.category.name"));
+    }
 
-				if (targetCategory == null) {
-					initNodeTable();
-				}
-
-				Category addedCategory = new Category();
-				int[] color = diagram.getDefaultColor();
-				addedCategory.setColor(color[0], color[1], color[2]);
-				addedCategory.setName(name);
-				categorySettings.addCategoryAsSelected(addedCategory);
-				targetCategory = addedCategory;
+    private void createNodeGroup(final Composite composite) {
+        final Group group = new Group(composite, SWT.NONE);
+        group.setLayout(new GridLayout());
+        group.setText(ResourceString.getResourceString("label.category.object.message"));
 
-				initCategoryTable();
-			}
+        final GridData gridData = new GridData();
+        gridData.heightHint = GROUP_HEIGHT;
+        group.setLayoutData(gridData);
 
-		});
+        CompositeFactory.fillLine(group, 5);
 
-		this.updateCategoryButton.addSelectionListener(new SelectionAdapter() {
+        final GridData tableGridData = new GridData();
+        tableGridData.grabExcessVerticalSpace = true;
+        tableGridData.verticalAlignment = GridData.FILL;
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = categoryTable.getSelectionIndex();
+        nodeTable = new Table(group, SWT.BORDER | SWT.HIDE_SELECTION);
+        nodeTable.setHeaderVisible(true);
+        nodeTable.setLayoutData(tableGridData);
+        nodeTable.setLinesVisible(true);
 
-				if (index == -1) {
-					return;
-				}
+        final TableColumn tableColumn2 = new TableColumn(nodeTable, SWT.NONE);
+        tableColumn2.setWidth(30);
+        tableColumn2.setResizable(false);
+        tableColumn2.setText("");
+        final TableColumn tableColumn3 = new TableColumn(nodeTable, SWT.NONE);
+        tableColumn3.setWidth(80);
+        tableColumn3.setResizable(false);
+        tableColumn3.setText(ResourceString.getResourceString("label.object.type"));
+        final TableColumn tableColumn4 = new TableColumn(nodeTable, SWT.NONE);
+        tableColumn4.setWidth(200);
+        tableColumn4.setResizable(false);
+        tableColumn4.setText(ResourceString.getResourceString("label.object.name"));
+    }
 
-				String name = categoryNameText.getText().trim();
+    private void initCategoryTable() {
+        categoryTable.removeAll();
 
-				if (name.equals("")) {
-					return;
-				}
+        if (categoryCheckMap != null) {
+            for (final TableEditor editor : categoryCheckMap.values()) {
+                editor.getEditor().dispose();
+                editor.dispose();
+            }
 
-				validatePage();
+            categoryCheckMap.clear();
+        } else {
+            categoryCheckMap = new HashMap<Category, TableEditor>();
+        }
 
-				targetCategory.setName(name);
+        for (final Category category : categorySettings.getAllCategories()) {
+            final TableItem tableItem = new TableItem(categoryTable, SWT.NONE);
 
-				initCategoryTable();
-			}
+            final Button selectCheckButton = new Button(categoryTable, SWT.CHECK);
+            selectCheckButton.pack();
+
+            final TableEditor editor = new TableEditor(categoryTable);
+
+            editor.minimumWidth = selectCheckButton.getSize().x;
+            editor.horizontalAlignment = SWT.CENTER;
+            editor.setEditor(selectCheckButton, tableItem, 0);
 
-		});
-
-		this.deleteCategoryButton.addSelectionListener(new SelectionAdapter() {
+            tableItem.setText(1, category.getName());
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				try {
-					int index = categoryTable.getSelectionIndex();
-
-					if (index == -1) {
-						return;
-					}
-
-					validatePage();
-
-					categorySettings.removeCategory(index);
-
-					if (categoryTable.getItemCount() > index + 1) {
-
-					} else if (categoryTable.getItemCount() != 0) {
-						index = categoryTable.getItemCount() - 2;
-
-					} else {
-						index = -1;
-					}
-
-					if (index != -1) {
-						targetCategory = categorySettings.getAllCategories()
-								.get(index);
-					} else {
-						targetCategory = null;
-					}
-
-					initCategoryTable();
-
-				} catch (Exception e) {
-					ERDiagramActivator.log(e);
-				}
-			}
-		});
-
-		this.upButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = categoryTable.getSelectionIndex();
-
-				if (index == -1 || index == 0) {
-					return;
-				}
-
-				validatePage();
-				changeColumn(index - 1, index);
-				initCategoryTable();
-			}
-
-		});
-
-		this.downButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = categoryTable.getSelectionIndex();
-
-				if (index == -1 || index == categoryTable.getItemCount() - 1) {
-					return;
-				}
-
-				validatePage();
-				changeColumn(index, index + 1);
-				initCategoryTable();
-			}
-
-		});
-	}
-
-	public void changeColumn(int index1, int index2) {
-		List<Category> allCategories = this.categorySettings.getAllCategories();
-
-		Category category1 = allCategories.remove(index1);
-		Category category2 = null;
-
-		if (index1 < index2) {
-			category2 = allCategories.remove(index2 - 1);
-			allCategories.add(index1, category2);
-			allCategories.add(index2, category1);
-
-		} else if (index1 > index2) {
-			category2 = allCategories.remove(index2);
-			allCategories.add(index1 - 1, category2);
-			allCategories.add(index2, category1);
-		}
-	}
-
-	@Override
-	protected String getTitle() {
-		return "label.category";
-	}
-
-	@Override
-	protected void perfomeOK() throws InputException {
-		validatePage();
-	}
-
-	@Override
-	protected void setData() {
-		this.initCategoryTable();
-	}
-
-	@Override
-	protected String getErrorMessage() {
-		if (!Check.isEmpty(this.categoryNameText.getText())) {
-			this.addCategoryButton.setEnabled(true);
-		} else {
-			this.addCategoryButton.setEnabled(false);
-		}
-
-		return null;
-	}
-
-	public void validatePage() {
-		if (targetCategory != null) {
-			List<NodeElement> selectedNodeElementList = new ArrayList<NodeElement>();
-
-			for (NodeElement table : this.nodeCheckMap.keySet()) {
-				Button selectCheckButton = (Button) this.nodeCheckMap
-						.get(table).getEditor();
-
-				if (selectCheckButton.getSelection()) {
-					selectedNodeElementList.add(table);
-				}
-			}
-
-			targetCategory.setContents(selectedNodeElementList);
-		}
-
-		List<Category> selectedCategories = new ArrayList<Category>();
-
-		for (Category category : categorySettings.getAllCategories()) {
-			Button button = (Button) this.categoryCheckMap.get(category)
-					.getEditor();
-
-			if (button.getSelection()) {
-				selectedCategories.add(category);
-			}
-		}
-
-		categorySettings.setSelectedCategories(selectedCategories);
-	}
+            if (categorySettings.isSelected(category)) {
+                selectCheckButton.setSelection(true);
+            }
+
+            categoryCheckMap.put(category, editor);
+
+            if (targetCategory == category) {
+                categoryTable.setSelection(tableItem);
+            }
+        }
+
+        if (targetCategory != null) {
+            initNodeList(targetCategory);
+            updateCategoryButton.setEnabled(true);
+            deleteCategoryButton.setEnabled(true);
+
+        } else {
+            deleteNodeList();
+            updateCategoryButton.setEnabled(false);
+            deleteCategoryButton.setEnabled(false);
+
+        }
+    }
+
+    private void initNodeTable() {
+        nodeTable.removeAll();
+
+        nodeCheckMap = new HashMap<NodeElement, TableEditor>();
+
+        for (final NodeElement nodeElement : diagram.getDiagramContents().getContents()) {
+            final TableItem tableItem = new TableItem(nodeTable, SWT.NONE);
+
+            final Button selectCheckButton = new Button(nodeTable, SWT.CHECK);
+            selectCheckButton.pack();
+
+            final TableEditor editor = new TableEditor(nodeTable);
+
+            editor.minimumWidth = selectCheckButton.getSize().x;
+            editor.horizontalAlignment = SWT.CENTER;
+            editor.setEditor(selectCheckButton, tableItem, 0);
+
+            tableItem.setText(1, ResourceString.getResourceString("label.object.type." + nodeElement.getObjectType()));
+            tableItem.setText(2, Format.null2blank(nodeElement.getName()));
+
+            nodeCheckMap.put(nodeElement, editor);
+        }
+    }
+
+    private void initNodeList(final Category category) {
+        categoryNameText.setText(category.getName());
+
+        for (final NodeElement nodeElement : nodeCheckMap.keySet()) {
+            final Button selectCheckButton = (Button) nodeCheckMap.get(nodeElement).getEditor();
+
+            if (category.contains(nodeElement)) {
+                selectCheckButton.setSelection(true);
+
+            } else {
+                selectCheckButton.setSelection(false);
+            }
+        }
+    }
+
+    private void deleteNodeList() {
+        categoryNameText.setText("");
+
+        nodeTable.removeAll();
+
+        if (nodeCheckMap != null) {
+            for (final TableEditor editor : nodeCheckMap.values()) {
+                editor.getEditor().dispose();
+                editor.dispose();
+            }
+
+            nodeCheckMap.clear();
+        }
+    }
+
+    @Override
+    protected void addListener() {
+        super.addListener();
+
+        categoryTable.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int index = categoryTable.getSelectionIndex();
+                if (index == -1) {
+                    return;
+                }
+
+                validatePage();
+
+                if (targetCategory == null) {
+                    initNodeTable();
+
+                    updateCategoryButton.setEnabled(true);
+                    deleteCategoryButton.setEnabled(true);
+                }
+
+                targetCategory = categorySettings.getAllCategories().get(index);
+                initNodeList(targetCategory);
+            }
+        });
+
+        addCategoryButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final String name = categoryNameText.getText().trim();
+
+                if (name.equals("")) {
+                    return;
+                }
+
+                validatePage();
+
+                if (targetCategory == null) {
+                    initNodeTable();
+                }
+
+                final Category addedCategory = new Category();
+                final int[] color = diagram.getDefaultColor();
+                addedCategory.setColor(color[0], color[1], color[2]);
+                addedCategory.setName(name);
+                categorySettings.addCategoryAsSelected(addedCategory);
+                targetCategory = addedCategory;
+
+                initCategoryTable();
+            }
+
+        });
+
+        updateCategoryButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int index = categoryTable.getSelectionIndex();
+
+                if (index == -1) {
+                    return;
+                }
+
+                final String name = categoryNameText.getText().trim();
+
+                if (name.equals("")) {
+                    return;
+                }
+
+                validatePage();
+
+                targetCategory.setName(name);
+
+                initCategoryTable();
+            }
+
+        });
+
+        deleteCategoryButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent event) {
+                try {
+                    int index = categoryTable.getSelectionIndex();
+
+                    if (index == -1) {
+                        return;
+                    }
+
+                    validatePage();
+
+                    categorySettings.removeCategory(index);
+
+                    if (categoryTable.getItemCount() > index + 1) {
+
+                    } else if (categoryTable.getItemCount() != 0) {
+                        index = categoryTable.getItemCount() - 2;
+
+                    } else {
+                        index = -1;
+                    }
+
+                    if (index != -1) {
+                        targetCategory = categorySettings.getAllCategories().get(index);
+                    } else {
+                        targetCategory = null;
+                    }
+
+                    initCategoryTable();
+
+                } catch (final Exception e) {
+                    ERDiagramActivator.log(e);
+                }
+            }
+        });
+
+        upButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int index = categoryTable.getSelectionIndex();
+
+                if (index == -1 || index == 0) {
+                    return;
+                }
+
+                validatePage();
+                changeColumn(index - 1, index);
+                initCategoryTable();
+            }
+
+        });
+
+        downButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int index = categoryTable.getSelectionIndex();
+
+                if (index == -1 || index == categoryTable.getItemCount() - 1) {
+                    return;
+                }
+
+                validatePage();
+                changeColumn(index, index + 1);
+                initCategoryTable();
+            }
+
+        });
+    }
+
+    public void changeColumn(final int index1, final int index2) {
+        final List<Category> allCategories = categorySettings.getAllCategories();
+
+        final Category category1 = allCategories.remove(index1);
+        Category category2 = null;
+
+        if (index1 < index2) {
+            category2 = allCategories.remove(index2 - 1);
+            allCategories.add(index1, category2);
+            allCategories.add(index2, category1);
+
+        } else if (index1 > index2) {
+            category2 = allCategories.remove(index2);
+            allCategories.add(index1 - 1, category2);
+            allCategories.add(index2, category1);
+        }
+    }
+
+    @Override
+    protected String getTitle() {
+        return "label.category";
+    }
+
+    @Override
+    protected void perfomeOK() throws InputException {
+        validatePage();
+    }
+
+    @Override
+    protected void setData() {
+        initCategoryTable();
+    }
+
+    @Override
+    protected String getErrorMessage() {
+        if (!Check.isEmpty(categoryNameText.getText())) {
+            addCategoryButton.setEnabled(true);
+        } else {
+            addCategoryButton.setEnabled(false);
+        }
+
+        return null;
+    }
+
+    public void validatePage() {
+        if (targetCategory != null) {
+            final List<NodeElement> selectedNodeElementList = new ArrayList<NodeElement>();
+
+            for (final NodeElement table : nodeCheckMap.keySet()) {
+                final Button selectCheckButton = (Button) nodeCheckMap.get(table).getEditor();
+
+                if (selectCheckButton.getSelection()) {
+                    selectedNodeElementList.add(table);
+                }
+            }
+
+            targetCategory.setContents(selectedNodeElementList);
+        }
+
+        final List<Category> selectedCategories = new ArrayList<Category>();
+
+        for (final Category category : categorySettings.getAllCategories()) {
+            final Button button = (Button) categoryCheckMap.get(category).getEditor();
+
+            if (button.getSelection()) {
+                selectedCategories.add(category);
+            }
+        }
+
+        categorySettings.setSelectedCategories(selectedCategories);
+    }
 }

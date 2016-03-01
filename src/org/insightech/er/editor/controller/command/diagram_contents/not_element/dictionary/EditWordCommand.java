@@ -7,43 +7,41 @@ import org.insightech.er.editor.model.diagram_contents.not_element.dictionary.Wo
 
 public class EditWordCommand extends AbstractCommand {
 
-	private Word oldWord;
+    private final Word oldWord;
 
-	private Word word;
+    private final Word word;
 
-	private Word newWord;
+    private final Word newWord;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private Dictionary dictionary;
+    private final Dictionary dictionary;
 
-	public EditWordCommand(Word word, Word newWord, ERDiagram diagram) {
-		this.oldWord = new Word(word.getPhysicalName(), word.getLogicalName(),
-				word.getType(), word.getTypeData().clone(), word
-						.getDescription(), diagram.getDatabase());
-		this.diagram = diagram;
-		this.word = word;
-		this.newWord = newWord;
+    public EditWordCommand(final Word word, final Word newWord, final ERDiagram diagram) {
+        oldWord = new Word(word.getPhysicalName(), word.getLogicalName(), word.getType(), word.getTypeData().clone(), word.getDescription(), diagram.getDatabase());
+        this.diagram = diagram;
+        this.word = word;
+        this.newWord = newWord;
 
-		this.dictionary = this.diagram.getDiagramContents().getDictionary();
-	}
+        dictionary = this.diagram.getDiagramContents().getDictionary();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.dictionary.copyTo(newWord, word);
-		this.diagram.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        dictionary.copyTo(newWord, word);
+        diagram.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.dictionary.copyTo(oldWord, word);
-		this.diagram.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        dictionary.copyTo(oldWord, word);
+        diagram.refreshVisuals();
+    }
 
 }

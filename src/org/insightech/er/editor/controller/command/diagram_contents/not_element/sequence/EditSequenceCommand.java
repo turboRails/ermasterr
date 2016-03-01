@@ -7,36 +7,35 @@ import org.insightech.er.editor.model.diagram_contents.not_element.sequence.Sequ
 
 public class EditSequenceCommand extends AbstractCommand {
 
-	private SequenceSet sequenceSet;
+    private final SequenceSet sequenceSet;
 
-	private Sequence oldSequence;
+    private final Sequence oldSequence;
 
-	private Sequence newSequence;
+    private final Sequence newSequence;
 
-	public EditSequenceCommand(ERDiagram diagram, Sequence oldSequence,
-			Sequence newSequence) {
-		this.sequenceSet = diagram.getDiagramContents().getSequenceSet();
-		this.oldSequence = oldSequence;
-		this.newSequence = newSequence;
-	}
+    public EditSequenceCommand(final ERDiagram diagram, final Sequence oldSequence, final Sequence newSequence) {
+        sequenceSet = diagram.getDiagramContents().getSequenceSet();
+        this.oldSequence = oldSequence;
+        this.newSequence = newSequence;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.sequenceSet.remove(this.oldSequence);
-		this.sequenceSet.addObject(this.newSequence);
-		this.sequenceSet.refresh();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        sequenceSet.remove(oldSequence);
+        sequenceSet.addObject(newSequence);
+        sequenceSet.refresh();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.sequenceSet.remove(this.newSequence);
-		this.sequenceSet.addObject(this.oldSequence);
-		this.sequenceSet.refresh();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        sequenceSet.remove(newSequence);
+        sequenceSet.addObject(oldSequence);
+        sequenceSet.refresh();
+    }
 }

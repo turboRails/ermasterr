@@ -8,26 +8,24 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.index.
 
 public class SqlServer2008DDLCreator extends SqlServerDDLCreator {
 
-	public SqlServer2008DDLCreator(ERDiagram diagram, Category targetCategory,
-			boolean semicolon) {
-		super(diagram, targetCategory, semicolon);
-	}
+    public SqlServer2008DDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        super(diagram, targetCategory, semicolon);
+    }
 
-	@Override
-	public String getDropDDL(Index index, ERTable table) {
-		StringBuilder ddl = new StringBuilder();
+    @Override
+    public String getDropDDL(final Index index, final ERTable table) {
+        final StringBuilder ddl = new StringBuilder();
 
-		ddl.append("DROP INDEX ");
-		ddl.append(this.getIfExistsOption());
-		ddl.append(filterName(index.getName()));
-		ddl.append(" ON ");
-		ddl.append(filterName(table.getNameWithSchema(this.getDiagram()
-				.getDatabase())));
+        ddl.append("DROP INDEX ");
+        ddl.append(getIfExistsOption());
+        ddl.append(filterName(index.getName()));
+        ddl.append(" ON ");
+        ddl.append(filterName(table.getNameWithSchema(getDiagram().getDatabase())));
 
-		if (this.semicolon) {
-			ddl.append(";");
-		}
+        if (semicolon) {
+            ddl.append(";");
+        }
 
-		return ddl.toString();
-	}
+        return ddl.toString();
+    }
 }

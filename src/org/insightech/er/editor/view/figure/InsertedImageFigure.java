@@ -8,71 +8,67 @@ import org.eclipse.swt.graphics.Image;
 
 public class InsertedImageFigure extends Figure {
 
-	private Image image;
+    private Image image;
 
-	private boolean fixAspectRatio;
+    private boolean fixAspectRatio;
 
-	private Dimension imageSize;
+    private Dimension imageSize;
 
-	private int alpha;
+    private int alpha;
 
-	public InsertedImageFigure(Image image, boolean fixAspectRatio, int alpha) {
-		this.image = image;
-		this.fixAspectRatio = fixAspectRatio;
-		this.alpha = alpha;
-		this.imageSize = new Dimension(this.image.getBounds().width, this.image
-				.getBounds().height);
-	}
+    public InsertedImageFigure(final Image image, final boolean fixAspectRatio, final int alpha) {
+        this.image = image;
+        this.fixAspectRatio = fixAspectRatio;
+        this.alpha = alpha;
+        imageSize = new Dimension(this.image.getBounds().width, this.image.getBounds().height);
+    }
 
-	public void setImg(Image image, boolean fixAspectRatio, int alpha) {
-		this.image = image;
-		this.fixAspectRatio = fixAspectRatio;
-		this.alpha = alpha;
+    public void setImg(final Image image, final boolean fixAspectRatio, final int alpha) {
+        this.image = image;
+        this.fixAspectRatio = fixAspectRatio;
+        this.alpha = alpha;
 
-		this.imageSize = new Dimension(this.image.getBounds().width, this.image
-				.getBounds().height);
-		
-		this.repaint();
-	}
+        imageSize = new Dimension(this.image.getBounds().width, this.image.getBounds().height);
 
-	@Override
-	protected void paintFigure(Graphics graphics) {
-		super.paintFigure(graphics);
+        this.repaint();
+    }
 
-		graphics.setAlpha(alpha);
+    @Override
+    protected void paintFigure(final Graphics graphics) {
+        super.paintFigure(graphics);
 
-		Rectangle area = getClientArea();
+        graphics.setAlpha(alpha);
 
-		if (this.fixAspectRatio) {
-			Rectangle destination = new Rectangle();
+        final Rectangle area = getClientArea();
 
-			double dw = (double) this.imageSize.width / (double) area.width;
-			double dh = (double) this.imageSize.height / (double) area.height;
+        if (fixAspectRatio) {
+            final Rectangle destination = new Rectangle();
 
-			if (dw > dh) {
-				// we must limit the size by the width
-				destination.width = area.width;
-				destination.height = (int) (this.imageSize.height / dw);
+            final double dw = (double) imageSize.width / (double) area.width;
+            final double dh = (double) imageSize.height / (double) area.height;
 
-			} else {
-				// we must limit the size by the height
-				destination.width = (int) (this.imageSize.width / dh);
-				destination.height = area.height;
+            if (dw > dh) {
+                // we must limit the size by the width
+                destination.width = area.width;
+                destination.height = (int) (imageSize.height / dw);
 
-			}
+            } else {
+                // we must limit the size by the height
+                destination.width = (int) (imageSize.width / dh);
+                destination.height = area.height;
 
-			destination.x = (area.width - destination.width) / 2 + area.x;
-			destination.y = (area.height - destination.height) / 2 + area.y;
+            }
 
-			graphics.drawImage(this.image,
-					new Rectangle(this.image.getBounds()), destination);
+            destination.x = (area.width - destination.width) / 2 + area.x;
+            destination.y = (area.height - destination.height) / 2 + area.y;
 
-		} else {
-			graphics.drawImage(this.image,
-					new Rectangle(this.image.getBounds()), area);
+            graphics.drawImage(image, new Rectangle(image.getBounds()), destination);
 
-		}
+        } else {
+            graphics.drawImage(image, new Rectangle(image.getBounds()), area);
 
-	}
+        }
+
+    }
 
 }

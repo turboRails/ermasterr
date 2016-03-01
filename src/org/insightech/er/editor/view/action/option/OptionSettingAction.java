@@ -15,34 +15,29 @@ import org.insightech.er.editor.view.dialog.option.OptionSettingDialog;
 
 public class OptionSettingAction extends AbstractBaseAction {
 
-	public static final String ID = OptionSettingAction.class.getName();
+    public static final String ID = OptionSettingAction.class.getName();
 
-	public OptionSettingAction(ERDiagramEditor editor) {
-		super(ID, ResourceString.getResourceString("action.title.option"),
-				editor);
-		this.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.OPTION));
-	}
+    public OptionSettingAction(final ERDiagramEditor editor) {
+        super(ID, ResourceString.getResourceString("action.title.option"), editor);
+        setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.OPTION));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        final ERDiagram diagram = getDiagram();
 
-		Settings settings = (Settings) diagram.getDiagramContents()
-				.getSettings().clone();
+        final Settings settings = diagram.getDiagramContents().getSettings().clone();
 
-		OptionSettingDialog dialog = new OptionSettingDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				settings, diagram);
+        final OptionSettingDialog dialog = new OptionSettingDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), settings, diagram);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			ChangeSettingsCommand command = new ChangeSettingsCommand(diagram,
-					settings, true);
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            final ChangeSettingsCommand command = new ChangeSettingsCommand(diagram, settings, true);
 
-			this.execute(command);
-		}
-	}
+            this.execute(command);
+        }
+    }
 
 }

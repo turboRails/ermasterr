@@ -28,193 +28,189 @@ import org.insightech.er.preference.page.jdbc.JDBCPathDialog;
 
 public abstract class DBManagerBase implements DBManager {
 
-	private Set<String> reservedWords = new HashSet<String>();
+    private Set<String> reservedWords = new HashSet<String>();
 
-	private Map<String, ClassLoader> loaderMap;
+    private final Map<String, ClassLoader> loaderMap;
 
-	public DBManagerBase() {
-		DBManagerFactory.addDB(this);
+    public DBManagerBase() {
+        DBManagerFactory.addDB(this);
 
-		this.reservedWords = this.getReservedWords();
+        reservedWords = getReservedWords();
 
-		this.loaderMap = new HashMap<String, ClassLoader>();
-	}
+        loaderMap = new HashMap<String, ClassLoader>();
+    }
 
-	public String getURL(String serverName, String dbName, int port) {
-		// String temp = serverName.replaceAll("\\\\", "\\\\\\\\");
-		String url = this.getURL().replaceAll("<SERVER NAME>",
-				Matcher.quoteReplacement(serverName));
-		url = url.replaceAll("<PORT>", String.valueOf(port));
+    @Override
+    public String getURL(final String serverName, final String dbName, final int port) {
+        // String temp = serverName.replaceAll("\\\\", "\\\\\\\\");
+        String url = this.getURL().replaceAll("<SERVER NAME>", Matcher.quoteReplacement(serverName));
+        url = url.replaceAll("<PORT>", String.valueOf(port));
 
-		// temp = dbName.replaceAll("\\\\", "\\\\\\\\");
-		url = url.replaceAll("<DB NAME>", Matcher.quoteReplacement(dbName));
+        // temp = dbName.replaceAll("\\\\", "\\\\\\\\");
+        url = url.replaceAll("<DB NAME>", Matcher.quoteReplacement(dbName));
 
-		return url;
-	}
+        return url;
+    }
 
-	@SuppressWarnings("unchecked")
-	public Class<Driver> getDriverClass(String driverClassName) {
-		String path = null;
-		Class clazz = null;
+    @Override
+    @SuppressWarnings("unchecked")
+    public Class<Driver> getDriverClass(final String driverClassName) {
+        String path = null;
+        Class clazz = null;
 
-		try {
-			if (driverClassName.equals("sun.jdbc.odbc.JdbcOdbcDriver")) {
-				return (Class<Driver>) Class
-						.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+        try {
+            if (driverClassName.equals("sun.jdbc.odbc.JdbcOdbcDriver")) {
+                return (Class<Driver>) Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 
-			} else {
-				path = PreferenceInitializer.getJDBCDriverPath(this.getId(),
-						driverClassName);
+            } else {
+                path = PreferenceInitializer.getJDBCDriverPath(getId(), driverClassName);
 
-				// Cache the class loader to map.
-				// Because if I use the another loader with the driver using
-				// native library(.dll)
-				// next error occur.
-				//
-				// java.lang.UnsatisfiedLinkError: Native Library xxx.dll
-				// already loaded in another classloader
-				//
-				ClassLoader loader = this.loaderMap.get(path);
-				if (loader == null) {
-					loader = this.getClassLoader(path);
-					this.loaderMap.put(path, loader);
-				}
+                // Cache the class loader to map.
+                // Because if I use the another loader with the driver using
+                // native library(.dll)
+                // next error occur.
+                //
+                // java.lang.UnsatisfiedLinkError: Native Library xxx.dll
+                // already loaded in another classloader
+                //
+                ClassLoader loader = loaderMap.get(path);
+                if (loader == null) {
+                    loader = getClassLoader(path);
+                    loaderMap.put(path, loader);
+                }
 
-				clazz = loader.loadClass(driverClassName);
-			}
+                clazz = loader.loadClass(driverClassName);
+            }
 
-		} catch (Exception e) {
-			JDBCPathDialog dialog = new JDBCPathDialog(PlatformUI
-					.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					this.getId(), driverClassName, path,
-					new ArrayList<JDBCDriverSetting>(), false);
+        } catch (final Exception e) {
+            final JDBCPathDialog dialog = new JDBCPathDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), getId(), driverClassName, path, new ArrayList<JDBCDriverSetting>(), false);
 
-			if (dialog.open() == IDialogConstants.OK_ID) {
-				JDBCDriverSetting newDriverSetting = new JDBCDriverSetting(
-						this.getId(), dialog.getDriverClassName(),
-						dialog.getPath());
+            if (dialog.open() == IDialogConstants.OK_ID) {
+                final JDBCDriverSetting newDriverSetting = new JDBCDriverSetting(getId(), dialog.getDriverClassName(), dialog.getPath());
 
-				List<JDBCDriverSetting> driverSettingList = PreferenceInitializer
-						.getJDBCDriverSettingList();
+                final List<JDBCDriverSetting> driverSettingList = PreferenceInitializer.getJDBCDriverSettingList();
 
-				if (driverSettingList.contains(newDriverSetting)) {
-					driverSettingList.remove(newDriverSetting);
-				}
-				driverSettingList.add(newDriverSetting);
+                if (driverSettingList.contains(newDriverSetting)) {
+                    driverSettingList.remove(newDriverSetting);
+                }
+                driverSettingList.add(newDriverSetting);
 
-				PreferenceInitializer
-						.saveJDBCDriverSettingList(driverSettingList);
+                PreferenceInitializer.saveJDBCDriverSettingList(driverSettingList);
 
-				clazz = this.getDriverClass(dialog.getDriverClassName());
-			}
-		}
+                clazz = getDriverClass(dialog.getDriverClassName());
+            }
+        }
 
-		return clazz;
-	}
+        return clazz;
+    }
 
-	private ClassLoader getClassLoader(String uri) throws SQLException,
-			MalformedURLException {
+    private ClassLoader getClassLoader(final String uri) throws SQLException, MalformedURLException {
 
-		StringTokenizer tokenizer = new StringTokenizer(uri, ";");
-		int count = tokenizer.countTokens();
+        final StringTokenizer tokenizer = new StringTokenizer(uri, ";");
+        final int count = tokenizer.countTokens();
 
-		URL[] urls = new URL[count];
+        final URL[] urls = new URL[count];
 
-		for (int i = 0; i < urls.length; i++) {
-			urls[i] = new URL("file", "", tokenizer.nextToken());
-		}
+        for (int i = 0; i < urls.length; i++) {
+            urls[i] = new URL("file", "", tokenizer.nextToken());
+        }
 
-		URLClassLoader loader = new URLClassLoader(urls,
-				ERDiagramActivator.getClassLoader());
+        final URLClassLoader loader = new URLClassLoader(urls, ERDiagramActivator.getClassLoader());
 
-		return loader;
-	}
+        return loader;
+    }
 
-	abstract protected String getURL();
+    abstract protected String getURL();
 
-	abstract public String getDriverClassName();
+    @Override
+    abstract public String getDriverClassName();
 
-	protected Set<String> getReservedWords() {
-		Set<String> reservedWords = new HashSet<String>();
+    protected Set<String> getReservedWords() {
+        final Set<String> reservedWords = new HashSet<String>();
 
-		ResourceBundle bundle = ResourceBundle.getBundle(this.getClass()
-				.getPackage().getName()
-				+ ".reserved_word");
+        final ResourceBundle bundle = ResourceBundle.getBundle(this.getClass().getPackage().getName() + ".reserved_word");
 
-		Enumeration<String> keys = bundle.getKeys();
+        final Enumeration<String> keys = bundle.getKeys();
 
-		while (keys.hasMoreElements()) {
-			reservedWords.add(keys.nextElement().toUpperCase());
-		}
+        while (keys.hasMoreElements()) {
+            reservedWords.add(keys.nextElement().toUpperCase());
+        }
 
-		return reservedWords;
-	}
+        return reservedWords;
+    }
 
-	public boolean isReservedWord(String str) {
-		return reservedWords.contains(str.toUpperCase());
-	}
+    @Override
+    public boolean isReservedWord(final String str) {
+        return reservedWords.contains(str.toUpperCase());
+    }
 
-	public boolean isSupported(int supportItem) {
-		int[] supportItems = this.getSupportItems();
+    @Override
+    public boolean isSupported(final int supportItem) {
+        final int[] supportItems = getSupportItems();
 
-		for (int i = 0; i < supportItems.length; i++) {
-			if (supportItems[i] == supportItem) {
-				return true;
-			}
-		}
+        for (int i = 0; i < supportItems.length; i++) {
+            if (supportItems[i] == supportItem) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean doesNeedURLDatabaseName() {
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean doesNeedURLDatabaseName() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean doesNeedURLServerName() {
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean doesNeedURLServerName() {
+        return true;
+    }
 
-	abstract protected int[] getSupportItems();
+    abstract protected int[] getSupportItems();
 
-	public List<String> getImportSchemaList(Connection con) throws SQLException {
-		List<String> schemaList = new ArrayList<String>();
+    @Override
+    public List<String> getImportSchemaList(final Connection con) throws SQLException {
+        final List<String> schemaList = new ArrayList<String>();
 
-		DatabaseMetaData metaData = con.getMetaData();
-		try {
-			ResultSet rs = metaData.getSchemas();
+        final DatabaseMetaData metaData = con.getMetaData();
+        try {
+            final ResultSet rs = metaData.getSchemas();
 
-			while (rs.next()) {
-				schemaList.add(rs.getString(1));
-			}
+            while (rs.next()) {
+                schemaList.add(rs.getString(1));
+            }
 
-		} catch (SQLException e) {
-			// when schema is not supported
-		}
+        } catch (final SQLException e) {
+            // when schema is not supported
+        }
 
-		return schemaList;
-	}
+        return schemaList;
+    }
 
-	public List<String> getSystemSchemaList() {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getSystemSchemaList() {
+        final List<String> list = new ArrayList<String>();
 
-		return list;
-	}
+        return list;
+    }
 
-	public List<String> getForeignKeyRuleList() {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getForeignKeyRuleList() {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("RESTRICT");
-		list.add("CASCADE");
-		list.add("NO ACTION");
-		list.add("SET NULL");
-		list.add("SET DEFAULT");
+        list.add("RESTRICT");
+        list.add("CASCADE");
+        list.add("NO ACTION");
+        list.add("SET NULL");
+        list.add("SET DEFAULT");
 
-		return list;
-	}
+        return list;
+    }
 }

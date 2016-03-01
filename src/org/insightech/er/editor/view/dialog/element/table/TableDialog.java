@@ -18,35 +18,33 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.DescriptionTa
 
 public class TableDialog extends TableViewDialog {
 
-	private ERTable copyData;
+    private final ERTable copyData;
 
-	public TableDialog(Shell parentShell, EditPartViewer viewer,
-			ERTable copyData) {
-		super(parentShell, viewer);
+    public TableDialog(final Shell parentShell, final EditPartViewer viewer, final ERTable copyData) {
+        super(parentShell, viewer);
 
-		this.copyData = copyData;
-	}
+        this.copyData = copyData;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getTitle() {
-		return "dialog.title.table";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getTitle() {
+        return "dialog.title.table";
+    }
 
-	@Override
-	protected List<ValidatableTabWrapper> createTabWrapperList(
-			TabFolder tabFolder) {
-		List<ValidatableTabWrapper> list = new ArrayList<ValidatableTabWrapper>();
+    @Override
+    protected List<ValidatableTabWrapper> createTabWrapperList(final TabFolder tabFolder) {
+        final List<ValidatableTabWrapper> list = new ArrayList<ValidatableTabWrapper>();
 
-		list.add(new AttributeTabWrapper(this, tabFolder, this.copyData));
-		list.add(new DescriptionTabWrapper(this, tabFolder, this.copyData));
-		list.add(new ComplexUniqueKeyTabWrapper(this, tabFolder, this.copyData));
-		list.add(new ConstraintTabWrapper(this, tabFolder, this.copyData));
-		list.add(new IndexTabWrapper(this, tabFolder, this.copyData));
-		list.add(new TableAdvancedTabWrapper(this, tabFolder, this.copyData));
+        list.add(new AttributeTabWrapper(this, tabFolder, copyData));
+        list.add(new DescriptionTabWrapper(this, tabFolder, copyData));
+        list.add(new ComplexUniqueKeyTabWrapper(this, tabFolder, copyData));
+        list.add(new ConstraintTabWrapper(this, tabFolder, copyData));
+        list.add(new IndexTabWrapper(this, tabFolder, copyData));
+        list.add(new TableAdvancedTabWrapper(this, tabFolder, copyData));
 
-		return list;
-	}
+        return list;
+    }
 }

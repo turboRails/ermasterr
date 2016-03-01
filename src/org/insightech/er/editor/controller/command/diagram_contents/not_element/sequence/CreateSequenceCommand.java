@@ -7,30 +7,30 @@ import org.insightech.er.editor.model.diagram_contents.not_element.sequence.Sequ
 
 public class CreateSequenceCommand extends AbstractCommand {
 
-	private SequenceSet sequenceSet;
+    private final SequenceSet sequenceSet;
 
-	private Sequence sequence;
+    private final Sequence sequence;
 
-	public CreateSequenceCommand(ERDiagram diagram, Sequence sequence) {
-		this.sequenceSet = diagram.getDiagramContents().getSequenceSet();
-		this.sequence = sequence;
-	}
+    public CreateSequenceCommand(final ERDiagram diagram, final Sequence sequence) {
+        sequenceSet = diagram.getDiagramContents().getSequenceSet();
+        this.sequence = sequence;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.sequenceSet.addObject(this.sequence);
-		this.sequenceSet.refresh();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        sequenceSet.addObject(sequence);
+        sequenceSet.refresh();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.sequenceSet.remove(this.sequence);
-		this.sequenceSet.refresh();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        sequenceSet.remove(sequence);
+        sequenceSet.refresh();
+    }
 }

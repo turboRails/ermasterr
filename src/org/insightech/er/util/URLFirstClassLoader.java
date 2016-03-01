@@ -5,24 +5,23 @@ import java.net.URLClassLoader;
 
 public class URLFirstClassLoader extends URLClassLoader {
 
-	private ClassLoader parentClassLoader;
+    private final ClassLoader parentClassLoader;
 
-	public URLFirstClassLoader(URL[] paramArrayOfURL,
-			ClassLoader paramClassLoader) {
-		super(paramArrayOfURL);
+    public URLFirstClassLoader(final URL[] paramArrayOfURL, final ClassLoader paramClassLoader) {
+        super(paramArrayOfURL);
 
-		this.parentClassLoader = paramClassLoader;
-	}
+        parentClassLoader = paramClassLoader;
+    }
 
-	@Override
-	public URL getResource(String paramString) {
-		URL url = super.getResource(paramString);
+    @Override
+    public URL getResource(final String paramString) {
+        URL url = super.getResource(paramString);
 
-		if (url == null) {
-			url = parentClassLoader.getResource(paramString);
-		}
+        if (url == null) {
+            url = parentClassLoader.getResource(paramString);
+        }
 
-		return url;
-	}
+        return url;
+    }
 
 }

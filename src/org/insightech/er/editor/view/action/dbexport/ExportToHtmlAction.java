@@ -7,15 +7,15 @@ import org.insightech.er.editor.view.dialog.dbexport.ExportToHtmlDialog;
 
 public class ExportToHtmlAction extends AbstractExportWithDialogAction {
 
-	public static final String ID = ExportToHtmlAction.class.getName();
+    public static final String ID = ExportToHtmlAction.class.getName();
 
-	public ExportToHtmlAction(ERDiagramEditor editor) {
-		super(ID, "action.title.export.html", ImageKey.EXPORT_TO_HTML, editor);
-	}
+    public ExportToHtmlAction(final ERDiagramEditor editor) {
+        super(ID, "action.title.export.html", ImageKey.EXPORT_TO_HTML, editor);
+    }
 
-	@Override
-	protected AbstractExportDialog getExportDialog() {
-		return new ExportToHtmlDialog();
-	}
+    @Override
+    protected AbstractExportDialog getExportDialog() {
+        return new ExportToHtmlDialog();
+    }
 
 }

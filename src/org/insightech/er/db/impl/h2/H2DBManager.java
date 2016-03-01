@@ -18,107 +18,117 @@ import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Ta
 
 public class H2DBManager extends DBManagerBase {
 
-	public static final String ID = "H2";
+    public static final String ID = "H2";
 
-	public String getId() {
-		return ID;
-	}
+    @Override
+    public String getId() {
+        return ID;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDriverClassName() {
-		return "org.h2.Driver";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDriverClassName() {
+        return "org.h2.Driver";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getURL() {
-		return "jdbc:h2:tcp://<SERVER NAME>:<PORT>/<DB NAME>";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getURL() {
+        return "jdbc:h2:tcp://<SERVER NAME>:<PORT>/<DB NAME>";
+    }
 
-	public int getDefaultPort() {
-		return 9092;
-	}
+    @Override
+    public int getDefaultPort() {
+        return 9092;
+    }
 
-	public SqlTypeManager getSqlTypeManager() {
-		return new H2SqlTypeManager();
-	}
+    @Override
+    public SqlTypeManager getSqlTypeManager() {
+        return new H2SqlTypeManager();
+    }
 
-	public TableProperties createTableProperties(TableProperties tableProperties) {
-		if (tableProperties != null
-				&& tableProperties instanceof H2TableProperties) {
-			return tableProperties;
-		}
+    @Override
+    public TableProperties createTableProperties(final TableProperties tableProperties) {
+        if (tableProperties != null && tableProperties instanceof H2TableProperties) {
+            return tableProperties;
+        }
 
-		return new H2TableProperties();
-	}
+        return new H2TableProperties();
+    }
 
-	public DDLCreator getDDLCreator(ERDiagram diagram, Category targetCategory, boolean semicolon) {
-		return new H2DDLCreator(diagram, targetCategory, semicolon);
-	}
+    @Override
+    public DDLCreator getDDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        return new H2DDLCreator(diagram, targetCategory, semicolon);
+    }
 
-	public List<String> getIndexTypeList(ERTable table) {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getIndexTypeList(final ERTable table) {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("BTREE");
+        list.add("BTREE");
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	protected int[] getSupportItems() {
-		return new int[] { SUPPORT_SCHEMA, SUPPORT_SEQUENCE,
-				SUPPORT_SEQUENCE_NOCACHE };
-	}
+    @Override
+    protected int[] getSupportItems() {
+        return new int[] {SUPPORT_SCHEMA, SUPPORT_SEQUENCE, SUPPORT_SEQUENCE_NOCACHE};
+    }
 
-	public ImportFromDBManager getTableImportManager() {
-		return new H2TableImportManager();
-	}
+    @Override
+    public ImportFromDBManager getTableImportManager() {
+        return new H2TableImportManager();
+    }
 
-	public PreImportFromDBManager getPreTableImportManager() {
-		return new H2PreTableImportManager();
-	}
+    @Override
+    public PreImportFromDBManager getPreTableImportManager() {
+        return new H2PreTableImportManager();
+    }
 
-	public PreTableExportManager getPreTableExportManager() {
-		return new H2PreTableExportManager();
-	}
+    @Override
+    public PreTableExportManager getPreTableExportManager() {
+        return new H2PreTableExportManager();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean doesNeedURLDatabaseName() {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean doesNeedURLDatabaseName() {
+        return false;
+    }
 
-	public TablespaceProperties createTablespaceProperties() {
-		return null;
-	}
+    @Override
+    public TablespaceProperties createTablespaceProperties() {
+        return null;
+    }
 
-	public TablespaceProperties checkTablespaceProperties(
-			TablespaceProperties tablespaceProperties) {
-		return null;
-	}
+    @Override
+    public TablespaceProperties checkTablespaceProperties(final TablespaceProperties tablespaceProperties) {
+        return null;
+    }
 
-	public String[] getCurrentTimeValue() {
-		return new String[] { "CURRENT_TIMESTAMP" };
-	}
+    @Override
+    public String[] getCurrentTimeValue() {
+        return new String[] {"CURRENT_TIMESTAMP"};
+    }
 
-	@Override
-	public List<String> getSystemSchemaList() {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getSystemSchemaList() {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("information_schema");
+        list.add("information_schema");
 
-		return list;
-	}
+        return list;
+    }
 
-	public BigDecimal getSequenceMaxValue() {
-		return null;
-	}
+    @Override
+    public BigDecimal getSequenceMaxValue() {
+        return null;
+    }
 
 }

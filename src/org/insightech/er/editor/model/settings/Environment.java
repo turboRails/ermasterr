@@ -4,46 +4,46 @@ import java.io.Serializable;
 
 public class Environment implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 2894497911334351672L;
+    private static final long serialVersionUID = 2894497911334351672L;
 
-	private String name;
+    private String name;
 
-	public Environment(String name) {
-		this.name = name;
-	}
+    public Environment(final String name) {
+        this.name = name;
+    }
 
-	/**
-	 * name ‚ğæ“¾‚µ‚Ü‚·.
-	 * 
-	 * @return name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * name ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     * 
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * name ‚ğİ’è‚µ‚Ü‚·.
-	 * 
-	 * @param name
-	 *            name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * name ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     * 
+     * @param name
+     *            name
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Environment clone() {
-		try {
-			Environment environment = (Environment) super.clone();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Environment clone() {
+        try {
+            final Environment environment = (Environment) super.clone();
 
-			return environment;
+            return environment;
 
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-	}
+        } catch (final CloneNotSupportedException e) {
+            return null;
+        }
+    }
 
 }

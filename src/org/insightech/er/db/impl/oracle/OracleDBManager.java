@@ -19,116 +19,125 @@ import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Ta
 
 public class OracleDBManager extends DBManagerBase {
 
-	public static final String ID = "Oracle";
+    public static final String ID = "Oracle";
 
-	public String getId() {
-		return ID;
-	}
+    @Override
+    public String getId() {
+        return ID;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDriverClassName() {
-		return "oracle.jdbc.driver.OracleDriver";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDriverClassName() {
+        return "oracle.jdbc.driver.OracleDriver";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getURL() {
-		return "jdbc:oracle:thin:@<SERVER NAME>:<PORT>:<DB NAME>";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getURL() {
+        return "jdbc:oracle:thin:@<SERVER NAME>:<PORT>:<DB NAME>";
+    }
 
-	public int getDefaultPort() {
-		return 1521;
-	}
+    @Override
+    public int getDefaultPort() {
+        return 1521;
+    }
 
-	public SqlTypeManager getSqlTypeManager() {
-		return new OracleSqlTypeManager();
-	}
+    @Override
+    public SqlTypeManager getSqlTypeManager() {
+        return new OracleSqlTypeManager();
+    }
 
-	public TableProperties createTableProperties(TableProperties tableProperties) {
-		if (tableProperties != null
-				&& tableProperties instanceof OracleTableProperties) {
-			return tableProperties;
-		}
+    @Override
+    public TableProperties createTableProperties(final TableProperties tableProperties) {
+        if (tableProperties != null && tableProperties instanceof OracleTableProperties) {
+            return tableProperties;
+        }
 
-		return new OracleTableProperties();
-	}
+        return new OracleTableProperties();
+    }
 
-	public DDLCreator getDDLCreator(ERDiagram diagram, Category targetCategory,
-			boolean semicolon) {
-		return new OracleDDLCreator(diagram, targetCategory, semicolon);
-	}
+    @Override
+    public DDLCreator getDDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        return new OracleDDLCreator(diagram, targetCategory, semicolon);
+    }
 
-	public List<String> getIndexTypeList(ERTable table) {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getIndexTypeList(final ERTable table) {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("BTREE");
+        list.add("BTREE");
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	protected int[] getSupportItems() {
-		return new int[] { SUPPORT_AUTO_INCREMENT, SUPPORT_SCHEMA,
-				SUPPORT_SEQUENCE, SUPPORT_SEQUENCE_NOCACHE };
-	}
+    @Override
+    protected int[] getSupportItems() {
+        return new int[] {SUPPORT_AUTO_INCREMENT, SUPPORT_SCHEMA, SUPPORT_SEQUENCE, SUPPORT_SEQUENCE_NOCACHE};
+    }
 
-	public ImportFromDBManager getTableImportManager() {
-		return new OracleTableImportManager();
-	}
+    @Override
+    public ImportFromDBManager getTableImportManager() {
+        return new OracleTableImportManager();
+    }
 
-	public PreImportFromDBManager getPreTableImportManager() {
-		return new OraclePreTableImportManager();
-	}
+    @Override
+    public PreImportFromDBManager getPreTableImportManager() {
+        return new OraclePreTableImportManager();
+    }
 
-	public PreTableExportManager getPreTableExportManager() {
-		return new OraclePreTableExportManager();
-	}
+    @Override
+    public PreTableExportManager getPreTableExportManager() {
+        return new OraclePreTableExportManager();
+    }
 
-	public TablespaceProperties createTablespaceProperties() {
-		return new OracleTablespaceProperties();
-	}
+    @Override
+    public TablespaceProperties createTablespaceProperties() {
+        return new OracleTablespaceProperties();
+    }
 
-	public TablespaceProperties checkTablespaceProperties(
-			TablespaceProperties tablespaceProperties) {
+    @Override
+    public TablespaceProperties checkTablespaceProperties(final TablespaceProperties tablespaceProperties) {
 
-		if (!(tablespaceProperties instanceof OracleTablespaceProperties)) {
-			return new OracleTablespaceProperties();
-		}
+        if (!(tablespaceProperties instanceof OracleTablespaceProperties)) {
+            return new OracleTablespaceProperties();
+        }
 
-		return tablespaceProperties;
-	}
+        return tablespaceProperties;
+    }
 
-	public String[] getCurrentTimeValue() {
-		return new String[] { "SYSDATE" };
-	}
+    @Override
+    public String[] getCurrentTimeValue() {
+        return new String[] {"SYSDATE"};
+    }
 
-	@Override
-	public List<String> getSystemSchemaList() {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getSystemSchemaList() {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("anonymous");
-		list.add("ctxsys");
-		list.add("dbsnmp");
-		list.add("dip");
-		list.add("flows_020100");
-		list.add("flows_files");
-		list.add("hr");
-		list.add("mdsys");
-		list.add("outln");
-		list.add("sys");
-		list.add("system");
-		list.add("tsmsys");
-		list.add("xdb");
+        list.add("anonymous");
+        list.add("ctxsys");
+        list.add("dbsnmp");
+        list.add("dip");
+        list.add("flows_020100");
+        list.add("flows_files");
+        list.add("hr");
+        list.add("mdsys");
+        list.add("outln");
+        list.add("sys");
+        list.add("system");
+        list.add("tsmsys");
+        list.add("xdb");
 
-		return list;
-	}
+        return list;
+    }
 
-	public BigDecimal getSequenceMaxValue() {
-		return new BigDecimal("9999999999999999999999999999");
-	}
+    @Override
+    public BigDecimal getSequenceMaxValue() {
+        return new BigDecimal("9999999999999999999999999999");
+    }
 }

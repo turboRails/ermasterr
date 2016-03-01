@@ -9,27 +9,26 @@ import org.insightech.er.editor.model.diagram_contents.element.node.note.Note;
 
 public class NoteEditManager extends DirectEditManager {
 
-	private Note note;
+    private final Note note;
 
-	public NoteEditManager(GraphicalEditPart source, Class editorType,
-			CellEditorLocator locator) {
-		super(source, editorType, locator);
-		this.note = (Note) source.getModel();
-	}
+    public NoteEditManager(final GraphicalEditPart source, final Class editorType, final CellEditorLocator locator) {
+        super(source, editorType, locator);
+        note = (Note) source.getModel();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initCellEditor() {
-		TextCellEditor editor = (TextCellEditor) this.getCellEditor();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initCellEditor() {
+        final TextCellEditor editor = (TextCellEditor) getCellEditor();
 
-		if (note.getText() != null) {
-			editor.setValue(note.getText());
-		}
+        if (note.getText() != null) {
+            editor.setValue(note.getText());
+        }
 
-		Text text = (Text) editor.getControl();
+        final Text text = (Text) editor.getControl();
 
-		text.selectAll();
-	}
+        text.selectAll();
+    }
 }

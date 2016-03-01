@@ -16,169 +16,148 @@ import org.insightech.er.util.Format;
 
 public class MySQLAdvancedComposite extends AdvancedComposite {
 
-	private Combo engineCombo;
+    private Combo engineCombo;
 
-	private Combo characterSetCombo;
+    private Combo characterSetCombo;
 
-	private Combo collationCombo;
+    private Combo collationCombo;
 
-	private Text primaryKeyLengthOfText;
+    private Text primaryKeyLengthOfText;
 
-	public MySQLAdvancedComposite(Composite parent) {
-		super(parent);
-	}
+    public MySQLAdvancedComposite(final Composite parent) {
+        super(parent);
+    }
 
-	@Override
-	protected void initComposite() {
-		super.initComposite();
+    @Override
+    protected void initComposite() {
+        super.initComposite();
 
-		this.engineCombo = createEngineCombo(this, this.dialog);
+        engineCombo = createEngineCombo(this, dialog);
 
-		this.characterSetCombo = CompositeFactory.createCombo(dialog, this,
-				"label.character.set", 1);
-		this.characterSetCombo.setVisibleItemCount(20);
+        characterSetCombo = CompositeFactory.createCombo(dialog, this, "label.character.set", 1);
+        characterSetCombo.setVisibleItemCount(20);
 
-		this.collationCombo = CompositeFactory.createCombo(this.dialog, this,
-				"label.collation", 1);
-		this.collationCombo.setVisibleItemCount(20);
+        collationCombo = CompositeFactory.createCombo(dialog, this, "label.collation", 1);
+        collationCombo.setVisibleItemCount(20);
 
-		this.primaryKeyLengthOfText = CompositeFactory.createNumText(
-				this.dialog, this, "label.primary.key.length.of.text", 1, 30,
-				true);
-	}
+        primaryKeyLengthOfText = CompositeFactory.createNumText(dialog, this, "label.primary.key.length.of.text", 1, 30, true);
+    }
 
-	public static Combo createEngineCombo(Composite parent,
-			AbstractDialog dialog) {
-		Combo combo = CompositeFactory.createCombo(dialog, parent,
-				"label.storage.engine", 1);
-		combo.setVisibleItemCount(20);
+    public static Combo createEngineCombo(final Composite parent, final AbstractDialog dialog) {
+        final Combo combo = CompositeFactory.createCombo(dialog, parent, "label.storage.engine", 1);
+        combo.setVisibleItemCount(20);
 
-		initEngineCombo(combo);
+        initEngineCombo(combo);
 
-		return combo;
-	}
+        return combo;
+    }
 
-	private static void initEngineCombo(Combo combo) {
-		combo.add("");
-		combo.add("MyISAM");
-		combo.add("InnoDB");
-		combo.add("Memory");
-		combo.add("Merge");
-		combo.add("Archive");
-		combo.add("Federated");
-		combo.add("NDB");
-		combo.add("CSV");
-		combo.add("Blackhole");
-		combo.add("CSV");
-	}
+    private static void initEngineCombo(final Combo combo) {
+        combo.add("");
+        combo.add("MyISAM");
+        combo.add("InnoDB");
+        combo.add("Memory");
+        combo.add("Merge");
+        combo.add("Archive");
+        combo.add("Federated");
+        combo.add("NDB");
+        combo.add("CSV");
+        combo.add("Blackhole");
+        combo.add("CSV");
+    }
 
-	private void initCharacterSetCombo() {
-		this.characterSetCombo.add("");
+    private void initCharacterSetCombo() {
+        characterSetCombo.add("");
 
-		for (String characterSet : MySQLDBManager.getCharacterSetList()) {
-			this.characterSetCombo.add(characterSet);
-		}
-	}
+        for (final String characterSet : MySQLDBManager.getCharacterSetList()) {
+            characterSetCombo.add(characterSet);
+        }
+    }
 
-	@Override
-	protected void setData() {
-		super.setData();
+    @Override
+    protected void setData() {
+        super.setData();
 
-		this.initCharacterSetCombo();
+        initCharacterSetCombo();
 
-		this.engineCombo.setText(Format
-				.toString(((MySQLTableProperties) this.tableViewProperties)
-						.getStorageEngine()));
+        engineCombo.setText(Format.toString(((MySQLTableProperties) tableViewProperties).getStorageEngine()));
 
-		String characterSet = ((MySQLTableProperties) this.tableViewProperties)
-				.getCharacterSet();
+        final String characterSet = ((MySQLTableProperties) tableViewProperties).getCharacterSet();
 
-		this.characterSetCombo.setText(Format.toString(characterSet));
+        characterSetCombo.setText(Format.toString(characterSet));
 
-		this.collationCombo.add("");
+        collationCombo.add("");
 
-		for (String collation : MySQLDBManager.getCollationList(Format
-				.toString(characterSet))) {
-			this.collationCombo.add(collation);
-		}
+        for (final String collation : MySQLDBManager.getCollationList(Format.toString(characterSet))) {
+            collationCombo.add(collation);
+        }
 
-		this.collationCombo.setText(Format
-				.toString(((MySQLTableProperties) this.tableViewProperties)
-						.getCollation()));
+        collationCombo.setText(Format.toString(((MySQLTableProperties) tableViewProperties).getCollation()));
 
-		this.primaryKeyLengthOfText.setText(Format
-				.toString(((MySQLTableProperties) this.tableViewProperties)
-						.getPrimaryKeyLengthOfText()));
-	}
+        primaryKeyLengthOfText.setText(Format.toString(((MySQLTableProperties) tableViewProperties).getPrimaryKeyLengthOfText()));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean validate() throws InputException {
-		String engine = this.engineCombo.getText();
-		((MySQLTableProperties) this.tableViewProperties)
-				.setStorageEngine(engine);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean validate() throws InputException {
+        final String engine = engineCombo.getText();
+        ((MySQLTableProperties) tableViewProperties).setStorageEngine(engine);
 
-		String characterSet = this.characterSetCombo.getText();
-		((MySQLTableProperties) this.tableViewProperties)
-				.setCharacterSet(characterSet);
+        final String characterSet = characterSetCombo.getText();
+        ((MySQLTableProperties) tableViewProperties).setCharacterSet(characterSet);
 
-		String collation = this.collationCombo.getText();
-		((MySQLTableProperties) this.tableViewProperties)
-				.setCollation(collation);
+        final String collation = collationCombo.getText();
+        ((MySQLTableProperties) tableViewProperties).setCollation(collation);
 
-		String str = this.primaryKeyLengthOfText.getText();
-		Integer length = null;
+        final String str = primaryKeyLengthOfText.getText();
+        Integer length = null;
 
-		try {
-			if (!Check.isEmptyTrim(str)) {
-				length = Integer.valueOf(str);
-			}
-		} catch (Exception e) {
-			throw new InputException("error.column.length.degit");
-		}
+        try {
+            if (!Check.isEmptyTrim(str)) {
+                length = Integer.valueOf(str);
+            }
+        } catch (final Exception e) {
+            throw new InputException("error.column.length.degit");
+        }
 
-		((MySQLTableProperties) this.tableViewProperties)
-				.setPrimaryKeyLengthOfText(length);
+        ((MySQLTableProperties) tableViewProperties).setPrimaryKeyLengthOfText(length);
 
-		if (this.table != null) {
-			for (NormalColumn primaryKey : this.table.getPrimaryKeys()) {
-				SqlType type = primaryKey.getType();
+        if (table != null) {
+            for (final NormalColumn primaryKey : table.getPrimaryKeys()) {
+                final SqlType type = primaryKey.getType();
 
-				if (type != null && type.isFullTextIndexable()
-						&& !type.isNeedLength(this.diagram.getDatabase())) {
-					if (length == null || length == 0) {
-						throw new InputException(
-								"error.primary.key.length.empty");
-					}
-				}
-			}
-		}
+                if (type != null && type.isFullTextIndexable() && !type.isNeedLength(diagram.getDatabase())) {
+                    if (length == null || length == 0) {
+                        throw new InputException("error.primary.key.length.empty");
+                    }
+                }
+            }
+        }
 
-		return super.validate();
-	}
+        return super.validate();
+    }
 
-	@Override
-	protected void addListener() {
-		this.characterSetCombo.addSelectionListener(new SelectionAdapter() {
+    @Override
+    protected void addListener() {
+        characterSetCombo.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String selectedCollation = collationCombo.getText();
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final String selectedCollation = collationCombo.getText();
 
-				collationCombo.removeAll();
-				collationCombo.add("");
+                collationCombo.removeAll();
+                collationCombo.add("");
 
-				for (String collation : MySQLDBManager
-						.getCollationList(characterSetCombo.getText())) {
-					collationCombo.add(collation);
-				}
+                for (final String collation : MySQLDBManager.getCollationList(characterSetCombo.getText())) {
+                    collationCombo.add(collation);
+                }
 
-				int index = collationCombo.indexOf(selectedCollation);
+                final int index = collationCombo.indexOf(selectedCollation);
 
-				collationCombo.select(index);
-			}
-		});
-	}
+                collationCombo.select(index);
+            }
+        });
+    }
 }

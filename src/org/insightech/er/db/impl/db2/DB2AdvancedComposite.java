@@ -5,8 +5,8 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.AdvancedCompo
 
 public class DB2AdvancedComposite extends AdvancedComposite {
 
-	public DB2AdvancedComposite(Composite parent) {
-		super(parent);
-	}
+    public DB2AdvancedComposite(final Composite parent) {
+        super(parent);
+    }
 
 }

@@ -14,56 +14,55 @@ import org.insightech.er.editor.model.ERDiagram;
 
 public class DeleteWithoutUpdateAction extends DeleteAction {
 
-	private ERDiagramEditor editor;
+    private final ERDiagramEditor editor;
 
-	public DeleteWithoutUpdateAction(ERDiagramEditor editor) {
-		super((IWorkbenchPart) editor);
-		this.editor = editor;
-		this.setText(ResourceString.getResourceString("action.title.delete"));
-		this.setToolTipText(ResourceString
-				.getResourceString("action.title.delete"));
+    public DeleteWithoutUpdateAction(final ERDiagramEditor editor) {
+        super((IWorkbenchPart) editor);
+        this.editor = editor;
+        setText(ResourceString.getResourceString("action.title.delete"));
+        setToolTipText(ResourceString.getResourceString("action.title.delete"));
 
-		this.setActionDefinitionId("org.eclipse.ui.edit.delete");
-	}
+        setActionDefinitionId("org.eclipse.ui.edit.delete");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Command createDeleteCommand(List objects) {		
-		Command command = super.createDeleteCommand(objects);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Command createDeleteCommand(final List objects) {
+        final Command command = super.createDeleteCommand(objects);
 
-		if (command == null) {
-			return null;
-		}
+        if (command == null) {
+            return null;
+        }
 
-		if (command instanceof CompoundCommand) {
-			CompoundCommand compoundCommand = (CompoundCommand) command;
-			if (compoundCommand.getCommands().isEmpty()) {
-				return null;
-			}
+        if (command instanceof CompoundCommand) {
+            final CompoundCommand compoundCommand = (CompoundCommand) command;
+            if (compoundCommand.getCommands().isEmpty()) {
+                return null;
+            }
 
-			if (compoundCommand.getCommands().size() == 1) {
-				return compoundCommand;
-			}
+            if (compoundCommand.getCommands().size() == 1) {
+                return compoundCommand;
+            }
 
-			EditPart editPart = this.editor.getGraphicalViewer().getContents();
-			ERDiagram diagram = (ERDiagram) editPart.getModel();
+            final EditPart editPart = editor.getGraphicalViewer().getContents();
+            final ERDiagram diagram = (ERDiagram) editPart.getModel();
 
-			return new WithoutUpdateCommandWrapper(compoundCommand, diagram);
-		}
+            return new WithoutUpdateCommandWrapper(compoundCommand, diagram);
+        }
 
-		return command;
-	}
+        return command;
+    }
 
-	@Override
-	protected boolean calculateEnabled() {
-		Command cmd = createDeleteCommand(getSelectedObjects());
-		if (cmd == null) {
-			return false;
-		}
+    @Override
+    protected boolean calculateEnabled() {
+        final Command cmd = createDeleteCommand(getSelectedObjects());
+        if (cmd == null) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 }

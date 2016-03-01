@@ -16,63 +16,61 @@ import org.insightech.er.common.dialog.AbstractDialog;
 
 public class MultiLineCheckbox extends Component {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private Button checkboxButton;
+    private final Button checkboxButton;
 
-	private Label label;
+    private final Label label;
 
-	public MultiLineCheckbox(final AbstractDialog dialog, Composite parent,
-			String title, boolean indent, int span) {
-		super();
+    public MultiLineCheckbox(final AbstractDialog dialog, final Composite parent, final String title, final boolean indent, final int span) {
+        super();
 
-		Composite box = new Composite(parent, SWT.NONE);
+        final Composite box = new Composite(parent, SWT.NONE);
 
-		GridData boxGridData = new GridData(SWT.FILL, SWT.LEFT, true, false,
-				span, 1);
-		if (indent) {
-			boxGridData.horizontalIndent = Resources.INDENT;
-		}
-		box.setLayoutData(boxGridData);
+        final GridData boxGridData = new GridData(SWT.FILL, SWT.LEFT, true, false, span, 1);
+        if (indent) {
+            boxGridData.horizontalIndent = Resources.INDENT;
+        }
+        box.setLayoutData(boxGridData);
 
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginWidth = 0;
-		box.setLayout(layout);
+        final GridLayout layout = new GridLayout(2, false);
+        layout.marginWidth = 0;
+        box.setLayout(layout);
 
-		this.checkboxButton = new Button(box, SWT.CHECK);
-		GridData checkboxGridData = new GridData();
-		checkboxGridData.verticalAlignment = SWT.TOP;
-		this.checkboxButton.setLayoutData(checkboxGridData);
+        checkboxButton = new Button(box, SWT.CHECK);
+        final GridData checkboxGridData = new GridData();
+        checkboxGridData.verticalAlignment = SWT.TOP;
+        checkboxButton.setLayoutData(checkboxGridData);
 
-		this.label = new Label(box, SWT.NONE);
-		GridData labelGridData = new GridData();
-		labelGridData.horizontalIndent = Resources.CHECKBOX_INDENT;
+        label = new Label(box, SWT.NONE);
+        final GridData labelGridData = new GridData();
+        labelGridData.horizontalIndent = Resources.CHECKBOX_INDENT;
 
-		this.label.setLayoutData(labelGridData);
-		this.label.setText(ResourceString.getResourceString(title));
+        label.setLayoutData(labelGridData);
+        label.setText(ResourceString.getResourceString(title));
 
-		ListenerAppender.addCheckBoxListener(this.checkboxButton, dialog);
+        ListenerAppender.addCheckBoxListener(checkboxButton, dialog);
 
-		label.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				checkboxButton.setSelection(!checkboxButton.getSelection());
-				dialog.validate();
-			}
-		});
-	}
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(final MouseEvent e) {
+                checkboxButton.setSelection(!checkboxButton.getSelection());
+                dialog.validate();
+            }
+        });
+    }
 
-	@Override
-	public void setEnabled(boolean enabled) {
-		this.checkboxButton.setEnabled(enabled);
-		this.label.setEnabled(enabled);
-	}
+    @Override
+    public void setEnabled(final boolean enabled) {
+        checkboxButton.setEnabled(enabled);
+        label.setEnabled(enabled);
+    }
 
-	public boolean getSelection() {
-		return this.checkboxButton.getSelection();
-	}
+    public boolean getSelection() {
+        return checkboxButton.getSelection();
+    }
 
-	public void setSelection(boolean selected) {
-		this.checkboxButton.setSelection(selected);
-	}
+    public void setSelection(final boolean selected) {
+        checkboxButton.setSelection(selected);
+    }
 }

@@ -17,117 +17,118 @@ import org.insightech.er.editor.model.diagram_contents.element.node.view.ViewSet
 
 public class NodeSet extends AbstractModel implements Iterable<NodeElement> {
 
-	private static final long serialVersionUID = -120487815554383179L;
+    private static final long serialVersionUID = -120487815554383179L;
 
-	private NoteSet noteSet;
+    private final NoteSet noteSet;
 
-	private TableSet tableSet;
+    private final TableSet tableSet;
 
-	private ViewSet viewSet;
+    private final ViewSet viewSet;
 
-	private List<NodeElement> nodeElementList;
+    private final List<NodeElement> nodeElementList;
 
-	private InsertedImageSet insertedImageSet;
+    private final InsertedImageSet insertedImageSet;
 
-	public NodeSet() {
-		this.tableSet = new TableSet();
-		this.viewSet = new ViewSet();
-		this.noteSet = new NoteSet();
-		this.insertedImageSet = new InsertedImageSet();
+    public NodeSet() {
+        tableSet = new TableSet();
+        viewSet = new ViewSet();
+        noteSet = new NoteSet();
+        insertedImageSet = new InsertedImageSet();
 
-		this.nodeElementList = new ArrayList<NodeElement>();
-	}
+        nodeElementList = new ArrayList<NodeElement>();
+    }
 
-	public void sort() {
-		this.tableSet.sort();
-		this.viewSet.sort();
-		this.noteSet.sort();
-		this.insertedImageSet.sort();
-	}
+    public void sort() {
+        tableSet.sort();
+        viewSet.sort();
+        noteSet.sort();
+        insertedImageSet.sort();
+    }
 
-	public void addNodeElement(NodeElement nodeElement) {
-		if (nodeElement instanceof ERTable) {
-			this.tableSet.add((ERTable) nodeElement);
+    public void addNodeElement(final NodeElement nodeElement) {
+        if (nodeElement instanceof ERTable) {
+            tableSet.add((ERTable) nodeElement);
 
-		} else if (nodeElement instanceof View) {
-			this.viewSet.add((View) nodeElement);
+        } else if (nodeElement instanceof View) {
+            viewSet.add((View) nodeElement);
 
-		} else if (nodeElement instanceof Note) {
-			this.noteSet.add((Note) nodeElement);
+        } else if (nodeElement instanceof Note) {
+            noteSet.add((Note) nodeElement);
 
-		} else if (nodeElement instanceof InsertedImage) {
-			this.insertedImageSet.add((InsertedImage) nodeElement);
+        } else if (nodeElement instanceof InsertedImage) {
+            insertedImageSet.add((InsertedImage) nodeElement);
 
-		}
+        }
 
-		this.nodeElementList.add(nodeElement);
-	}
+        nodeElementList.add(nodeElement);
+    }
 
-	public void remove(NodeElement nodeElement) {
-		if (nodeElement instanceof ERTable) {
-			this.tableSet.remove((ERTable) nodeElement);
+    public void remove(final NodeElement nodeElement) {
+        if (nodeElement instanceof ERTable) {
+            tableSet.remove((ERTable) nodeElement);
 
-		} else if (nodeElement instanceof View) {
-			this.viewSet.remove((View) nodeElement);
+        } else if (nodeElement instanceof View) {
+            viewSet.remove((View) nodeElement);
 
-		} else if (nodeElement instanceof Note) {
-			this.noteSet.remove((Note) nodeElement);
+        } else if (nodeElement instanceof Note) {
+            noteSet.remove((Note) nodeElement);
 
-		} else if (nodeElement instanceof InsertedImage) {
-			this.insertedImageSet.remove((InsertedImage) nodeElement);
+        } else if (nodeElement instanceof InsertedImage) {
+            insertedImageSet.remove((InsertedImage) nodeElement);
 
-		}
+        }
 
-		this.nodeElementList.remove(nodeElement);
-	}
+        nodeElementList.remove(nodeElement);
+    }
 
-	public boolean contains(NodeElement nodeElement) {
-		return this.nodeElementList.contains(nodeElement);
-	}
+    public boolean contains(final NodeElement nodeElement) {
+        return nodeElementList.contains(nodeElement);
+    }
 
-	public void clear() {
-		this.tableSet.getList().clear();
-		this.viewSet.getList().clear();
-		this.noteSet.getList().clear();
-		this.insertedImageSet.getList().clear();
+    public void clear() {
+        tableSet.getList().clear();
+        viewSet.getList().clear();
+        noteSet.getList().clear();
+        insertedImageSet.getList().clear();
 
-		this.nodeElementList.clear();
-	}
+        nodeElementList.clear();
+    }
 
-	public boolean isEmpty() {
-		return this.nodeElementList.isEmpty();
-	}
+    public boolean isEmpty() {
+        return nodeElementList.isEmpty();
+    }
 
-	public List<NodeElement> getNodeElementList() {
-		return this.nodeElementList;
-	}
+    public List<NodeElement> getNodeElementList() {
+        return nodeElementList;
+    }
 
-	public List<TableView> getTableViewList() {
-		List<TableView> nodeElementList = new ArrayList<TableView>();
+    public List<TableView> getTableViewList() {
+        final List<TableView> nodeElementList = new ArrayList<TableView>();
 
-		nodeElementList.addAll(this.tableSet.getList());
-		nodeElementList.addAll(this.viewSet.getList());
+        nodeElementList.addAll(tableSet.getList());
+        nodeElementList.addAll(viewSet.getList());
 
-		return nodeElementList;
-	}
+        return nodeElementList;
+    }
 
-	public Iterator<NodeElement> iterator() {
-		return this.getNodeElementList().iterator();
-	}
+    @Override
+    public Iterator<NodeElement> iterator() {
+        return getNodeElementList().iterator();
+    }
 
-	public ViewSet getViewSet() {
-		return viewSet;
-	}
+    public ViewSet getViewSet() {
+        return viewSet;
+    }
 
-	public NoteSet getNoteSet() {
-		return noteSet;
-	}
+    public NoteSet getNoteSet() {
+        return noteSet;
+    }
 
-	public TableSet getTableSet() {
-		return tableSet;
-	}
+    public TableSet getTableSet() {
+        return tableSet;
+    }
 
-	public InsertedImageSet getInsertedImageSet() {
-		return insertedImageSet;
-	}
+    public InsertedImageSet getInsertedImageSet() {
+        return insertedImageSet;
+    }
 }

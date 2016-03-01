@@ -13,159 +13,155 @@ import org.insightech.er.Resources;
 
 public class ERDiagramConnection extends PolylineConnection {
 
-	private static final double DELTA = 0.01;
+    private static final double DELTA = 0.01;
 
-	private static final int TOLERANCE = 2;
+    private static final int TOLERANCE = 2;
 
-	private boolean selected;
+    private boolean selected;
 
-	private boolean bezier;
+    private boolean bezier;
 
-	private Color color;
+    private Color color;
 
-	public ERDiagramConnection(boolean bezier) {
-		this.bezier = bezier;
-	}
+    public ERDiagramConnection(final boolean bezier) {
+        this.bezier = bezier;
+    }
 
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
+    public void setSelected(final boolean selected) {
+        this.selected = selected;
+    }
 
-	public void setBezier(boolean bezier) {
-		this.bezier = bezier;
-	}
+    public void setBezier(final boolean bezier) {
+        this.bezier = bezier;
+    }
 
-	public void setColor(Color color) {
-		this.color = color;
-	}
+    public void setColor(final Color color) {
+        this.color = color;
+    }
 
-	public Color getColor() {
-		return color;
-	}
+    public Color getColor() {
+        return color;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void outlineShape(Graphics g) {
-		g.setAntialias(SWT.ON);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void outlineShape(final Graphics g) {
+        g.setAntialias(SWT.ON);
 
-		if (this.color == null) {
-			this.color = ColorConstants.black;
-		}
+        if (color == null) {
+            color = ColorConstants.black;
+        }
 
-		g.setForegroundColor(this.color);
-		g.setLineWidth(1);
+        g.setForegroundColor(color);
+        g.setLineWidth(1);
 
-		if (this.selected) {
-			if (this.bezier) {
-				g.setForegroundColor(ColorConstants.gray);
+        if (selected) {
+            if (bezier) {
+                g.setForegroundColor(ColorConstants.gray);
 
-				PointList points = getPoints();
-				g.drawPolyline(points);
-			}
+                final PointList points = getPoints();
+                g.drawPolyline(points);
+            }
 
-			g.setForegroundColor(Resources.LINE_COLOR);
-			g.setLineWidth(7);
-		}
+            g.setForegroundColor(Resources.LINE_COLOR);
+            g.setLineWidth(7);
+        }
 
-		PointList points = getBezierPoints();
+        final PointList points = getBezierPoints();
 
-		int width = g.getLineWidth();
+        int width = g.getLineWidth();
 
-		Color color = g.getForegroundColor();
+        Color color = g.getForegroundColor();
 
-		int lineRed = color.getRed();
-		int lineGreen = color.getGreen();
-		int lineBlue = color.getBlue();
+        final int lineRed = color.getRed();
+        final int lineGreen = color.getGreen();
+        final int lineBlue = color.getBlue();
 
-		int deltaRed = (255 - lineRed) * 2 / width;
-		int deltaGreen = (255 - lineGreen) * 2 / width;
-		int deltaBlue = (255 - lineBlue) * 2 / width;
+        final int deltaRed = (255 - lineRed) * 2 / width;
+        final int deltaGreen = (255 - lineGreen) * 2 / width;
+        final int deltaBlue = (255 - lineBlue) * 2 / width;
 
-		int red = 255;
-		int green = 255;
-		int blue = 255;
+        int red = 255;
+        int green = 255;
+        int blue = 255;
 
-		while (width > 0) {
-			red -= deltaRed;
-			green -= deltaGreen;
-			blue -= deltaBlue;
+        while (width > 0) {
+            red -= deltaRed;
+            green -= deltaGreen;
+            blue -= deltaBlue;
 
-			if (red < lineRed) {
-				red = lineRed;
-			}
-			if (green < lineGreen) {
-				green = lineGreen;
-			}
-			if (blue < lineBlue) {
-				blue = lineBlue;
-			}
+            if (red < lineRed) {
+                red = lineRed;
+            }
+            if (green < lineGreen) {
+                green = lineGreen;
+            }
+            if (blue < lineBlue) {
+                blue = lineBlue;
+            }
 
-			color = new Color(Display.getCurrent(), red, green, blue);
+            color = new Color(Display.getCurrent(), red, green, blue);
 
-			g.setLineWidth(width);
-			g.setForegroundColor(color);
-			g.drawPolyline(points);
+            g.setLineWidth(width);
+            g.setForegroundColor(color);
+            g.drawPolyline(points);
 
-			width -= 2;
-		}
-	}
+            width -= 2;
+        }
+    }
 
-	public PointList getBezierPoints() {
-		PointList controlPoints = this.getPoints();
+    public PointList getBezierPoints() {
+        final PointList controlPoints = getPoints();
 
-		if (this.bezier && controlPoints.size() >= 3) {
-			int index = 0;
+        if (bezier && controlPoints.size() >= 3) {
+            int index = 0;
 
-			PointList pointList = new PointList();
+            final PointList pointList = new PointList();
 
-			Point p0 = controlPoints.getPoint(index++);
-			Point p1 = controlPoints.getPoint(index++);
-			Point p2 = null;
-			Point nextPoint = controlPoints.getPoint(index++);
+            Point p0 = controlPoints.getPoint(index++);
+            Point p1 = controlPoints.getPoint(index++);
+            Point p2 = null;
+            Point nextPoint = controlPoints.getPoint(index++);
 
-			while (true) {
-				if (index != controlPoints.size()) {
-					p2 = new Point((p1.x + nextPoint.x) / 2,
-							(p1.y + nextPoint.y) / 2);
+            while (true) {
+                if (index != controlPoints.size()) {
+                    p2 = new Point((p1.x + nextPoint.x) / 2, (p1.y + nextPoint.y) / 2);
 
-				} else {
-					p2 = nextPoint;
-				}
+                } else {
+                    p2 = nextPoint;
+                }
 
-				for (double t = 0.0; t <= 1.0; t = t + DELTA) {
-					Point point = new Point();
+                for (double t = 0.0; t <= 1.0; t = t + DELTA) {
+                    final Point point = new Point();
 
-					point.x = (int) (p0.x * (1 - t) * (1 - t) + 2 * p1.x * t
-							* (1 - t) + p2.x * t * t);
+                    point.x = (int) (p0.x * (1 - t) * (1 - t) + 2 * p1.x * t * (1 - t) + p2.x * t * t);
 
-					point.y = (int) (p0.y * (1 - t) * (1 - t) + 2 * p1.y * t
-							* (1 - t) + p2.y * t * t);
+                    point.y = (int) (p0.y * (1 - t) * (1 - t) + 2 * p1.y * t * (1 - t) + p2.y * t * t);
 
-					pointList.addPoint(point);
-				}
+                    pointList.addPoint(point);
+                }
 
-				pointList.addPoint(p2);
+                pointList.addPoint(p2);
 
-				if (index == controlPoints.size()) {
-					break;
-				}
+                if (index == controlPoints.size()) {
+                    break;
+                }
 
-				p0 = p2;
-				p1 = nextPoint;
-				nextPoint = controlPoints.getPoint(index++);
-			}
+                p0 = p2;
+                p1 = nextPoint;
+                nextPoint = controlPoints.getPoint(index++);
+            }
 
-			return pointList;
-		}
+            return pointList;
+        }
 
-		return controlPoints;
-	}
+        return controlPoints;
+    }
 
-	@Override
-	protected boolean shapeContainsPoint(int x, int y) {
-		return Geometry.polylineContainsPoint(this.getBezierPoints(), x, y,
-				TOLERANCE);
-	}
+    @Override
+    protected boolean shapeContainsPoint(final int x, final int y) {
+        return Geometry.polylineContainsPoint(getBezierPoints(), x, y, TOLERANCE);
+    }
 }

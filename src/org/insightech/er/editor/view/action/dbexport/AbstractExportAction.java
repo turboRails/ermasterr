@@ -19,92 +19,79 @@ import org.insightech.er.editor.view.action.AbstractBaseAction;
 
 public abstract class AbstractExportAction extends AbstractBaseAction {
 
-	public AbstractExportAction(String id, String label, ERDiagramEditor editor) {
-		super(id, label, editor);
-	}
+    public AbstractExportAction(final String id, final String label, final ERDiagramEditor editor) {
+        super(id, label, editor);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) throws Exception {
-		this.save(this.getEditorPart(), this.getGraphicalViewer());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) throws Exception {
+        this.save(getEditorPart(), getGraphicalViewer());
+    }
 
-	protected void save(IEditorPart editorPart, GraphicalViewer viewer)
-			throws Exception {
+    protected void save(final IEditorPart editorPart, final GraphicalViewer viewer) throws Exception {
 
-		String saveFilePath = this.getSaveFilePath(editorPart, viewer, this
-				.getDiagram().getDiagramContents().getSettings()
-				.getExportSetting());
-		if (saveFilePath == null) {
-			return;
-		}
+        final String saveFilePath = getSaveFilePath(editorPart, viewer, getDiagram().getDiagramContents().getSettings().getExportSetting());
+        if (saveFilePath == null) {
+            return;
+        }
 
-		File file = new File(saveFilePath);
-		if (file.exists()) {
-			MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_WARNING
-					| SWT.OK | SWT.CANCEL);
-			messageBox.setText(ResourceString
-					.getResourceString("dialog.title.warning"));
-			messageBox.setMessage(ResourceString.getResourceString(this
-					.getConfirmOverrideMessage()));
+        final File file = new File(saveFilePath);
+        if (file.exists()) {
+            final MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
+            messageBox.setText(ResourceString.getResourceString("dialog.title.warning"));
+            messageBox.setMessage(ResourceString.getResourceString(getConfirmOverrideMessage()));
 
-			if (messageBox.open() == SWT.CANCEL) {
-				return;
-			}
-		}
+            if (messageBox.open() == SWT.CANCEL) {
+                return;
+            }
+        }
 
-		this.save(editorPart, viewer, saveFilePath);
-		this.refreshProject();
-	}
+        this.save(editorPart, viewer, saveFilePath);
+        refreshProject();
+    }
 
-	protected String getConfirmOverrideMessage() {
-		return "dialog.message.update.file";
-	}
+    protected String getConfirmOverrideMessage() {
+        return "dialog.message.update.file";
+    }
 
-	protected String getSaveFilePath(IEditorPart editorPart,
-			GraphicalViewer viewer, ExportSetting exportSetting) {
+    protected String getSaveFilePath(final IEditorPart editorPart, final GraphicalViewer viewer, final ExportSetting exportSetting) {
 
-		FileDialog fileDialog = new FileDialog(editorPart.getEditorSite()
-				.getShell(), SWT.SAVE);
+        final FileDialog fileDialog = new FileDialog(editorPart.getEditorSite().getShell(), SWT.SAVE);
 
-		fileDialog.setFilterPath(this.getBasePath());
+        fileDialog.setFilterPath(getBasePath());
 
-		String[] filterExtensions = this.getFilterExtensions();
-		fileDialog.setFilterExtensions(filterExtensions);
+        final String[] filterExtensions = getFilterExtensions();
+        fileDialog.setFilterExtensions(filterExtensions);
 
-		String fileName = this.getDiagramFileName(editorPart);
+        final String fileName = getDiagramFileName(editorPart);
 
-		fileDialog.setFileName(fileName);
+        fileDialog.setFileName(fileName);
 
-		return fileDialog.open();
-	}
+        return fileDialog.open();
+    }
 
-	protected String getDiagramFileName(IEditorPart editorPart) {
-		IFile file = ((IFileEditorInput) editorPart.getEditorInput()).getFile();
-		String fileName = file.getName();
+    protected String getDiagramFileName(final IEditorPart editorPart) {
+        final IFile file = ((IFileEditorInput) editorPart.getEditorInput()).getFile();
+        final String fileName = file.getName();
 
-		return fileName.substring(0, fileName.lastIndexOf("."))
-				+ this.getDefaultExtension();
-	}
+        return fileName.substring(0, fileName.lastIndexOf(".")) + getDefaultExtension();
+    }
 
-	protected abstract String getDefaultExtension();
+    protected abstract String getDefaultExtension();
 
-	protected String getSaveDirPath(IEditorPart editorPart,
-			GraphicalViewer viewer) {
+    protected String getSaveDirPath(final IEditorPart editorPart, final GraphicalViewer viewer) {
 
-		DirectoryDialog directoryDialog = new DirectoryDialog(editorPart
-				.getEditorSite().getShell(), SWT.SAVE);
+        final DirectoryDialog directoryDialog = new DirectoryDialog(editorPart.getEditorSite().getShell(), SWT.SAVE);
 
-		directoryDialog.setFilterPath(this.getBasePath());
+        directoryDialog.setFilterPath(getBasePath());
 
-		return directoryDialog.open();
-	}
+        return directoryDialog.open();
+    }
 
-	protected abstract String[] getFilterExtensions();
+    protected abstract String[] getFilterExtensions();
 
-	protected abstract void save(IEditorPart editorPart,
-			GraphicalViewer viewer, String saveFilePath) throws Exception;
+    protected abstract void save(IEditorPart editorPart, GraphicalViewer viewer, String saveFilePath) throws Exception;
 }

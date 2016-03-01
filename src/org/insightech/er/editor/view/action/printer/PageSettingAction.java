@@ -13,29 +13,26 @@ import org.insightech.er.editor.view.dialog.printer.PageSettingDialog;
 
 public class PageSettingAction extends AbstractBaseAction {
 
-	public static final String ID = PageSettingAction.class.getName();
+    public static final String ID = PageSettingAction.class.getName();
 
-	public PageSettingAction(ERDiagramEditor editor) {
-		super(ID,
-				ResourceString.getResourceString("action.title.page.setting"),
-				editor);
+    public PageSettingAction(final ERDiagramEditor editor) {
+        super(ID, ResourceString.getResourceString("action.title.page.setting"), editor);
 
-		this.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.PRINTER));
-	}
+        setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.PRINTER));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        final ERDiagram diagram = getDiagram();
 
-		PageSettingDialog dialog = new PageSettingDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram);
+        final PageSettingDialog dialog = new PageSettingDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
+        if (dialog.open() == IDialogConstants.OK_ID) {
 
-		}
-	}
+        }
+    }
 
 }

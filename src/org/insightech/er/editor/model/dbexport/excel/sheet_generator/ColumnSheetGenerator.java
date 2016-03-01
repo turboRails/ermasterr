@@ -17,132 +17,102 @@ import org.insightech.er.util.POIUtils.CellLocation;
 
 public class ColumnSheetGenerator extends AbstractSheetGenerator {
 
-	private static final String KEYWORD_SHEET_NAME = "$SHTN";
+    private static final String KEYWORD_SHEET_NAME = "$SHTN";
 
-	private ColumnTemplate columnTemplate;
+    private ColumnTemplate columnTemplate;
 
-	private void clear() {
-		this.columnTemplate = null;
-	}
+    private void clear() {
+        columnTemplate = null;
+    }
 
-	public void setAllColumnsData(ProgressMonitor monitor,
-			HSSFWorkbook workbook, HSSFSheet sheet, ERDiagram diagram)
-			throws InterruptedException {
-		this.clear();
+    public void setAllColumnsData(final ProgressMonitor monitor, final HSSFWorkbook workbook, final HSSFSheet sheet, final ERDiagram diagram) throws InterruptedException {
+        clear();
 
-		CellLocation cellLocation = POIUtils.findCell(sheet,
-				FIND_KEYWORDS_OF_COLUMN);
+        final CellLocation cellLocation = POIUtils.findCell(sheet, FIND_KEYWORDS_OF_COLUMN);
 
-		if (cellLocation != null) {
-			int rowNum = cellLocation.r;
-			HSSFRow templateRow = sheet.getRow(rowNum);
+        if (cellLocation != null) {
+            int rowNum = cellLocation.r;
+            final HSSFRow templateRow = sheet.getRow(rowNum);
 
-			if (this.columnTemplate == null) {
-				this.columnTemplate = this.loadColumnTemplate(workbook, sheet,
-						cellLocation);
-			}
+            if (columnTemplate == null) {
+                columnTemplate = loadColumnTemplate(workbook, sheet, cellLocation);
+            }
 
-			int order = 1;
+            int order = 1;
 
-			for (ERTable table : diagram.getDiagramContents().getContents()
-					.getTableSet()) {
+            for (final ERTable table : diagram.getDiagramContents().getContents().getTableSet()) {
 
-				if (diagram.getCurrentCategory() != null
-						&& !diagram.getCurrentCategory().contains(table)) {
-					continue;
-				}
+                if (diagram.getCurrentCategory() != null && !diagram.getCurrentCategory().contains(table)) {
+                    continue;
+                }
 
-				monitor.subTaskWithCounter(sheet.getSheetName() + " - "
-						+ table.getName());
+                monitor.subTaskWithCounter(sheet.getSheetName() + " - " + table.getName());
 
-				for (NormalColumn normalColumn : table.getExpandedColumns()) {
+                for (final NormalColumn normalColumn : table.getExpandedColumns()) {
 
-					HSSFRow row = POIUtils.insertRow(sheet, rowNum++);
-					this.setColumnData(this.keywordsValueMap, columnTemplate,
-							row, normalColumn, table, order);
-					order++;
-				}
+                    final HSSFRow row = POIUtils.insertRow(sheet, rowNum++);
+                    setColumnData(keywordsValueMap, columnTemplate, row, normalColumn, table, order);
+                    order++;
+                }
 
-				monitor.worked(1);
-			}
+                monitor.worked(1);
+            }
 
-			this.setCellStyle(columnTemplate, sheet, cellLocation.r, rowNum
-					- cellLocation.r, templateRow.getFirstCellNum());
-		}
-	}
+            setCellStyle(columnTemplate, sheet, cellLocation.r, rowNum - cellLocation.r, templateRow.getFirstCellNum());
+        }
+    }
 
-	public String getSheetName() {
-		String name = this.keywordsValueMap.get(KEYWORD_SHEET_NAME);
+    public String getSheetName() {
+        String name = keywordsValueMap.get(KEYWORD_SHEET_NAME);
 
-		if (name == null) {
-			name = "all attributes";
-		}
+        if (name == null) {
+            name = "all attributes";
+        }
 
-		return name;
-	}
+        return name;
+    }
 
-	@Override
-	public void generate(ProgressMonitor monitor, HSSFWorkbook workbook,
-			int sheetNo, boolean useLogicalNameAsSheetName,
-			Map<String, Integer> sheetNameMap,
-			Map<String, ObjectModel> sheetObjectMap, ERDiagram diagram,
-			Map<String, LoopDefinition> loopDefinitionMap)
-			throws InterruptedException {
-		String name = this.getSheetName();
-		HSSFSheet newSheet = createNewSheet(workbook, sheetNo, name,
-				sheetNameMap);
+    @Override
+    public void generate(final ProgressMonitor monitor, final HSSFWorkbook workbook, final int sheetNo, final boolean useLogicalNameAsSheetName, final Map<String, Integer> sheetNameMap, final Map<String, ObjectModel> sheetObjectMap, final ERDiagram diagram, final Map<String, LoopDefinition> loopDefinitionMap) throws InterruptedException {
+        final String name = getSheetName();
+        final HSSFSheet newSheet = createNewSheet(workbook, sheetNo, name, sheetNameMap);
 
-		String sheetName = workbook.getSheetName(workbook
-				.getSheetIndex(newSheet));
+        final String sheetName = workbook.getSheetName(workbook.getSheetIndex(newSheet));
 
-		sheetObjectMap.put(sheetName, new ColumnSet());
+        sheetObjectMap.put(sheetName, new ColumnSet());
 
-		this.setAllColumnsData(monitor, workbook, newSheet, diagram);
-	}
+        setAllColumnsData(monitor, workbook, newSheet, diagram);
+    }
 
-	@Override
-	public String getTemplateSheetName() {
-		return "column_template";
-	}
+    @Override
+    public String getTemplateSheetName() {
+        return "column_template";
+    }
 
-	@Override
-	public int getKeywordsColumnNo() {
-		return 20;
-	}
+    @Override
+    public int getKeywordsColumnNo() {
+        return 20;
+    }
 
-	@Override
-	public String[] getKeywords() {
-		return new String[] { KEYWORD_LOGICAL_TABLE_NAME,
-				KEYWORD_PHYSICAL_TABLE_NAME, KEYWORD_TABLE_DESCRIPTION,
-				KEYWORD_ORDER, KEYWORD_LOGICAL_COLUMN_NAME,
-				KEYWORD_PHYSICAL_COLUMN_NAME, KEYWORD_TYPE, KEYWORD_LENGTH,
-				KEYWORD_DECIMAL, KEYWORD_PRIMARY_KEY, KEYWORD_NOT_NULL,
-				KEYWORD_UNIQUE_KEY, KEYWORD_FOREIGN_KEY,
-				KEYWORD_LOGICAL_REFERENCE_TABLE_KEY,
-				KEYWORD_PHYSICAL_REFERENCE_TABLE_KEY,
-				KEYWORD_LOGICAL_REFERENCE_TABLE,
-				KEYWORD_PHYSICAL_REFERENCE_TABLE,
-				KEYWORD_LOGICAL_REFERENCE_KEY, KEYWORD_PHYSICAL_REFERENCE_KEY,
-				KEYWORD_AUTO_INCREMENT, KEYWORD_DEFAULT_VALUE,
-				KEYWORD_DESCRIPTION, KEYWORD_SHEET_NAME };
-	}
+    @Override
+    public String[] getKeywords() {
+        return new String[] {KEYWORD_LOGICAL_TABLE_NAME, KEYWORD_PHYSICAL_TABLE_NAME, KEYWORD_TABLE_DESCRIPTION, KEYWORD_ORDER, KEYWORD_LOGICAL_COLUMN_NAME, KEYWORD_PHYSICAL_COLUMN_NAME, KEYWORD_TYPE, KEYWORD_LENGTH, KEYWORD_DECIMAL, KEYWORD_PRIMARY_KEY, KEYWORD_NOT_NULL, KEYWORD_UNIQUE_KEY, KEYWORD_FOREIGN_KEY, KEYWORD_LOGICAL_REFERENCE_TABLE_KEY, KEYWORD_PHYSICAL_REFERENCE_TABLE_KEY, KEYWORD_LOGICAL_REFERENCE_TABLE, KEYWORD_PHYSICAL_REFERENCE_TABLE, KEYWORD_LOGICAL_REFERENCE_KEY, KEYWORD_PHYSICAL_REFERENCE_KEY, KEYWORD_AUTO_INCREMENT, KEYWORD_DEFAULT_VALUE, KEYWORD_DESCRIPTION, KEYWORD_SHEET_NAME};
+    }
 
-	@Override
-	public int count(ERDiagram diagram) {
-		int count = 0;
+    @Override
+    public int count(final ERDiagram diagram) {
+        int count = 0;
 
-		for (ERTable table : diagram.getDiagramContents().getContents()
-				.getTableSet()) {
+        for (final ERTable table : diagram.getDiagramContents().getContents().getTableSet()) {
 
-			if (diagram.getCurrentCategory() != null
-					&& !diagram.getCurrentCategory().contains(table)) {
-				continue;
-			}
+            if (diagram.getCurrentCategory() != null && !diagram.getCurrentCategory().contains(table)) {
+                continue;
+            }
 
-			count++;
-		}
+            count++;
+        }
 
-		return count;
-	}
+        return count;
+    }
 
 }

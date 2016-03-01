@@ -10,48 +10,47 @@ import org.insightech.er.editor.model.tracking.ChangeTrackingList;
  */
 public class DeleteChangeTrackingCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private ChangeTracking changeTracking;
+    private final ChangeTracking changeTracking;
 
-	private int index;
+    private final int index;
 
-	private ChangeTrackingList changeTrackingList;
+    private final ChangeTrackingList changeTrackingList;
 
-	/**
-	 * 変更履歴削除コマンドを作成します。
-	 * 
-	 * @param diagram
-	 * @param index
-	 */
-	public DeleteChangeTrackingCommand(ERDiagram diagram, int index) {
-		this.diagram = diagram;
-		this.changeTrackingList = this.diagram.getChangeTrackingList();
+    /**
+     * 変更履歴削除コマンドを作成します。
+     * 
+     * @param diagram
+     * @param index
+     */
+    public DeleteChangeTrackingCommand(final ERDiagram diagram, final int index) {
+        this.diagram = diagram;
+        changeTrackingList = this.diagram.getChangeTrackingList();
 
-		this.index = index;
-		this.changeTracking = this.changeTrackingList.get(index);
-	}
+        this.index = index;
+        changeTracking = changeTrackingList.get(index);
+    }
 
-	/**
-	 * 変更履歴削除処理を実行する
-	 */
-	@Override
-	protected void doExecute() {
-		this.changeTrackingList.removeChangeTracking(this.index);
+    /**
+     * 変更履歴削除処理を実行する
+     */
+    @Override
+    protected void doExecute() {
+        changeTrackingList.removeChangeTracking(index);
 
-		if (this.changeTrackingList.isCalculated()) {
-			this.changeTrackingList.setCalculated(false);
-			this.diagram.refresh();
-		}
-	}
+        if (changeTrackingList.isCalculated()) {
+            changeTrackingList.setCalculated(false);
+            diagram.refresh();
+        }
+    }
 
-	/**
-	 * 変更履歴削除処理を元に戻す
-	 */
-	@Override
-	protected void doUndo() {
-		this.changeTrackingList.addChangeTracking(this.index,
-				this.changeTracking);
-	}
+    /**
+     * 変更履歴削除処理を元に戻す
+     */
+    @Override
+    protected void doUndo() {
+        changeTrackingList.addChangeTracking(index, changeTracking);
+    }
 
 }

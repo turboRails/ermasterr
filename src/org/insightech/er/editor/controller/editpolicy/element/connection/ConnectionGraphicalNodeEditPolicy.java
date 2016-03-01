@@ -10,50 +10,45 @@ import org.insightech.er.editor.model.diagram_contents.element.connection.Commen
 
 public class ConnectionGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 
-	@Override
-	protected Command getConnectionCompleteCommand(
-			CreateConnectionRequest request) {
-		CreateCommentConnectionCommand command = (CreateCommentConnectionCommand) request
-				.getStartCommand();
+    @Override
+    protected Command getConnectionCompleteCommand(final CreateConnectionRequest request) {
+        final CreateCommentConnectionCommand command = (CreateCommentConnectionCommand) request.getStartCommand();
 
-		command.setTarget(request.getTargetEditPart());
+        command.setTarget(request.getTargetEditPart());
 
-		if (!command.canExecute()) {
-			return null;
-		}
+        if (!command.canExecute()) {
+            return null;
+        }
 
-		return command;
-	}
+        return command;
+    }
 
-	@Override
-	protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
-		Object object = request.getNewObject();
+    @Override
+    protected Command getConnectionCreateCommand(final CreateConnectionRequest request) {
+        final Object object = request.getNewObject();
 
-		if (object instanceof CommentConnection) {
-			CommentConnection connection = (CommentConnection) object;
+        if (object instanceof CommentConnection) {
+            final CommentConnection connection = (CommentConnection) object;
 
-			CreateConnectionCommand command = new CreateCommentConnectionCommand(
-					connection);
+            final CreateConnectionCommand command = new CreateCommentConnectionCommand(connection);
 
-			command.setSource(request.getTargetEditPart());
-			request.setStartCommand(command);
+            command.setSource(request.getTargetEditPart());
+            request.setStartCommand(command);
 
-			return command;
-		}
+            return command;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected Command getReconnectTargetCommand(
-			ReconnectRequest paramReconnectRequest) {
-		return null;
-	}
+    @Override
+    protected Command getReconnectTargetCommand(final ReconnectRequest paramReconnectRequest) {
+        return null;
+    }
 
-	@Override
-	protected Command getReconnectSourceCommand(
-			ReconnectRequest paramReconnectRequest) {
-		return null;
-	}
+    @Override
+    protected Command getReconnectSourceCommand(final ReconnectRequest paramReconnectRequest) {
+        return null;
+    }
 
 }

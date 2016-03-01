@@ -10,29 +10,26 @@ import org.insightech.er.editor.view.action.AbstractBaseAction;
 
 public abstract class AbstractChangeViewAction extends AbstractBaseAction {
 
-	public AbstractChangeViewAction(String id, String type,
-			ERDiagramEditor editor) {
-		super(id, null, IAction.AS_RADIO_BUTTON, editor);
-		this.setText(ResourceString
-				.getResourceString("action.title.change.mode.to." + type));
-	}
+    public AbstractChangeViewAction(final String id, final String type, final ERDiagramEditor editor) {
+        super(id, null, IAction.AS_RADIO_BUTTON, editor);
+        setText(ResourceString.getResourceString("action.title.change.mode.to." + type));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		if (!this.isChecked()) {
-			return;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        if (!isChecked()) {
+            return;
+        }
 
-		ERDiagram diagram = this.getDiagram();
+        final ERDiagram diagram = getDiagram();
 
-		ChangeViewModeCommand command = new ChangeViewModeCommand(diagram, this
-				.getViewMode());
+        final ChangeViewModeCommand command = new ChangeViewModeCommand(diagram, getViewMode());
 
-		this.execute(command);
-	}
+        this.execute(command);
+    }
 
-	protected abstract int getViewMode();
+    protected abstract int getViewMode();
 }

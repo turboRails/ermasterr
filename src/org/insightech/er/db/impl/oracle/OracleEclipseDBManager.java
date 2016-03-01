@@ -8,16 +8,19 @@ import org.insightech.er.editor.view.dialog.outline.tablespace.TablespaceDialog;
 
 public class OracleEclipseDBManager extends EclipseDBManagerBase {
 
-	public String getId() {
-		return OracleDBManager.ID;
-	}
+    @Override
+    public String getId() {
+        return OracleDBManager.ID;
+    }
 
-	public AdvancedComposite createAdvancedComposite(Composite composite) {
-		return new OracleAdvancedComposite(composite);
-	}
+    @Override
+    public AdvancedComposite createAdvancedComposite(final Composite composite) {
+        return new OracleAdvancedComposite(composite);
+    }
 
-	public TablespaceDialog createTablespaceDialog() {
-		return new OracleTablespaceDialog();
-	}
+    @Override
+    public TablespaceDialog createTablespaceDialog() {
+        return new OracleTablespaceDialog();
+    }
 
 }

@@ -116,415 +116,326 @@ import org.insightech.er.extention.ExtensionLoader;
 /**
  * TODO ON UPDATE、ON DELETE のプルダウンを設定できるものだけに制限する<br>
  * TODO デフォルト値に型の制限を適用する<br>
- * 
  */
 public class ERDiagramEditor extends GraphicalEditorWithPalette {
 
-	private ERDiagram diagram;
-
-	private ERDiagramEditPartFactory editPartFactory;
-
-	private ERDiagramOutlinePage outlinePage;
-
-	private MenuManager outlineMenuMgr;
-
-	private ERDiagramActionBarContributor actionBarContributor;
-
-	private ERDiagramPaletteRoot palette;
-
-	private ExtensionLoader extensionLoader;
-
-	private boolean isDirty;
-
-	/**
-	 * コンストラクタ.
-	 * 
-	 * @param diagram
-	 *            ERDiagram
-	 * @param editPartFactory
-	 *            ERDiagramEditPartFactory
-	 * @param outlinePage
-	 *            ERDiagramOutlinePage
-	 * @param editDomain
-	 *            DefaultEditDomain
-	 */
-	public ERDiagramEditor(ERDiagram diagram,
-			ERDiagramEditPartFactory editPartFactory,
-			ERDiagramOutlinePage outlinePage, DefaultEditDomain editDomain,
-			ERDiagramPaletteRoot palette) {
-		this.diagram = diagram;
-		this.editPartFactory = editPartFactory;
-		this.outlinePage = outlinePage;
-		this.palette = palette;
-
-		this.setEditDomain(editDomain);
-
-		try {
-			this.extensionLoader = new ExtensionLoader(this);
-		} catch (CoreException e) {
-			ERDiagramActivator.showExceptionDialog(e);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void dispose() {
-		this.getSelectionSynchronizer().removeViewer(
-				this.outlinePage.getViewer());
-		super.dispose();
-	}
-
-	/**
-	 * <pre>
-	 * 保存時の処理
-	 * ファイルの保存自体は、{@link ERDiagramMultiPageEditor} で行うため
-	 * 各ページの {@link ERDiagramEditor} では、コマンドスタックのクリアのみを行う
-	 * </pre>
-	 */
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		this.getCommandStack().markSaveLocation();
-		this.isDirty = false;
-	}
-
-	public void resetCommandStack() {
-		this.getCommandStack().flush();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void commandStackChanged(EventObject eventObject) {
-		this.firePropertyChange(IEditorPart.PROP_DIRTY);
-		super.commandStackChanged(eventObject);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initializeGraphicalViewer() {
-		GraphicalViewer viewer = this.getGraphicalViewer();
-		viewer.setEditPartFactory(editPartFactory);
-
-		this.initViewerAction(viewer);
-		this.initDragAndDrop(viewer);
-
-		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1),
-				MouseWheelZoomHandler.SINGLETON);
-		viewer.setProperty(SnapToGrid.PROPERTY_GRID_ENABLED, true);
-		viewer.setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE, true);
-		viewer.setProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED, true);
-
-		MenuManager menuMgr = new ERDiagramPopupMenuManager(
-				this.getActionRegistry(), this.diagram);
-
-		this.extensionLoader.addERDiagramPopupMenu(menuMgr,
-				this.getActionRegistry());
-
-		viewer.setContextMenu(menuMgr);
-
-		viewer.setContents(diagram);
-
-		this.outlineMenuMgr = new ERDiagramOutlinePopupMenuManager(
-				this.diagram, this.getActionRegistry(),
-				this.outlinePage.getOutlineActionRegistory(),
-				this.outlinePage.getViewer());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected PaletteRoot getPaletteRoot() {
-		return this.palette;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object getAdapter(Class type) {
-		if (type == ZoomManager.class) {
-			return ((ScalableFreeformRootEditPart) getGraphicalViewer()
-					.getRootEditPart()).getZoomManager();
-
-		} else if (type == IContentOutlinePage.class) {
-			return this.outlinePage;
-		}
-
-		return super.getAdapter(type);
-	}
-
-	/**
-	 * <pre>
-	 * このページが選択された際の処理
-	 * </pre>
-	 */
-	public void changeCategory() {
-		this.outlinePage.setCategory(this.getEditDomain(),
-				this.getGraphicalViewer(), this.outlineMenuMgr,
-				this.getActionRegistry());
-
-		this.getSelectionSynchronizer().addViewer(this.outlinePage.getViewer());
-
-		this.getEditDomain().setPaletteViewer(this.getPaletteViewer());
-
-		this.getActionRegistry().getAction(TooltipAction.ID)
-				.setChecked(this.diagram.isTooltip());
-		this.getActionRegistry().getAction(LockEditAction.ID)
-				.setChecked(this.diagram.isDisableSelectColumn());
-
-		((ChangeBackgroundColorAction) this.getActionRegistry().getAction(
-				ChangeBackgroundColorAction.ID)).setRGB();
-
-	}
-
-	public void removeSelection() {
-		this.getGraphicalViewer().deselectAll();
-		this.getSelectionSynchronizer().removeViewer(
-				this.outlinePage.getViewer());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	protected void createActions() {
-		super.createActions();
-
-		ActionRegistry registry = this.getActionRegistry();
-		List<String> selectionActionList = this.getSelectionActions();
-
-		List<IAction> actionList = new ArrayList<IAction>(
-				Arrays.asList(new IAction[] {
-						new ChangeViewToLogicalAction(this),
-						new ChangeViewToPhysicalAction(this),
-						new ChangeViewToBothAction(this),
-						new ChangeToIENotationAction(this),
-						new ChangeToIDEF1XNotationAction(this),
-						new ChangeNotationLevelToColumnAction(this),
-						new ChangeNotationLevelToExcludeTypeAction(this),
-						new ChangeNotationLevelToDetailAction(this),
-						new ChangeNotationLevelToOnlyTitleAction(this),
-						new ChangeNotationLevelToOnlyKeyAction(this),
-						new ChangeNotationLevelToNameAndKeyAction(this),
-						new ChangeNotationExpandGroupAction(this),
-						new ChangeDesignToFunnyAction(this),
-						new ChangeDesignToFrameAction(this),
-						new ChangeDesignToSimpleAction(this),
-						new ChangeCapitalAction(this),
-						new ChangeStampAction(this),
-						new GroupManageAction(this),
-						new ChangeTrackingAction(this),
-						new OptionSettingAction(this),
-						new CategoryManageAction(this),
-						new ChangeFreeLayoutAction(this),
-						new ChangeShowReferredTablesAction(this),
-						new TranslationManageAction(this),
-						new TestDataCreateAction(this),
-						new ImportFromDBAction(this),
-						new ImportFromFileAction(this),
-						new ExportToImageAction(this),
-						new ExportToExcelAction(this),
-						new ExportToHtmlAction(this),
-						new ExportToJavaAction(this),
-						new ExportToDDLAction(this),
-						new ExportToDictionaryAction(this),
-						new ExportToTranslationDictionaryAction(this),
-						new ExportToTestDataAction(this),
-						new PageSettingAction(this),
-						new EditAllAttributesAction(this),
-						new DirectEditAction((IWorkbenchPart) this),
-						new ERDiagramAlignmentAction((IWorkbenchPart) this,
-								PositionConstants.LEFT),
-						new ERDiagramAlignmentAction((IWorkbenchPart) this,
-								PositionConstants.CENTER),
-						new ERDiagramAlignmentAction((IWorkbenchPart) this,
-								PositionConstants.RIGHT),
-						new ERDiagramAlignmentAction((IWorkbenchPart) this,
-								PositionConstants.TOP),
-						new ERDiagramAlignmentAction((IWorkbenchPart) this,
-								PositionConstants.MIDDLE),
-						new ERDiagramAlignmentAction((IWorkbenchPart) this,
-								PositionConstants.BOTTOM),
-						new ERDiagramMatchWidthAction(this),
-						new ERDiagramMatchHeightAction(this),
-						new HorizontalLineAction(this),
-						new VerticalLineAction(this),
-						new RightAngleLineAction(this),
-						new DefaultLineAction(this), new CopyAction(this),
-						new PasteAction(this), new SearchAction(this),
-						new AutoResizeModelAction(this),
-						new PrintImageAction(this),
-						new DeleteWithoutUpdateAction(this),
-						new SelectAllContentsAction(this) }));
-
-		actionList.addAll(this.extensionLoader.createExtendedActions());
-
-		for (IAction action : actionList) {
-			if (action instanceof SelectionAction) {
-				IAction originalAction = registry.getAction(action.getId());
-
-				if (originalAction != null) {
-					selectionActionList.remove(originalAction);
-				}
-				selectionActionList.add(action.getId());
-			}
-
-			registry.registerAction(action);
-		}
-
-		IAction action = registry.getAction(SearchAction.ID);
-		this.addKeyHandler(action);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void initViewerAction(GraphicalViewer viewer) {
-		ScalableFreeformRootEditPart rootEditPart = new PagableFreeformRootEditPart(
-				this.diagram);
-		viewer.setRootEditPart(rootEditPart);
-
-		ZoomManager manager = rootEditPart.getZoomManager();
-
-		double[] zoomLevels = new double[] { 0.1, 0.25, 0.5, 0.75, 0.8, 1.0,
-				1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 10.0, 20.0 };
-		manager.setZoomLevels(zoomLevels);
-
-		List<String> zoomContributions = new ArrayList<String>();
-		zoomContributions.add(ZoomManager.FIT_ALL);
-		zoomContributions.add(ZoomManager.FIT_HEIGHT);
-		zoomContributions.add(ZoomManager.FIT_WIDTH);
-		manager.setZoomLevelContributions(zoomContributions);
-
-		ZoomInAction zoomInAction = new ZoomInAction(manager);
-		ZoomOutAction zoomOutAction = new ZoomOutAction(manager);
-		ZoomAdjustAction zoomAdjustAction = new ZoomAdjustAction(manager);
-
-		this.getActionRegistry().registerAction(zoomInAction);
-		this.getActionRegistry().registerAction(zoomOutAction);
-		this.getActionRegistry().registerAction(zoomAdjustAction);
-
-		this.addKeyHandler(zoomInAction);
-		this.addKeyHandler(zoomOutAction);
-
-		IFigure gridLayer = rootEditPart.getLayer(LayerConstants.GRID_LAYER);
-		gridLayer.setForegroundColor(Resources.GRID_COLOR);
-
-		IAction action = new ToggleGridAction(viewer);
-		this.getActionRegistry().registerAction(action);
-
-		action = new ToggleSnapToGeometryAction(viewer);
-		this.getActionRegistry().registerAction(action);
-
-		action = new ChangeBackgroundColorAction(this, this.diagram);
-		this.getActionRegistry().registerAction(action);
-		this.getSelectionActions().add(action.getId());
-
-		action = new TooltipAction(this);
-		this.getActionRegistry().registerAction(action);
-
-		action = new LockEditAction(this);
-		this.getActionRegistry().registerAction(action);
-
-		action = new ExportToDBAction(this);
-		this.getActionRegistry().registerAction(action);
-
-		this.actionBarContributor = new ERDiagramActionBarContributor();
-		this.actionBarContributor.init(this.getEditorSite().getActionBars(),
-				this.getSite().getPage());
-		// action = new ToggleRulerVisibilityAction(viewer);
-		// this.getActionRegistry().registerAction(action);
-	}
-
-	private void initDragAndDrop(GraphicalViewer viewer) {
-		AbstractTransferDragSourceListener dragSourceListener = new ERDiagramTransferDragSourceListener(
-				viewer, TemplateTransfer.getInstance());
-		viewer.addDragSourceListener(dragSourceListener);
-
-		AbstractTransferDropTargetListener dropTargetListener = new ERDiagramTransferDropTargetListener(
-				viewer, TemplateTransfer.getInstance());
-
-		viewer.addDropTargetListener(dropTargetListener);
-	}
-
-	private void addKeyHandler(IAction action) {
-		IHandlerService service = (IHandlerService) this.getSite().getService(
-				IHandlerService.class);
-		service.activateHandler(action.getActionDefinitionId(),
-				new ActionHandler(action));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public GraphicalViewer getGraphicalViewer() {
-		return super.getGraphicalViewer();
-	}
-
-	public void resetEditDomain() {
-		this.getEditDomain().setPaletteViewer(this.getPaletteViewer());
-	}
-
-	public ERDiagramActionBarContributor getActionBarContributor() {
-		return actionBarContributor;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		IEditorPart editorPart = getSite().getPage().getActiveEditor();
-
-		if (editorPart instanceof ERDiagramMultiPageEditor) {
-			ERDiagramMultiPageEditor multiPageEditorPart = (ERDiagramMultiPageEditor) editorPart;
-
-			if (this.equals(multiPageEditorPart.getActiveEditor())) {
-				updateActions(this.getSelectionActions());
-			}
-
-		} else {
-			super.selectionChanged(part, selection);
-		}
-	}
-
-	public Point getLocation() {
-		FigureCanvas canvas = (FigureCanvas) this.getGraphicalViewer()
-				.getControl();
-		return canvas.getViewport().getViewLocation();
-	}
-
-	public void setLocation(int x, int y) {
-		FigureCanvas canvas = (FigureCanvas) this.getGraphicalViewer()
-				.getControl();
-		canvas.scrollTo(x, y);
-	}
-
-	public void setDirty(boolean isDirty) {
-		this.isDirty = isDirty;
-	}
-
-	@Override
-	public boolean isDirty() {
-		if (this.isDirty) {
-			return true;
-		}
-
-		return super.isDirty();
-	}
-
-	public String getProjectFilePath(String extention) {
-		IFile file = ((IFileEditorInput) this.getEditorInput()).getFile();
-		String filePath = file.getLocation().toOSString();
-		filePath = filePath.substring(0, filePath.lastIndexOf(".")) + extention;
-
-		return filePath;
-	}
+    private final ERDiagram diagram;
+
+    private final ERDiagramEditPartFactory editPartFactory;
+
+    private final ERDiagramOutlinePage outlinePage;
+
+    private MenuManager outlineMenuMgr;
+
+    private ERDiagramActionBarContributor actionBarContributor;
+
+    private final ERDiagramPaletteRoot palette;
+
+    private ExtensionLoader extensionLoader;
+
+    private boolean isDirty;
+
+    /**
+     * コンストラクタ.
+     * 
+     * @param diagram
+     *            ERDiagram
+     * @param editPartFactory
+     *            ERDiagramEditPartFactory
+     * @param outlinePage
+     *            ERDiagramOutlinePage
+     * @param editDomain
+     *            DefaultEditDomain
+     */
+    public ERDiagramEditor(final ERDiagram diagram, final ERDiagramEditPartFactory editPartFactory, final ERDiagramOutlinePage outlinePage, final DefaultEditDomain editDomain, final ERDiagramPaletteRoot palette) {
+        this.diagram = diagram;
+        this.editPartFactory = editPartFactory;
+        this.outlinePage = outlinePage;
+        this.palette = palette;
+
+        setEditDomain(editDomain);
+
+        try {
+            extensionLoader = new ExtensionLoader(this);
+        } catch (final CoreException e) {
+            ERDiagramActivator.showExceptionDialog(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        getSelectionSynchronizer().removeViewer(outlinePage.getViewer());
+        super.dispose();
+    }
+
+    /**
+     * <pre>
+     * 保存時の処理
+     * ファイルの保存自体は、{@link ERDiagramMultiPageEditor} で行うため
+     * 各ページの {@link ERDiagramEditor} では、コマンドスタックのクリアのみを行う
+     * </pre>
+     */
+    @Override
+    public void doSave(final IProgressMonitor monitor) {
+        getCommandStack().markSaveLocation();
+        isDirty = false;
+    }
+
+    public void resetCommandStack() {
+        getCommandStack().flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void commandStackChanged(final EventObject eventObject) {
+        firePropertyChange(IEditorPart.PROP_DIRTY);
+        super.commandStackChanged(eventObject);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initializeGraphicalViewer() {
+        final GraphicalViewer viewer = getGraphicalViewer();
+        viewer.setEditPartFactory(editPartFactory);
+
+        initViewerAction(viewer);
+        initDragAndDrop(viewer);
+
+        viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1), MouseWheelZoomHandler.SINGLETON);
+        viewer.setProperty(SnapToGrid.PROPERTY_GRID_ENABLED, true);
+        viewer.setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE, true);
+        viewer.setProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED, true);
+
+        final MenuManager menuMgr = new ERDiagramPopupMenuManager(getActionRegistry(), diagram);
+
+        extensionLoader.addERDiagramPopupMenu(menuMgr, getActionRegistry());
+
+        viewer.setContextMenu(menuMgr);
+
+        viewer.setContents(diagram);
+
+        outlineMenuMgr = new ERDiagramOutlinePopupMenuManager(diagram, getActionRegistry(), outlinePage.getOutlineActionRegistory(), outlinePage.getViewer());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected PaletteRoot getPaletteRoot() {
+        return palette;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getAdapter(final Class type) {
+        if (type == ZoomManager.class) {
+            return ((ScalableFreeformRootEditPart) getGraphicalViewer().getRootEditPart()).getZoomManager();
+
+        } else if (type == IContentOutlinePage.class) {
+            return outlinePage;
+        }
+
+        return super.getAdapter(type);
+    }
+
+    /**
+     * <pre>
+     * このページが選択された際の処理
+     * </pre>
+     */
+    public void changeCategory() {
+        outlinePage.setCategory(getEditDomain(), getGraphicalViewer(), outlineMenuMgr, getActionRegistry());
+
+        getSelectionSynchronizer().addViewer(outlinePage.getViewer());
+
+        getEditDomain().setPaletteViewer(getPaletteViewer());
+
+        getActionRegistry().getAction(TooltipAction.ID).setChecked(diagram.isTooltip());
+        getActionRegistry().getAction(LockEditAction.ID).setChecked(diagram.isDisableSelectColumn());
+
+        ((ChangeBackgroundColorAction) getActionRegistry().getAction(ChangeBackgroundColorAction.ID)).setRGB();
+
+    }
+
+    public void removeSelection() {
+        getGraphicalViewer().deselectAll();
+        getSelectionSynchronizer().removeViewer(outlinePage.getViewer());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void createActions() {
+        super.createActions();
+
+        final ActionRegistry registry = getActionRegistry();
+        final List<String> selectionActionList = getSelectionActions();
+
+        final List<IAction> actionList = new ArrayList<IAction>(Arrays.asList(new IAction[] {new ChangeViewToLogicalAction(this), new ChangeViewToPhysicalAction(this), new ChangeViewToBothAction(this), new ChangeToIENotationAction(this), new ChangeToIDEF1XNotationAction(this), new ChangeNotationLevelToColumnAction(this), new ChangeNotationLevelToExcludeTypeAction(this), new ChangeNotationLevelToDetailAction(this), new ChangeNotationLevelToOnlyTitleAction(this), new ChangeNotationLevelToOnlyKeyAction(this), new ChangeNotationLevelToNameAndKeyAction(this), new ChangeNotationExpandGroupAction(this), new ChangeDesignToFunnyAction(this), new ChangeDesignToFrameAction(this), new ChangeDesignToSimpleAction(this), new ChangeCapitalAction(this), new ChangeStampAction(this), new GroupManageAction(this), new ChangeTrackingAction(this), new OptionSettingAction(this), new CategoryManageAction(this), new ChangeFreeLayoutAction(this), new ChangeShowReferredTablesAction(this), new TranslationManageAction(this), new TestDataCreateAction(this), new ImportFromDBAction(this), new ImportFromFileAction(this), new ExportToImageAction(this), new ExportToExcelAction(this), new ExportToHtmlAction(this), new ExportToJavaAction(this), new ExportToDDLAction(this), new ExportToDictionaryAction(this), new ExportToTranslationDictionaryAction(this), new ExportToTestDataAction(this), new PageSettingAction(this), new EditAllAttributesAction(this), new DirectEditAction((IWorkbenchPart) this), new ERDiagramAlignmentAction(this, PositionConstants.LEFT), new ERDiagramAlignmentAction(this, PositionConstants.CENTER), new ERDiagramAlignmentAction(this, PositionConstants.RIGHT), new ERDiagramAlignmentAction(this, PositionConstants.TOP), new ERDiagramAlignmentAction(this, PositionConstants.MIDDLE), new ERDiagramAlignmentAction(this, PositionConstants.BOTTOM), new ERDiagramMatchWidthAction(this), new ERDiagramMatchHeightAction(this), new HorizontalLineAction(this), new VerticalLineAction(this), new RightAngleLineAction(this), new DefaultLineAction(this), new CopyAction(this), new PasteAction(this), new SearchAction(this), new AutoResizeModelAction(this), new PrintImageAction(this), new DeleteWithoutUpdateAction(this), new SelectAllContentsAction(this)}));
+
+        actionList.addAll(extensionLoader.createExtendedActions());
+
+        for (final IAction action : actionList) {
+            if (action instanceof SelectionAction) {
+                final IAction originalAction = registry.getAction(action.getId());
+
+                if (originalAction != null) {
+                    selectionActionList.remove(originalAction);
+                }
+                selectionActionList.add(action.getId());
+            }
+
+            registry.registerAction(action);
+        }
+
+        final IAction action = registry.getAction(SearchAction.ID);
+        addKeyHandler(action);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initViewerAction(final GraphicalViewer viewer) {
+        final ScalableFreeformRootEditPart rootEditPart = new PagableFreeformRootEditPart(diagram);
+        viewer.setRootEditPart(rootEditPart);
+
+        final ZoomManager manager = rootEditPart.getZoomManager();
+
+        final double[] zoomLevels = new double[] {0.1, 0.25, 0.5, 0.75, 0.8, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 10.0, 20.0};
+        manager.setZoomLevels(zoomLevels);
+
+        final List<String> zoomContributions = new ArrayList<String>();
+        zoomContributions.add(ZoomManager.FIT_ALL);
+        zoomContributions.add(ZoomManager.FIT_HEIGHT);
+        zoomContributions.add(ZoomManager.FIT_WIDTH);
+        manager.setZoomLevelContributions(zoomContributions);
+
+        final ZoomInAction zoomInAction = new ZoomInAction(manager);
+        final ZoomOutAction zoomOutAction = new ZoomOutAction(manager);
+        final ZoomAdjustAction zoomAdjustAction = new ZoomAdjustAction(manager);
+
+        getActionRegistry().registerAction(zoomInAction);
+        getActionRegistry().registerAction(zoomOutAction);
+        getActionRegistry().registerAction(zoomAdjustAction);
+
+        addKeyHandler(zoomInAction);
+        addKeyHandler(zoomOutAction);
+
+        final IFigure gridLayer = rootEditPart.getLayer(LayerConstants.GRID_LAYER);
+        gridLayer.setForegroundColor(Resources.GRID_COLOR);
+
+        IAction action = new ToggleGridAction(viewer);
+        getActionRegistry().registerAction(action);
+
+        action = new ToggleSnapToGeometryAction(viewer);
+        getActionRegistry().registerAction(action);
+
+        action = new ChangeBackgroundColorAction(this, diagram);
+        getActionRegistry().registerAction(action);
+        getSelectionActions().add(action.getId());
+
+        action = new TooltipAction(this);
+        getActionRegistry().registerAction(action);
+
+        action = new LockEditAction(this);
+        getActionRegistry().registerAction(action);
+
+        action = new ExportToDBAction(this);
+        getActionRegistry().registerAction(action);
+
+        actionBarContributor = new ERDiagramActionBarContributor();
+        actionBarContributor.init(getEditorSite().getActionBars(), getSite().getPage());
+        // action = new ToggleRulerVisibilityAction(viewer);
+        // this.getActionRegistry().registerAction(action);
+    }
+
+    private void initDragAndDrop(final GraphicalViewer viewer) {
+        final AbstractTransferDragSourceListener dragSourceListener = new ERDiagramTransferDragSourceListener(viewer, TemplateTransfer.getInstance());
+        viewer.addDragSourceListener(dragSourceListener);
+
+        final AbstractTransferDropTargetListener dropTargetListener = new ERDiagramTransferDropTargetListener(viewer, TemplateTransfer.getInstance());
+
+        viewer.addDropTargetListener(dropTargetListener);
+    }
+
+    private void addKeyHandler(final IAction action) {
+        final IHandlerService service = getSite().getService(IHandlerService.class);
+        service.activateHandler(action.getActionDefinitionId(), new ActionHandler(action));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GraphicalViewer getGraphicalViewer() {
+        return super.getGraphicalViewer();
+    }
+
+    public void resetEditDomain() {
+        getEditDomain().setPaletteViewer(getPaletteViewer());
+    }
+
+    public ERDiagramActionBarContributor getActionBarContributor() {
+        return actionBarContributor;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
+        final IEditorPart editorPart = getSite().getPage().getActiveEditor();
+
+        if (editorPart instanceof ERDiagramMultiPageEditor) {
+            final ERDiagramMultiPageEditor multiPageEditorPart = (ERDiagramMultiPageEditor) editorPart;
+
+            if (equals(multiPageEditorPart.getActiveEditor())) {
+                updateActions(getSelectionActions());
+            }
+
+        } else {
+            super.selectionChanged(part, selection);
+        }
+    }
+
+    public Point getLocation() {
+        final FigureCanvas canvas = (FigureCanvas) getGraphicalViewer().getControl();
+        return canvas.getViewport().getViewLocation();
+    }
+
+    public void setLocation(final int x, final int y) {
+        final FigureCanvas canvas = (FigureCanvas) getGraphicalViewer().getControl();
+        canvas.scrollTo(x, y);
+    }
+
+    public void setDirty(final boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    @Override
+    public boolean isDirty() {
+        if (isDirty) {
+            return true;
+        }
+
+        return super.isDirty();
+    }
+
+    public String getProjectFilePath(final String extention) {
+        final IFile file = ((IFileEditorInput) getEditorInput()).getFile();
+        String filePath = file.getLocation().toOSString();
+        filePath = filePath.substring(0, filePath.lastIndexOf(".")) + extention;
+
+        return filePath;
+    }
 
 }

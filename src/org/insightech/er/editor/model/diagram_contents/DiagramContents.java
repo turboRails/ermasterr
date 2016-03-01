@@ -18,123 +18,123 @@ import org.insightech.er.editor.model.testdata.TestData;
 
 public class DiagramContents {
 
-	private Settings settings;
+    private Settings settings;
 
-	private NodeSet contents;
+    private NodeSet contents;
 
-	private GroupSet groups;
+    private GroupSet groups;
 
-	private Dictionary dictionary;
+    private Dictionary dictionary;
 
-	private SequenceSet sequenceSet;
+    private SequenceSet sequenceSet;
 
-	private TriggerSet triggerSet;
+    private TriggerSet triggerSet;
 
-	private IndexSet indexSet;
+    private final IndexSet indexSet;
 
-	private TablespaceSet tablespaceSet;
+    private final TablespaceSet tablespaceSet;
 
-	private List<TestData> testDataList;
+    private List<TestData> testDataList;
 
-	public DiagramContents() {
-		this.settings = new Settings();
-		this.contents = new NodeSet();
-		this.groups = new GroupSet();
-		this.dictionary = new Dictionary();
-		this.sequenceSet = new SequenceSet();
-		this.triggerSet = new TriggerSet();
-		this.indexSet = new IndexSet();
-		this.tablespaceSet = new TablespaceSet();
+    public DiagramContents() {
+        settings = new Settings();
+        contents = new NodeSet();
+        groups = new GroupSet();
+        dictionary = new Dictionary();
+        sequenceSet = new SequenceSet();
+        triggerSet = new TriggerSet();
+        indexSet = new IndexSet();
+        tablespaceSet = new TablespaceSet();
 
-		this.testDataList = new ArrayList<TestData>();
-	}
+        testDataList = new ArrayList<TestData>();
+    }
 
-	public void clear() {
-		this.contents.clear();
-		this.groups.clear();
-		this.dictionary.clear();
-		this.sequenceSet.clear();
-		this.triggerSet.clear();
-		this.tablespaceSet.clear();
-		this.testDataList.clear();
-	}
+    public void clear() {
+        contents.clear();
+        groups.clear();
+        dictionary.clear();
+        sequenceSet.clear();
+        triggerSet.clear();
+        tablespaceSet.clear();
+        testDataList.clear();
+    }
 
-	public void sort() {
-		this.contents.sort();
-		this.groups.sort();
-		this.sequenceSet.sort();
-		this.triggerSet.sort();
-		this.tablespaceSet.sort();
-		Collections.sort(this.testDataList);	
-	}
-	
-	public NodeSet getContents() {
-		return this.contents;
-	}
+    public void sort() {
+        contents.sort();
+        groups.sort();
+        sequenceSet.sort();
+        triggerSet.sort();
+        tablespaceSet.sort();
+        Collections.sort(testDataList);
+    }
 
-	public void setContents(NodeSet contents) {
-		this.contents = contents;
-	}
+    public NodeSet getContents() {
+        return contents;
+    }
 
-	public GroupSet getGroups() {
-		return this.groups;
-	}
+    public void setContents(final NodeSet contents) {
+        this.contents = contents;
+    }
 
-	public void setColumnGroups(GroupSet groups) {
-		this.groups = groups;
-		for (ColumnGroup group : groups) {
-			for (NormalColumn normalColumn : group.getColumns()) {
-				this.dictionary.add(normalColumn);
-			}
-		}
-	}
+    public GroupSet getGroups() {
+        return groups;
+    }
 
-	public Dictionary getDictionary() {
-		return this.dictionary;
-	}
+    public void setColumnGroups(final GroupSet groups) {
+        this.groups = groups;
+        for (final ColumnGroup group : groups) {
+            for (final NormalColumn normalColumn : group.getColumns()) {
+                dictionary.add(normalColumn);
+            }
+        }
+    }
 
-	public void setDictionary(Dictionary dictionary) {
-		this.dictionary = dictionary;
-	}
+    public Dictionary getDictionary() {
+        return dictionary;
+    }
 
-	public SequenceSet getSequenceSet() {
-		return sequenceSet;
-	}
+    public void setDictionary(final Dictionary dictionary) {
+        this.dictionary = dictionary;
+    }
 
-	public void setSequenceSet(SequenceSet sequenceSet) {
-		this.sequenceSet = sequenceSet;
-	}
+    public SequenceSet getSequenceSet() {
+        return sequenceSet;
+    }
 
-	public TriggerSet getTriggerSet() {
-		return triggerSet;
-	}
+    public void setSequenceSet(final SequenceSet sequenceSet) {
+        this.sequenceSet = sequenceSet;
+    }
 
-	public void setTriggerSet(TriggerSet triggerSet) {
-		this.triggerSet = triggerSet;
-	}
+    public TriggerSet getTriggerSet() {
+        return triggerSet;
+    }
 
-	public Settings getSettings() {
-		return settings;
-	}
+    public void setTriggerSet(final TriggerSet triggerSet) {
+        this.triggerSet = triggerSet;
+    }
 
-	public void setSettings(Settings settings) {
-		this.settings = settings;
-	}
+    public Settings getSettings() {
+        return settings;
+    }
 
-	public IndexSet getIndexSet() {
-		return indexSet;
-	}
+    public void setSettings(final Settings settings) {
+        this.settings = settings;
+    }
 
-	public TablespaceSet getTablespaceSet() {
-		return tablespaceSet;
-	}
+    public IndexSet getIndexSet() {
+        return indexSet;
+    }
 
-	public List<TestData> getTestDataList() {
-		return testDataList;
-	}
+    public TablespaceSet getTablespaceSet() {
+        return tablespaceSet;
+    }
 
-	public void setTestDataList(List<TestData> testDataList) {
-		this.testDataList = testDataList;
-	}
+    public List<TestData> getTestDataList() {
+        return testDataList;
+    }
+
+    public void setTestDataList(final List<TestData> testDataList) {
+        this.testDataList = testDataList;
+    }
 
 }

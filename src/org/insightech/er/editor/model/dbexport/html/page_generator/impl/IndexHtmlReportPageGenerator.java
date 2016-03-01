@@ -13,90 +13,87 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.column
 import org.insightech.er.editor.model.diagram_contents.element.node.table.index.Index;
 import org.insightech.er.util.Format;
 
-public class IndexHtmlReportPageGenerator extends
-		AbstractHtmlReportPageGenerator {
+public class IndexHtmlReportPageGenerator extends AbstractHtmlReportPageGenerator {
 
-	public IndexHtmlReportPageGenerator(Map<Object, Integer> idMap) {
-		super(idMap);
-	}
+    public IndexHtmlReportPageGenerator(final Map<Object, Integer> idMap) {
+        super(idMap);
+    }
 
-	public String getType() {
-		return "index";
-	}
+    @Override
+    public String getType() {
+        return "index";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<Object> getObjectList(ERDiagram diagram) {
-		List<Object> list = new ArrayList<Object>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Object> getObjectList(final ERDiagram diagram) {
+        final List<Object> list = new ArrayList<Object>();
 
-		for (NodeElement nodeElement : diagram.getDiagramContents()
-				.getContents()) {
-			if (nodeElement instanceof ERTable) {
-				ERTable table = (ERTable) nodeElement;
-				list.addAll(table.getIndexes());
-			}
-		}
+        for (final NodeElement nodeElement : diagram.getDiagramContents().getContents()) {
+            if (nodeElement instanceof ERTable) {
+                final ERTable table = (ERTable) nodeElement;
+                list.addAll(table.getIndexes());
+            }
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String[] getContentArgs(ERDiagram diagram, Object object)
-			throws IOException {
-		Index index = (Index) object;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String[] getContentArgs(final ERDiagram diagram, final Object object) throws IOException {
+        final Index index = (Index) object;
 
-		ERTable table = index.getTable();
+        final ERTable table = index.getTable();
 
-		String description = Format.null2blank(index.getDescription());
-		String tableId = this.getObjectId(table);
-		String tableName = Format.null2blank(table.getName());
+        final String description = Format.null2blank(index.getDescription());
+        final String tableId = getObjectId(table);
+        final String tableName = Format.null2blank(table.getName());
 
-		String unique = this.getUniqueString(index);
+        final String unique = getUniqueString(index);
 
-		List<NormalColumn> normalColumnList = index.getColumns();
-		List<Boolean> descs = index.getDescs();
-		
-		String indexAttribute = this.generateIndexAttributeTable(table,
-				normalColumnList, descs);
+        final List<NormalColumn> normalColumnList = index.getColumns();
+        final List<Boolean> descs = index.getDescs();
 
-		return new String[] { description, tableId, tableName,
-				this.getType(index), unique, indexAttribute };
-	}
+        final String indexAttribute = generateIndexAttributeTable(table, normalColumnList, descs);
 
-	private String getType(Index index) {
-		if (index.isFullText()) {
-			return "FULLTEXT";
-		}
+        return new String[] {description, tableId, tableName, this.getType(index), unique, indexAttribute};
+    }
 
-		return Format.null2blank(index.getType());
-	}
+    private String getType(final Index index) {
+        if (index.isFullText()) {
+            return "FULLTEXT";
+        }
 
-	public String getObjectName(Object object) {
-		Index index = (Index) object;
+        return Format.null2blank(index.getType());
+    }
 
-		return index.getName();
-	}
+    @Override
+    public String getObjectName(final Object object) {
+        final Index index = (Index) object;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getObjectSummary(Object object) {
-		Index index = (Index) object;
+        return index.getName();
+    }
 
-		return index.getDescription();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getObjectSummary(final Object object) {
+        final Index index = (Index) object;
 
-	private String getUniqueString(Index index) {
-		if (!index.isNonUnique()) {
-			return "UNIQUE";
-		} else {
-			return "";
-		}
-	}
+        return index.getDescription();
+    }
+
+    private String getUniqueString(final Index index) {
+        if (!index.isNonUnique()) {
+            return "UNIQUE";
+        } else {
+            return "";
+        }
+    }
 }

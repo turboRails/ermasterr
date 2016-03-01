@@ -8,32 +8,28 @@ import org.insightech.er.editor.controller.command.display.notation.ChangeNotati
 import org.insightech.er.editor.model.ERDiagram;
 import org.insightech.er.editor.view.action.AbstractBaseAction;
 
-public abstract class AbstractChangeNotationLevelAction extends
-		AbstractBaseAction {
+public abstract class AbstractChangeNotationLevelAction extends AbstractBaseAction {
 
-	public AbstractChangeNotationLevelAction(String id, ERDiagramEditor editor) {
-		super(id, null, IAction.AS_RADIO_BUTTON, editor);
-		this.setText(ResourceString
-				.getResourceString("action.title.change.notation.level."
-						+ this.getLevel()));
-	}
+    public AbstractChangeNotationLevelAction(final String id, final ERDiagramEditor editor) {
+        super(id, null, IAction.AS_RADIO_BUTTON, editor);
+        setText(ResourceString.getResourceString("action.title.change.notation.level." + getLevel()));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		if (!this.isChecked()) {
-			return;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        if (!isChecked()) {
+            return;
+        }
 
-		ERDiagram diagram = this.getDiagram();
+        final ERDiagram diagram = getDiagram();
 
-		ChangeNotationLevelCommand command = new ChangeNotationLevelCommand(
-				diagram, this.getLevel());
+        final ChangeNotationLevelCommand command = new ChangeNotationLevelCommand(diagram, getLevel());
 
-		this.execute(command);
-	}
+        this.execute(command);
+    }
 
-	protected abstract int getLevel();
+    protected abstract int getLevel();
 }

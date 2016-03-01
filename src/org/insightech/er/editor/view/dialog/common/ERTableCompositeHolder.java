@@ -4,6 +4,6 @@ import org.insightech.er.editor.model.diagram_contents.not_element.group.ColumnG
 
 public interface ERTableCompositeHolder {
 
-	public void selectGroup(ColumnGroup selectedColumn);
-	
+    public void selectGroup(ColumnGroup selectedColumn);
+
 }

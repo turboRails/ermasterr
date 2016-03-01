@@ -17,42 +17,39 @@ import org.insightech.er.editor.view.dialog.option.tab.OptionTabWrapper;
 
 public class OptionSettingDialog extends AbstractTabbedDialog {
 
-	private Settings settings;
+    private final Settings settings;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	public OptionSettingDialog(Shell parentShell, Settings settings,
-			ERDiagram diagram) {
-		super(parentShell);
+    public OptionSettingDialog(final Shell parentShell, final Settings settings, final ERDiagram diagram) {
+        super(parentShell);
 
-		this.diagram = diagram;
-		this.settings = settings;
-	}
+        this.diagram = diagram;
+        this.settings = settings;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite composite) {
-		this.createTabFolder(composite);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite composite) {
+        createTabFolder(composite);
+    }
 
-	@Override
-	protected String getTitle() {
-		return "dialog.title.option";
-	}
+    @Override
+    protected String getTitle() {
+        return "dialog.title.option";
+    }
 
-	@Override
-	protected List<ValidatableTabWrapper> createTabWrapperList(
-			TabFolder tabFolder) {
-		List<ValidatableTabWrapper> list = new ArrayList<ValidatableTabWrapper>();
+    @Override
+    protected List<ValidatableTabWrapper> createTabWrapperList(final TabFolder tabFolder) {
+        final List<ValidatableTabWrapper> list = new ArrayList<ValidatableTabWrapper>();
 
-		list.add(new DBSelectTabWrapper(this, tabFolder, this.settings));
-		list.add(new EnvironmentTabWrapper(this, tabFolder, this.settings));
-		list.add(new AdvancedTabWrapper(this, tabFolder, this.settings,
-				this.diagram));
-		list.add(new OptionTabWrapper(this, tabFolder, this.settings));
+        list.add(new DBSelectTabWrapper(this, tabFolder, settings));
+        list.add(new EnvironmentTabWrapper(this, tabFolder, settings));
+        list.add(new AdvancedTabWrapper(this, tabFolder, settings, diagram));
+        list.add(new OptionTabWrapper(this, tabFolder, settings));
 
-		return list;
-	}
+        return list;
+    }
 }

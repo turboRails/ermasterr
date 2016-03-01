@@ -9,21 +9,20 @@ import org.insightech.er.editor.view.figure.NoteFigure;
 
 public class NoteEditorLocator implements CellEditorLocator {
 
-	private IFigure figure;
+    private final IFigure figure;
 
-	public NoteEditorLocator(IFigure figure) {
-		this.figure = figure;
-	}
+    public NoteEditorLocator(final IFigure figure) {
+        this.figure = figure;
+    }
 
-	public void relocate(CellEditor cellEditor) {
-		Text text = (Text) cellEditor.getControl();
+    @Override
+    public void relocate(final CellEditor cellEditor) {
+        final Text text = (Text) cellEditor.getControl();
 
-		Rectangle rect = this.figure.getBounds().getCopy();
-		this.figure.translateToAbsolute(rect);
+        final Rectangle rect = figure.getBounds().getCopy();
+        figure.translateToAbsolute(rect);
 
-		text.setBounds(rect.x + NoteFigure.RETURN_WIDTH, rect.y
-				+ NoteFigure.RETURN_WIDTH, rect.width - NoteFigure.RETURN_WIDTH
-				* 2, rect.height - NoteFigure.RETURN_WIDTH * 2);
-	}
+        text.setBounds(rect.x + NoteFigure.RETURN_WIDTH, rect.y + NoteFigure.RETURN_WIDTH, rect.width - NoteFigure.RETURN_WIDTH * 2, rect.height - NoteFigure.RETURN_WIDTH * 2);
+    }
 
 }

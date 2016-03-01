@@ -10,45 +10,42 @@ import org.insightech.er.editor.model.settings.CategorySetting;
 
 public class DeleteCategoryCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private CategorySetting categorySettings;
+    private final CategorySetting categorySettings;
 
-	private Category category;
+    private final Category category;
 
-	private List<Category> oldAllCategories;
+    private List<Category> oldAllCategories;
 
-	private List<Category> oldSelectedCategories;
+    private List<Category> oldSelectedCategories;
 
-	public DeleteCategoryCommand(ERDiagram diagram, Category category) {
-		this.diagram = diagram;
-		this.categorySettings = diagram.getDiagramContents().getSettings()
-				.getCategorySetting();
-		this.category = category;
-	}
+    public DeleteCategoryCommand(final ERDiagram diagram, final Category category) {
+        this.diagram = diagram;
+        categorySettings = diagram.getDiagramContents().getSettings().getCategorySetting();
+        this.category = category;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.oldAllCategories = new ArrayList<Category>(this.categorySettings
-				.getAllCategories());
-		this.oldSelectedCategories = new ArrayList<Category>(
-				this.categorySettings.getSelectedCategories());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        oldAllCategories = new ArrayList<Category>(categorySettings.getAllCategories());
+        oldSelectedCategories = new ArrayList<Category>(categorySettings.getSelectedCategories());
 
-		this.diagram.removeCategory(category);
-		this.diagram.refreshChildren();
-	}
+        diagram.removeCategory(category);
+        diagram.refreshChildren();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.categorySettings.setAllCategories(oldAllCategories);
-		this.categorySettings.setSelectedCategories(oldSelectedCategories);
-		this.diagram.restoreCategories();
-		this.diagram.refreshChildren();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        categorySettings.setAllCategories(oldAllCategories);
+        categorySettings.setSelectedCategories(oldSelectedCategories);
+        diagram.restoreCategories();
+        diagram.refreshChildren();
+    }
 }

@@ -7,53 +7,53 @@ import org.insightech.er.editor.model.diagram_contents.element.node.category.Cat
 
 public class ImageInfoSet {
 
-	private static final int MAX_NAME_LENGTH = 26;
+    private static final int MAX_NAME_LENGTH = 26;
 
-	private ImageInfo diagramImageInfo;
+    private final ImageInfo diagramImageInfo;
 
-	private Map<Category, ImageInfo> categoryImageInfoMap;
+    private final Map<Category, ImageInfo> categoryImageInfoMap;
 
-	private Map<String, Integer> fileNameMap = new HashMap<String, Integer>();
+    private final Map<String, Integer> fileNameMap = new HashMap<String, Integer>();
 
-	public ImageInfoSet(ImageInfo diagramImageInfo) {
-		this.diagramImageInfo = diagramImageInfo;
-		this.categoryImageInfoMap = new HashMap<Category, ImageInfo>();
-	}
+    public ImageInfoSet(final ImageInfo diagramImageInfo) {
+        this.diagramImageInfo = diagramImageInfo;
+        categoryImageInfoMap = new HashMap<Category, ImageInfo>();
+    }
 
-	public ImageInfo getDiagramImageInfo() {
-		return this.diagramImageInfo;
-	}
+    public ImageInfo getDiagramImageInfo() {
+        return diagramImageInfo;
+    }
 
-	public void addImageInfo(Category category, ImageInfo imageInfo) {
-		this.categoryImageInfoMap.put(category, imageInfo);
-	}
+    public void addImageInfo(final Category category, final ImageInfo imageInfo) {
+        categoryImageInfoMap.put(category, imageInfo);
+    }
 
-	public ImageInfo getImageInfo(Category category) {
-		return this.categoryImageInfoMap.get(category);
-	}
+    public ImageInfo getImageInfo(final Category category) {
+        return categoryImageInfoMap.get(category);
+    }
 
-	public String decideFileName(String name, String extension) {
-		if (name.length() > MAX_NAME_LENGTH) {
-			name = name.substring(0, MAX_NAME_LENGTH);
-		}
+    public String decideFileName(String name, final String extension) {
+        if (name.length() > MAX_NAME_LENGTH) {
+            name = name.substring(0, MAX_NAME_LENGTH);
+        }
 
-		String fileName = null;
+        String fileName = null;
 
-		Integer sameNameNum = fileNameMap.get(name.toUpperCase());
-		if (sameNameNum == null) {
-			sameNameNum = 0;
-			fileName = name;
+        Integer sameNameNum = fileNameMap.get(name.toUpperCase());
+        if (sameNameNum == null) {
+            sameNameNum = 0;
+            fileName = name;
 
-		} else {
-			do {
-				sameNameNum++;
-				fileName = name + "(" + sameNameNum + ")";
-			} while (fileNameMap.containsKey(fileName.toUpperCase()));
-		}
+        } else {
+            do {
+                sameNameNum++;
+                fileName = name + "(" + sameNameNum + ")";
+            } while (fileNameMap.containsKey(fileName.toUpperCase()));
+        }
 
-		fileNameMap.put(name.toUpperCase(), sameNameNum);
+        fileNameMap.put(name.toUpperCase(), sameNameNum);
 
-		return fileName + extension;
-	}
+        return fileName + extension;
+    }
 
 }

@@ -10,62 +10,59 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.ERTabl
 
 public class ERTablePropertySource extends AbstractPropertySource {
 
-	private ERTable table;
+    private final ERTable table;
 
-	public ERTablePropertySource(ERDiagramMultiPageEditor editor, ERTable table) {
-		super(editor);
-		this.table = table;
-	}
+    public ERTablePropertySource(final ERDiagramMultiPageEditor editor, final ERTable table) {
+        super(editor);
+        this.table = table;
+    }
 
-	public Object getEditableValue() {
-		return this.table;
-	}
+    @Override
+    public Object getEditableValue() {
+        return table;
+    }
 
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return new IPropertyDescriptor[] {
-				new TextPropertyDescriptor("physicalName",
-						ResourceString.getResourceString("label.physical.name")),
-				new TextPropertyDescriptor("logicalName",
-						ResourceString.getResourceString("label.logical.name")) };
-	}
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        return new IPropertyDescriptor[] {new TextPropertyDescriptor("physicalName", ResourceString.getResourceString("label.physical.name")), new TextPropertyDescriptor("logicalName", ResourceString.getResourceString("label.logical.name"))};
+    }
 
-	public Object getPropertyValue(Object id) {
-		if (id.equals("physicalName")) {
-			return this.table.getPhysicalName() != null ? this.table
-					.getPhysicalName() : "";
-		}
-		if (id.equals("logicalName")) {
-			return this.table.getLogicalName() != null ? this.table
-					.getLogicalName() : "";
-		}
-		return null;
-	}
+    @Override
+    public Object getPropertyValue(final Object id) {
+        if (id.equals("physicalName")) {
+            return table.getPhysicalName() != null ? table.getPhysicalName() : "";
+        }
+        if (id.equals("logicalName")) {
+            return table.getLogicalName() != null ? table.getLogicalName() : "";
+        }
+        return null;
+    }
 
-	public boolean isPropertySet(Object id) {
-		if (id.equals("physicalName")) {
-			return true;
-		}
-		if (id.equals("logicalName")) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean isPropertySet(final Object id) {
+        if (id.equals("physicalName")) {
+            return true;
+        }
+        if (id.equals("logicalName")) {
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	protected Command createSetPropertyCommand(Object id, Object value) {
-		ERTable copyTable = table.copyData();
+    @Override
+    protected Command createSetPropertyCommand(final Object id, final Object value) {
+        final ERTable copyTable = table.copyData();
 
-		if (id.equals("physicalName")) {
-			copyTable.setPhysicalName(String.valueOf(value));
+        if (id.equals("physicalName")) {
+            copyTable.setPhysicalName(String.valueOf(value));
 
-		} else if (id.equals("logicalName")) {
-			copyTable.setLogicalName(String.valueOf(value));
-		}
+        } else if (id.equals("logicalName")) {
+            copyTable.setLogicalName(String.valueOf(value));
+        }
 
-		ChangeTableViewPropertyCommand command = new ChangeTableViewPropertyCommand(
-				this.table, copyTable);
+        final ChangeTableViewPropertyCommand command = new ChangeTableViewPropertyCommand(table, copyTable);
 
-		return command;
-	}
+        return command;
+    }
 
 }

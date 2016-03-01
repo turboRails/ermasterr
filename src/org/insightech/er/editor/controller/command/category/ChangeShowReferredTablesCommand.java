@@ -10,57 +10,54 @@ import org.insightech.er.editor.model.settings.CategorySetting;
 
 public class ChangeShowReferredTablesCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private boolean oldShowReferredTables;
+    private final boolean oldShowReferredTables;
 
-	private boolean newShowReferredTables;
+    private final boolean newShowReferredTables;
 
-	private CategorySetting categorySettings;
+    private final CategorySetting categorySettings;
 
-	public ChangeShowReferredTablesCommand(ERDiagram diagram,
-			boolean isShowReferredTables) {
-		this.diagram = diagram;
-		this.categorySettings = this.diagram.getDiagramContents().getSettings()
-				.getCategorySetting();
+    public ChangeShowReferredTablesCommand(final ERDiagram diagram, final boolean isShowReferredTables) {
+        this.diagram = diagram;
+        categorySettings = this.diagram.getDiagramContents().getSettings().getCategorySetting();
 
-		this.newShowReferredTables = isShowReferredTables;
-		this.oldShowReferredTables = this.categorySettings.isFreeLayout();
-	}
+        newShowReferredTables = isShowReferredTables;
+        oldShowReferredTables = categorySettings.isFreeLayout();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.categorySettings.setShowReferredTables(this.newShowReferredTables);
-		this.refreshReferredNodeElementList();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        categorySettings.setShowReferredTables(newShowReferredTables);
+        refreshReferredNodeElementList();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.categorySettings.setShowReferredTables(this.oldShowReferredTables);
-		this.refreshReferredNodeElementList();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        categorySettings.setShowReferredTables(oldShowReferredTables);
+        refreshReferredNodeElementList();
+    }
 
-	private void refreshReferredNodeElementList() {
-		List<NodeElement> nodeElementList = this.diagram.getCurrentCategory()
-				.getContents();
+    private void refreshReferredNodeElementList() {
+        final List<NodeElement> nodeElementList = diagram.getCurrentCategory().getContents();
 
-		for (NodeElement nodeElement : nodeElementList) {
-			for (ConnectionElement connection : nodeElement.getIncomings()) {
-				NodeElement referredNodeElement = connection.getSource();
+        for (final NodeElement nodeElement : nodeElementList) {
+            for (final ConnectionElement connection : nodeElement.getIncomings()) {
+                final NodeElement referredNodeElement = connection.getSource();
 
-				if (nodeElementList.contains(referredNodeElement)) {
-					continue;
-				}
+                if (nodeElementList.contains(referredNodeElement)) {
+                    continue;
+                }
 
-				referredNodeElement.refreshVisuals();
-				connection.refreshVisuals();
-			}
-		}
-	}
+                referredNodeElement.refreshVisuals();
+                connection.refreshVisuals();
+            }
+        }
+    }
 }

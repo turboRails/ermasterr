@@ -19,120 +19,104 @@ import org.insightech.er.util.io.FileUtils;
 
 public class ExportToImageDialog extends AbstractExportDialog {
 
-	private static final String DEFAULT_EXTENTION = ".png";
+    private static final String DEFAULT_EXTENTION = ".png";
 
-	private FileText outputFileText;
+    private FileText outputFileText;
 
-	// private DirectoryText categoryDirText;
+    // private DirectoryText categoryDirText;
 
-	private MultiLineCheckbox withCategoryImageButton;
+    private MultiLineCheckbox withCategoryImageButton;
 
-	private Label categoryLabel;
+    private Label categoryLabel;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite parent) {
-		this.outputFileText = CompositeFactory.createFileText(true, this,
-				parent, "label.output.file", this.getBaseDir(),
-				this.getDefaultOutputFileName(DEFAULT_EXTENTION), new String[] {
-						"*.png", "*.jpeg", "*.bmp" });
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite parent) {
+        outputFileText = CompositeFactory.createFileText(true, this, parent, "label.output.file", getBaseDir(), getDefaultOutputFileName(DEFAULT_EXTENTION), new String[] {"*.png", "*.jpeg", "*.bmp"});
 
-		CompositeFactory.createLabel(parent, "label.category");
-		this.categoryLabel = CompositeFactory.createLabelAsValue(parent, "", 2);
+        CompositeFactory.createLabel(parent, "label.category");
+        categoryLabel = CompositeFactory.createLabelAsValue(parent, "", 2);
 
-		Composite checkboxArea = this.createCheckboxArea(parent);
+        final Composite checkboxArea = this.createCheckboxArea(parent);
 
-		this.withCategoryImageButton = CompositeFactory
-				.createMultiLineCheckbox(this, checkboxArea,
-						"label.output.category.image", false, 3);
+        withCategoryImageButton = CompositeFactory.createMultiLineCheckbox(this, checkboxArea, "label.output.category.image", false, 3);
 
-		// CompositeFactory.createLabel(parent,
-		// "label.output.category.image.dir");
-		// this.categoryDirText = new DirectoryText(parent, SWT.BORDER, null);
-		// this.categoryDirText.setLayoutData(gridData);
+        // CompositeFactory.createLabel(parent,
+        // "label.output.category.image.dir");
+        // this.categoryDirText = new DirectoryText(parent, SWT.BORDER, null);
+        // this.categoryDirText.setLayoutData(gridData);
 
-		this.createOpenAfterSavedButton(checkboxArea, false, 3);
-	}
+        createOpenAfterSavedButton(checkboxArea, false, 3);
+    }
 
-	@Override
-	protected String getErrorMessage() {
-		// this.categoryDirText.setEnabled(this.withCategoryImageButton
-		// .getSelection());
+    @Override
+    protected String getErrorMessage() {
+        // this.categoryDirText.setEnabled(this.withCategoryImageButton
+        // .getSelection());
 
-		if (this.outputFileText.isBlank()) {
-			return "error.output.file.is.empty";
-		}
+        if (outputFileText.isBlank()) {
+            return "error.output.file.is.empty";
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected ExportWithProgressManager getExportWithProgressManager(
-			ExportSetting exportSetting) throws InputException {
-		ExportImageSetting exportImageSetting = exportSetting
-				.getExportImageSetting();
+    @Override
+    protected ExportWithProgressManager getExportWithProgressManager(final ExportSetting exportSetting) throws InputException {
+        final ExportImageSetting exportImageSetting = exportSetting.getExportImageSetting();
 
-		exportImageSetting.setOutputFilePath(this.outputFileText.getFilePath());
-		exportImageSetting.setWithCategoryImage(this.withCategoryImageButton
-				.getSelection());
-		exportImageSetting.setOpenAfterSaved(this.openAfterSavedButton
-				.getSelection());
-		exportImageSetting.setCategory(this.diagram.getCurrentCategory());
+        exportImageSetting.setOutputFilePath(outputFileText.getFilePath());
+        exportImageSetting.setWithCategoryImage(withCategoryImageButton.getSelection());
+        exportImageSetting.setOpenAfterSaved(openAfterSavedButton.getSelection());
+        exportImageSetting.setCategory(diagram.getCurrentCategory());
 
-		return new ExportToImageManager(exportImageSetting);
-	}
+        return new ExportToImageManager(exportImageSetting);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws IOException
-	 */
-	@Override
-	protected void setData() {
-		ExportImageSetting exportImageSetting = settings.getExportSetting()
-				.getExportImageSetting();
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws IOException
+     */
+    @Override
+    protected void setData() {
+        final ExportImageSetting exportImageSetting = settings.getExportSetting().getExportImageSetting();
 
-		String outputFile = Format.null2blank(exportImageSetting
-				.getOutputFilePath());
+        String outputFile = Format.null2blank(exportImageSetting.getOutputFilePath());
 
-		if (Check.isEmpty(outputFile)) {
-			outputFile = this.getDefaultOutputFilePath(DEFAULT_EXTENTION);
-		}
+        if (Check.isEmpty(outputFile)) {
+            outputFile = getDefaultOutputFilePath(DEFAULT_EXTENTION);
+        }
 
-		this.outputFileText.setText(FileUtils.getRelativeFilePath(
-				this.getBaseDir(), outputFile));
+        outputFileText.setText(FileUtils.getRelativeFilePath(getBaseDir(), outputFile));
 
-		this.withCategoryImageButton.setSelection(exportImageSetting
-				.isWithCategoryImage());
-		this.openAfterSavedButton.setSelection(exportImageSetting
-				.isOpenAfterSaved());
+        withCategoryImageButton.setSelection(exportImageSetting.isWithCategoryImage());
+        openAfterSavedButton.setSelection(exportImageSetting.isOpenAfterSaved());
 
-		this.setCategoryData(this.categoryLabel);
-		if (this.diagram.getCurrentCategory() != null) {
-			this.withCategoryImageButton.setEnabled(false);
-		}
-	}
+        setCategoryData(categoryLabel);
+        if (diagram.getCurrentCategory() != null) {
+            withCategoryImageButton.setEnabled(false);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getTitle() {
-		return "dialog.title.export.image";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getTitle() {
+        return "dialog.title.export.image";
+    }
 
-	@Override
-	protected File openAfterSaved() {
-		return FileUtils
-				.getFile(this.getBaseDir(), this.settings.getExportSetting()
-						.getExportImageSetting().getOutputFilePath());
-	}
+    @Override
+    protected File openAfterSaved() {
+        return FileUtils.getFile(getBaseDir(), settings.getExportSetting().getExportImageSetting().getOutputFilePath());
+    }
 
-	@Override
-	protected boolean openWithExternalEditor() {
-		return true;
-	}
+    @Override
+    protected boolean openWithExternalEditor() {
+        return true;
+    }
 
 }

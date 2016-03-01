@@ -6,52 +6,50 @@ import org.insightech.er.util.Format;
 
 public abstract class WithSchemaModel extends AbstractObjectModel {
 
-	private static final long serialVersionUID = -7450893485538582071L;
+    private static final long serialVersionUID = -7450893485538582071L;
 
-	private String schema;
+    private String schema;
 
-	public String getSchema() {
-		return schema;
-	}
+    public String getSchema() {
+        return schema;
+    }
 
-	public void setSchema(String schema) {
-		this.schema = schema;
-	}
+    public void setSchema(final String schema) {
+        this.schema = schema;
+    }
 
-	public String getNameWithSchema(String database) {
-		if (this.schema == null) {
-			return Format.null2blank(this.getName());
-		}
+    public String getNameWithSchema(final String database) {
+        if (schema == null) {
+            return Format.null2blank(getName());
+        }
 
-		DBManager dbManager = DBManagerFactory.getDBManager(database);
+        final DBManager dbManager = DBManagerFactory.getDBManager(database);
 
-		if (!dbManager.isSupported(DBManager.SUPPORT_SCHEMA)) {
-			return Format.null2blank(this.getName());
-		}
+        if (!dbManager.isSupported(DBManager.SUPPORT_SCHEMA)) {
+            return Format.null2blank(getName());
+        }
 
-		return this.schema + "." + Format.null2blank(this.getName());
-	}
+        return schema + "." + Format.null2blank(getName());
+    }
 
-	@Override
-	public int compareTo(AbstractObjectModel other) {
-		WithSchemaModel otherModel = (WithSchemaModel) other;
+    @Override
+    public int compareTo(final AbstractObjectModel other) {
+        final WithSchemaModel otherModel = (WithSchemaModel) other;
 
-		int compareTo = 0;
+        int compareTo = 0;
 
-		compareTo = Format.null2blank(this.schema).toUpperCase()
-				.compareTo(Format.null2blank(otherModel.schema).toUpperCase());
+        compareTo = Format.null2blank(schema).toUpperCase().compareTo(Format.null2blank(otherModel.schema).toUpperCase());
 
-		if (compareTo != 0) {
-			return compareTo;
-		}
+        if (compareTo != 0) {
+            return compareTo;
+        }
 
-		compareTo = Format.null2blank(this.getName()).toUpperCase()
-				.compareTo(Format.null2blank(other.getName()).toUpperCase());
+        compareTo = Format.null2blank(getName()).toUpperCase().compareTo(Format.null2blank(other.getName()).toUpperCase());
 
-		if (compareTo != 0) {
-			return compareTo;
-		}
+        if (compareTo != 0) {
+            return compareTo;
+        }
 
-		return compareTo;
-	}
+        return compareTo;
+    }
 }

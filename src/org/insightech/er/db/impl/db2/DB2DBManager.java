@@ -19,117 +19,126 @@ import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Ta
 
 public class DB2DBManager extends DBManagerBase {
 
-	public static final String ID = "DB2";
+    public static final String ID = "DB2";
 
-	public String getId() {
-		return ID;
-	}
+    @Override
+    public String getId() {
+        return ID;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDriverClassName() {
-		return "com.ibm.db2.jcc.DB2Driver";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDriverClassName() {
+        return "com.ibm.db2.jcc.DB2Driver";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getURL() {
-		return "jdbc:db2://<SERVER NAME>:<PORT>/<DB NAME>";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getURL() {
+        return "jdbc:db2://<SERVER NAME>:<PORT>/<DB NAME>";
+    }
 
-	public int getDefaultPort() {
-		return 50000;
-	}
+    @Override
+    public int getDefaultPort() {
+        return 50000;
+    }
 
-	public SqlTypeManager getSqlTypeManager() {
-		return new DB2SqlTypeManager();
-	}
+    @Override
+    public SqlTypeManager getSqlTypeManager() {
+        return new DB2SqlTypeManager();
+    }
 
-	public TableProperties createTableProperties(TableProperties tableProperties) {
-		if (tableProperties != null
-				&& tableProperties instanceof DB2TableProperties) {
-			return tableProperties;
-		}
+    @Override
+    public TableProperties createTableProperties(final TableProperties tableProperties) {
+        if (tableProperties != null && tableProperties instanceof DB2TableProperties) {
+            return tableProperties;
+        }
 
-		return new DB2TableProperties();
-	}
+        return new DB2TableProperties();
+    }
 
-	public DDLCreator getDDLCreator(ERDiagram diagram, Category targetCategory,
-			boolean semicolon) {
-		return new DB2DDLCreator(diagram, targetCategory, semicolon);
-	}
+    @Override
+    public DDLCreator getDDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        return new DB2DDLCreator(diagram, targetCategory, semicolon);
+    }
 
-	public List<String> getIndexTypeList(ERTable table) {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getIndexTypeList(final ERTable table) {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("BTREE");
+        list.add("BTREE");
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	protected int[] getSupportItems() {
-		return new int[] { SUPPORT_AUTO_INCREMENT, SUPPORT_SCHEMA,
-				SUPPORT_SEQUENCE, SUPPORT_SEQUENCE_NOCACHE };
-	}
+    @Override
+    protected int[] getSupportItems() {
+        return new int[] {SUPPORT_AUTO_INCREMENT, SUPPORT_SCHEMA, SUPPORT_SEQUENCE, SUPPORT_SEQUENCE_NOCACHE};
+    }
 
-	public ImportFromDBManager getTableImportManager() {
-		return new DB2TableImportManager();
-	}
+    @Override
+    public ImportFromDBManager getTableImportManager() {
+        return new DB2TableImportManager();
+    }
 
-	public PreImportFromDBManager getPreTableImportManager() {
-		return new DB2PreTableImportManager();
-	}
+    @Override
+    public PreImportFromDBManager getPreTableImportManager() {
+        return new DB2PreTableImportManager();
+    }
 
-	public PreTableExportManager getPreTableExportManager() {
-		return new DB2PreTableExportManager();
-	}
+    @Override
+    public PreTableExportManager getPreTableExportManager() {
+        return new DB2PreTableExportManager();
+    }
 
-	public TablespaceProperties createTablespaceProperties() {
-		return new DB2TablespaceProperties();
-	}
+    @Override
+    public TablespaceProperties createTablespaceProperties() {
+        return new DB2TablespaceProperties();
+    }
 
-	public TablespaceProperties checkTablespaceProperties(
-			TablespaceProperties tablespaceProperties) {
+    @Override
+    public TablespaceProperties checkTablespaceProperties(final TablespaceProperties tablespaceProperties) {
 
-		if (!(tablespaceProperties instanceof DB2TablespaceProperties)) {
-			return new DB2TablespaceProperties();
-		}
+        if (!(tablespaceProperties instanceof DB2TablespaceProperties)) {
+            return new DB2TablespaceProperties();
+        }
 
-		return tablespaceProperties;
-	}
+        return tablespaceProperties;
+    }
 
-	public String[] getCurrentTimeValue() {
-		return new String[] { "CURRENT TIMESTAMP" };
-	}
+    @Override
+    public String[] getCurrentTimeValue() {
+        return new String[] {"CURRENT TIMESTAMP"};
+    }
 
-	@Override
-	public List<String> getSystemSchemaList() {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getSystemSchemaList() {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("nullid");
-		list.add("sqlj");
-		list.add("syscat");
-		list.add("sysfun");
-		list.add("sysibm");
-		list.add("sysibmadm");
-		list.add("sysibminternal");
-		list.add("sysibmts");
-		list.add("sysproc");
-		list.add("syspublic");
-		list.add("sysstat");
-		list.add("systools");
-		list.add("db2admin");
+        list.add("nullid");
+        list.add("sqlj");
+        list.add("syscat");
+        list.add("sysfun");
+        list.add("sysibm");
+        list.add("sysibmadm");
+        list.add("sysibminternal");
+        list.add("sysibmts");
+        list.add("sysproc");
+        list.add("syspublic");
+        list.add("sysstat");
+        list.add("systools");
+        list.add("db2admin");
 
-		return list;
-	}
+        return list;
+    }
 
-	public BigDecimal getSequenceMaxValue() {
-		return null;
-	}
+    @Override
+    public BigDecimal getSequenceMaxValue() {
+        return null;
+    }
 
 }

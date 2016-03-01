@@ -34,238 +34,210 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.ERTabl
 
 public class NodeElementGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Command getConnectionCompleteCommand(
-			CreateConnectionRequest request) {
-		AbstractCreateConnectionCommand command = (AbstractCreateConnectionCommand) request
-				.getStartCommand();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Command getConnectionCompleteCommand(final CreateConnectionRequest request) {
+        final AbstractCreateConnectionCommand command = (AbstractCreateConnectionCommand) request.getStartCommand();
 
-		NodeElementEditPart targetEditPart = (NodeElementEditPart) request
-				.getTargetEditPart();
+        final NodeElementEditPart targetEditPart = (NodeElementEditPart) request.getTargetEditPart();
 
-		if (command instanceof AbstractCreateRelationCommand) {
-			if (!(targetEditPart instanceof TableViewEditPart)) {
-				return null;
-			}
-		}
+        if (command instanceof AbstractCreateRelationCommand) {
+            if (!(targetEditPart instanceof TableViewEditPart)) {
+                return null;
+            }
+        }
 
-		String validatedMessage = command.validate();
-		if (validatedMessage != null) {
-			ERDiagramActivator.showErrorDialog(validatedMessage);
+        final String validatedMessage = command.validate();
+        if (validatedMessage != null) {
+            ERDiagramActivator.showErrorDialog(validatedMessage);
 
-			return null;
-		}
+            return null;
+        }
 
-		command.setTarget(targetEditPart);
+        command.setTarget(targetEditPart);
 
-		if (!command.canExecute()) {
-			return null;
-		}
+        if (!command.canExecute()) {
+            return null;
+        }
 
-		return command;
-	}
+        return command;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
-		EditPart editPart = request.getTargetEditPart();
-		Object object = request.getNewObject();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Command getConnectionCreateCommand(final CreateConnectionRequest request) {
+        final EditPart editPart = request.getTargetEditPart();
+        final Object object = request.getNewObject();
 
-		if (editPart instanceof ERTableEditPart) {
-			Command command = this.getRelationCreateCommand(request, object);
+        if (editPart instanceof ERTableEditPart) {
+            final Command command = getRelationCreateCommand(request, object);
 
-			if (command != null) {
-				return command;
-			}
-		}
+            if (command != null) {
+                return command;
+            }
+        }
 
-		if (object instanceof CommentConnection) {
-			CommentConnection connection = (CommentConnection) object;
+        if (object instanceof CommentConnection) {
+            final CommentConnection connection = (CommentConnection) object;
 
-			CreateConnectionCommand command = new CreateCommentConnectionCommand(
-					connection);
+            final CreateConnectionCommand command = new CreateCommentConnectionCommand(connection);
 
-			command.setSource(request.getTargetEditPart());
-			request.setStartCommand(command);
+            command.setSource(request.getTargetEditPart());
+            request.setStartCommand(command);
 
-			return command;
-		}
+            return command;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private Command getRelationCreateCommand(CreateConnectionRequest request,
-			Object object) {
-		if (object instanceof Relation) {
-			Relation relation = (Relation) object;
-			CreateRelationCommand command = new CreateRelationCommand(relation);
+    private Command getRelationCreateCommand(final CreateConnectionRequest request, final Object object) {
+        if (object instanceof Relation) {
+            final Relation relation = (Relation) object;
+            final CreateRelationCommand command = new CreateRelationCommand(relation);
 
-			EditPart source = request.getTargetEditPart();
-			command.setSource(source);
+            final EditPart source = request.getTargetEditPart();
+            command.setSource(source);
 
-			ERTable sourceTable = (ERTable) source.getModel();
+            final ERTable sourceTable = (ERTable) source.getModel();
 
-			Relation temp = sourceTable.createRelation();
-			relation.setReferenceForPK(temp.isReferenceForPK());
-			relation.setReferencedComplexUniqueKey(temp
-					.getReferencedComplexUniqueKey());
-			relation.setReferencedColumn(temp.getReferencedColumn());
+            final Relation temp = sourceTable.createRelation();
+            relation.setReferenceForPK(temp.isReferenceForPK());
+            relation.setReferencedComplexUniqueKey(temp.getReferencedComplexUniqueKey());
+            relation.setReferencedColumn(temp.getReferencedColumn());
 
-			request.setStartCommand(command);
+            request.setStartCommand(command);
 
-			return command;
+            return command;
 
-		} else if (object instanceof RelatedTable) {
-			ERDiagram diagram = (ERDiagram) this.getHost().getRoot()
-					.getContents().getModel();
+        } else if (object instanceof RelatedTable) {
+            final ERDiagram diagram = (ERDiagram) getHost().getRoot().getContents().getModel();
 
-			CreateRelatedTableCommand command = new CreateRelatedTableCommand(
-					diagram);
+            final CreateRelatedTableCommand command = new CreateRelatedTableCommand(diagram);
 
-			ERTableEditPart sourceEditPart = (ERTableEditPart) request
-					.getTargetEditPart();
+            final ERTableEditPart sourceEditPart = (ERTableEditPart) request.getTargetEditPart();
 
-			command.setSource(sourceEditPart);
+            command.setSource(sourceEditPart);
 
-			if (sourceEditPart != null) {
-				Point point = sourceEditPart.getFigure().getBounds()
-						.getCenter();
-				command.setSourcePoint(point.x, point.y);
-			}
+            if (sourceEditPart != null) {
+                final Point point = sourceEditPart.getFigure().getBounds().getCenter();
+                command.setSourcePoint(point.x, point.y);
+            }
 
-			request.setStartCommand(command);
+            request.setStartCommand(command);
 
-			return command;
+            return command;
 
-		} else if (object instanceof SelfRelation) {
-			ERTableEditPart sourceEditPart = (ERTableEditPart) request
-					.getTargetEditPart();
-			ERTable sourceTable = (ERTable) sourceEditPart.getModel();
+        } else if (object instanceof SelfRelation) {
+            final ERTableEditPart sourceEditPart = (ERTableEditPart) request.getTargetEditPart();
+            final ERTable sourceTable = (ERTable) sourceEditPart.getModel();
 
-			CreateSelfRelationCommand command = new CreateSelfRelationCommand(
-					sourceTable.createRelation());
+            final CreateSelfRelationCommand command = new CreateSelfRelationCommand(sourceTable.createRelation());
 
-			command.setSource(sourceEditPart);
+            command.setSource(sourceEditPart);
 
-			request.setStartCommand(command);
+            request.setStartCommand(command);
 
-			return command;
+            return command;
 
-		} else if (object instanceof RelationByExistingColumns) {
-			CreateRelationByExistingColumnsCommand command = new CreateRelationByExistingColumnsCommand();
+        } else if (object instanceof RelationByExistingColumns) {
+            final CreateRelationByExistingColumnsCommand command = new CreateRelationByExistingColumnsCommand();
 
-			EditPart source = request.getTargetEditPart();
-			command.setSource(source);
+            final EditPart source = request.getTargetEditPart();
+            command.setSource(source);
 
-			request.setStartCommand(command);
+            request.setStartCommand(command);
 
-			return command;
-		}
+            return command;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Command getReconnectSourceCommand(
-			ReconnectRequest reconnectrequest) {
-		ConnectionElement connection = (ConnectionElement) reconnectrequest
-				.getConnectionEditPart().getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Command getReconnectSourceCommand(final ReconnectRequest reconnectrequest) {
+        final ConnectionElement connection = (ConnectionElement) reconnectrequest.getConnectionEditPart().getModel();
 
-		if (connection.getSource() == connection.getTarget()) {
-			return null;
-		}
+        if (connection.getSource() == connection.getTarget()) {
+            return null;
+        }
 
-		NodeElement newSource = (NodeElement) reconnectrequest.getTarget()
-				.getModel();
-		if (connection.getSource() != newSource) {
-			return null;
-		}
+        final NodeElement newSource = (NodeElement) reconnectrequest.getTarget().getModel();
+        if (connection.getSource() != newSource) {
+            return null;
+        }
 
-		NodeElementEditPart sourceEditPart = (NodeElementEditPart) reconnectrequest
-				.getConnectionEditPart().getSource();
+        final NodeElementEditPart sourceEditPart = (NodeElementEditPart) reconnectrequest.getConnectionEditPart().getSource();
 
-		Point location = new Point(reconnectrequest.getLocation());
+        final Point location = new Point(reconnectrequest.getLocation());
 
-		IFigure sourceFigure = sourceEditPart.getFigure();
-		sourceFigure.translateToRelative(location);
+        final IFigure sourceFigure = sourceEditPart.getFigure();
+        sourceFigure.translateToRelative(location);
 
-		int xp = -1;
-		int yp = -1;
+        int xp = -1;
+        int yp = -1;
 
-		Rectangle bounds = sourceFigure.getBounds();
+        final Rectangle bounds = sourceFigure.getBounds();
 
-		Rectangle centerRectangle = new Rectangle(
-				bounds.x + (bounds.width / 4), bounds.y + (bounds.height / 4),
-				bounds.width / 2, bounds.height / 2);
+        final Rectangle centerRectangle = new Rectangle(bounds.x + (bounds.width / 4), bounds.y + (bounds.height / 4), bounds.width / 2, bounds.height / 2);
 
-		if (!centerRectangle.contains(location)) {
-			Point point = ERTableEditPart.getIntersectionPoint(location,
-					sourceFigure);
-			xp = 100 * (point.x - bounds.x) / bounds.width;
-			yp = 100 * (point.y - bounds.y) / bounds.height;
-		}
+        if (!centerRectangle.contains(location)) {
+            final Point point = NodeElementEditPart.getIntersectionPoint(location, sourceFigure);
+            xp = 100 * (point.x - bounds.x) / bounds.width;
+            yp = 100 * (point.y - bounds.y) / bounds.height;
+        }
 
-		ReconnectSourceCommand command = new ReconnectSourceCommand(connection,
-				xp, yp);
+        final ReconnectSourceCommand command = new ReconnectSourceCommand(connection, xp, yp);
 
-		return command;
-	}
+        return command;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Command getReconnectTargetCommand(
-			ReconnectRequest reconnectrequest) {
-		ConnectionElement connection = (ConnectionElement) reconnectrequest
-				.getConnectionEditPart().getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Command getReconnectTargetCommand(final ReconnectRequest reconnectrequest) {
+        final ConnectionElement connection = (ConnectionElement) reconnectrequest.getConnectionEditPart().getModel();
 
-		if (connection.getSource() == connection.getTarget()) {
-			return null;
-		}
+        if (connection.getSource() == connection.getTarget()) {
+            return null;
+        }
 
-		NodeElement newTarget = (NodeElement) reconnectrequest.getTarget()
-				.getModel();
-		if (connection.getTarget() != newTarget) {
-			return null;
-		}
+        final NodeElement newTarget = (NodeElement) reconnectrequest.getTarget().getModel();
+        if (connection.getTarget() != newTarget) {
+            return null;
+        }
 
-		NodeElementEditPart targetEditPart = (NodeElementEditPart) reconnectrequest
-				.getConnectionEditPart().getTarget();
+        final NodeElementEditPart targetEditPart = (NodeElementEditPart) reconnectrequest.getConnectionEditPart().getTarget();
 
-		Point location = new Point(reconnectrequest.getLocation());
+        final Point location = new Point(reconnectrequest.getLocation());
 
-		IFigure targetFigure = targetEditPart.getFigure();
-		targetFigure.translateToRelative(location);
+        final IFigure targetFigure = targetEditPart.getFigure();
+        targetFigure.translateToRelative(location);
 
-		int xp = -1;
-		int yp = -1;
+        int xp = -1;
+        int yp = -1;
 
-		Rectangle bounds = targetFigure.getBounds();
+        final Rectangle bounds = targetFigure.getBounds();
 
-		Rectangle centerRectangle = new Rectangle(
-				bounds.x + (bounds.width / 4), bounds.y + (bounds.height / 4),
-				bounds.width / 2, bounds.height / 2);
+        final Rectangle centerRectangle = new Rectangle(bounds.x + (bounds.width / 4), bounds.y + (bounds.height / 4), bounds.width / 2, bounds.height / 2);
 
-		if (!centerRectangle.contains(location)) {
-			Point point = ERTableEditPart.getIntersectionPoint(location,
-					targetFigure);
+        if (!centerRectangle.contains(location)) {
+            final Point point = NodeElementEditPart.getIntersectionPoint(location, targetFigure);
 
-			xp = 100 * (point.x - bounds.x) / bounds.width;
-			yp = 100 * (point.y - bounds.y) / bounds.height;
-		}
-		ReconnectTargetCommand command = new ReconnectTargetCommand(connection,
-				xp, yp);
+            xp = 100 * (point.x - bounds.x) / bounds.width;
+            yp = 100 * (point.y - bounds.y) / bounds.height;
+        }
+        final ReconnectTargetCommand command = new ReconnectTargetCommand(connection, xp, yp);
 
-		return command;
-	}
+        return command;
+    }
 
 }

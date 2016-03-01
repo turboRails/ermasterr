@@ -22,209 +22,197 @@ import org.insightech.er.util.Check;
 
 public class EnvironmentTabWrapper extends ValidatableTabWrapper {
 
-	private List environmentList;
+    private List environmentList;
 
-	private Text nameText;
+    private Text nameText;
 
-	private Button addButton;
+    private Button addButton;
 
-	private Button editButton;
+    private Button editButton;
 
-	private Button deleteButton;
+    private Button deleteButton;
 
-	private Settings settings;
+    private final Settings settings;
 
-	private static final int LIST_HEIGHT = 230;
+    private static final int LIST_HEIGHT = 230;
 
-	public EnvironmentTabWrapper(OptionSettingDialog dialog, TabFolder parent,
-			Settings settings) {
-		super(dialog, parent, "label.tablespace.environment");
+    public EnvironmentTabWrapper(final OptionSettingDialog dialog, final TabFolder parent, final Settings settings) {
+        super(dialog, parent, "label.tablespace.environment");
 
-		this.settings = settings;
-	}
+        this.settings = settings;
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
-		layout.numColumns = 3;
-	}
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
+        layout.numColumns = 3;
+    }
 
-	@Override
-	public void initComposite() {
-		this.createEnvironmentGroup(this);
+    @Override
+    public void initComposite() {
+        createEnvironmentGroup(this);
 
-		this.nameText = CompositeFactory.createText(null, this, null, 3, true,
-				false);
+        nameText = CompositeFactory.createText(null, this, null, 3, true, false);
 
-		this.addButton = CompositeFactory.createSmallButton(this,
-				"label.button.add");
-		this.editButton = CompositeFactory.createSmallButton(this,
-				"label.button.edit");
-		this.deleteButton = CompositeFactory.createSmallButton(this,
-				"label.button.delete");
+        addButton = CompositeFactory.createSmallButton(this, "label.button.add");
+        editButton = CompositeFactory.createSmallButton(this, "label.button.edit");
+        deleteButton = CompositeFactory.createSmallButton(this, "label.button.delete");
 
-		this.buttonEnabled(false);
-		this.addButton.setEnabled(false);
-	}
+        buttonEnabled(false);
+        addButton.setEnabled(false);
+    }
 
-	private void createEnvironmentGroup(Composite parent) {
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.horizontalSpan = 3;
-		gridData.heightHint = LIST_HEIGHT;
+    private void createEnvironmentGroup(final Composite parent) {
+        final GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.horizontalSpan = 3;
+        gridData.heightHint = LIST_HEIGHT;
 
-		this.environmentList = new List(parent, SWT.BORDER | SWT.V_SCROLL);
-		this.environmentList.setLayoutData(gridData);
-	}
+        environmentList = new List(parent, SWT.BORDER | SWT.V_SCROLL);
+        environmentList.setLayoutData(gridData);
+    }
 
-	@Override
-	protected void addListener() {
-		this.environmentList.addSelectionListener(new SelectionAdapter() {
+    @Override
+    protected void addListener() {
+        environmentList.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int targetIndex = environmentList.getSelectionIndex();
-				if (targetIndex == -1) {
-					return;
-				}
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int targetIndex = environmentList.getSelectionIndex();
+                if (targetIndex == -1) {
+                    return;
+                }
 
-				Environment environment = settings.getEnvironmentSetting()
-						.getEnvironments().get(targetIndex);
-				nameText.setText(environment.getName());
-				buttonEnabled(true);
-			}
-		});
+                final Environment environment = settings.getEnvironmentSetting().getEnvironments().get(targetIndex);
+                nameText.setText(environment.getName());
+                buttonEnabled(true);
+            }
+        });
 
-		this.addButton.addSelectionListener(new SelectionAdapter() {
+        addButton.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String name = nameText.getText().trim();
-				if (!Check.isEmpty(name)) {
-					settings.getEnvironmentSetting().getEnvironments()
-							.add(new Environment(name));
-					setData();
-					environmentList.select(environmentList.getItemCount() - 1);
-				}
-			}
-		});
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final String name = nameText.getText().trim();
+                if (!Check.isEmpty(name)) {
+                    settings.getEnvironmentSetting().getEnvironments().add(new Environment(name));
+                    setData();
+                    environmentList.select(environmentList.getItemCount() - 1);
+                }
+            }
+        });
 
-		this.editButton.addSelectionListener(new SelectionAdapter() {
+        editButton.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int targetIndex = environmentList.getSelectionIndex();
-				if (targetIndex == -1) {
-					return;
-				}
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int targetIndex = environmentList.getSelectionIndex();
+                if (targetIndex == -1) {
+                    return;
+                }
 
-				String name = nameText.getText().trim();
-				if (!Check.isEmpty(name)) {
-					Environment environment = settings.getEnvironmentSetting()
-							.getEnvironments().get(targetIndex);
-					environment.setName(name);
-					setData();
-					environmentList.select(targetIndex);
-				}
-			}
-		});
+                final String name = nameText.getText().trim();
+                if (!Check.isEmpty(name)) {
+                    final Environment environment = settings.getEnvironmentSetting().getEnvironments().get(targetIndex);
+                    environment.setName(name);
+                    setData();
+                    environmentList.select(targetIndex);
+                }
+            }
+        });
 
-		this.deleteButton.addSelectionListener(new SelectionAdapter() {
+        deleteButton.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int targetIndex = environmentList.getSelectionIndex();
-				if (targetIndex == -1) {
-					return;
-				}
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int targetIndex = environmentList.getSelectionIndex();
+                if (targetIndex == -1) {
+                    return;
+                }
 
-				settings.getEnvironmentSetting().getEnvironments()
-						.remove(targetIndex);
-				setData();
+                settings.getEnvironmentSetting().getEnvironments().remove(targetIndex);
+                setData();
 
-				if (settings.getEnvironmentSetting().getEnvironments().size() > targetIndex) {
-					environmentList.select(targetIndex);
-					Environment environment = settings.getEnvironmentSetting()
-							.getEnvironments().get(targetIndex);
-					nameText.setText(environment.getName());
+                if (settings.getEnvironmentSetting().getEnvironments().size() > targetIndex) {
+                    environmentList.select(targetIndex);
+                    final Environment environment = settings.getEnvironmentSetting().getEnvironments().get(targetIndex);
+                    nameText.setText(environment.getName());
 
-				} else {
-					nameText.setText("");
-					buttonEnabled(false);
-				}
-			}
-		});
+                } else {
+                    nameText.setText("");
+                    buttonEnabled(false);
+                }
+            }
+        });
 
-		this.nameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				String name = nameText.getText().trim();
-				if (name.length() == 0) {
-					addButton.setEnabled(false);
-					editButton.setEnabled(false);
+        nameText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(final ModifyEvent e) {
+                final String name = nameText.getText().trim();
+                if (name.length() == 0) {
+                    addButton.setEnabled(false);
+                    editButton.setEnabled(false);
 
-				} else {
-					addButton.setEnabled(true);
-					if (environmentList.getSelectionIndex() != -1) {
-						editButton.setEnabled(true);
-					} else {
-						editButton.setEnabled(false);
-					}
-				}
-			}
-		});
-	}
+                } else {
+                    addButton.setEnabled(true);
+                    if (environmentList.getSelectionIndex() != -1) {
+                        editButton.setEnabled(true);
+                    } else {
+                        editButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+    }
 
-	private void buttonEnabled(boolean enabled) {
-		this.editButton.setEnabled(enabled);
+    private void buttonEnabled(boolean enabled) {
+        editButton.setEnabled(enabled);
 
-		if (environmentList.getItemCount() <= 1) {
-			enabled = false;
-		}
-		this.deleteButton.setEnabled(enabled);
-	}
+        if (environmentList.getItemCount() <= 1) {
+            enabled = false;
+        }
+        deleteButton.setEnabled(enabled);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {}
 
-	@Override
-	public void setInitFocus() {
-		this.environmentList.setFocus();
-	}
+    @Override
+    public void setInitFocus() {
+        environmentList.setFocus();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void setData() {
-		super.setData();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setData() {
+        super.setData();
 
-		this.environmentList.removeAll();
+        environmentList.removeAll();
 
-		for (Environment environment : this.settings.getEnvironmentSetting()
-				.getEnvironments()) {
-			this.environmentList.add(environment.getName());
-		}
-	}
+        for (final Environment environment : settings.getEnvironmentSetting().getEnvironments()) {
+            environmentList.add(environment.getName());
+        }
+    }
 
-	@Override
-	public void perfomeOK() {
-	}
+    @Override
+    public void perfomeOK() {}
 
 }

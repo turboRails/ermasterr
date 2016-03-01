@@ -7,31 +7,31 @@ import org.insightech.er.editor.model.diagram_contents.not_element.trigger.Trigg
 
 public class CreateTriggerCommand extends AbstractCommand {
 
-	private TriggerSet triggerSet;
+    private final TriggerSet triggerSet;
 
-	private Trigger trigger;
+    private final Trigger trigger;
 
-	public CreateTriggerCommand(ERDiagram diagram, Trigger trigger) {
-		this.triggerSet = diagram.getDiagramContents().getTriggerSet();
-		this.trigger = trigger;
-	}
+    public CreateTriggerCommand(final ERDiagram diagram, final Trigger trigger) {
+        triggerSet = diagram.getDiagramContents().getTriggerSet();
+        this.trigger = trigger;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.triggerSet.addObject(this.trigger);		
-		this.triggerSet.refresh();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        triggerSet.addObject(trigger);
+        triggerSet.refresh();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.triggerSet.remove(this.trigger);
-		this.triggerSet.refresh();
-	}
-	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        triggerSet.remove(trigger);
+        triggerSet.refresh();
+    }
+
 }

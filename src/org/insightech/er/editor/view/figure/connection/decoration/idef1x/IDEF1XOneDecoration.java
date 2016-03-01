@@ -5,13 +5,13 @@ import org.insightech.er.editor.view.figure.connection.decoration.ERDecoration;
 
 public class IDEF1XOneDecoration extends ERDecoration {
 
-	public IDEF1XOneDecoration() {
-		super();
+    public IDEF1XOneDecoration() {
+        super();
 
-		PointList pointList = new PointList();
+        final PointList pointList = new PointList();
 
-		this.setTemplate(pointList);
-		this.setScale(1, 1);
-	}
+        setTemplate(pointList);
+        setScale(1, 1);
+    }
 
 }

@@ -9,22 +9,21 @@ import org.insightech.er.editor.view.action.AbstractBaseAction;
 
 public class TooltipAction extends AbstractBaseAction {
 
-	public static final String ID = TooltipAction.class.getName();
+    public static final String ID = TooltipAction.class.getName();
 
-	public TooltipAction(ERDiagramEditor editor) {
-		super(ID, null, IAction.AS_CHECK_BOX, editor);
-		this.setText(ResourceString
-				.getResourceString("action.title.display.tooltip"));
-	}
+    public TooltipAction(final ERDiagramEditor editor) {
+        super(ID, null, IAction.AS_CHECK_BOX, editor);
+        setText(ResourceString.getResourceString("action.title.display.tooltip"));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        final ERDiagram diagram = getDiagram();
 
-		diagram.setTooltip(this.isChecked());
-	}
-	
+        diagram.setTooltip(isChecked());
+    }
+
 }

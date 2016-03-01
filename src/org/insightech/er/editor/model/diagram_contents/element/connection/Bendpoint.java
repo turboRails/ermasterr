@@ -4,74 +4,73 @@ import java.io.Serializable;
 
 public class Bendpoint implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = -5052242525570844155L;
+    private static final long serialVersionUID = -5052242525570844155L;
 
-	private int x;
+    private int x;
 
-	private int y;
+    private int y;
 
-	private boolean relative;
+    private boolean relative;
 
-	public Bendpoint(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
+    public Bendpoint(final int x, final int y) {
+        this.x = x;
+        this.y = y;
+    }
 
-	public int getX() {
-		return x;
-	}
+    public int getX() {
+        return x;
+    }
 
-	public int getY() {
-		return y;
-	}
+    public int getY() {
+        return y;
+    }
 
-	public void transform(int dx, int dy) {
-		if (!this.relative) {
-			this.x += dx;
-			this.y += dy;
-		}
-	}
+    public void transform(final int dx, final int dy) {
+        if (!relative) {
+            x += dx;
+            y += dy;
+        }
+    }
 
-	public boolean isRelative() {
-		return this.relative;
-	}
+    public boolean isRelative() {
+        return relative;
+    }
 
-	public void setRelative(boolean relative) {
-		this.relative = relative;
+    public void setRelative(final boolean relative) {
+        this.relative = relative;
 
-		this.validate();
-	}
+        validate();
+    }
 
-	public void validate() {
-		if (this.relative) {
-			if (this.x < 20) {
-				this.x = 20;
+    public void validate() {
+        if (relative) {
+            if (x < 20) {
+                x = 20;
 
-			} else if (this.x > 180) {
-				this.x = 180;
-			}
+            } else if (x > 180) {
+                x = 180;
+            }
 
-			if (this.y < 20) {
-				this.y = 20;
+            if (y < 20) {
+                y = 20;
 
-			} else if (this.y > 180) {
-				this.y = 180;
-			}
-		}
-	}
+            } else if (y > 180) {
+                y = 180;
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object clone() {
-		Bendpoint clone = null;
-		try {
-			clone = (Bendpoint) super.clone();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object clone() {
+        Bendpoint clone = null;
+        try {
+            clone = (Bendpoint) super.clone();
 
-		} catch (CloneNotSupportedException e) {
-		}
+        } catch (final CloneNotSupportedException e) {}
 
-		return clone;
-	}
+        return clone;
+    }
 }

@@ -6,116 +6,115 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * CSVo—ÍƒNƒ‰ƒX
+ * CSVï¿½oï¿½ÍƒNï¿½ï¿½ï¿½X
  * 
  * @author generator
  * @version $Id: CsvWriter.java,v 1.1 2008/08/17 10:49:17 h_nakajima Exp $
  */
 public class CsvWriter {
 
-	private static final DateFormat DEFAULT_FORMAT = new SimpleDateFormat(
-			"yyyy/MM/dd");
+    private static final DateFormat DEFAULT_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
-	private static final String DELIMITER = ",";
+    private static final String DELIMITER = ",";
 
-	private PrintWriter writer;
+    private final PrintWriter writer;
 
-	private DateFormat dateFormat;
+    private DateFormat dateFormat;
 
-	private String delimiter;
+    private String delimiter;
 
-	/**
-	 * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	 * 
-	 * @param writer
-	 *            o—Íæ
-	 */
-	public CsvWriter(PrintWriter writer) {
-		this.writer = writer;
-		this.delimiter = "";
-		this.dateFormat = DEFAULT_FORMAT;
-	}
+    /**
+     * ï¿½Rï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Nï¿½^
+     * 
+     * @param writer
+     *            ï¿½oï¿½Íï¿½
+     */
+    public CsvWriter(final PrintWriter writer) {
+        this.writer = writer;
+        delimiter = "";
+        dateFormat = DEFAULT_FORMAT;
+    }
 
-	/**
-	 * Date Œ^‚Ìƒf[ƒ^‚ğo—Í‚·‚éÛ‚ÌƒtƒH[ƒ}ƒbƒgŒ`®‚ğw’è‚µ‚Ü‚·
-	 * 
-	 * @param format
-	 *            ƒtƒH[ƒ}ƒbƒgŒ`®
-	 */
-	public void setDateFormat(String format) {
-		this.dateFormat = new SimpleDateFormat(format);
-	}
+    /**
+     * Date ï¿½^ï¿½Ìƒfï¿½[ï¿½^ï¿½ï¿½ï¿½oï¿½Í‚ï¿½ï¿½ï¿½Û‚Ìƒtï¿½Hï¿½[ï¿½}ï¿½bï¿½gï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½è‚µï¿½Ü‚ï¿½
+     * 
+     * @param format
+     *            ï¿½tï¿½Hï¿½[ï¿½}ï¿½bï¿½gï¿½`ï¿½ï¿½
+     */
+    public void setDateFormat(final String format) {
+        dateFormat = new SimpleDateFormat(format);
+    }
 
-	/**
-	 * CSV‚Ì‚½‚ß‚É•¶š—ñ‚ğƒGƒXƒP[ƒv‚µ‚Ü‚·B
-	 * 
-	 * @param str
-	 *            ƒGƒXƒP[ƒv‘O‚Ì•¶š—ñ
-	 * @return ƒGƒXƒP[ƒv‚³‚ê‚½•¶š—ñ
-	 */
-	public static String escape(String str) {
-		if (str == null) {
-			return "";
-		}
-		return str.replaceAll("\"", "\"\"");
-	}
+    /**
+     * CSVï¿½Ì‚ï¿½ï¿½ß‚É•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½Xï¿½Pï¿½[ï¿½vï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     * 
+     * @param str
+     *            ï¿½Gï¿½Xï¿½Pï¿½[ï¿½vï¿½Oï¿½Ì•ï¿½ï¿½ï¿½ï¿½ï¿½
+     * @return ï¿½Gï¿½Xï¿½Pï¿½[ï¿½vï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+     */
+    public static String escape(final String str) {
+        if (str == null) {
+            return "";
+        }
+        return str.replaceAll("\"", "\"\"");
+    }
 
-	/**
-	 * ƒIƒuƒWƒFƒNƒg‚Ì•¶š—ñ•\Œ»‚ğo—Í‚µ‚Ü‚·
-	 * 
-	 * @param object
-	 *            ƒIƒuƒWƒFƒNƒg
-	 */
-	public void print(Object object) {
-		String value = null;
+    /**
+     * ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ì•ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½Í‚ï¿½ï¿½Ü‚ï¿½
+     * 
+     * @param object
+     *            ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½g
+     */
+    public void print(final Object object) {
+        String value = null;
 
-		if (object instanceof Date) {
-			value = dateFormat.format((Date) object);
-		} else {
-			if (object == null) {
-				value = "";
-			} else {
-				value = object.toString();
-			}
-		}
+        if (object instanceof Date) {
+            value = dateFormat.format((Date) object);
+        } else {
+            if (object == null) {
+                value = "";
+            } else {
+                value = object.toString();
+            }
+        }
 
-		writer.print(this.delimiter);
+        writer.print(delimiter);
 
-		writer.print("\"");
-		writer.print(escape(value));
-		writer.print("\"");
+        writer.print("\"");
+        writer.print(escape(value));
+        writer.print("\"");
 
-		this.setDelimiter();
-	}
+        setDelimiter();
+    }
 
-	/**
-	 * ƒfƒŠƒ~ƒ^[‚ğo—Í‘ÎÛ‚ÉƒZƒbƒg‚µ‚Ü‚·
-	 */
-	private void setDelimiter() {
-		this.delimiter = DELIMITER;
-	}
+    /**
+     * ï¿½fï¿½ï¿½ï¿½~ï¿½^ï¿½[ï¿½ï¿½ï¿½oï¿½Í‘ÎÛ‚ÉƒZï¿½bï¿½gï¿½ï¿½ï¿½Ü‚ï¿½
+     */
+    private void setDelimiter() {
+        delimiter = DELIMITER;
+    }
 
-	/**
-	 * ƒfƒŠƒ~ƒ^[‚ğo—Í‘ÎÛ‚©‚çƒŠƒZƒbƒg‚µ‚Ü‚·
-	 */
-	private void resetDelimiter() {
-		this.delimiter = "";
-	}
+    /**
+     * ï¿½fï¿½ï¿½ï¿½~ï¿½^ï¿½[ï¿½ï¿½ï¿½oï¿½Í‘ÎÛ‚ï¿½ï¿½çƒŠï¿½Zï¿½bï¿½gï¿½ï¿½ï¿½Ü‚ï¿½
+     */
+    private void resetDelimiter() {
+        delimiter = "";
+    }
 
-	/**
-	 * ‰üsƒR[ƒh‚ğo—Í‚µ‚Ü‚·
-	 */
-	public void crln() {
-		writer.print("\r\n");
+    /**
+     * ï¿½ï¿½ï¿½sï¿½Rï¿½[ï¿½hï¿½ï¿½ï¿½oï¿½Í‚ï¿½ï¿½Ü‚ï¿½
+     */
+    public void crln() {
+        writer.print("\r\n");
 
-		this.resetDelimiter();
-	}
+        resetDelimiter();
+    }
 
-	/**
-	 * o—Íæ‚ğ•Â‚¶‚Ü‚·
-	 */
-	public void close() {
-		this.writer.close();
-	}
+    /**
+     * ï¿½oï¿½Íï¿½ï¿½Â‚ï¿½ï¿½Ü‚ï¿½
+     */
+    public void close() {
+        writer.close();
+    }
 
 }

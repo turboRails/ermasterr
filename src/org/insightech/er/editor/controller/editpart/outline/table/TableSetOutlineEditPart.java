@@ -16,42 +16,40 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class TableSetOutlineEditPart extends AbstractOutlineEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected List getModelChildren() {
-		TableSet tableSet = (TableSet) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List getModelChildren() {
+        final TableSet tableSet = (TableSet) getModel();
 
-		List<ERTable> list = new ArrayList<ERTable>();
+        final List<ERTable> list = new ArrayList<ERTable>();
 
-		Category category = this.getCurrentCategory();
-		for (ERTable table : tableSet) {
-			if (category == null || category.contains(table)) {
-				list.add(table);
-			}
-		}
+        final Category category = getCurrentCategory();
+        for (final ERTable table : tableSet) {
+            if (category == null || category.contains(table)) {
+                list.add(table);
+            }
+        }
 
-		if (this.getDiagram().getDiagramContents().getSettings()
-				.getViewOrderBy() == Settings.VIEW_MODE_LOGICAL) {
-			Collections.sort(list, TableView.LOGICAL_NAME_COMPARATOR);
+        if (getDiagram().getDiagramContents().getSettings().getViewOrderBy() == Settings.VIEW_MODE_LOGICAL) {
+            Collections.sort(list, TableView.LOGICAL_NAME_COMPARATOR);
 
-		} else {
-			Collections.sort(list, TableView.PHYSICAL_NAME_COMPARATOR);
+        } else {
+            Collections.sort(list, TableView.PHYSICAL_NAME_COMPARATOR);
 
-		}
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		this.setWidgetText(ResourceString.getResourceString("label.table")
-				+ " (" + this.getModelChildren().size() + ")");
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        setWidgetText(ResourceString.getResourceString("label.table") + " (" + getModelChildren().size() + ")");
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
+    }
 
 }

@@ -5,41 +5,41 @@ import org.insightech.er.editor.model.diagram_contents.element.connection.Connec
 
 public class ReconnectTargetCommand extends AbstractCommand {
 
-	private ConnectionElement connection;
+    private final ConnectionElement connection;
 
-	int xp;
+    int xp;
 
-	int yp;
+    int yp;
 
-	int oldXp;
+    int oldXp;
 
-	int oldYp;
+    int oldYp;
 
-	public ReconnectTargetCommand(ConnectionElement connection, int xp, int yp) {
-		this.connection = connection;
+    public ReconnectTargetCommand(final ConnectionElement connection, final int xp, final int yp) {
+        this.connection = connection;
 
-		this.xp = xp;
-		this.yp = yp;
-	}
+        this.xp = xp;
+        this.yp = yp;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.oldXp = this.connection.getTargetXp();
-		this.oldYp = this.connection.getTargetYp();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        oldXp = connection.getTargetXp();
+        oldYp = connection.getTargetYp();
 
-		this.connection.setTargetLocationp(this.xp, this.yp);
-		this.connection.refreshVisuals();
-	}
+        connection.setTargetLocationp(xp, yp);
+        connection.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.connection.setTargetLocationp(this.oldXp, this.oldYp);
-		this.connection.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        connection.setTargetLocationp(oldXp, oldYp);
+        connection.refreshVisuals();
+    }
 }

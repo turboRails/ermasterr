@@ -16,72 +16,71 @@ import org.insightech.er.editor.model.diagram_contents.not_element.group.GroupSe
 
 public class DeleteGroupCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private GroupSet groupSet;
+    private final GroupSet groupSet;
 
-	private ColumnGroup columnGroup;
+    private final ColumnGroup columnGroup;
 
-	private Map<TableView, List<Column>> oldColumnListMap;
+    private final Map<TableView, List<Column>> oldColumnListMap;
 
-	public DeleteGroupCommand(ERDiagram diagram, ColumnGroup columnGroup) {
-		this.groupSet = diagram.getDiagramContents().getGroups();
-		this.columnGroup = columnGroup;
-		this.diagram = diagram;
+    public DeleteGroupCommand(final ERDiagram diagram, final ColumnGroup columnGroup) {
+        groupSet = diagram.getDiagramContents().getGroups();
+        this.columnGroup = columnGroup;
+        this.diagram = diagram;
 
-		this.oldColumnListMap = new HashMap<TableView, List<Column>>();
-	}
+        oldColumnListMap = new HashMap<TableView, List<Column>>();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		for (NormalColumn column : columnGroup.getColumns()) {
-			this.diagram.getDiagramContents().getDictionary().remove(column);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        for (final NormalColumn column : columnGroup.getColumns()) {
+            diagram.getDiagramContents().getDictionary().remove(column);
+        }
 
-		for (TableView tableView : this.diagram.getDiagramContents()
-				.getContents().getTableViewList()) {
-			List<Column> columns = tableView.getColumns();
-			List<Column> oldColumns = new ArrayList<Column>(columns);
+        for (final TableView tableView : diagram.getDiagramContents().getContents().getTableViewList()) {
+            final List<Column> columns = tableView.getColumns();
+            final List<Column> oldColumns = new ArrayList<Column>(columns);
 
-			this.oldColumnListMap.put(tableView, oldColumns);
+            oldColumnListMap.put(tableView, oldColumns);
 
-			for (Iterator<Column> iter = columns.iterator(); iter.hasNext();) {
-				Column column = iter.next();
+            for (final Iterator<Column> iter = columns.iterator(); iter.hasNext();) {
+                final Column column = iter.next();
 
-				if (column instanceof ColumnGroup) {
-					if (column == this.columnGroup) {
-						iter.remove();
-					}
-				}
-			}
+                if (column instanceof ColumnGroup) {
+                    if (column == columnGroup) {
+                        iter.remove();
+                    }
+                }
+            }
 
-			tableView.setColumns(columns);
-		}
+            tableView.setColumns(columns);
+        }
 
-		this.groupSet.remove(this.columnGroup);
+        groupSet.remove(columnGroup);
 
-		this.diagram.refreshVisuals();
-	}
+        diagram.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		for (NormalColumn column : this.columnGroup.getColumns()) {
-			this.diagram.getDiagramContents().getDictionary().add(column);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        for (final NormalColumn column : columnGroup.getColumns()) {
+            diagram.getDiagramContents().getDictionary().add(column);
+        }
 
-		for (TableView tableView : this.oldColumnListMap.keySet()) {
-			List<Column> oldColumns = this.oldColumnListMap.get(tableView);
-			tableView.setColumns(oldColumns);
-		}
+        for (final TableView tableView : oldColumnListMap.keySet()) {
+            final List<Column> oldColumns = oldColumnListMap.get(tableView);
+            tableView.setColumns(oldColumns);
+        }
 
-		this.groupSet.add(this.columnGroup);
+        groupSet.add(columnGroup);
 
-		this.diagram.refreshVisuals();
-	}
+        diagram.refreshVisuals();
+    }
 }

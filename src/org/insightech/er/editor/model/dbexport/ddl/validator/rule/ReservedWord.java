@@ -9,20 +9,19 @@ import org.insightech.er.ERDiagramActivator;
 
 public class ReservedWord {
 
-	private static Set<String> reservedWords = new HashSet<String>();
+    private static Set<String> reservedWords = new HashSet<String>();
 
-	static {
-		ResourceBundle bundle = ResourceBundle.getBundle(ERDiagramActivator.PLUGIN_ID
-				+ ".reserved_word");
+    static {
+        final ResourceBundle bundle = ResourceBundle.getBundle(ERDiagramActivator.PLUGIN_ID + ".reserved_word");
 
-		Enumeration<String> keys = bundle.getKeys();
+        final Enumeration<String> keys = bundle.getKeys();
 
-		while (keys.hasMoreElements()) {
-			reservedWords.add(keys.nextElement());
-		}
-	}
+        while (keys.hasMoreElements()) {
+            reservedWords.add(keys.nextElement());
+        }
+    }
 
-	public static boolean isReservedWord(String str) {
-		return reservedWords.contains(str);
-	}
+    public static boolean isReservedWord(final String str) {
+        return reservedWords.contains(str);
+    }
 }

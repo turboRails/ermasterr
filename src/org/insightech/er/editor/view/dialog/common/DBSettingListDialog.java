@@ -24,185 +24,176 @@ import org.insightech.er.util.Format;
 
 public class DBSettingListDialog extends AbstractDialog {
 
-	private Table settingTable;
+    private Table settingTable;
 
-	private List<DBSetting> dbSettingList;
+    private List<DBSetting> dbSettingList;
 
-	private DBSetting result;
+    private DBSetting result;
 
-	private String database;
+    private final String database;
 
-	public DBSettingListDialog(Shell parentShell, String database) {
-		super(parentShell);
+    public DBSettingListDialog(final Shell parentShell, final String database) {
+        super(parentShell);
 
-		this.database = database;
-		this.dbSettingList = new ArrayList<DBSetting>();
-	}
+        this.database = database;
+        dbSettingList = new ArrayList<DBSetting>();
+    }
 
-	@Override
-	protected void initialize(Composite composite) {
-		this.settingTable = CompositeFactory.createTable(composite, 150);
+    @Override
+    protected void initialize(final Composite composite) {
+        settingTable = CompositeFactory.createTable(composite, 150);
 
-		CompositeFactory.createTableColumn(this.settingTable, "label.database",
-				150);
-		CompositeFactory.createTableColumn(this.settingTable,
-				"label.server.name", 130);
-		CompositeFactory.createTableColumn(this.settingTable, "label.port", 80,
-				SWT.RIGHT);
-		CompositeFactory.createTableColumn(this.settingTable,
-				"label.database.name", 130);
-		CompositeFactory.createTableColumn(this.settingTable,
-				"label.user.name", 100);
-		CompositeFactory.createTableColumn(this.settingTable, "label.url", 350);
-	}
+        CompositeFactory.createTableColumn(settingTable, "label.database", 150);
+        CompositeFactory.createTableColumn(settingTable, "label.server.name", 130);
+        CompositeFactory.createTableColumn(settingTable, "label.port", 80, SWT.RIGHT);
+        CompositeFactory.createTableColumn(settingTable, "label.database.name", 130);
+        CompositeFactory.createTableColumn(settingTable, "label.user.name", 100);
+        CompositeFactory.createTableColumn(settingTable, "label.url", 350);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void addListener() {
-		super.addListener();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addListener() {
+        super.addListener();
 
-		this.settingTable.addMouseListener(new MouseAdapter() {
+        settingTable.addMouseListener(new MouseAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				buttonPressed(IDialogConstants.OK_ID);
-			}
-		});
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void mouseDoubleClick(final MouseEvent e) {
+                buttonPressed(IDialogConstants.OK_ID);
+            }
+        });
 
-		this.settingTable.addSelectionListener(new SelectionAdapter() {
+        settingTable.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				validate();
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                validate();
 
-				int index = settingTable.getSelectionIndex();
-				if (index == -1) {
-					return;
-				}
+                final int index = settingTable.getSelectionIndex();
+                if (index == -1) {
+                    return;
+                }
 
-				selectTable(index);
-			}
-		});
+                selectTable(index);
+            }
+        });
 
-	}
+    }
 
-	@Override
-	protected void perfomeOK() throws InputException {
-		int index = settingTable.getSelectionIndex();
-		this.result = this.dbSettingList.get(index);
-	}
+    @Override
+    protected void perfomeOK() throws InputException {
+        final int index = settingTable.getSelectionIndex();
+        result = dbSettingList.get(index);
+    }
 
-	public DBSetting getResult() {
-		return this.result;
-	}
+    public DBSetting getResult() {
+        return result;
+    }
 
-	public int getResultIndex() {
-		return this.dbSettingList.indexOf(this.result);
-	}
+    public int getResultIndex() {
+        return dbSettingList.indexOf(result);
+    }
 
-	@Override
-	protected void setData() {
-		this.dbSettingList = PreferenceInitializer
-				.getDBSettingList(this.database);
+    @Override
+    protected void setData() {
+        dbSettingList = PreferenceInitializer.getDBSettingList(database);
 
-		for (DBSetting dbSetting : this.dbSettingList) {
-			TableItem item = new TableItem(this.settingTable, SWT.NONE);
-			item.setText(0, dbSetting.getDbsystem());
-			item.setText(1, dbSetting.getServer());
-			if (dbSetting.getPort() != 0) {
-				item.setText(2, String.valueOf(dbSetting.getPort()));
-			}
-			item.setText(3, dbSetting.getDatabase());
-			item.setText(4, dbSetting.getUser());
-			item.setText(5, Format.null2blank(dbSetting.getUrl()));
-		}
+        for (final DBSetting dbSetting : dbSettingList) {
+            final TableItem item = new TableItem(settingTable, SWT.NONE);
+            item.setText(0, dbSetting.getDbsystem());
+            item.setText(1, dbSetting.getServer());
+            if (dbSetting.getPort() != 0) {
+                item.setText(2, String.valueOf(dbSetting.getPort()));
+            }
+            item.setText(3, dbSetting.getDatabase());
+            item.setText(4, dbSetting.getUser());
+            item.setText(5, Format.null2blank(dbSetting.getUrl()));
+        }
 
-		this.setButtonEnabled(false);
-	}
+        setButtonEnabled(false);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID,
-				ResourceString.getResourceString("label.load.setting"), true);
-		createButton(parent, IDialogConstants.STOP_ID,
-				ResourceString.getResourceString("label.delete"), false);
-		createButton(parent, IDialogConstants.CLOSE_ID,
-				IDialogConstants.CLOSE_LABEL, false);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createButtonsForButtonBar(final Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, ResourceString.getResourceString("label.load.setting"), true);
+        createButton(parent, IDialogConstants.STOP_ID, ResourceString.getResourceString("label.delete"), false);
+        createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, false);
 
-		setButtonEnabled(false);
-	}
+        setButtonEnabled(false);
+    }
 
-	private void setButtonEnabled(boolean enabled) {
-		Button okButton = this.getButton(IDialogConstants.OK_ID);
-		if (okButton != null) {
-			okButton.setEnabled(enabled);
-		}
+    private void setButtonEnabled(final boolean enabled) {
+        final Button okButton = getButton(IDialogConstants.OK_ID);
+        if (okButton != null) {
+            okButton.setEnabled(enabled);
+        }
 
-		Button deleteButton = this.getButton(IDialogConstants.STOP_ID);
-		if (deleteButton != null) {
-			deleteButton.setEnabled(enabled);
-		}
-	}
+        final Button deleteButton = getButton(IDialogConstants.STOP_ID);
+        if (deleteButton != null) {
+            deleteButton.setEnabled(enabled);
+        }
+    }
 
-	private void selectTable(int index) {
-		this.settingTable.select(index);
+    private void selectTable(final int index) {
+        settingTable.select(index);
 
-		if (index >= 0) {
-			this.setButtonEnabled(true);
-		} else {
-			this.setButtonEnabled(false);
-		}
-	}
+        if (index >= 0) {
+            setButtonEnabled(true);
+        } else {
+            setButtonEnabled(false);
+        }
+    }
 
-	@Override
-	protected String getErrorMessage() {
-		int index = settingTable.getSelectionIndex();
-		if (index == -1) {
-			return "dialog.message.load.db.setting";
-		}
+    @Override
+    protected String getErrorMessage() {
+        final int index = settingTable.getSelectionIndex();
+        if (index == -1) {
+            return "dialog.message.load.db.setting";
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected String getTitle() {
-		return "label.load.database.setting";
-	}
+    @Override
+    protected String getTitle() {
+        return "label.load.database.setting";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void buttonPressed(int buttonId) {
-		if (buttonId == IDialogConstants.STOP_ID) {
-			int index = this.settingTable.getSelectionIndex();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void buttonPressed(final int buttonId) {
+        if (buttonId == IDialogConstants.STOP_ID) {
+            int index = settingTable.getSelectionIndex();
 
-			if (index != -1) {
-				this.settingTable.remove(index);
-				this.dbSettingList.remove(index);
+            if (index != -1) {
+                settingTable.remove(index);
+                dbSettingList.remove(index);
 
-				PreferenceInitializer.saveSetting(this.dbSettingList);
+                PreferenceInitializer.saveSetting(dbSettingList);
 
-				if (index >= this.settingTable.getItemCount()) {
-					index = this.settingTable.getItemCount() - 1;
-				}
+                if (index >= settingTable.getItemCount()) {
+                    index = settingTable.getItemCount() - 1;
+                }
 
-				this.selectTable(index);
-			}
-		}
+                selectTable(index);
+            }
+        }
 
-		super.buttonPressed(buttonId);
-	}
+        super.buttonPressed(buttonId);
+    }
 
 }

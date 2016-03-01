@@ -13,68 +13,65 @@ import org.insightech.er.util.Format;
 
 public abstract class AbstractErrorDialog extends Dialog {
 
-	protected Text textArea;
+    protected Text textArea;
 
-	public AbstractErrorDialog(Shell parentShell) {
-		super(parentShell);
-	}
+    public AbstractErrorDialog(final Shell parentShell) {
+        super(parentShell);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Control createDialogArea(Composite parent) {
-		this.getShell().setText(
-				ResourceString.getResourceString(this.getTitle()));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Control createDialogArea(final Composite parent) {
+        getShell().setText(ResourceString.getResourceString(getTitle()));
 
-		Composite composite = (Composite) super.createDialogArea(parent);
+        final Composite composite = (Composite) super.createDialogArea(parent);
 
-		GridLayout layout = new GridLayout();
-		this.initLayout(layout);
-		composite.setLayout(layout);
+        final GridLayout layout = new GridLayout();
+        initLayout(layout);
+        composite.setLayout(layout);
 
-		this.textArea = CompositeFactory.createTextArea(null, composite,
-				this.getMessage(), 400, 200, 1, false, false);
+        textArea = CompositeFactory.createTextArea(null, composite, getMessage(), 400, 200, 1, false, false);
 
-		this.textArea.setText(Format.null2blank(this.getData()));
+        textArea.setText(Format.null2blank(getData()));
 
-		return composite;
-	}
+        return composite;
+    }
 
-	protected void initLayout(GridLayout layout) {
-		layout.numColumns = 1;
-		layout.marginLeft = 20;
-		layout.marginRight = 20;
-		layout.marginBottom = 20;
-		layout.marginTop = 10;
-		layout.verticalSpacing = 15;
-	}
+    protected void initLayout(final GridLayout layout) {
+        layout.numColumns = 1;
+        layout.marginLeft = 20;
+        layout.marginRight = 20;
+        layout.marginBottom = 20;
+        layout.marginTop = 10;
+        layout.verticalSpacing = 15;
+    }
 
-	protected abstract String getData();
+    protected abstract String getData();
 
-	protected String getMessage() {
-		return "dialog.message.export.ddl.error";
-	}
+    protected String getMessage() {
+        return "dialog.message.export.ddl.error";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		this.createButton(parent, IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL, true);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createButtonsForButtonBar(final Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void buttonPressed(int buttonId) {
-		setReturnCode(buttonId);
-		close();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void buttonPressed(final int buttonId) {
+        setReturnCode(buttonId);
+        close();
 
-		super.buttonPressed(buttonId);
-	}
+        super.buttonPressed(buttonId);
+    }
 
-	protected abstract String getTitle();
+    protected abstract String getTitle();
 }

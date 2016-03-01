@@ -20,130 +20,118 @@ import org.insightech.er.editor.view.figure.table.style.simple.SimpleStyleSuppor
 
 public class TableFigure extends RoundedRectangle {
 
-	private Figure columns;
+    private final Figure columns;
 
-	private StyleSupport styleSupport;
+    private StyleSupport styleSupport;
 
-	private Color foregroundColor;
+    private Color foregroundColor;
 
-	public TableFigure(String tableStyle) {
-		this.columns = new Figure();
-		this.setLayoutManager(new BorderLayout());
-		this.setTableStyle(tableStyle);
-	}
+    public TableFigure(final String tableStyle) {
+        columns = new Figure();
+        setLayoutManager(new BorderLayout());
+        setTableStyle(tableStyle);
+    }
 
-	public void setTableStyle(String tableStyle) {
-		if (ChangeDesignToSimpleAction.TYPE.equals(tableStyle)) {
-			this.styleSupport = new SimpleStyleSupport(this);
+    public void setTableStyle(final String tableStyle) {
+        if (ChangeDesignToSimpleAction.TYPE.equals(tableStyle)) {
+            styleSupport = new SimpleStyleSupport(this);
 
-		} else if (ChangeDesignToFrameAction.TYPE.equals(tableStyle)) {
-			this.styleSupport = new FrameStyleSupport(this);
+        } else if (ChangeDesignToFrameAction.TYPE.equals(tableStyle)) {
+            styleSupport = new FrameStyleSupport(this);
 
-		} else {
-			this.styleSupport = new FunnyStyleSupport(this);
-		}
+        } else {
+            styleSupport = new FunnyStyleSupport(this);
+        }
 
-		this.styleSupport.init();
+        styleSupport.init();
 
-		this.create(null);
-	}
+        create(null);
+    }
 
-	public void create(int[] color) {
-		this.decideColor(color);
+    public void create(final int[] color) {
+        decideColor(color);
 
-		this.removeAll();
+        removeAll();
 
-		this.styleSupport.createTitleBar();
+        styleSupport.createTitleBar();
 
-		this.columns.removeAll();
+        columns.removeAll();
 
-		this.styleSupport.createColumnArea(this.columns);
+        styleSupport.createColumnArea(columns);
 
-		this.styleSupport.createFooter();
-	}
+        styleSupport.createFooter();
+    }
 
-	private void decideColor(int[] color) {
-		if (color != null) {
-			int sum = color[0] + color[1] + color[2];
+    private void decideColor(final int[] color) {
+        if (color != null) {
+            final int sum = color[0] + color[1] + color[2];
 
-			if (sum > 255) {
-				this.foregroundColor = ColorConstants.black;
-			} else {
-				this.foregroundColor = ColorConstants.white;
-			}
-		}
-	}
+            if (sum > 255) {
+                foregroundColor = ColorConstants.black;
+            } else {
+                foregroundColor = ColorConstants.white;
+            }
+        }
+    }
 
-	public void setName(String name) {
-		this.styleSupport.setName(name);
-	}
+    public void setName(final String name) {
+        styleSupport.setName(name);
+    }
 
-	public void setFont(Font font, Font titleFont) {
-		this.setFont(font);
-		this.styleSupport.setFont(font, titleFont);
-	}
+    public void setFont(final Font font, final Font titleFont) {
+        this.setFont(font);
+        styleSupport.setFont(font, titleFont);
+    }
 
-	public void clearColumns() {
-		this.columns.removeAll();
-	}
+    public void clearColumns() {
+        columns.removeAll();
+    }
 
-	public void addColumn(NormalColumnFigure columnFigure, int viewMode,
-			String physicalName, String logicalName, String type,
-			boolean primaryKey, boolean foreignKey, boolean isNotNull,
-			boolean uniqueKey, boolean displayKey, boolean displayDetail,
-			boolean displayType, boolean isSelectedReferenced,
-			boolean isSelectedForeignKey, boolean isAdded, boolean isUpdated,
-			boolean isRemoved) {
+    public void addColumn(final NormalColumnFigure columnFigure, final int viewMode, final String physicalName, final String logicalName, final String type, final boolean primaryKey, final boolean foreignKey, final boolean isNotNull, final boolean uniqueKey, final boolean displayKey, final boolean displayDetail, final boolean displayType, final boolean isSelectedReferenced, final boolean isSelectedForeignKey, final boolean isAdded, final boolean isUpdated, final boolean isRemoved) {
 
-		columnFigure.removeAll();
-		columnFigure.setBackgroundColor(null);
+        columnFigure.removeAll();
+        columnFigure.setBackgroundColor(null);
 
-		this.styleSupport.addColumn(columnFigure, viewMode, physicalName,
-				logicalName, type, primaryKey, foreignKey, isNotNull,
-				uniqueKey, displayKey, displayDetail, displayType,
-				isSelectedReferenced, isSelectedForeignKey, isAdded, isUpdated,
-				isRemoved);
-	}
+        styleSupport.addColumn(columnFigure, viewMode, physicalName, logicalName, type, primaryKey, foreignKey, isNotNull, uniqueKey, displayKey, displayDetail, displayType, isSelectedReferenced, isSelectedForeignKey, isAdded, isUpdated, isRemoved);
+    }
 
-	public void addColumnGroup(GroupColumnFigure columnFigure, int viewMode,
-			String name, boolean isAdded, boolean isUpdated, boolean isRemoved) {
+    public void addColumnGroup(final GroupColumnFigure columnFigure, final int viewMode, final String name, final boolean isAdded, final boolean isUpdated, final boolean isRemoved) {
 
-		columnFigure.removeAll();
-		columnFigure.setBackgroundColor(null);
+        columnFigure.removeAll();
+        columnFigure.setBackgroundColor(null);
 
-		this.styleSupport.addColumnGroup(columnFigure, viewMode, name, isAdded,
-				isUpdated, isRemoved);
-	}
+        styleSupport.addColumnGroup(columnFigure, viewMode, name, isAdded, isUpdated, isRemoved);
+    }
 
-	@Override
-	public Rectangle getBounds() {
-		Rectangle bounds = super.getBounds();
+    @Override
+    public Rectangle getBounds() {
+        final Rectangle bounds = super.getBounds();
 
-		this.styleSupport.adjustBounds(bounds);
+        styleSupport.adjustBounds(bounds);
 
-		return bounds;
-	}
+        return bounds;
+    }
 
-	public Color getTextColor() {
-		return foregroundColor;
-	}
+    public Color getTextColor() {
+        return foregroundColor;
+    }
 
-	@Override
-	protected void fillShape(Graphics graphics) {
-		graphics.setAlpha(200);
-		super.fillShape(graphics);
-	}
+    @Override
+    protected void fillShape(final Graphics graphics) {
+        graphics.setAlpha(200);
+        super.fillShape(graphics);
+    }
 
-	/**
-	 * columns ‚ðŽæ“¾‚µ‚Ü‚·.
-	 * 
-	 * @return columns
-	 */
-	public Figure getColumns() {
-		return columns;
-	}
+    /**
+     * columns ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     * 
+     * @return columns
+     */
+    public Figure getColumns() {
+        return columns;
+    }
 
-	public String getImageKey() {
-		return ImageKey.TABLE;
-	}
+    public String getImageKey() {
+        return ImageKey.TABLE;
+    }
 }

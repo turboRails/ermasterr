@@ -14,66 +14,61 @@ import org.insightech.er.editor.view.figure.NoteFigure;
 
 public class NoteEditPart extends NodeElementEditPart implements IResizable {
 
-	private NoteEditManager editManager = null;
+    private NoteEditManager editManager = null;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected IFigure createFigure() {
-		NoteFigure noteFigure = new NoteFigure();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected IFigure createFigure() {
+        final NoteFigure noteFigure = new NoteFigure();
 
-		this.changeFont(noteFigure);
+        changeFont(noteFigure);
 
-		return noteFigure;
-	}
+        return noteFigure;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new NodeElementComponentEditPolicy());
-		this.installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE,
-				new NoteDirectEditPolicy());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new NodeElementComponentEditPolicy());
+        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new NoteDirectEditPolicy());
 
-		super.createEditPolicies();
-	}
+        super.createEditPolicies();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doRefreshVisuals() {
-		Note note = (Note) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRefreshVisuals() {
+        final Note note = (Note) getModel();
 
-		NoteFigure figure = (NoteFigure) this.getFigure();
+        final NoteFigure figure = (NoteFigure) getFigure();
 
-		figure.setText(note.getText(), note.getColor());
-	}
+        figure.setText(note.getText(), note.getColor());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		if (request.getType().equals(RequestConstants.REQ_DIRECT_EDIT)
-				|| request.getType().equals(RequestConstants.REQ_OPEN)) {
-			performDirectEdit();
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        if (request.getType().equals(RequestConstants.REQ_DIRECT_EDIT) || request.getType().equals(RequestConstants.REQ_OPEN)) {
+            performDirectEdit();
+        }
+    }
 
-	private void performDirectEdit() {
-		if (this.editManager == null) {
-			this.editManager = new NoteEditManager(this, NoteCellEditor.class,
-					new NoteEditorLocator(getFigure()));
-		}
+    private void performDirectEdit() {
+        if (editManager == null) {
+            editManager = new NoteEditManager(this, NoteCellEditor.class, new NoteEditorLocator(getFigure()));
+        }
 
-		this.editManager.show();
-	}
+        editManager.show();
+    }
 
-	@Override
-	protected void performRequestOpen() {
-	}
+    @Override
+    protected void performRequestOpen() {}
 }

@@ -23,65 +23,59 @@ import org.insightech.er.editor.view.dialog.group.GroupManageDialog;
 
 public class GroupSetOutlineEditPart extends AbstractOutlineEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected List getModelChildren() {
-		GroupSet columnGroupSet = (GroupSet) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List getModelChildren() {
+        final GroupSet columnGroupSet = (GroupSet) getModel();
 
-		List<ColumnGroup> columnGroupList = columnGroupSet.getGroupList();
+        final List<ColumnGroup> columnGroupList = columnGroupSet.getGroupList();
 
-		Collections.sort(columnGroupList);
+        Collections.sort(columnGroupList);
 
-		return columnGroupList;
-	}
+        return columnGroupList;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		this.setWidgetText(ResourceString
-				.getResourceString("label.column.group")
-				+ " ("
-				+ this.getModelChildren().size() + ")");
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        setWidgetText(ResourceString.getResourceString("label.column.group") + " (" + getModelChildren().size() + ")");
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        final ERDiagram diagram = getDiagram();
 
-		GroupSet groupSet = diagram.getDiagramContents().getGroups();
+        final GroupSet groupSet = diagram.getDiagramContents().getGroups();
 
-		if (request.getType().equals(RequestConstants.REQ_OPEN)) {
-			GroupManageDialog dialog = new GroupManageDialog(PlatformUI
-					.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					groupSet, diagram, false, -1);
+        if (request.getType().equals(RequestConstants.REQ_OPEN)) {
+            final GroupManageDialog dialog = new GroupManageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), groupSet, diagram, false, -1);
 
-			if (dialog.open() == IDialogConstants.OK_ID) {
-				List<CopyGroup> newColumnGroups = dialog.getCopyColumnGroups();
+            if (dialog.open() == IDialogConstants.OK_ID) {
+                final List<CopyGroup> newColumnGroups = dialog.getCopyColumnGroups();
 
-				Command command = new ChangeGroupCommand(diagram, groupSet,
-						newColumnGroups);
+                final Command command = new ChangeGroupCommand(diagram, groupSet, newColumnGroups);
 
-				this.execute(command);
-			}
-		}
+                execute(command);
+            }
+        }
 
-		super.performRequest(request);
-	}
+        super.performRequest(request);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DragTracker getDragTracker(Request req) {
-		return new SelectEditPartTracker(this);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DragTracker getDragTracker(final Request req) {
+        return new SelectEditPartTracker(this);
+    }
 
 }

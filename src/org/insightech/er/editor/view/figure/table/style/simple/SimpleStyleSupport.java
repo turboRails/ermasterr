@@ -4,6 +4,7 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.OrderedLayout;
 import org.eclipse.draw2d.ToolbarLayout;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
@@ -14,93 +15,88 @@ import org.insightech.er.editor.view.figure.table.style.AbstractStyleSupport;
 
 public class SimpleStyleSupport extends AbstractStyleSupport {
 
-	private Label nameLabel;
+    private Label nameLabel;
 
-	public SimpleStyleSupport(TableFigure tableFigure) {
-		super(tableFigure);
-	}
+    public SimpleStyleSupport(final TableFigure tableFigure) {
+        super(tableFigure);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void init(TableFigure tableFigure) {
-		tableFigure.setCornerDimensions(new Dimension(10, 10));
-		tableFigure.setBorder(null);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void init(final TableFigure tableFigure) {
+        tableFigure.setCornerDimensions(new Dimension(10, 10));
+        tableFigure.setBorder(null);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void initTitleBar(Figure top) {
-		ToolbarLayout topLayout = new ToolbarLayout();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void initTitleBar(final Figure top) {
+        final ToolbarLayout topLayout = new ToolbarLayout();
 
-		topLayout.setMinorAlignment(ToolbarLayout.ALIGN_TOPLEFT);
-		topLayout.setStretchMinorAxis(true);
-		top.setLayoutManager(topLayout);
+        topLayout.setMinorAlignment(OrderedLayout.ALIGN_TOPLEFT);
+        topLayout.setStretchMinorAxis(true);
+        top.setLayoutManager(topLayout);
 
-		this.nameLabel = new Label();
-		this.nameLabel.setBorder(new MarginBorder(new Insets(5, 20, 5, 20)));
-		top.add(nameLabel);
+        nameLabel = new Label();
+        nameLabel.setBorder(new MarginBorder(new Insets(5, 20, 5, 20)));
+        top.add(nameLabel);
 
-		Figure separater = new Figure();
-		separater.setSize(-1, 1);
-		separater.setBackgroundColor(this.getTextColor());
-		separater.setOpaque(true);
+        final Figure separater = new Figure();
+        separater.setSize(-1, 1);
+        separater.setBackgroundColor(getTextColor());
+        separater.setOpaque(true);
 
-		top.add(separater);
-	}
+        top.add(separater);
+    }
 
-	public void setName(String name) {
-		this.nameLabel.setForegroundColor(this.getTextColor());
-		this.nameLabel.setText(name);
-	}
+    @Override
+    public void setName(final String name) {
+        nameLabel.setForegroundColor(getTextColor());
+        nameLabel.setText(name);
+    }
 
-	public void setFont(Font font, Font titleFont) {
-		this.nameLabel.setFont(titleFont);
-	}
+    @Override
+    public void setFont(final Font font, final Font titleFont) {
+        nameLabel.setFont(titleFont);
+    }
 
-	public void addColumn(NormalColumnFigure columnFigure, int viewMode,
-			String physicalName, String logicalName, String type,
-			boolean primaryKey, boolean foreignKey, boolean isNotNull,
-			boolean uniqueKey, boolean displayKey, boolean displayDetail,
-			boolean displayType, boolean isSelectedReferenced,
-			boolean isSelectedForeignKey, boolean isAdded, boolean isUpdated,
-			boolean isRemoved) {
-		Label label = this.createColumnLabel();
-		label.setForegroundColor(this.getTextColor());
+    @Override
+    public void addColumn(final NormalColumnFigure columnFigure, final int viewMode, final String physicalName, final String logicalName, final String type, final boolean primaryKey, final boolean foreignKey, final boolean isNotNull, final boolean uniqueKey, final boolean displayKey, final boolean displayDetail, final boolean displayType, final boolean isSelectedReferenced, final boolean isSelectedForeignKey, final boolean isAdded, final boolean isUpdated, final boolean isRemoved) {
+        final Label label = createColumnLabel();
+        label.setForegroundColor(getTextColor());
 
-		StringBuilder text = new StringBuilder();
-		text.append(this.getColumnText(viewMode, physicalName, logicalName,
-				type, isNotNull, uniqueKey, displayDetail, displayType));
+        final StringBuilder text = new StringBuilder();
+        text.append(getColumnText(viewMode, physicalName, logicalName, type, isNotNull, uniqueKey, displayDetail, displayType));
 
-		if (displayKey) {
-			if (primaryKey && foreignKey) {
-				label.setForegroundColor(ColorConstants.blue);
+        if (displayKey) {
+            if (primaryKey && foreignKey) {
+                label.setForegroundColor(ColorConstants.blue);
 
-				text.append(" ");
-				text.append("(PFK)");
+                text.append(" ");
+                text.append("(PFK)");
 
-			} else if (primaryKey) {
-				label.setForegroundColor(ColorConstants.red);
+            } else if (primaryKey) {
+                label.setForegroundColor(ColorConstants.red);
 
-				text.append(" ");
-				text.append("(PK)");
+                text.append(" ");
+                text.append("(PK)");
 
-			} else if (foreignKey) {
-				label.setForegroundColor(ColorConstants.darkGreen);
+            } else if (foreignKey) {
+                label.setForegroundColor(ColorConstants.darkGreen);
 
-				text.append(" ");
-				text.append("(FK)");
-			}
-		}
+                text.append(" ");
+                text.append("(FK)");
+            }
+        }
 
-		label.setText(text.toString());
+        label.setText(text.toString());
 
-		this.setColumnFigureColor(columnFigure, isSelectedReferenced,
-				isSelectedForeignKey, isAdded, isUpdated, isRemoved);
+        setColumnFigureColor(columnFigure, isSelectedReferenced, isSelectedForeignKey, isAdded, isUpdated, isRemoved);
 
-		columnFigure.add(label);
-	}
+        columnFigure.add(label);
+    }
 }

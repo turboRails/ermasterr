@@ -6,46 +6,45 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ChangeSettingsCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private Settings oldSettings;
+    private final Settings oldSettings;
 
-	private Settings settings;
+    private final Settings settings;
 
-	private boolean needRefresh;
+    private final boolean needRefresh;
 
-	public ChangeSettingsCommand(ERDiagram diagram, Settings settings,
-			boolean needRefresh) {
-		this.diagram = diagram;
-		this.oldSettings = this.diagram.getDiagramContents().getSettings();
-		this.settings = settings;
-		this.needRefresh = needRefresh;
-	}
+    public ChangeSettingsCommand(final ERDiagram diagram, final Settings settings, final boolean needRefresh) {
+        this.diagram = diagram;
+        oldSettings = this.diagram.getDiagramContents().getSettings();
+        this.settings = settings;
+        this.needRefresh = needRefresh;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.diagram.setSettings(settings);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        diagram.setSettings(settings);
 
-		if (this.needRefresh) {
-			this.diagram.refreshSettings();
-			this.diagram.getEditor().refreshPropertySheet();
-		}
-	}
+        if (needRefresh) {
+            diagram.refreshSettings();
+            diagram.getEditor().refreshPropertySheet();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.diagram.setSettings(oldSettings);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        diagram.setSettings(oldSettings);
 
-		if (this.needRefresh) {
-			this.diagram.refreshSettings();
-			this.diagram.getEditor().refreshPropertySheet();
-		}
-	}
+        if (needRefresh) {
+            diagram.refreshSettings();
+            diagram.getEditor().refreshPropertySheet();
+        }
+    }
 
 }

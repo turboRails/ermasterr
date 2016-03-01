@@ -8,22 +8,22 @@ import org.insightech.er.editor.view.figure.connection.ERDiagramConnection;
 
 public class ERDecoration extends PolygonDecoration {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void paintFigure(Graphics graphics) {
-		ERDiagramConnection connection = (ERDiagramConnection) this.getParent();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void paintFigure(final Graphics graphics) {
+        final ERDiagramConnection connection = (ERDiagramConnection) getParent();
 
-		graphics.setAntialias(SWT.ON);
+        graphics.setAntialias(SWT.ON);
 
-		Color color = connection.getColor();
+        final Color color = connection.getColor();
 
-		if (color != null) {
-			graphics.setForegroundColor(color);
-			graphics.setBackgroundColor(color);
-		}
+        if (color != null) {
+            graphics.setForegroundColor(color);
+            graphics.setBackgroundColor(color);
+        }
 
-		super.paintFigure(graphics);
-	}
+        super.paintFigure(graphics);
+    }
 }

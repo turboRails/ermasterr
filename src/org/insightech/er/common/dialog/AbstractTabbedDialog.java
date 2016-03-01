@@ -12,72 +12,70 @@ import org.insightech.er.common.widgets.ListenerAppender;
 
 public abstract class AbstractTabbedDialog extends AbstractDialog {
 
-	private TabFolder tabFolder;
+    private TabFolder tabFolder;
 
-	private List<ValidatableTabWrapper> tabWrapperList;
+    private List<ValidatableTabWrapper> tabWrapperList;
 
-	public AbstractTabbedDialog(Shell parentShell) {
-		super(parentShell);
-	}
+    public AbstractTabbedDialog(final Shell parentShell) {
+        super(parentShell);
+    }
 
-	protected void createTabFolder(Composite parent) {
-		GridData gridData = new GridData();
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.verticalAlignment = GridData.FILL;
-		gridData.horizontalAlignment = GridData.FILL;
+    protected void createTabFolder(final Composite parent) {
+        final GridData gridData = new GridData();
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.verticalAlignment = GridData.FILL;
+        gridData.horizontalAlignment = GridData.FILL;
 
-		this.tabFolder = new TabFolder(parent, SWT.NONE);
-		this.tabFolder.setLayoutData(gridData);
+        tabFolder = new TabFolder(parent, SWT.NONE);
+        tabFolder.setLayoutData(gridData);
 
-		this.tabWrapperList = this.createTabWrapperList(this.tabFolder);
+        tabWrapperList = createTabWrapperList(tabFolder);
 
-		for (ValidatableTabWrapper tab : this.tabWrapperList) {
-			tab.init();
-		}
+        for (final ValidatableTabWrapper tab : tabWrapperList) {
+            tab.init();
+        }
 
-		ListenerAppender.addTabListener(tabFolder, tabWrapperList);
+        ListenerAppender.addTabListener(tabFolder, tabWrapperList);
 
-		this.tabWrapperList.get(0).setInitFocus();
-	}
+        tabWrapperList.get(0).setInitFocus();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getErrorMessage() {
-		try {
-			for (ValidatableTabWrapper tabWrapper : this.tabWrapperList) {
-				tabWrapper.validatePage();
-			}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getErrorMessage() {
+        try {
+            for (final ValidatableTabWrapper tabWrapper : tabWrapperList) {
+                tabWrapper.validatePage();
+            }
 
-		} catch (InputException e) {
-			return e.getMessage();
-		}
+        } catch (final InputException e) {
+            return e.getMessage();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected void perfomeOK() throws InputException {
-		for (ValidatableTabWrapper tab : this.tabWrapperList) {
-			tab.perfomeOK();
-		}
-	}
+    @Override
+    protected void perfomeOK() throws InputException {
+        for (final ValidatableTabWrapper tab : tabWrapperList) {
+            tab.perfomeOK();
+        }
+    }
 
-	@Override
-	protected void setData() {
-	}
+    @Override
+    protected void setData() {}
 
-	protected abstract List<ValidatableTabWrapper> createTabWrapperList(
-			TabFolder tabFolder);
+    protected abstract List<ValidatableTabWrapper> createTabWrapperList(TabFolder tabFolder);
 
-	public void resetTabs() {
-		for (ValidatableTabWrapper tab : tabWrapperList) {
-			// tab.setVisible(false);
-			tab.reset();
-			// tab.setVisible(true);
-		}
-	}
+    public void resetTabs() {
+        for (final ValidatableTabWrapper tab : tabWrapperList) {
+            // tab.setVisible(false);
+            tab.reset();
+            // tab.setVisible(true);
+        }
+    }
 
 }

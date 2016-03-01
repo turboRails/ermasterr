@@ -13,232 +13,227 @@ import org.insightech.er.editor.model.diagram_contents.element.node.view.View;
 import org.insightech.er.editor.model.settings.CategorySetting;
 import org.insightech.er.util.Format;
 
-public class Category extends NodeElement implements IResizable,
-		Comparable<Category> {
+public class Category extends NodeElement implements IResizable, Comparable<Category> {
 
-	private static final long serialVersionUID = -7691417386790834828L;
+    private static final long serialVersionUID = -7691417386790834828L;
 
-	private static int MARGIN = 30;
+    private static int MARGIN = 30;
 
-	private List<NodeElement> nodeElementList;
+    private List<NodeElement> nodeElementList;
 
-	private String name;
+    private String name;
 
-	public Category() {
-		this.nodeElementList = new ArrayList<NodeElement>();
-	}
+    public Category() {
+        nodeElementList = new ArrayList<NodeElement>();
+    }
 
-	public void setContents(List<NodeElement> contetns) {
-		this.nodeElementList = contetns;
+    public void setContents(final List<NodeElement> contetns) {
+        nodeElementList = contetns;
 
-		if (this.getWidth() == 0) {
+        if (getWidth() == 0) {
 
-			int categoryX = 0;
-			int categoryY = 0;
+            int categoryX = 0;
+            int categoryY = 0;
 
-			int categoryWidth = 300;
-			int categoryHeight = 400;
+            int categoryWidth = 300;
+            int categoryHeight = 400;
 
-			if (!nodeElementList.isEmpty()) {
-				categoryX = nodeElementList.get(0).getX();
-				categoryY = nodeElementList.get(0).getY();
-				categoryWidth = nodeElementList.get(0).getWidth();
-				categoryHeight = nodeElementList.get(0).getHeight();
+            if (!nodeElementList.isEmpty()) {
+                categoryX = nodeElementList.get(0).getX();
+                categoryY = nodeElementList.get(0).getY();
+                categoryWidth = nodeElementList.get(0).getWidth();
+                categoryHeight = nodeElementList.get(0).getHeight();
 
-				for (NodeElement nodeElement : nodeElementList) {
-					int x = nodeElement.getX();
-					int y = nodeElement.getY();
-					int width = nodeElement.getWidth();
-					int height = nodeElement.getHeight();
+                for (final NodeElement nodeElement : nodeElementList) {
+                    final int x = nodeElement.getX();
+                    final int y = nodeElement.getY();
+                    int width = nodeElement.getWidth();
+                    int height = nodeElement.getHeight();
 
-					if (categoryX > x - MARGIN) {
-						width += categoryX - x + MARGIN;
-						categoryX = x - MARGIN;
-					}
-					if (categoryY > y - MARGIN) {
-						height += categoryY - y + MARGIN;
-						categoryY = y - MARGIN;
-					}
+                    if (categoryX > x - MARGIN) {
+                        width += categoryX - x + MARGIN;
+                        categoryX = x - MARGIN;
+                    }
+                    if (categoryY > y - MARGIN) {
+                        height += categoryY - y + MARGIN;
+                        categoryY = y - MARGIN;
+                    }
 
-					if (x - categoryX + width + MARGIN > categoryWidth) {
-						categoryWidth = x - categoryX + width + MARGIN;
-					}
+                    if (x - categoryX + width + MARGIN > categoryWidth) {
+                        categoryWidth = x - categoryX + width + MARGIN;
+                    }
 
-					if (y - categoryY + height + MARGIN > categoryHeight) {
-						categoryHeight = y - categoryY + height + MARGIN;
-					}
+                    if (y - categoryY + height + MARGIN > categoryHeight) {
+                        categoryHeight = y - categoryY + height + MARGIN;
+                    }
 
-				}
-			}
+                }
+            }
 
-			this.setLocation(new Location(categoryX, categoryY, categoryWidth,
-					categoryHeight));
-		}
-	}
+            setLocation(new Location(categoryX, categoryY, categoryWidth, categoryHeight));
+        }
+    }
 
-	public boolean contains(NodeElement nodeElement) {
-		return this.nodeElementList.contains(nodeElement);
-	}
+    public boolean contains(final NodeElement nodeElement) {
+        return nodeElementList.contains(nodeElement);
+    }
 
-	public boolean isVisible(NodeElement nodeElement, ERDiagram diagram) {
-		boolean isVisible = false;
+    public boolean isVisible(final NodeElement nodeElement, final ERDiagram diagram) {
+        boolean isVisible = false;
 
-		if (this.contains(nodeElement)) {
-			isVisible = true;
+        if (contains(nodeElement)) {
+            isVisible = true;
 
-		} else {
-			CategorySetting categorySettings = diagram.getDiagramContents()
-					.getSettings().getCategorySetting();
+        } else {
+            final CategorySetting categorySettings = diagram.getDiagramContents().getSettings().getCategorySetting();
 
-			if (categorySettings.isShowReferredTables()) {
-				for (NodeElement referringElement : nodeElement
-						.getReferringElementList()) {
-					if (this.contains(referringElement)) {
-						isVisible = true;
-						break;
-					}
-				}
-			}
-		}
+            if (categorySettings.isShowReferredTables()) {
+                for (final NodeElement referringElement : nodeElement.getReferringElementList()) {
+                    if (contains(referringElement)) {
+                        isVisible = true;
+                        break;
+                    }
+                }
+            }
+        }
 
-		return isVisible;
-	}
+        return isVisible;
+    }
 
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public List<NodeElement> getContents() {
-		return nodeElementList;
-	}
+    public List<NodeElement> getContents() {
+        return nodeElementList;
+    }
 
-	public void add(NodeElement nodeElement) {
-		if (!(nodeElement instanceof Category)) {
-			this.nodeElementList.add(nodeElement);
-		}
-	}
+    public void add(final NodeElement nodeElement) {
+        if (!(nodeElement instanceof Category)) {
+            nodeElementList.add(nodeElement);
+        }
+    }
 
-	public void remove(NodeElement nodeElement) {
-		this.nodeElementList.remove(nodeElement);
-	}
+    public void remove(final NodeElement nodeElement) {
+        nodeElementList.remove(nodeElement);
+    }
 
-	public List<ERTable> getTableContents() {
-		List<ERTable> tableList = new ArrayList<ERTable>();
+    public List<ERTable> getTableContents() {
+        final List<ERTable> tableList = new ArrayList<ERTable>();
 
-		for (NodeElement nodeElement : this.nodeElementList) {
-			if (nodeElement instanceof ERTable) {
-				tableList.add((ERTable) nodeElement);
-			}
-		}
+        for (final NodeElement nodeElement : nodeElementList) {
+            if (nodeElement instanceof ERTable) {
+                tableList.add((ERTable) nodeElement);
+            }
+        }
 
-		return tableList;
-	}
+        return tableList;
+    }
 
-	public List<View> getViewContents() {
-		List<View> viewList = new ArrayList<View>();
+    public List<View> getViewContents() {
+        final List<View> viewList = new ArrayList<View>();
 
-		for (NodeElement nodeElement : this.nodeElementList) {
-			if (nodeElement instanceof View) {
-				viewList.add((View) nodeElement);
-			}
-		}
+        for (final NodeElement nodeElement : nodeElementList) {
+            if (nodeElement instanceof View) {
+                viewList.add((View) nodeElement);
+            }
+        }
 
-		return viewList;
-	}
+        return viewList;
+    }
 
-	public List<TableView> getTableViewContents() {
-		List<TableView> tableList = new ArrayList<TableView>();
+    public List<TableView> getTableViewContents() {
+        final List<TableView> tableList = new ArrayList<TableView>();
 
-		for (NodeElement nodeElement : this.nodeElementList) {
-			if (nodeElement instanceof TableView) {
-				tableList.add((TableView) nodeElement);
-			}
-		}
+        for (final NodeElement nodeElement : nodeElementList) {
+            if (nodeElement instanceof TableView) {
+                tableList.add((TableView) nodeElement);
+            }
+        }
 
-		return tableList;
-	}
+        return tableList;
+    }
 
-	public Location getNewCategoryLocation(NodeElement element) {
-		if (element instanceof Category) {
-			return null;
-		}
+    public Location getNewCategoryLocation(final NodeElement element) {
+        if (element instanceof Category) {
+            return null;
+        }
 
-		if (this.contains(element)) {
-			Location elementLocation = element.getLocation();
-			Location newLocation = calculateCategoryLocation(elementLocation);
+        if (contains(element)) {
+            final Location elementLocation = element.getLocation();
+            final Location newLocation = calculateCategoryLocation(elementLocation);
 
-			if (!newLocation.equals(this.getLocation())) {
-				return newLocation;
-			}
-		}
+            if (!newLocation.equals(getLocation())) {
+                return newLocation;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public Location getNewCategoryLocation(Location elementLocation) {
-		Location newLocation = calculateCategoryLocation(elementLocation);
+    public Location getNewCategoryLocation(final Location elementLocation) {
+        final Location newLocation = calculateCategoryLocation(elementLocation);
 
-		if (!newLocation.equals(this.getLocation())) {
-			return newLocation;
-		}
+        if (!newLocation.equals(getLocation())) {
+            return newLocation;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private Location calculateCategoryLocation(Location elementLocation) {
-		Location location = this.getLocation();
+    private Location calculateCategoryLocation(final Location elementLocation) {
+        final Location location = getLocation();
 
-		if (elementLocation.x < location.x) {
-			location.width += location.x - elementLocation.x;
-			location.x = elementLocation.x;
-		}
-		if (elementLocation.y < location.y) {
-			location.height += location.y - elementLocation.y;
-			location.y = elementLocation.y;
-		}
-		if (elementLocation.x + elementLocation.width > location.x
-				+ location.width) {
-			location.width = elementLocation.x + elementLocation.width
-					- location.x;
-		}
-		if (elementLocation.y + elementLocation.height > location.y
-				+ location.height) {
-			location.height = elementLocation.y + elementLocation.height
-					- location.y;
-		}
+        if (elementLocation.x < location.x) {
+            location.width += location.x - elementLocation.x;
+            location.x = elementLocation.x;
+        }
+        if (elementLocation.y < location.y) {
+            location.height += location.y - elementLocation.y;
+            location.y = elementLocation.y;
+        }
+        if (elementLocation.x + elementLocation.width > location.x + location.width) {
+            location.width = elementLocation.x + elementLocation.width - location.x;
+        }
+        if (elementLocation.y + elementLocation.height > location.y + location.height) {
+            location.height = elementLocation.y + elementLocation.height - location.y;
+        }
 
-		return location;
-	}
-	
-	public int compareTo(Category other) {
-		int compareTo = 0;
+        return location;
+    }
 
-		compareTo = Format.null2blank(this.name).compareTo(
-				Format.null2blank(other.name));
+    @Override
+    public int compareTo(final Category other) {
+        int compareTo = 0;
 
-		return compareTo;
-	}
+        compareTo = Format.null2blank(name).compareTo(Format.null2blank(other.name));
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Category clone() {
-		Category clone = (Category) super.clone();
+        return compareTo;
+    }
 
-		return clone;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Category clone() {
+        final Category clone = (Category) super.clone();
 
-	public String getDescription() {
-		return "";
-	}
+        return clone;
+    }
 
-	public String getObjectType() {
-		return "category";
-	}
+    @Override
+    public String getDescription() {
+        return "";
+    }
+
+    @Override
+    public String getObjectType() {
+        return "category";
+    }
 
 }

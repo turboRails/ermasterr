@@ -24,121 +24,120 @@ import org.insightech.er.editor.model.diagram_contents.element.node.category.Cat
 import org.insightech.er.editor.model.settings.Settings;
 import org.insightech.er.editor.model.tracking.RemovedNodeElement;
 
-public abstract class RemovedNodeElementEditPart extends AbstractModelEditPart
-		implements NodeEditPart, DeleteableEditPart {
+public abstract class RemovedNodeElementEditPart extends AbstractModelEditPart implements NodeEditPart, DeleteableEditPart {
 
-	private Font font;
+    private Font font;
 
-	@Override
-	public void doPropertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals("refreshFont")) {
-			this.changeFont(this.figure);
-			this.refreshVisuals();
-		}
-	}
+    @Override
+    public void doPropertyChange(final PropertyChangeEvent event) {
+        if (event.getPropertyName().equals("refreshFont")) {
+            changeFont(figure);
+            refreshVisuals();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {}
 
-	protected void setVisible() {
-		Category category = this.getCurrentCategory();
+    protected void setVisible() {
+        final Category category = getCurrentCategory();
 
-		if (category != null) {
-			this.figure.setVisible(false);
-		} else {
-			this.figure.setVisible(true);
-		}
-	}
+        if (category != null) {
+            figure.setVisible(false);
+        } else {
+            figure.setVisible(true);
+        }
+    }
 
-	protected Font changeFont(IFigure figure) {
-		RemovedNodeElement removedNodeElement = (RemovedNodeElement) this
-				.getModel();
+    protected Font changeFont(final IFigure figure) {
+        final RemovedNodeElement removedNodeElement = (RemovedNodeElement) getModel();
 
-		String fontName = removedNodeElement.getFontName();
-		int fontSize = removedNodeElement.getFontSize();
+        String fontName = removedNodeElement.getFontName();
+        int fontSize = removedNodeElement.getFontSize();
 
-		if (fontName == null) {
-			FontData fontData = Display.getCurrent().getSystemFont()
-					.getFontData()[0];
-			fontName = fontData.getName();
-		}
-		if (fontSize <= 0) {
-			fontSize = ViewableModel.DEFAULT_FONT_SIZE;
-		}
+        if (fontName == null) {
+            final FontData fontData = Display.getCurrent().getSystemFont().getFontData()[0];
+            fontName = fontData.getName();
+        }
+        if (fontSize <= 0) {
+            fontSize = ViewableModel.DEFAULT_FONT_SIZE;
+        }
 
-		this.font = Resources.getFont(fontName, fontSize);
+        font = Resources.getFont(fontName, fontSize);
 
-		figure.setFont(this.font);
+        figure.setFont(font);
 
-		return font;
-	}
+        return font;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshVisuals() {
-		this.setVisible();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshVisuals() {
+        setVisible();
 
-		Rectangle rectangle = this.getRectangle();
+        final Rectangle rectangle = getRectangle();
 
-		GraphicalEditPart parent = (GraphicalEditPart) this.getParent();
+        final GraphicalEditPart parent = (GraphicalEditPart) getParent();
 
-		IFigure figure = this.getFigure();
+        final IFigure figure = getFigure();
 
-		figure.setBackgroundColor(Resources.REMOVED_COLOR);
+        figure.setBackgroundColor(Resources.REMOVED_COLOR);
 
-		parent.setLayoutConstraint(this, figure, rectangle);
-	}
+        parent.setLayoutConstraint(this, figure, rectangle);
+    }
 
-	protected Rectangle getRectangle() {
-		RemovedNodeElement removedNodeElement = (RemovedNodeElement) this
-				.getModel();
+    protected Rectangle getRectangle() {
+        final RemovedNodeElement removedNodeElement = (RemovedNodeElement) getModel();
 
-		NodeElement nodeElement = removedNodeElement.getNodeElement();
+        final NodeElement nodeElement = removedNodeElement.getNodeElement();
 
-		Point point = new Point(nodeElement.getX(), nodeElement.getY());
+        final Point point = new Point(nodeElement.getX(), nodeElement.getY());
 
-		Dimension dimension = new Dimension(nodeElement.getWidth(),
-				nodeElement.getHeight());
+        final Dimension dimension = new Dimension(nodeElement.getWidth(), nodeElement.getHeight());
 
-		Dimension minimumSize = this.figure.getMinimumSize();
-		if (dimension.width != -1 && dimension.width < minimumSize.width) {
-			dimension.width = minimumSize.width;
-		}
-		if (dimension.height != -1 && dimension.height < minimumSize.height) {
-			dimension.height = minimumSize.height;
-		}
+        final Dimension minimumSize = figure.getMinimumSize();
+        if (dimension.width != -1 && dimension.width < minimumSize.width) {
+            dimension.width = minimumSize.width;
+        }
+        if (dimension.height != -1 && dimension.height < minimumSize.height) {
+            dimension.height = minimumSize.height;
+        }
 
-		return new Rectangle(point, dimension);
-	}
+        return new Rectangle(point, dimension);
+    }
 
-	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart arg0) {
-		return new ChopboxAnchor(this.getFigure());
-	}
+    @Override
+    public ConnectionAnchor getSourceConnectionAnchor(final ConnectionEditPart arg0) {
+        return new ChopboxAnchor(getFigure());
+    }
 
-	public ConnectionAnchor getSourceConnectionAnchor(Request arg0) {
-		return new ChopboxAnchor(this.getFigure());
-	}
+    @Override
+    public ConnectionAnchor getSourceConnectionAnchor(final Request arg0) {
+        return new ChopboxAnchor(getFigure());
+    }
 
-	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart arg0) {
-		return new ChopboxAnchor(this.getFigure());
-	}
+    @Override
+    public ConnectionAnchor getTargetConnectionAnchor(final ConnectionEditPart arg0) {
+        return new ChopboxAnchor(getFigure());
+    }
 
-	public ConnectionAnchor getTargetConnectionAnchor(Request arg0) {
-		return new ChopboxAnchor(this.getFigure());
-	}
+    @Override
+    public ConnectionAnchor getTargetConnectionAnchor(final Request arg0) {
+        return new ChopboxAnchor(getFigure());
+    }
 
-	public void changeSettings(Settings settings) {
-		this.refresh();
-	}
+    public void changeSettings(final Settings settings) {
+        refresh();
+    }
 
-	public boolean isDeleteable() {
-		return false;
-	}
+    @Override
+    public boolean isDeleteable() {
+        return false;
+    }
 
 }

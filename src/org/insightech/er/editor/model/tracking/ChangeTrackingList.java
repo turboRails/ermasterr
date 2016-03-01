@@ -17,257 +17,243 @@ import org.insightech.er.util.Check;
 
 public class ChangeTrackingList implements Serializable {
 
-	private static final long serialVersionUID = 3290113276160681941L;
+    private static final long serialVersionUID = 3290113276160681941L;
 
-	private List<ChangeTracking> changeTrackingList;
+    private final List<ChangeTracking> changeTrackingList;
 
-	private List<NodeElement> addedNodeElements;
+    private List<NodeElement> addedNodeElements;
 
-	private List<UpdatedNodeElement> updatedNodeElements;
+    private List<UpdatedNodeElement> updatedNodeElements;
 
-	private List<RemovedNodeElement> removedNodeElements;
+    private List<RemovedNodeElement> removedNodeElements;
 
-	private boolean calculated;
+    private boolean calculated;
 
-	public ChangeTrackingList() {
-		this.changeTrackingList = new ArrayList<ChangeTracking>();
-		this.addedNodeElements = new ArrayList<NodeElement>();
-		this.updatedNodeElements = new ArrayList<UpdatedNodeElement>();
-		this.removedNodeElements = new ArrayList<RemovedNodeElement>();
-	}
+    public ChangeTrackingList() {
+        changeTrackingList = new ArrayList<ChangeTracking>();
+        addedNodeElements = new ArrayList<NodeElement>();
+        updatedNodeElements = new ArrayList<UpdatedNodeElement>();
+        removedNodeElements = new ArrayList<RemovedNodeElement>();
+    }
 
-	public void clear() {
-		this.changeTrackingList.clear();
-		this.addedNodeElements.clear();
-		this.updatedNodeElements.clear();
-		this.removedNodeElements.clear();
-	}
-	
-	public void addChangeTracking(ChangeTracking changeTracking) {
-		this.changeTrackingList.add(changeTracking);
-	}
+    public void clear() {
+        changeTrackingList.clear();
+        addedNodeElements.clear();
+        updatedNodeElements.clear();
+        removedNodeElements.clear();
+    }
 
-	public void addChangeTracking(int index, ChangeTracking changeTracking) {
-		this.changeTrackingList.add(index, changeTracking);
-	}
+    public void addChangeTracking(final ChangeTracking changeTracking) {
+        changeTrackingList.add(changeTracking);
+    }
 
-	public void removeChangeTracking(int index) {
-		if (index >= 0 && index < this.changeTrackingList.size()) {
-			this.changeTrackingList.remove(index);
-		}
-	}
+    public void addChangeTracking(final int index, final ChangeTracking changeTracking) {
+        changeTrackingList.add(index, changeTracking);
+    }
 
-	public void removeChangeTracking(ChangeTracking changeTracking) {
-		this.changeTrackingList.remove(changeTracking);
-	}
+    public void removeChangeTracking(final int index) {
+        if (index >= 0 && index < changeTrackingList.size()) {
+            changeTrackingList.remove(index);
+        }
+    }
 
-	public List<ChangeTracking> getList() {
-		return this.changeTrackingList;
-	}
+    public void removeChangeTracking(final ChangeTracking changeTracking) {
+        changeTrackingList.remove(changeTracking);
+    }
 
-	public ChangeTracking get(int index) {
-		return this.changeTrackingList.get(index);
-	}
+    public List<ChangeTracking> getList() {
+        return changeTrackingList;
+    }
 
-	public List<UpdatedNodeElement> getUpdatedNodeElementSet() {
-		return this.updatedNodeElements;
-	}
+    public ChangeTracking get(final int index) {
+        return changeTrackingList.get(index);
+    }
 
-	public List<NodeElement> getAddedNodeElementSet() {
-		return this.addedNodeElements;
-	}
+    public List<UpdatedNodeElement> getUpdatedNodeElementSet() {
+        return updatedNodeElements;
+    }
 
-	public List<RemovedNodeElement> getRemovedNodeElementSet() {
-		return this.removedNodeElements;
-	}
+    public List<NodeElement> getAddedNodeElementSet() {
+        return addedNodeElements;
+    }
 
-	public void setCalculated(boolean calculated) {
-		this.calculated = calculated;
-	}
+    public List<RemovedNodeElement> getRemovedNodeElementSet() {
+        return removedNodeElements;
+    }
 
-	public boolean isCalculated() {
-		return this.calculated;
-	}
+    public void setCalculated(final boolean calculated) {
+        this.calculated = calculated;
+    }
 
-	public void calculateUpdatedNodeElementSet(NodeSet oldList, NodeSet newList) {
-		this.calculated = true;
+    public boolean isCalculated() {
+        return calculated;
+    }
 
-		this.addedNodeElements.clear();
-		this.updatedNodeElements.clear();
-		this.removedNodeElements.clear();
+    public void calculateUpdatedNodeElementSet(final NodeSet oldList, final NodeSet newList) {
+        calculated = true;
 
-		List<Note> oldNotes = new ArrayList<Note>();
-		List<ERTable> oldTables = new ArrayList<ERTable>();
+        addedNodeElements.clear();
+        updatedNodeElements.clear();
+        removedNodeElements.clear();
 
-		for (NodeElement nodeElement : oldList) {
-			if (nodeElement instanceof Note) {
-				Note note = (Note) nodeElement;
-				oldNotes.add(note);
+        final List<Note> oldNotes = new ArrayList<Note>();
+        final List<ERTable> oldTables = new ArrayList<ERTable>();
 
-			} else if (nodeElement instanceof ERTable) {
-				oldTables.add((ERTable) nodeElement);
-			}
-		}
+        for (final NodeElement nodeElement : oldList) {
+            if (nodeElement instanceof Note) {
+                final Note note = (Note) nodeElement;
+                oldNotes.add(note);
 
-		for (NodeElement newNodeElement : newList) {
-			if (newNodeElement instanceof Note) {
-				Note newNote = (Note) newNodeElement;
-				String newNoteText = newNote.getText();
+            } else if (nodeElement instanceof ERTable) {
+                oldTables.add((ERTable) nodeElement);
+            }
+        }
 
-				boolean exists = false;
+        for (final NodeElement newNodeElement : newList) {
+            if (newNodeElement instanceof Note) {
+                final Note newNote = (Note) newNodeElement;
+                final String newNoteText = newNote.getText();
 
-				for (Iterator<Note> iter = oldNotes.iterator(); iter.hasNext();) {
-					Note oldNote = iter.next();
+                boolean exists = false;
 
-					if (oldNote.getText() != null
-							&& oldNote.getText().equals(newNoteText)) {
-						iter.remove();
-						exists = true;
-						break;
-					}
-				}
+                for (final Iterator<Note> iter = oldNotes.iterator(); iter.hasNext();) {
+                    final Note oldNote = iter.next();
 
-				if (!exists) {
-					this.addedNodeElements.add(newNote);
-				}
+                    if (oldNote.getText() != null && oldNote.getText().equals(newNoteText)) {
+                        iter.remove();
+                        exists = true;
+                        break;
+                    }
+                }
 
-			} else if (newNodeElement instanceof ERTable) {
-				ERTable newTable = (ERTable) newNodeElement;
-				ERTable oldTable = null;
+                if (!exists) {
+                    addedNodeElements.add(newNote);
+                }
 
-				boolean exists = false;
+            } else if (newNodeElement instanceof ERTable) {
+                final ERTable newTable = (ERTable) newNodeElement;
+                ERTable oldTable = null;
 
-				for (ERTable table : oldTables) {
-					oldTable = table;
+                boolean exists = false;
 
-					if (oldTable.getPhysicalName().equals(
-							newTable.getPhysicalName())) {
-						exists = true;
-						break;
-					}
-				}
+                for (final ERTable table : oldTables) {
+                    oldTable = table;
 
-				if (!exists) {
-					this.addedNodeElements.add(newTable);
+                    if (oldTable.getPhysicalName().equals(newTable.getPhysicalName())) {
+                        exists = true;
+                        break;
+                    }
+                }
 
-				} else {
-					oldTables.remove(oldTable);
+                if (!exists) {
+                    addedNodeElements.add(newTable);
 
-					Set<NormalColumn> addedColumns = new HashSet<NormalColumn>();
-					Set<NormalColumn> updatedColumns = new HashSet<NormalColumn>();
+                } else {
+                    oldTables.remove(oldTable);
 
-					List<NormalColumn> oldColumns = new ArrayList<NormalColumn>(
-							oldTable.getExpandedColumns());
+                    final Set<NormalColumn> addedColumns = new HashSet<NormalColumn>();
+                    final Set<NormalColumn> updatedColumns = new HashSet<NormalColumn>();
 
-					for (NormalColumn newColumn : newTable.getExpandedColumns()) {
-						Column originalColumn = null;
+                    final List<NormalColumn> oldColumns = new ArrayList<NormalColumn>(oldTable.getExpandedColumns());
 
-						for (NormalColumn oldColumn : oldColumns) {
-							if (newColumn.getName().equals(oldColumn.getName())) {
-								originalColumn = oldColumn;
-								oldColumns.remove(oldColumn);
+                    for (final NormalColumn newColumn : newTable.getExpandedColumns()) {
+                        Column originalColumn = null;
 
-								if (!this.compareColumn(
-										(NormalColumn) oldColumn,
-										(NormalColumn) newColumn)) {
-									updatedColumns.add(newColumn);
-								}
+                        for (final NormalColumn oldColumn : oldColumns) {
+                            if (newColumn.getName().equals(oldColumn.getName())) {
+                                originalColumn = oldColumn;
+                                oldColumns.remove(oldColumn);
 
-								break;
-							}
-						}
+                                if (!compareColumn(oldColumn, newColumn)) {
+                                    updatedColumns.add(newColumn);
+                                }
 
-						if (originalColumn == null) {
-							addedColumns.add(newColumn);
-						}
-					}
+                                break;
+                            }
+                        }
 
-					if (!addedColumns.isEmpty() || !updatedColumns.isEmpty()
-							|| !oldColumns.isEmpty()) {
-						UpdatedNodeElement updatedNodeElement = new UpdatedNodeElement(
-								newTable);
-						this.updatedNodeElements.add(updatedNodeElement);
+                        if (originalColumn == null) {
+                            addedColumns.add(newColumn);
+                        }
+                    }
 
-						updatedNodeElement.setAddedColumns(addedColumns);
-						updatedNodeElement.setUpdatedColumns(updatedColumns);
-						updatedNodeElement.setRemovedColumns(oldColumns);
-					}
-				}
-			}
-		}
+                    if (!addedColumns.isEmpty() || !updatedColumns.isEmpty() || !oldColumns.isEmpty()) {
+                        final UpdatedNodeElement updatedNodeElement = new UpdatedNodeElement(newTable);
+                        updatedNodeElements.add(updatedNodeElement);
 
-		for (Note oldNote : oldNotes) {
-			this.removedNodeElements.add(new RemovedNote(oldNote));
-		}
+                        updatedNodeElement.setAddedColumns(addedColumns);
+                        updatedNodeElement.setUpdatedColumns(updatedColumns);
+                        updatedNodeElement.setRemovedColumns(oldColumns);
+                    }
+                }
+            }
+        }
 
-		for (ERTable oldTable : oldTables) {
-			this.removedNodeElements.add(new RemovedERTable(oldTable));
-		}
+        for (final Note oldNote : oldNotes) {
+            removedNodeElements.add(new RemovedNote(oldNote));
+        }
 
-	}
+        for (final ERTable oldTable : oldTables) {
+            removedNodeElements.add(new RemovedERTable(oldTable));
+        }
 
-	private boolean compareColumn(NormalColumn oldColumn, NormalColumn newColumn) {
-		if (!Check.equals(oldColumn.getPhysicalName(), newColumn
-				.getPhysicalName())) {
-			return false;
-		}
-		if (!Check.equals(oldColumn.getTypeData().getDecimal(), newColumn
-				.getTypeData().getDecimal())) {
-			return false;
-		}
-		if (!Check.equals(oldColumn.getDefaultValue(), newColumn
-				.getDefaultValue())) {
-			return false;
-		}
-		if (!Check.equals(oldColumn.getDescription(), newColumn
-				.getDescription())) {
-			return false;
-		}
-		if (!Check.equals(oldColumn.getTypeData().getLength(), newColumn
-				.getTypeData().getLength())) {
-			return false;
-		}
-		if (!Check.equals(oldColumn.getType(), newColumn.getType())) {
-			return false;
-		}
-		if (oldColumn.isAutoIncrement() != newColumn.isAutoIncrement()) {
-			return false;
-		}
-		if (oldColumn.isForeignKey() != newColumn.isForeignKey()) {
-			return false;
-		}
-		if (oldColumn.isNotNull() != newColumn.isNotNull()) {
-			return false;
-		}
-		if (oldColumn.isPrimaryKey() != newColumn.isPrimaryKey()) {
-			return false;
-		}
-		if (oldColumn.isUniqueKey() != newColumn.isUniqueKey()) {
-			return false;
-		}
+    }
 
-		return true;
-	}
+    private boolean compareColumn(final NormalColumn oldColumn, final NormalColumn newColumn) {
+        if (!Check.equals(oldColumn.getPhysicalName(), newColumn.getPhysicalName())) {
+            return false;
+        }
+        if (!Check.equals(oldColumn.getTypeData().getDecimal(), newColumn.getTypeData().getDecimal())) {
+            return false;
+        }
+        if (!Check.equals(oldColumn.getDefaultValue(), newColumn.getDefaultValue())) {
+            return false;
+        }
+        if (!Check.equals(oldColumn.getDescription(), newColumn.getDescription())) {
+            return false;
+        }
+        if (!Check.equals(oldColumn.getTypeData().getLength(), newColumn.getTypeData().getLength())) {
+            return false;
+        }
+        if (!Check.equals(oldColumn.getType(), newColumn.getType())) {
+            return false;
+        }
+        if (oldColumn.isAutoIncrement() != newColumn.isAutoIncrement()) {
+            return false;
+        }
+        if (oldColumn.isForeignKey() != newColumn.isForeignKey()) {
+            return false;
+        }
+        if (oldColumn.isNotNull() != newColumn.isNotNull()) {
+            return false;
+        }
+        if (oldColumn.isPrimaryKey() != newColumn.isPrimaryKey()) {
+            return false;
+        }
+        if (oldColumn.isUniqueKey() != newColumn.isUniqueKey()) {
+            return false;
+        }
 
-	public UpdatedNodeElement getUpdatedNodeElement(NodeElement nodeElement) {
-		for (UpdatedNodeElement updatedNodeElement : this.updatedNodeElements) {
-			if (updatedNodeElement.getNodeElement() == nodeElement) {
-				return updatedNodeElement;
-			}
-		}
+        return true;
+    }
 
-		return null;
-	}
+    public UpdatedNodeElement getUpdatedNodeElement(final NodeElement nodeElement) {
+        for (final UpdatedNodeElement updatedNodeElement : updatedNodeElements) {
+            if (updatedNodeElement.getNodeElement() == nodeElement) {
+                return updatedNodeElement;
+            }
+        }
 
-	public boolean isAdded(NodeElement nodeElement) {
-		return this.addedNodeElements.contains(nodeElement);
-	}
+        return null;
+    }
 
-	public void restore(List<NodeElement> addedNodeElements,
-			List<UpdatedNodeElement> updatedNodeElements,
-			List<RemovedNodeElement> removedNodeElements) {
-		this.addedNodeElements = addedNodeElements;
-		this.updatedNodeElements = updatedNodeElements;
-		this.removedNodeElements = removedNodeElements;
-	}
+    public boolean isAdded(final NodeElement nodeElement) {
+        return addedNodeElements.contains(nodeElement);
+    }
+
+    public void restore(final List<NodeElement> addedNodeElements, final List<UpdatedNodeElement> updatedNodeElements, final List<RemovedNodeElement> removedNodeElements) {
+        this.addedNodeElements = addedNodeElements;
+        this.updatedNodeElements = updatedNodeElements;
+        this.removedNodeElements = removedNodeElements;
+    }
 }

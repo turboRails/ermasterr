@@ -11,26 +11,23 @@ import org.insightech.er.editor.view.action.outline.AbstractOutlineBaseAction;
 
 public class ChangeOutlineViewToBothAction extends AbstractOutlineBaseAction {
 
-	public static final String ID = ChangeOutlineViewToBothAction.class
-			.getName();
+    public static final String ID = ChangeOutlineViewToBothAction.class.getName();
 
-	public ChangeOutlineViewToBothAction(TreeViewer treeViewer) {
-		super(ID, null, IAction.AS_RADIO_BUTTON, treeViewer);
-		this.setText(ResourceString
-				.getResourceString("action.title.change.mode.to.both"));
-	}
+    public ChangeOutlineViewToBothAction(final TreeViewer treeViewer) {
+        super(ID, null, IAction.AS_RADIO_BUTTON, treeViewer);
+        setText(ResourceString.getResourceString("action.title.change.mode.to.both"));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        final ERDiagram diagram = getDiagram();
 
-		ChangeOutlineViewModeCommand command = new ChangeOutlineViewModeCommand(
-				diagram, Settings.VIEW_MODE_BOTH);
+        final ChangeOutlineViewModeCommand command = new ChangeOutlineViewModeCommand(diagram, Settings.VIEW_MODE_BOTH);
 
-		this.execute(command);
-	}
+        this.execute(command);
+    }
 
 }

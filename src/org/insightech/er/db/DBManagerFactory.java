@@ -19,48 +19,45 @@ import org.insightech.er.editor.model.ERDiagram;
 
 public class DBManagerFactory {
 
-	private static final List<DBManager> DB_LIST = new ArrayList<DBManager>();
+    private static final List<DBManager> DB_LIST = new ArrayList<DBManager>();
 
-	private static final List<String> DB_ID_LIST = new ArrayList<String>();
+    private static final List<String> DB_ID_LIST = new ArrayList<String>();
 
-	static {
-		new StandardSQLDBManager();
-		new AccessDBManager();
-		new DB2DBManager();
-		new H2DBManager();
-		new HSQLDBDBManager();
-		new MySQLDBManager();
-		new OracleDBManager();
-		new PostgresDBManager();
-		new SQLiteDBManager();
-		new SqlServerDBManager();
-		new SqlServer2008DBManager();
-	}
+    static {
+        new StandardSQLDBManager();
+        new AccessDBManager();
+        new DB2DBManager();
+        new H2DBManager();
+        new HSQLDBDBManager();
+        new MySQLDBManager();
+        new OracleDBManager();
+        new PostgresDBManager();
+        new SQLiteDBManager();
+        new SqlServerDBManager();
+        new SqlServer2008DBManager();
+    }
 
-	static void addDB(DBManager manager) {
-		DB_LIST.add(manager);
-		DB_ID_LIST.add(manager.getId());
-	}
+    static void addDB(final DBManager manager) {
+        DB_LIST.add(manager);
+        DB_ID_LIST.add(manager.getId());
+    }
 
-	public static DBManager getDBManager(String database) {
-		for (DBManager manager : DB_LIST) {
-			if (manager.getId().equals(database)) {
-				return manager;
-			}
-		}
+    public static DBManager getDBManager(final String database) {
+        for (final DBManager manager : DB_LIST) {
+            if (manager.getId().equals(database)) {
+                return manager;
+            }
+        }
 
-		throw new IllegalArgumentException(
-				ResourceString
-						.getResourceString("error.database.is.not.supported")
-						+ database);
-	}
+        throw new IllegalArgumentException(ResourceString.getResourceString("error.database.is.not.supported") + database);
+    }
 
-	public static DBManager getDBManager(ERDiagram diagram) {
-		return getDBManager(diagram.getDatabase());
-	}
+    public static DBManager getDBManager(final ERDiagram diagram) {
+        return getDBManager(diagram.getDatabase());
+    }
 
-	public static List<String> getAllDBList() {
-		return DB_ID_LIST;
-	}
+    public static List<String> getAllDBList() {
+        return DB_ID_LIST;
+    }
 
 }

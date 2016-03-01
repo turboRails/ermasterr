@@ -25,413 +25,385 @@ import org.insightech.er.util.Format;
 
 public class SequenceDialog extends AbstractDialog {
 
-	private int NUMBER_TEXT_SIZE = -1;
+    private final int NUMBER_TEXT_SIZE = -1;
 
-	private Text nameText;
+    private Text nameText;
 
-	private Text schemaText;
+    private Text schemaText;
 
-	private Text incrementText;
+    private Text incrementText;
 
-	private Text minValueText;
+    private Text minValueText;
 
-	private Text maxValueText;
+    private Text maxValueText;
 
-	private Text startText;
+    private Text startText;
 
-	private Text cacheText;
+    private Text cacheText;
 
-	private Button nocacheCheckBox;
+    private Button nocacheCheckBox;
 
-	private Button cycleCheckBox;
+    private Button cycleCheckBox;
 
-	private Button orderCheckBox;
+    private Button orderCheckBox;
 
-	private Text descriptionText;
+    private Text descriptionText;
 
-	private Combo dataTypeCombo;
+    private Combo dataTypeCombo;
 
-	private Text decimalSizeText;
+    private Text decimalSizeText;
 
-	private Sequence sequence;
+    private final Sequence sequence;
 
-	private Sequence result;
+    private Sequence result;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	public SequenceDialog(Shell parentShell, Sequence sequence,
-			ERDiagram diagram) {
-		super(parentShell);
+    public SequenceDialog(final Shell parentShell, final Sequence sequence, final ERDiagram diagram) {
+        super(parentShell);
 
-		this.sequence = sequence;
-		this.diagram = diagram;
-	}
+        this.sequence = sequence;
+        this.diagram = diagram;
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
 
-		layout.numColumns = 5;
-	}
+        layout.numColumns = 5;
+    }
 
-	@Override
-	protected void initialize(Composite composite) {
-		String database = this.diagram.getDatabase();
+    @Override
+    protected void initialize(final Composite composite) {
+        final String database = diagram.getDatabase();
 
-		this.nameText = CompositeFactory.createText(this, composite,
-				"label.sequence.name", 4, false, true);
-		this.schemaText = CompositeFactory.createText(this, composite,
-				"label.schema", 4, false, true);
+        nameText = CompositeFactory.createText(this, composite, "label.sequence.name", 4, false, true);
+        schemaText = CompositeFactory.createText(this, composite, "label.schema", 4, false, true);
 
-		if (DB2DBManager.ID.equals(diagram.getDatabase())) {
-			this.dataTypeCombo = CompositeFactory.createReadOnlyCombo(this,
-					composite, "Data Type", 2);
-			this.dataTypeCombo.add("BIGINT");
-			this.dataTypeCombo.add("INTEGER");
-			this.dataTypeCombo.add("SMALLINT");
-			this.dataTypeCombo.add("DECIMAL(p)");
+        if (DB2DBManager.ID.equals(diagram.getDatabase())) {
+            dataTypeCombo = CompositeFactory.createReadOnlyCombo(this, composite, "Data Type", 2);
+            dataTypeCombo.add("BIGINT");
+            dataTypeCombo.add("INTEGER");
+            dataTypeCombo.add("SMALLINT");
+            dataTypeCombo.add("DECIMAL(p)");
 
-			this.decimalSizeText = CompositeFactory.createNumText(this,
-					composite, "Size", 1, 30, false);
-			this.decimalSizeText.setEnabled(false);
+            decimalSizeText = CompositeFactory.createNumText(this, composite, "Size", 1, 30, false);
+            decimalSizeText.setEnabled(false);
 
-		} else if (HSQLDBDBManager.ID.equals(database)) {
-			this.dataTypeCombo = CompositeFactory.createReadOnlyCombo(this,
-					composite, "Data Type", 4);
-			this.dataTypeCombo.add("BIGINT");
-			this.dataTypeCombo.add("INTEGER");
+        } else if (HSQLDBDBManager.ID.equals(database)) {
+            dataTypeCombo = CompositeFactory.createReadOnlyCombo(this, composite, "Data Type", 4);
+            dataTypeCombo.add("BIGINT");
+            dataTypeCombo.add("INTEGER");
 
-		}
+        }
 
-		this.incrementText = CompositeFactory.createNumText(this, composite,
-				"Increment", 4, NUMBER_TEXT_SIZE, true);
+        incrementText = CompositeFactory.createNumText(this, composite, "Increment", 4, NUMBER_TEXT_SIZE, true);
 
-		if (!H2DBManager.ID.equals(database)) {
-			this.startText = CompositeFactory.createNumText(this, composite,
-					"Start", 4, NUMBER_TEXT_SIZE, true);
+        if (!H2DBManager.ID.equals(database)) {
+            startText = CompositeFactory.createNumText(this, composite, "Start", 4, NUMBER_TEXT_SIZE, true);
 
-			this.minValueText = CompositeFactory.createNumText(this, composite,
-					"MinValue", 4, NUMBER_TEXT_SIZE, true);
+            minValueText = CompositeFactory.createNumText(this, composite, "MinValue", 4, NUMBER_TEXT_SIZE, true);
 
-			this.maxValueText = CompositeFactory.createNumText(this, composite,
-					"MaxValue", 4, NUMBER_TEXT_SIZE, true);
-		}
+            maxValueText = CompositeFactory.createNumText(this, composite, "MaxValue", 4, NUMBER_TEXT_SIZE, true);
+        }
 
-		if (!HSQLDBDBManager.ID.equals(diagram.getDatabase())) {
-			if (DB2DBManager.ID.equals(diagram.getDatabase())) {
-				this.cacheText = CompositeFactory.createNumText(this,
-						composite, "Cache", 1, NUMBER_TEXT_SIZE, true);
-				this.nocacheCheckBox = CompositeFactory.createCheckbox(this,
-						composite, "nocache", false, 3);
-			} else {
-				this.cacheText = CompositeFactory.createNumText(this,
-						composite, "Cache", 4, NUMBER_TEXT_SIZE, true);
-
-			}
-		}
-
-		if (!H2DBManager.ID.equals(database)) {
-			this.cycleCheckBox = CompositeFactory.createCheckbox(this,
-					composite, "Cycle", false, 5);
-		}
-
-		if (DB2DBManager.ID.equals(diagram.getDatabase())) {
-			this.orderCheckBox = CompositeFactory.createCheckbox(this,
-					composite, "Order", false, 5);
-		}
-
-		this.descriptionText = CompositeFactory.createTextArea(this, composite,
-				"label.description", -1, 100, 4, true);
-	}
-
-	@Override
-	protected String getErrorMessage() {
-		if (!DBManagerFactory.getDBManager(this.diagram).isSupported(
-				DBManager.SUPPORT_SEQUENCE)) {
-			return "error.sequence.not.supported";
-		}
-
-		String text = nameText.getText().trim();
-		if (text.equals("")) {
-			return "error.sequence.name.empty";
-		}
-
-		if (!Check.isAlphabet(text)) {
-			if (this.diagram.getDiagramContents().getSettings()
-					.isValidatePhysicalName()) {
-				return "error.sequence.name.not.alphabet";
-			}
-		}
-
-		text = schemaText.getText();
-
-		if (!Check.isAlphabet(text)) {
-			return "error.schema.not.alphabet";
-		}
-
-		text = incrementText.getText();
-
-		if (!text.equals("")) {
-			try {
-				Integer.parseInt(text);
-
-			} catch (NumberFormatException e) {
-				return "error.sequence.increment.degit";
-			}
-		}
-
-		if (this.minValueText != null) {
-			text = minValueText.getText();
-
-			if (!text.equals("")) {
-				try {
-					Long.parseLong(text);
-
-				} catch (NumberFormatException e) {
-					return "error.sequence.minValue.degit";
-				}
-			}
-		}
-
-		if (this.maxValueText != null) {
-			text = maxValueText.getText();
-
-			if (!text.equals("")) {
-				try {
-					new BigDecimal(text);
-
-				} catch (NumberFormatException e) {
-					return "error.sequence.maxValue.degit";
-				}
-			}
-		}
-
-		if (this.startText != null) {
-			text = this.startText.getText();
-
-			if (!text.equals("")) {
-				try {
-					Long.parseLong(text);
-
-				} catch (NumberFormatException e) {
-					return "error.sequence.start.degit";
-				}
-			}
-		}
-
-		if (this.cacheText != null) {
-			text = cacheText.getText();
-
-			if (!text.equals("")) {
-				try {
-					int cache = Integer.parseInt(text);
-					if (DB2DBManager.ID.equals(this.diagram.getDatabase())) {
-						if (cache < 2) {
-							return "error.sequence.cache.min2";
-						}
-					} else {
-						if (cache < 1) {
-							return "error.sequence.cache.min1";
-						}
-					}
-				} catch (NumberFormatException e) {
-					return "error.sequence.cache.degit";
-				}
-			}
-		}
-
-		if (this.decimalSizeText != null) {
-			text = this.decimalSizeText.getText();
-
-			if (!text.equals("")) {
-
-				try {
-					int size = Integer.parseInt(text);
-					if (size < 0) {
-						return "error.sequence.size.zero";
-					}
-
-				} catch (NumberFormatException e) {
-					return "error.sequence.size.degit";
-				}
-			}
-		}
-
-		return null;
-	}
-
-	@Override
-	protected String getTitle() {
-		return "dialog.title.sequence";
-	}
-
-	@Override
-	protected void perfomeOK() throws InputException {
-		this.result = new Sequence();
-
-		this.result.setName(this.nameText.getText().trim());
-		this.result.setSchema(this.schemaText.getText().trim());
-
-		Integer increment = null;
-		Long minValue = null;
-		BigDecimal maxValue = null;
-		Long start = null;
-		Integer cache = null;
-
-		String text = incrementText.getText();
-		if (!text.equals("")) {
-			increment = Integer.valueOf(text);
-		}
-
-		if (this.minValueText != null) {
-			text = minValueText.getText();
-			if (!text.equals("")) {
-				minValue = Long.valueOf(text);
-			}
-		}
-
-		if (this.maxValueText != null) {
-			text = maxValueText.getText();
-			if (!text.equals("")) {
-				maxValue = new BigDecimal(text);
-			}
-		}
-
-		text = startText.getText();
-		if (!text.equals("")) {
-			start = Long.valueOf(text);
-		}
-
-		if (this.cacheText != null) {
-			text = cacheText.getText();
-			if (!text.equals("")) {
-				cache = Integer.valueOf(text);
-			}
-		}
-
-		this.result.setIncrement(increment);
-		this.result.setMinValue(minValue);
-		this.result.setMaxValue(maxValue);
-		this.result.setStart(start);
-		this.result.setCache(cache);
-
-		if (this.nocacheCheckBox != null) {
-			this.result.setNocache(this.nocacheCheckBox.getSelection());
-		}
-
-		if (this.cycleCheckBox != null) {
-			this.result.setCycle(this.cycleCheckBox.getSelection());
-		}
-
-		if (this.orderCheckBox != null) {
-			this.result.setOrder(this.orderCheckBox.getSelection());
-		}
-
-		this.result.setDescription(this.descriptionText.getText().trim());
-
-		if (this.dataTypeCombo != null) {
-			this.result.setDataType(this.dataTypeCombo.getText());
-			int decimalSize = 0;
-			try {
-				decimalSize = Integer.parseInt(this.decimalSizeText.getText()
-						.trim());
-			} catch (NumberFormatException e) {
-			}
-			this.result.setDecimalSize(decimalSize);
-		}
-	}
-
-	@Override
-	protected void setData() {
-		if (this.sequence != null) {
-			this.nameText.setText(Format.toString(this.sequence.getName()));
-			this.schemaText.setText(Format.toString(this.sequence.getSchema()));
-			this.incrementText.setText(Format.toString(this.sequence
-					.getIncrement()));
-			if (this.minValueText != null) {
-				this.minValueText.setText(Format.toString(this.sequence
-						.getMinValue()));
-			}
-			if (this.maxValueText != null) {
-				this.maxValueText.setText(Format.toString(this.sequence
-						.getMaxValue()));
-			}
-			if (this.startText != null) {
-				this.startText
-						.setText(Format.toString(this.sequence.getStart()));
-			}
-			if (this.cacheText != null) {
-				this.cacheText
-						.setText(Format.toString(this.sequence.getCache()));
-			}
-			if (this.nocacheCheckBox != null) {
-				this.nocacheCheckBox.setSelection(this.sequence.isNocache());
-			}
-			if (this.cycleCheckBox != null) {
-				this.cycleCheckBox.setSelection(this.sequence.isCycle());
-			}
-			if (this.orderCheckBox != null) {
-				this.orderCheckBox.setSelection(this.sequence.isOrder());
-			}
-
-			this.descriptionText.setText(Format.toString(this.sequence
-					.getDescription()));
-
-			if (this.dataTypeCombo != null) {
-				String dataType = Format.toString(this.sequence.getDataType());
-				this.dataTypeCombo.setText(dataType);
-				if (dataType.equals("DECIMAL(p)")
-						&& this.decimalSizeText != null) {
-					this.decimalSizeText.setEnabled(true);
-					this.decimalSizeText.setText(Format.toString(this.sequence
-							.getDecimalSize()));
-				}
-			}
-		}
-	}
-
-	public Sequence getResult() {
-		return result;
-	}
-
-	@Override
-	protected void addListener() {
-		super.addListener();
-
-		if (this.dataTypeCombo != null && this.decimalSizeText != null) {
-			this.dataTypeCombo.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					String dataType = dataTypeCombo.getText();
-
-					if (dataType.equals("DECIMAL(p)")) {
-						decimalSizeText.setEnabled(true);
-
-					} else {
-						decimalSizeText.setEnabled(false);
-					}
-				}
-
-			});
-		}
-
-		if (this.nocacheCheckBox != null) {
-			this.nocacheCheckBox.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (nocacheCheckBox.getSelection()) {
-						cacheText.setEnabled(false);
-
-					} else {
-						cacheText.setEnabled(true);
-					}
-
-				}
-
-			});
-		}
-	}
+        if (!HSQLDBDBManager.ID.equals(diagram.getDatabase())) {
+            if (DB2DBManager.ID.equals(diagram.getDatabase())) {
+                cacheText = CompositeFactory.createNumText(this, composite, "Cache", 1, NUMBER_TEXT_SIZE, true);
+                nocacheCheckBox = CompositeFactory.createCheckbox(this, composite, "nocache", false, 3);
+            } else {
+                cacheText = CompositeFactory.createNumText(this, composite, "Cache", 4, NUMBER_TEXT_SIZE, true);
+
+            }
+        }
+
+        if (!H2DBManager.ID.equals(database)) {
+            cycleCheckBox = CompositeFactory.createCheckbox(this, composite, "Cycle", false, 5);
+        }
+
+        if (DB2DBManager.ID.equals(diagram.getDatabase())) {
+            orderCheckBox = CompositeFactory.createCheckbox(this, composite, "Order", false, 5);
+        }
+
+        descriptionText = CompositeFactory.createTextArea(this, composite, "label.description", -1, 100, 4, true);
+    }
+
+    @Override
+    protected String getErrorMessage() {
+        if (!DBManagerFactory.getDBManager(diagram).isSupported(DBManager.SUPPORT_SEQUENCE)) {
+            return "error.sequence.not.supported";
+        }
+
+        String text = nameText.getText().trim();
+        if (text.equals("")) {
+            return "error.sequence.name.empty";
+        }
+
+        if (!Check.isAlphabet(text)) {
+            if (diagram.getDiagramContents().getSettings().isValidatePhysicalName()) {
+                return "error.sequence.name.not.alphabet";
+            }
+        }
+
+        text = schemaText.getText();
+
+        if (!Check.isAlphabet(text)) {
+            return "error.schema.not.alphabet";
+        }
+
+        text = incrementText.getText();
+
+        if (!text.equals("")) {
+            try {
+                Integer.parseInt(text);
+
+            } catch (final NumberFormatException e) {
+                return "error.sequence.increment.degit";
+            }
+        }
+
+        if (minValueText != null) {
+            text = minValueText.getText();
+
+            if (!text.equals("")) {
+                try {
+                    Long.parseLong(text);
+
+                } catch (final NumberFormatException e) {
+                    return "error.sequence.minValue.degit";
+                }
+            }
+        }
+
+        if (maxValueText != null) {
+            text = maxValueText.getText();
+
+            if (!text.equals("")) {
+                try {
+                    new BigDecimal(text);
+
+                } catch (final NumberFormatException e) {
+                    return "error.sequence.maxValue.degit";
+                }
+            }
+        }
+
+        if (startText != null) {
+            text = startText.getText();
+
+            if (!text.equals("")) {
+                try {
+                    Long.parseLong(text);
+
+                } catch (final NumberFormatException e) {
+                    return "error.sequence.start.degit";
+                }
+            }
+        }
+
+        if (cacheText != null) {
+            text = cacheText.getText();
+
+            if (!text.equals("")) {
+                try {
+                    final int cache = Integer.parseInt(text);
+                    if (DB2DBManager.ID.equals(diagram.getDatabase())) {
+                        if (cache < 2) {
+                            return "error.sequence.cache.min2";
+                        }
+                    } else {
+                        if (cache < 1) {
+                            return "error.sequence.cache.min1";
+                        }
+                    }
+                } catch (final NumberFormatException e) {
+                    return "error.sequence.cache.degit";
+                }
+            }
+        }
+
+        if (decimalSizeText != null) {
+            text = decimalSizeText.getText();
+
+            if (!text.equals("")) {
+
+                try {
+                    final int size = Integer.parseInt(text);
+                    if (size < 0) {
+                        return "error.sequence.size.zero";
+                    }
+
+                } catch (final NumberFormatException e) {
+                    return "error.sequence.size.degit";
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    protected String getTitle() {
+        return "dialog.title.sequence";
+    }
+
+    @Override
+    protected void perfomeOK() throws InputException {
+        result = new Sequence();
+
+        result.setName(nameText.getText().trim());
+        result.setSchema(schemaText.getText().trim());
+
+        Integer increment = null;
+        Long minValue = null;
+        BigDecimal maxValue = null;
+        Long start = null;
+        Integer cache = null;
+
+        String text = incrementText.getText();
+        if (!text.equals("")) {
+            increment = Integer.valueOf(text);
+        }
+
+        if (minValueText != null) {
+            text = minValueText.getText();
+            if (!text.equals("")) {
+                minValue = Long.valueOf(text);
+            }
+        }
+
+        if (maxValueText != null) {
+            text = maxValueText.getText();
+            if (!text.equals("")) {
+                maxValue = new BigDecimal(text);
+            }
+        }
+
+        text = startText.getText();
+        if (!text.equals("")) {
+            start = Long.valueOf(text);
+        }
+
+        if (cacheText != null) {
+            text = cacheText.getText();
+            if (!text.equals("")) {
+                cache = Integer.valueOf(text);
+            }
+        }
+
+        result.setIncrement(increment);
+        result.setMinValue(minValue);
+        result.setMaxValue(maxValue);
+        result.setStart(start);
+        result.setCache(cache);
+
+        if (nocacheCheckBox != null) {
+            result.setNocache(nocacheCheckBox.getSelection());
+        }
+
+        if (cycleCheckBox != null) {
+            result.setCycle(cycleCheckBox.getSelection());
+        }
+
+        if (orderCheckBox != null) {
+            result.setOrder(orderCheckBox.getSelection());
+        }
+
+        result.setDescription(descriptionText.getText().trim());
+
+        if (dataTypeCombo != null) {
+            result.setDataType(dataTypeCombo.getText());
+            int decimalSize = 0;
+            try {
+                decimalSize = Integer.parseInt(decimalSizeText.getText().trim());
+            } catch (final NumberFormatException e) {}
+            result.setDecimalSize(decimalSize);
+        }
+    }
+
+    @Override
+    protected void setData() {
+        if (sequence != null) {
+            nameText.setText(Format.toString(sequence.getName()));
+            schemaText.setText(Format.toString(sequence.getSchema()));
+            incrementText.setText(Format.toString(sequence.getIncrement()));
+            if (minValueText != null) {
+                minValueText.setText(Format.toString(sequence.getMinValue()));
+            }
+            if (maxValueText != null) {
+                maxValueText.setText(Format.toString(sequence.getMaxValue()));
+            }
+            if (startText != null) {
+                startText.setText(Format.toString(sequence.getStart()));
+            }
+            if (cacheText != null) {
+                cacheText.setText(Format.toString(sequence.getCache()));
+            }
+            if (nocacheCheckBox != null) {
+                nocacheCheckBox.setSelection(sequence.isNocache());
+            }
+            if (cycleCheckBox != null) {
+                cycleCheckBox.setSelection(sequence.isCycle());
+            }
+            if (orderCheckBox != null) {
+                orderCheckBox.setSelection(sequence.isOrder());
+            }
+
+            descriptionText.setText(Format.toString(sequence.getDescription()));
+
+            if (dataTypeCombo != null) {
+                final String dataType = Format.toString(sequence.getDataType());
+                dataTypeCombo.setText(dataType);
+                if (dataType.equals("DECIMAL(p)") && decimalSizeText != null) {
+                    decimalSizeText.setEnabled(true);
+                    decimalSizeText.setText(Format.toString(sequence.getDecimalSize()));
+                }
+            }
+        }
+    }
+
+    public Sequence getResult() {
+        return result;
+    }
+
+    @Override
+    protected void addListener() {
+        super.addListener();
+
+        if (dataTypeCombo != null && decimalSizeText != null) {
+            dataTypeCombo.addSelectionListener(new SelectionAdapter() {
+
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    final String dataType = dataTypeCombo.getText();
+
+                    if (dataType.equals("DECIMAL(p)")) {
+                        decimalSizeText.setEnabled(true);
+
+                    } else {
+                        decimalSizeText.setEnabled(false);
+                    }
+                }
+
+            });
+        }
+
+        if (nocacheCheckBox != null) {
+            nocacheCheckBox.addSelectionListener(new SelectionAdapter() {
+
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    if (nocacheCheckBox.getSelection()) {
+                        cacheText.setEnabled(false);
+
+                    } else {
+                        cacheText.setEnabled(true);
+                    }
+
+                }
+
+            });
+        }
+    }
 
 }

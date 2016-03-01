@@ -24,217 +24,208 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ERDiagramEditPart extends AbstractModelEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deactivate() {
-		try {
-			super.deactivate();
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deactivate() {
+        try {
+            super.deactivate();
+        } catch (final Throwable t) {
+            t.printStackTrace();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected IFigure createFigure() {
-		FreeformLayer layer = new FreeformLayer();
-		layer.setLayoutManager(new FreeformLayout());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected IFigure createFigure() {
+        final FreeformLayer layer = new FreeformLayer();
+        layer.setLayoutManager(new FreeformLayout());
 
-		return layer;
-	}
+        return layer;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.LAYOUT_ROLE,
-				new ERDiagramLayoutEditPolicy());
-		this.installEditPolicy("Snap Feedback", new SnapFeedbackPolicy());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.LAYOUT_ROLE, new ERDiagramLayoutEditPolicy());
+        installEditPolicy("Snap Feedback", new SnapFeedbackPolicy());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected List getModelChildren() {
-		List<Object> modelChildren = new ArrayList<Object>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List getModelChildren() {
+        final List<Object> modelChildren = new ArrayList<Object>();
 
-		ERDiagram diagram = (ERDiagram) this.getModel();
+        final ERDiagram diagram = (ERDiagram) getModel();
 
-		// category must be first.
-		modelChildren.addAll(diagram.getDiagramContents().getSettings()
-				.getCategorySetting().getSelectedCategories());
+        // category must be first.
+        modelChildren.addAll(diagram.getDiagramContents().getSettings().getCategorySetting().getSelectedCategories());
 
-		modelChildren.addAll(diagram.getDiagramContents().getContents()
-				.getNodeElementList());
+        modelChildren.addAll(diagram.getDiagramContents().getContents().getNodeElementList());
 
-		if (diagram.getChangeTrackingList().isCalculated()) {
-			modelChildren.addAll(diagram.getChangeTrackingList()
-					.getRemovedNodeElementSet());
-		}
+        if (diagram.getChangeTrackingList().isCalculated()) {
+            modelChildren.addAll(diagram.getChangeTrackingList().getRemovedNodeElementSet());
+        }
 
-		modelChildren.add(diagram.getDiagramContents().getSettings()
-				.getModelProperties());
+        modelChildren.add(diagram.getDiagramContents().getSettings().getModelProperties());
 
-		return modelChildren;
-	}
+        return modelChildren;
+    }
 
-	@Override
-	public void doPropertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals("refreshChildren")) {
-			this.refreshChildren();
+    @Override
+    public void doPropertyChange(final PropertyChangeEvent event) {
+        if (event.getPropertyName().equals("refreshChildren")) {
+            refreshChildren();
 
-		} else if (event.getPropertyName().equals("refreshConnection")) {
-			for (NodeElement nodeElement : this.getDiagram()
-					.getDiagramContents().getContents().getNodeElementList()) {
-				for (ConnectionElement connection : nodeElement.getIncomings()) {
-					connection.refreshVisuals();
-				}
-			}
+        } else if (event.getPropertyName().equals("refreshConnection")) {
+            for (final NodeElement nodeElement : getDiagram().getDiagramContents().getContents().getNodeElementList()) {
+                for (final ConnectionElement connection : nodeElement.getIncomings()) {
+                    connection.refreshVisuals();
+                }
+            }
 
-		} else if (event.getPropertyName().equals("refreshSettings")) {
-			this.refreshChildren();
-			this.refreshSettings();
+        } else if (event.getPropertyName().equals("refreshSettings")) {
+            refreshChildren();
+            refreshSettings();
 
-		} else if (event.getPropertyName().equals("refreshWithConnection")) {
-			this.refresh();
+        } else if (event.getPropertyName().equals("refreshWithConnection")) {
+            refresh();
 
-			for (NodeElement nodeElement : this.getDiagram()
-					.getDiagramContents().getContents().getNodeElementList()) {
-				for (ConnectionElement connection : nodeElement.getIncomings()) {
-					connection.refreshVisuals();
-				}
-			}
+            for (final NodeElement nodeElement : getDiagram().getDiagramContents().getContents().getNodeElementList()) {
+                for (final ConnectionElement connection : nodeElement.getIncomings()) {
+                    connection.refreshVisuals();
+                }
+            }
 
-			this.getViewer().deselectAll();
-			/*
-			 * List<NodeElement> nodeElementList = (List<NodeElement>) event
-			 * .getNewValue();
-			 * 
-			 * if (nodeElementList != null) { SelectionManager selectionManager
-			 * = this.getViewer() .getSelectionManager();
-			 * 
-			 * Map<NodeElement, EditPart> modelToEditPart =
-			 * getModelToEditPart();
-			 * 
-			 * for (NodeElement nodeElement : nodeElementList) {
-			 * selectionManager.appendSelection(modelToEditPart
-			 * .get(nodeElement)); } }
-			 */
-		}
+            getViewer().deselectAll();
+            /*
+             * List<NodeElement> nodeElementList = (List<NodeElement>) event
+             * .getNewValue();
+             * 
+             * if (nodeElementList != null) { SelectionManager selectionManager
+             * = this.getViewer() .getSelectionManager();
+             * 
+             * Map<NodeElement, EditPart> modelToEditPart =
+             * getModelToEditPart();
+             * 
+             * for (NodeElement nodeElement : nodeElementList) {
+             * selectionManager.appendSelection(modelToEditPart
+             * .get(nodeElement)); } }
+             */
+        }
 
-		/*
-		 * } else if (event.getPropertyName()
-		 * .equals(ERDiagram.PROPERTY_CHANGE_ALL)) {
-		 * 
-		 * this.refresh(); this.refreshRelations();
-		 * 
-		 * List<NodeElement> nodeElementList = (List<NodeElement>) event
-		 * .getNewValue();
-		 * 
-		 * if (nodeElementList != null) { this.getViewer().deselectAll();
-		 * SelectionManager selectionManager = this.getViewer()
-		 * .getSelectionManager();
-		 * 
-		 * Map<NodeElement, EditPart> modelToEditPart = getModelToEditPart();
-		 * 
-		 * for (NodeElement nodeElement : nodeElementList) {
-		 * selectionManager.appendSelection(modelToEditPart .get(nodeElement));
-		 * } }
-		 */
+        /*
+         * } else if (event.getPropertyName()
+         * .equals(ERDiagram.PROPERTY_CHANGE_ALL)) {
+         * 
+         * this.refresh(); this.refreshRelations();
+         * 
+         * List<NodeElement> nodeElementList = (List<NodeElement>) event
+         * .getNewValue();
+         * 
+         * if (nodeElementList != null) { this.getViewer().deselectAll();
+         * SelectionManager selectionManager = this.getViewer()
+         * .getSelectionManager();
+         * 
+         * Map<NodeElement, EditPart> modelToEditPart = getModelToEditPart();
+         * 
+         * for (NodeElement nodeElement : nodeElementList) {
+         * selectionManager.appendSelection(modelToEditPart .get(nodeElement));
+         * } }
+         */
 
-		super.doPropertyChange(event);
-	}
+        super.doPropertyChange(event);
+    }
 
-	@Override
-	final public void refresh() {
-		refreshChildren();
-		refreshVisuals();
+    @Override
+    final public void refresh() {
+        refreshChildren();
+        refreshVisuals();
 
-		refreshSourceConnections();
-		refreshTargetConnections();
-	}
+        refreshSourceConnections();
+        refreshTargetConnections();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void refreshVisuals() {
-		ERDiagram element = (ERDiagram) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void refreshVisuals() {
+        final ERDiagram element = (ERDiagram) getModel();
 
-		int[] color = element.getColor();
+        final int[] color = element.getColor();
 
-		if (color != null) {
-			Color bgColor = Resources.getColor(color);
-			this.getViewer().getControl().setBackground(bgColor);
-		}
+        if (color != null) {
+            final Color bgColor = Resources.getColor(color);
+            getViewer().getControl().setBackground(bgColor);
+        }
 
-		for (Object child : this.getChildren()) {
-			if (child instanceof NodeElementEditPart) {
-				NodeElementEditPart part = (NodeElementEditPart) child;
-				part.refreshVisuals();
-			}
-		}
-	}
+        for (final Object child : getChildren()) {
+            if (child instanceof NodeElementEditPart) {
+                final NodeElementEditPart part = (NodeElementEditPart) child;
+                part.refreshVisuals();
+            }
+        }
+    }
 
-	private void refreshSettings() {
-		ERDiagram diagram = (ERDiagram) this.getModel();
-		Settings settings = diagram.getDiagramContents().getSettings();
+    private void refreshSettings() {
+        final ERDiagram diagram = (ERDiagram) getModel();
+        final Settings settings = diagram.getDiagramContents().getSettings();
 
-		for (Object child : this.getChildren()) {
-			if (child instanceof NodeElementEditPart) {
-				NodeElementEditPart part = (NodeElementEditPart) child;
-				part.refreshSettings(settings);
-			}
-		}
-	}
+        for (final Object child : getChildren()) {
+            if (child instanceof NodeElementEditPart) {
+                final NodeElementEditPart part = (NodeElementEditPart) child;
+                part.refreshSettings(settings);
+            }
+        }
+    }
 
-	// private Map<NodeElement, EditPart> getModelToEditPart() {
-	// Map<NodeElement, EditPart> modelToEditPart = new HashMap<NodeElement,
-	// EditPart>();
-	// List children = getChildren();
-	//
-	// for (int i = 0; i < children.size(); i++) {
-	// EditPart editPart = (EditPart) children.get(i);
-	// modelToEditPart.put((NodeElement) editPart.getModel(), editPart);
-	// }
-	//
-	// return modelToEditPart;
-	// }
+    // private Map<NodeElement, EditPart> getModelToEditPart() {
+    // Map<NodeElement, EditPart> modelToEditPart = new HashMap<NodeElement,
+    // EditPart>();
+    // List children = getChildren();
+    //
+    // for (int i = 0; i < children.size(); i++) {
+    // EditPart editPart = (EditPart) children.get(i);
+    // modelToEditPart.put((NodeElement) editPart.getModel(), editPart);
+    // }
+    //
+    // return modelToEditPart;
+    // }
 
-	@Override
-	public Object getAdapter(Class key) {
+    @Override
+    public Object getAdapter(final Class key) {
 
-		if (key == SnapToHelper.class) {
-			List<SnapToHelper> helpers = new ArrayList<SnapToHelper>();
+        if (key == SnapToHelper.class) {
+            final List<SnapToHelper> helpers = new ArrayList<SnapToHelper>();
 
-			helpers.add(new SnapToGeometry(this));
+            helpers.add(new SnapToGeometry(this));
 
-			if (Boolean.TRUE.equals(getViewer().getProperty(
-					SnapToGeometry.PROPERTY_SNAP_ENABLED))) {
-				helpers.add(new SnapToGrid(this));
-			}
+            if (Boolean.TRUE.equals(getViewer().getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED))) {
+                helpers.add(new SnapToGrid(this));
+            }
 
-			// if (Boolean.TRUE.equals(getViewer().getProperty(
-			// SnapToGrid.PROPERTY_GRID_ENABLED))) {
-			// helpers.add(new SnapToGrid(this));
-			// }
+            // if (Boolean.TRUE.equals(getViewer().getProperty(
+            // SnapToGrid.PROPERTY_GRID_ENABLED))) {
+            // helpers.add(new SnapToGrid(this));
+            // }
 
-			if (helpers.size() == 0) {
-				return null;
+            if (helpers.size() == 0) {
+                return null;
 
-			} else {
-				return new CompoundSnapToHelper(
-						helpers.toArray(new SnapToHelper[0]));
-			}
-		}
+            } else {
+                return new CompoundSnapToHelper(helpers.toArray(new SnapToHelper[0]));
+            }
+        }
 
-		return super.getAdapter(key);
-	}
+        return super.getAdapter(key);
+    }
 
 }

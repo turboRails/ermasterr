@@ -5,8 +5,8 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.AdvancedCompo
 
 public class OracleAdvancedComposite extends AdvancedComposite {
 
-	public OracleAdvancedComposite(Composite parent) {
-		super(parent);
-	}
+    public OracleAdvancedComposite(final Composite parent) {
+        super(parent);
+    }
 
 }

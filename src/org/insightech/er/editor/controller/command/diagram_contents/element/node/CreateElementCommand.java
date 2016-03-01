@@ -9,101 +9,99 @@ import org.insightech.er.editor.model.diagram_contents.element.node.Location;
 import org.insightech.er.editor.model.diagram_contents.element.node.NodeElement;
 import org.insightech.er.editor.model.diagram_contents.element.node.category.Category;
 import org.insightech.er.editor.model.diagram_contents.element.node.table.ERTable;
+import org.insightech.er.editor.model.diagram_contents.element.node.table.TableView;
 import org.insightech.er.editor.model.diagram_contents.element.node.view.View;
 
 public class CreateElementCommand extends AbstractCreateElementCommand {
 
-	private NodeElement element;
+    private final NodeElement element;
 
-	private List<NodeElement> enclosedElementList;
+    private final List<NodeElement> enclosedElementList;
 
-	public CreateElementCommand(ERDiagram diagram, NodeElement element, int x,
-			int y, Dimension size, List<NodeElement> enclosedElementList) {
-		super(diagram);
+    public CreateElementCommand(final ERDiagram diagram, final NodeElement element, final int x, final int y, final Dimension size, final List<NodeElement> enclosedElementList) {
+        super(diagram);
 
-		this.element = element;
+        this.element = element;
 
-		if (this.element instanceof Category && size != null) {
-			this.element
-					.setLocation(new Location(x, y, size.width, size.height));
-		} else {
-			this.element.setLocation(new Location(x, y, ERTable.DEFAULT_WIDTH,
-					ERTable.DEFAULT_HEIGHT));
-		}
+        if (this.element instanceof Category && size != null) {
+            this.element.setLocation(new Location(x, y, size.width, size.height));
+        } else {
+            this.element.setLocation(new Location(x, y, TableView.DEFAULT_WIDTH, TableView.DEFAULT_HEIGHT));
+        }
 
-		if (element instanceof ERTable) {
-			ERTable table = (ERTable) element;
-			table.setLogicalName(ERTable.NEW_LOGICAL_NAME);
-			table.setPhysicalName(ERTable.NEW_PHYSICAL_NAME);
+        if (element instanceof ERTable) {
+            final ERTable table = (ERTable) element;
+            table.setLogicalName(ERTable.NEW_LOGICAL_NAME);
+            table.setPhysicalName(ERTable.NEW_PHYSICAL_NAME);
 
-		} else if (element instanceof View) {
-			View view = (View) element;
-			view.setLogicalName(View.NEW_LOGICAL_NAME);
-			view.setPhysicalName(View.NEW_PHYSICAL_NAME);
-		}
+        } else if (element instanceof View) {
+            final View view = (View) element;
+            view.setLogicalName(View.NEW_LOGICAL_NAME);
+            view.setPhysicalName(View.NEW_PHYSICAL_NAME);
+        }
 
-		this.enclosedElementList = enclosedElementList;
-	}
+        this.enclosedElementList = enclosedElementList;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		if (this.element instanceof Category) {
-			Category category = (Category) this.element;
-			category.setName(ResourceString.getResourceString("label.category"));
-			category.setContents(this.enclosedElementList);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        if (element instanceof Category) {
+            final Category category = (Category) element;
+            category.setName(ResourceString.getResourceString("label.category"));
+            category.setContents(enclosedElementList);
 
-			this.diagram.addCategory(category);
+            diagram.addCategory(category);
 
-		} else {
-			this.diagram.addNewContent(this.element);
-			this.addToCategory(this.element);
+        } else {
+            diagram.addNewContent(element);
+            addToCategory(element);
 
-		}
+        }
 
-		this.diagram.refreshChildren();
-		if (this.category != null) {
-			this.category.refresh();
-		}
-	}
+        diagram.refreshChildren();
+        if (category != null) {
+            category.refresh();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		if (this.element instanceof Category) {
-			Category category = (Category) this.element;
-			category.getContents().clear();
-			this.diagram.removeCategory(category);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        if (element instanceof Category) {
+            final Category category = (Category) element;
+            category.getContents().clear();
+            diagram.removeCategory(category);
 
-		} else {
-			this.diagram.removeContent(this.element);
-			this.removeFromCategory(this.element);
+        } else {
+            diagram.removeContent(element);
+            removeFromCategory(element);
 
-		}
+        }
 
-		this.diagram.refreshChildren();
-		
-		if (this.category != null) {
-			this.category.refresh();
-		}
-	}
+        diagram.refreshChildren();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean canExecute() {
-		if (this.element instanceof Category) {
-			if (this.diagram.getCurrentCategory() != null) {
-				return false;
-			}
-		}
+        if (category != null) {
+            category.refresh();
+        }
+    }
 
-		return super.canExecute();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canExecute() {
+        if (element instanceof Category) {
+            if (diagram.getCurrentCategory() != null) {
+                return false;
+            }
+        }
+
+        return super.canExecute();
+    }
 
 }

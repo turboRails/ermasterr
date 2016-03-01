@@ -6,35 +6,35 @@ import org.insightech.er.editor.model.diagram_contents.element.connection.Connec
 
 public class DeleteBendpointCommand extends AbstractCommand {
 
-	private ConnectionElement connection;
+    private final ConnectionElement connection;
 
-	private Bendpoint oldBendpoint;
+    private Bendpoint oldBendpoint;
 
-	private int index;
+    private final int index;
 
-	public DeleteBendpointCommand(ConnectionElement connection, int index) {
-		this.connection = connection;
-		this.index = index;
-	}
+    public DeleteBendpointCommand(final ConnectionElement connection, final int index) {
+        this.connection = connection;
+        this.index = index;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.oldBendpoint = this.connection.getBendpoints().get(index);
-		this.connection.removeBendpoint(index);
-		
-		this.connection.refreshBendpoint();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        oldBendpoint = connection.getBendpoints().get(index);
+        connection.removeBendpoint(index);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.connection.addBendpoint(index, oldBendpoint);
-		
-		this.connection.refreshBendpoint();
-	}
+        connection.refreshBendpoint();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        connection.addBendpoint(index, oldBendpoint);
+
+        connection.refreshBendpoint();
+    }
 }

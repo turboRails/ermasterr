@@ -11,46 +11,45 @@ import org.insightech.er.editor.view.dialog.word.column.real.ColumnDialog;
 
 public class AttributeTabWrapper extends AbstractAttributeTabWrapper {
 
-	private ERTable copyData;
+    private final ERTable copyData;
 
-	public AttributeTabWrapper(TableDialog tableDialog, TabFolder parent,
-			ERTable copyData) {
-		super(tableDialog, parent, copyData);
+    public AttributeTabWrapper(final TableDialog tableDialog, final TabFolder parent, final ERTable copyData) {
+        super(tableDialog, parent, copyData);
 
-		this.copyData = copyData;
-	}
+        this.copyData = copyData;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-		super.validatePage();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {
+        super.validatePage();
 
-		boolean needPrimaryKey = false;
+        boolean needPrimaryKey = false;
 
-		for (Relation relation : this.copyData.getOutgoingRelations()) {
-			if (relation.isReferenceForPK()) {
-				needPrimaryKey = true;
-				break;
-			}
-		}
+        for (final Relation relation : copyData.getOutgoingRelations()) {
+            if (relation.isReferenceForPK()) {
+                needPrimaryKey = true;
+                break;
+            }
+        }
 
-		if (needPrimaryKey) {
-			if (this.copyData.getPrimaryKeySize() == 0) {
-				throw new InputException("error.primary.key.is.referenced");
-			}
-		}
-	}
+        if (needPrimaryKey) {
+            if (copyData.getPrimaryKeySize() == 0) {
+                throw new InputException("error.primary.key.is.referenced");
+            }
+        }
+    }
 
-	@Override
-	protected AbstractColumnDialog createColumnDialog() {
-		return new ColumnDialog(this.getShell(), this.copyData);
-	}
+    @Override
+    protected AbstractColumnDialog createColumnDialog() {
+        return new ColumnDialog(getShell(), copyData);
+    }
 
-	@Override
-	protected String getGroupAddButtonLabel() {
-		return "label.button.add.group.to.table";
-	}
+    @Override
+    protected String getGroupAddButtonLabel() {
+        return "label.button.add.group.to.table";
+    }
 
 }

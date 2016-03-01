@@ -23,455 +23,423 @@ import org.insightech.er.editor.model.diagram_contents.not_element.dictionary.Wo
 import org.insightech.er.editor.model.diagram_contents.not_element.group.ColumnGroup;
 import org.insightech.er.util.Format;
 
-public abstract class TableView extends NodeElement implements ObjectModel,
-		ColumnHolder, Comparable<TableView> {
+public abstract class TableView extends NodeElement implements ObjectModel, ColumnHolder, Comparable<TableView> {
 
-	private static final long serialVersionUID = -4492787972500741281L;
+    private static final long serialVersionUID = -4492787972500741281L;
 
-	public static final int DEFAULT_WIDTH = 120;
+    public static final int DEFAULT_WIDTH = 120;
 
-	public static final int DEFAULT_HEIGHT = 75;
+    public static final int DEFAULT_HEIGHT = 75;
 
-	public static final Comparator<TableView> PHYSICAL_NAME_COMPARATOR = new TableViewPhysicalNameComparator();
+    public static final Comparator<TableView> PHYSICAL_NAME_COMPARATOR = new TableViewPhysicalNameComparator();
 
-	public static final Comparator<TableView> LOGICAL_NAME_COMPARATOR = new TableViewLogicalNameComparator();
+    public static final Comparator<TableView> LOGICAL_NAME_COMPARATOR = new TableViewLogicalNameComparator();
 
-	private String physicalName;
+    private String physicalName;
 
-	private String logicalName;
+    private String logicalName;
 
-	private String description;
+    private String description;
 
-	protected List<Column> columns;
+    protected List<Column> columns;
 
-	protected TableViewProperties tableViewProperties;
+    protected TableViewProperties tableViewProperties;
 
-	public TableView() {
-		this.columns = new ArrayList<Column>();
-	}
+    public TableView() {
+        columns = new ArrayList<Column>();
+    }
 
-	public String getPhysicalName() {
-		return physicalName;
-	}
+    public String getPhysicalName() {
+        return physicalName;
+    }
 
-	public void setPhysicalName(String physicalName) {
-		this.physicalName = physicalName;
-	}
+    public void setPhysicalName(final String physicalName) {
+        this.physicalName = physicalName;
+    }
 
-	public String getLogicalName() {
-		return logicalName;
-	}
+    public String getLogicalName() {
+        return logicalName;
+    }
 
-	public void setLogicalName(String logicalName) {
-		this.logicalName = logicalName;
-	}
+    public void setLogicalName(final String logicalName) {
+        this.logicalName = logicalName;
+    }
 
-	public String getName() {
-		return this.getLogicalName();
-	}
+    @Override
+    public String getName() {
+        return getLogicalName();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public List<Column> getColumns() {
-		return this.columns;
-	}
+    public List<Column> getColumns() {
+        return columns;
+    }
 
-	public abstract TableViewProperties getTableViewProperties();
+    public abstract TableViewProperties getTableViewProperties();
 
-	public List<NormalColumn> getExpandedColumns() {
-		List<NormalColumn> expandedColumns = new ArrayList<NormalColumn>();
+    public List<NormalColumn> getExpandedColumns() {
+        final List<NormalColumn> expandedColumns = new ArrayList<NormalColumn>();
 
-		for (Column column : this.getColumns()) {
-			if (column instanceof NormalColumn) {
-				NormalColumn normalColumn = (NormalColumn) column;
-				expandedColumns.add(normalColumn);
+        for (final Column column : getColumns()) {
+            if (column instanceof NormalColumn) {
+                final NormalColumn normalColumn = (NormalColumn) column;
+                expandedColumns.add(normalColumn);
 
-			} else if (column instanceof ColumnGroup) {
-				ColumnGroup groupColumn = (ColumnGroup) column;
+            } else if (column instanceof ColumnGroup) {
+                final ColumnGroup groupColumn = (ColumnGroup) column;
 
-				expandedColumns.addAll(groupColumn.getColumns());
-			}
-		}
+                expandedColumns.addAll(groupColumn.getColumns());
+            }
+        }
 
-		return expandedColumns;
-	}
+        return expandedColumns;
+    }
 
-	public List<Relation> getIncomingRelations() {
-		List<Relation> relations = new ArrayList<Relation>();
+    public List<Relation> getIncomingRelations() {
+        final List<Relation> relations = new ArrayList<Relation>();
 
-		for (ConnectionElement connection : this.getIncomings()) {
-			if (connection instanceof Relation) {
-				relations.add((Relation) connection);
-			}
-		}
+        for (final ConnectionElement connection : getIncomings()) {
+            if (connection instanceof Relation) {
+                relations.add((Relation) connection);
+            }
+        }
 
-		return relations;
-	}
+        return relations;
+    }
 
-	public List<Relation> getOutgoingRelations() {
-		List<Relation> relations = new ArrayList<Relation>();
+    public List<Relation> getOutgoingRelations() {
+        final List<Relation> relations = new ArrayList<Relation>();
 
-		for (ConnectionElement connection : this.getOutgoings()) {
-			if (connection instanceof Relation) {
-				relations.add((Relation) connection);
-			}
-		}
+        for (final ConnectionElement connection : getOutgoings()) {
+            if (connection instanceof Relation) {
+                relations.add((Relation) connection);
+            }
+        }
 
-		return relations;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setLocation(Location location) {
-		super.setLocation(location);
-	}
-
-	public List<NormalColumn> getNormalColumns() {
-		List<NormalColumn> normalColumns = new ArrayList<NormalColumn>();
-
-		for (Column column : this.columns) {
-			if (column instanceof NormalColumn) {
-				normalColumns.add((NormalColumn) column);
-			}
-		}
-		return normalColumns;
-	}
-
-	public Column getColumn(int index) {
-		return this.columns.get(index);
-	}
-
-	public void setColumns(List<Column> columns) {
-		this.columns = columns;
-
-		for (Column column : columns) {
-			column.setColumnHolder(this);
-		}
-	}
-
-	public void setDirty() {
-	}
-
-	public void addColumn(Column column) {
-		this.columns.add(column);
-		column.setColumnHolder(this);
-	}
-
-	public void addColumn(int index, Column column) {
-		this.columns.add(index, column);
-		column.setColumnHolder(this);
-	}
-
-	public void removeColumn(Column column) {
-		this.columns.remove(column);
-	}
-
-	public TableView copyTableViewData(TableView to) {
-		to.setDiagram(this.getDiagram());
-
-		to.setPhysicalName(this.getPhysicalName());
-		to.setLogicalName(this.getLogicalName());
-		to.setDescription(this.getDescription());
-
-		List<Column> columns = new ArrayList<Column>();
-
-		for (Column fromColumn : this.getColumns()) {
-			if (fromColumn instanceof NormalColumn) {
-				NormalColumn normalColumn = (NormalColumn) fromColumn;
-				NormalColumn copyColumn = new CopyColumn(normalColumn);
-				if (normalColumn.getWord() != null) {
-					copyColumn.setWord(new CopyWord(normalColumn.getWord()));
-				}
-				columns.add(copyColumn);
+        return relations;
+    }
 
-			} else {
-				columns.add(fromColumn);
-			}
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLocation(final Location location) {
+        super.setLocation(location);
+    }
 
-		to.setColumns(columns);
+    public List<NormalColumn> getNormalColumns() {
+        final List<NormalColumn> normalColumns = new ArrayList<NormalColumn>();
 
-		to.setOutgoing(this.getOutgoings());
-		to.setIncoming(this.getIncomings());
-
-		return to;
-	}
-
-	public void restructureData(TableView to) {
-		Dictionary dictionary = this.getDiagram().getDiagramContents()
-				.getDictionary();
-
-		to.setPhysicalName(this.getPhysicalName());
-		to.setLogicalName(this.getLogicalName());
-		to.setDescription(this.getDescription());
-
-		for (NormalColumn toColumn : to.getNormalColumns()) {
-			dictionary.remove(toColumn);
-		}
-
-		List<Column> columns = new ArrayList<Column>();
-
-		List<NormalColumn> newPrimaryKeyColumns = new ArrayList<NormalColumn>();
-
-		for (Column fromColumn : this.getColumns()) {
-			if (fromColumn instanceof NormalColumn) {
-				CopyColumn copyColumn = (CopyColumn) fromColumn;
-
-				CopyWord copyWord = copyColumn.getWord();
-				if (copyColumn.isForeignKey()) {
-					copyWord = null;
-				}
-
-				if (copyWord != null) {
-					Word originalWord = copyColumn.getOriginalWord();
-					dictionary.copyTo(copyWord, originalWord);
-				}
-
-				NormalColumn restructuredColumn = copyColumn
-						.getRestructuredColumn();
-
-				restructuredColumn.setColumnHolder(this);
-				if (copyWord == null) {
-					restructuredColumn.setWord(null);
-				}
-				columns.add(restructuredColumn);
-
-				if (restructuredColumn.isPrimaryKey()) {
-					newPrimaryKeyColumns.add(restructuredColumn);
-				}
-
-				dictionary.add(restructuredColumn);
-
-				if (restructuredColumn.isForeignKey()) {
-					for (Relation relation : restructuredColumn
-							.getRelationList()) {
-						relation.setNotNullOfForeignKey(restructuredColumn
-								.isNotNull());
-					}
-				}
-
-			} else {
-				columns.add(fromColumn);
-			}
-		}
-
-		to.setColumns(columns);
-
-		this.setTargetTableRelation(to, newPrimaryKeyColumns);
-	}
-
-	private void setTargetTableRelation(TableView sourceTable,
-			List<NormalColumn> newPrimaryKeyColumns) {
-		for (Relation relation : sourceTable.getOutgoingRelations()) {
-
-			if (relation.isReferenceForPK()) {
-				TableView targetTable = relation.getTargetTableView();
-
-				List<NormalColumn> foreignKeyColumns = relation
-						.getForeignKeyColumns();
-
-				boolean isPrimary = true;
-				boolean isPrimaryChanged = false;
-
-				for (NormalColumn newPrimaryKeyColumn : newPrimaryKeyColumns) {
-					boolean isNewPrimaryKeyReferenced = false;
-
-					for (Iterator<NormalColumn> iter = foreignKeyColumns
-							.iterator(); iter.hasNext();) {
-
-						NormalColumn foreignKeyColumn = iter.next();
-
-						if (isPrimary) {
-							isPrimary = foreignKeyColumn.isPrimaryKey();
-						}
-
-						for (NormalColumn referencedColumn : foreignKeyColumn
-								.getReferencedColumnList()) {
-
-							if (referencedColumn == newPrimaryKeyColumn) {
-								isNewPrimaryKeyReferenced = true;
-								iter.remove();
-								break;
-							}
-						}
-
-						if (isNewPrimaryKeyReferenced) {
-							break;
-						}
-					}
-
-					if (!isNewPrimaryKeyReferenced) {
-						if (isPrimary) {
-							isPrimaryChanged = true;
-						}
-						NormalColumn foreignKeyColumn = newPrimaryKeyColumn
-								.createForeignKey(relation, isPrimary);
-
-						targetTable.addColumn(foreignKeyColumn);
-					}
-				}
-
-				for (NormalColumn removedColumn : foreignKeyColumns) {
-					if (removedColumn.isPrimaryKey()) {
-						isPrimaryChanged = true;
-					}
-					targetTable.removeColumn(removedColumn);
-				}
-
-				if (isPrimaryChanged) {
-					List<NormalColumn> nextNewPrimaryKeyColumns = ((ERTable) targetTable)
-							.getPrimaryKeys();
-
-					this.setTargetTableRelation(targetTable,
-							nextNewPrimaryKeyColumns);
-				}
-
-				// targetTable.setDirty();
-			}
-		}
-	}
-
-	public int compareTo(TableView other) {
-		return PHYSICAL_NAME_COMPARATOR.compare(this, other);
-	}
-
-	public void replaceColumnGroup(ColumnGroup oldColumnGroup,
-			ColumnGroup newColumnGroup) {
-		int index = this.columns.indexOf(oldColumnGroup);
-		if (index != -1) {
-			this.columns.remove(index);
-			this.columns.add(index, newColumnGroup);
-		}
-	}
-
-	public String getNameWithSchema(String database) {
-		StringBuilder sb = new StringBuilder();
-
-		DBManager dbManager = DBManagerFactory.getDBManager(database);
-
-		if (!dbManager.isSupported(DBManager.SUPPORT_SCHEMA)) {
-			return Format.null2blank(this.getPhysicalName());
-		}
-
-		TableViewProperties commonTableViewProperties = this.getDiagram()
-				.getDiagramContents().getSettings().getTableViewProperties();
-
-		String schema = this.getTableViewProperties().getSchema();
-
-		if (schema == null || schema.equals("")) {
-			schema = commonTableViewProperties.getSchema();
-		}
-
-		if (schema != null && !schema.equals("")) {
-			sb.append(schema);
-			sb.append(".");
-		}
-
-		sb.append(this.getPhysicalName());
-
-		return sb.toString();
-	}
-
-	public abstract TableView copyData();
-
-	private static class TableViewPhysicalNameComparator implements
-			Comparator<TableView> {
-
-		public int compare(TableView o1, TableView o2) {
-			if (o1 == o2) {
-				return 0;
-			}
-			if (o2 == null) {
-				return -1;
-			}
-			if (o1 == null) {
-				return 1;
-			}
-
-			int compareTo = Format
-					.null2blank(o1.getTableViewProperties().getSchema())
-					.toUpperCase()
-					.compareTo(
-							Format.null2blank(
-									o2.getTableViewProperties().getSchema())
-									.toUpperCase());
-
-			if (compareTo != 0) {
-				return compareTo;
-			}
-
-			int value = 0;
-
-			value = Format
-					.null2blank(o1.physicalName)
-					.toUpperCase()
-					.compareTo(Format.null2blank(o2.physicalName).toUpperCase());
-			if (value != 0) {
-				return value;
-			}
-
-			value = Format.null2blank(o1.logicalName).toUpperCase()
-					.compareTo(Format.null2blank(o2.logicalName).toUpperCase());
-			if (value != 0) {
-				return value;
-			}
-
-			return 0;
-		}
-
-	}
-
-	private static class TableViewLogicalNameComparator implements
-			Comparator<TableView> {
-
-		public int compare(TableView o1, TableView o2) {
-			if (o1 == o2) {
-				return 0;
-			}
-			if (o2 == null) {
-				return -1;
-			}
-			if (o1 == null) {
-				return 1;
-			}
-
-			int compareTo = Format
-					.null2blank(o1.getTableViewProperties().getSchema())
-					.toUpperCase()
-					.compareTo(
-							Format.null2blank(
-									o2.getTableViewProperties().getSchema())
-									.toUpperCase());
-
-			if (compareTo != 0) {
-				return compareTo;
-			}
-
-			int value = 0;
-
-			value = Format.null2blank(o1.logicalName).toUpperCase()
-					.compareTo(Format.null2blank(o2.logicalName).toUpperCase());
-			if (value != 0) {
-				return value;
-			}
-
-			value = Format
-					.null2blank(o1.physicalName)
-					.toUpperCase()
-					.compareTo(Format.null2blank(o2.physicalName).toUpperCase());
-			if (value != 0) {
-				return value;
-			}
-
-			return 0;
-		}
-	}
+        for (final Column column : columns) {
+            if (column instanceof NormalColumn) {
+                normalColumns.add((NormalColumn) column);
+            }
+        }
+        return normalColumns;
+    }
+
+    public Column getColumn(final int index) {
+        return columns.get(index);
+    }
+
+    public void setColumns(final List<Column> columns) {
+        this.columns = columns;
+
+        for (final Column column : columns) {
+            column.setColumnHolder(this);
+        }
+    }
+
+    public void setDirty() {}
+
+    public void addColumn(final Column column) {
+        columns.add(column);
+        column.setColumnHolder(this);
+    }
+
+    public void addColumn(final int index, final Column column) {
+        columns.add(index, column);
+        column.setColumnHolder(this);
+    }
+
+    public void removeColumn(final Column column) {
+        columns.remove(column);
+    }
+
+    public TableView copyTableViewData(final TableView to) {
+        to.setDiagram(getDiagram());
+
+        to.setPhysicalName(getPhysicalName());
+        to.setLogicalName(getLogicalName());
+        to.setDescription(getDescription());
+
+        final List<Column> columns = new ArrayList<Column>();
+
+        for (final Column fromColumn : getColumns()) {
+            if (fromColumn instanceof NormalColumn) {
+                final NormalColumn normalColumn = (NormalColumn) fromColumn;
+                final NormalColumn copyColumn = new CopyColumn(normalColumn);
+                if (normalColumn.getWord() != null) {
+                    copyColumn.setWord(new CopyWord(normalColumn.getWord()));
+                }
+                columns.add(copyColumn);
+
+            } else {
+                columns.add(fromColumn);
+            }
+        }
+
+        to.setColumns(columns);
+
+        to.setOutgoing(getOutgoings());
+        to.setIncoming(getIncomings());
+
+        return to;
+    }
+
+    public void restructureData(final TableView to) {
+        final Dictionary dictionary = getDiagram().getDiagramContents().getDictionary();
+
+        to.setPhysicalName(getPhysicalName());
+        to.setLogicalName(getLogicalName());
+        to.setDescription(getDescription());
+
+        for (final NormalColumn toColumn : to.getNormalColumns()) {
+            dictionary.remove(toColumn);
+        }
+
+        final List<Column> columns = new ArrayList<Column>();
+
+        final List<NormalColumn> newPrimaryKeyColumns = new ArrayList<NormalColumn>();
+
+        for (final Column fromColumn : getColumns()) {
+            if (fromColumn instanceof NormalColumn) {
+                final CopyColumn copyColumn = (CopyColumn) fromColumn;
+
+                CopyWord copyWord = copyColumn.getWord();
+                if (copyColumn.isForeignKey()) {
+                    copyWord = null;
+                }
+
+                if (copyWord != null) {
+                    final Word originalWord = copyColumn.getOriginalWord();
+                    dictionary.copyTo(copyWord, originalWord);
+                }
+
+                final NormalColumn restructuredColumn = copyColumn.getRestructuredColumn();
+
+                restructuredColumn.setColumnHolder(this);
+                if (copyWord == null) {
+                    restructuredColumn.setWord(null);
+                }
+                columns.add(restructuredColumn);
+
+                if (restructuredColumn.isPrimaryKey()) {
+                    newPrimaryKeyColumns.add(restructuredColumn);
+                }
+
+                dictionary.add(restructuredColumn);
+
+                if (restructuredColumn.isForeignKey()) {
+                    for (final Relation relation : restructuredColumn.getRelationList()) {
+                        relation.setNotNullOfForeignKey(restructuredColumn.isNotNull());
+                    }
+                }
+
+            } else {
+                columns.add(fromColumn);
+            }
+        }
+
+        to.setColumns(columns);
+
+        setTargetTableRelation(to, newPrimaryKeyColumns);
+    }
+
+    private void setTargetTableRelation(final TableView sourceTable, final List<NormalColumn> newPrimaryKeyColumns) {
+        for (final Relation relation : sourceTable.getOutgoingRelations()) {
+
+            if (relation.isReferenceForPK()) {
+                final TableView targetTable = relation.getTargetTableView();
+
+                final List<NormalColumn> foreignKeyColumns = relation.getForeignKeyColumns();
+
+                boolean isPrimary = true;
+                boolean isPrimaryChanged = false;
+
+                for (final NormalColumn newPrimaryKeyColumn : newPrimaryKeyColumns) {
+                    boolean isNewPrimaryKeyReferenced = false;
+
+                    for (final Iterator<NormalColumn> iter = foreignKeyColumns.iterator(); iter.hasNext();) {
+
+                        final NormalColumn foreignKeyColumn = iter.next();
+
+                        if (isPrimary) {
+                            isPrimary = foreignKeyColumn.isPrimaryKey();
+                        }
+
+                        for (final NormalColumn referencedColumn : foreignKeyColumn.getReferencedColumnList()) {
+
+                            if (referencedColumn == newPrimaryKeyColumn) {
+                                isNewPrimaryKeyReferenced = true;
+                                iter.remove();
+                                break;
+                            }
+                        }
+
+                        if (isNewPrimaryKeyReferenced) {
+                            break;
+                        }
+                    }
+
+                    if (!isNewPrimaryKeyReferenced) {
+                        if (isPrimary) {
+                            isPrimaryChanged = true;
+                        }
+                        final NormalColumn foreignKeyColumn = newPrimaryKeyColumn.createForeignKey(relation, isPrimary);
+
+                        targetTable.addColumn(foreignKeyColumn);
+                    }
+                }
+
+                for (final NormalColumn removedColumn : foreignKeyColumns) {
+                    if (removedColumn.isPrimaryKey()) {
+                        isPrimaryChanged = true;
+                    }
+                    targetTable.removeColumn(removedColumn);
+                }
+
+                if (isPrimaryChanged) {
+                    final List<NormalColumn> nextNewPrimaryKeyColumns = ((ERTable) targetTable).getPrimaryKeys();
+
+                    setTargetTableRelation(targetTable, nextNewPrimaryKeyColumns);
+                }
+
+                // targetTable.setDirty();
+            }
+        }
+    }
+
+    @Override
+    public int compareTo(final TableView other) {
+        return PHYSICAL_NAME_COMPARATOR.compare(this, other);
+    }
+
+    public void replaceColumnGroup(final ColumnGroup oldColumnGroup, final ColumnGroup newColumnGroup) {
+        final int index = columns.indexOf(oldColumnGroup);
+        if (index != -1) {
+            columns.remove(index);
+            columns.add(index, newColumnGroup);
+        }
+    }
+
+    public String getNameWithSchema(final String database) {
+        final StringBuilder sb = new StringBuilder();
+
+        final DBManager dbManager = DBManagerFactory.getDBManager(database);
+
+        if (!dbManager.isSupported(DBManager.SUPPORT_SCHEMA)) {
+            return Format.null2blank(getPhysicalName());
+        }
+
+        final TableViewProperties commonTableViewProperties = getDiagram().getDiagramContents().getSettings().getTableViewProperties();
+
+        String schema = getTableViewProperties().getSchema();
+
+        if (schema == null || schema.equals("")) {
+            schema = commonTableViewProperties.getSchema();
+        }
+
+        if (schema != null && !schema.equals("")) {
+            sb.append(schema);
+            sb.append(".");
+        }
+
+        sb.append(getPhysicalName());
+
+        return sb.toString();
+    }
+
+    public abstract TableView copyData();
+
+    private static class TableViewPhysicalNameComparator implements Comparator<TableView> {
+
+        @Override
+        public int compare(final TableView o1, final TableView o2) {
+            if (o1 == o2) {
+                return 0;
+            }
+            if (o2 == null) {
+                return -1;
+            }
+            if (o1 == null) {
+                return 1;
+            }
+
+            final int compareTo = Format.null2blank(o1.getTableViewProperties().getSchema()).toUpperCase().compareTo(Format.null2blank(o2.getTableViewProperties().getSchema()).toUpperCase());
+
+            if (compareTo != 0) {
+                return compareTo;
+            }
+
+            int value = 0;
+
+            value = Format.null2blank(o1.physicalName).toUpperCase().compareTo(Format.null2blank(o2.physicalName).toUpperCase());
+            if (value != 0) {
+                return value;
+            }
+
+            value = Format.null2blank(o1.logicalName).toUpperCase().compareTo(Format.null2blank(o2.logicalName).toUpperCase());
+            if (value != 0) {
+                return value;
+            }
+
+            return 0;
+        }
+
+    }
+
+    private static class TableViewLogicalNameComparator implements Comparator<TableView> {
+
+        @Override
+        public int compare(final TableView o1, final TableView o2) {
+            if (o1 == o2) {
+                return 0;
+            }
+            if (o2 == null) {
+                return -1;
+            }
+            if (o1 == null) {
+                return 1;
+            }
+
+            final int compareTo = Format.null2blank(o1.getTableViewProperties().getSchema()).toUpperCase().compareTo(Format.null2blank(o2.getTableViewProperties().getSchema()).toUpperCase());
+
+            if (compareTo != 0) {
+                return compareTo;
+            }
+
+            int value = 0;
+
+            value = Format.null2blank(o1.logicalName).toUpperCase().compareTo(Format.null2blank(o2.logicalName).toUpperCase());
+            if (value != 0) {
+                return value;
+            }
+
+            value = Format.null2blank(o1.physicalName).toUpperCase().compareTo(Format.null2blank(o2.physicalName).toUpperCase());
+            if (value != 0) {
+                return value;
+            }
+
+            return 0;
+        }
+    }
 }

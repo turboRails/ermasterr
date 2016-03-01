@@ -17,62 +17,58 @@ import org.insightech.er.editor.model.ERDiagram;
 import org.insightech.er.editor.model.diagram_contents.element.node.table.index.Index;
 import org.insightech.er.editor.view.dialog.element.table.sub.IndexDialog;
 
-public class IndexOutlineEditPart extends AbstractOutlineEditPart implements
-		DeleteableEditPart {
+public class IndexOutlineEditPart extends AbstractOutlineEditPart implements DeleteableEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		Index index = (Index) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        final Index index = (Index) getModel();
 
-		this.setWidgetText(this.getDiagram().filter(index.getName()));
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.INDEX));
-	}
+        setWidgetText(getDiagram().filter(index.getName()));
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.INDEX));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new IndexComponentEditPolicy());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new IndexComponentEditPolicy());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DragTracker getDragTracker(Request req) {
-		return new SelectEditPartTracker(this);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DragTracker getDragTracker(final Request req) {
+        return new SelectEditPartTracker(this);
+    }
 
-	public boolean isDeleteable() {
-		return true;
-	}
+    @Override
+    public boolean isDeleteable() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		Index index = (Index) this.getModel();
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        final Index index = (Index) getModel();
+        final ERDiagram diagram = getDiagram();
 
-		if (request.getType().equals(RequestConstants.REQ_OPEN)) {
-			IndexDialog dialog = new IndexDialog(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), index,
-					index.getTable());
+        if (request.getType().equals(RequestConstants.REQ_OPEN)) {
+            final IndexDialog dialog = new IndexDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), index, index.getTable());
 
-			if (dialog.open() == IDialogConstants.OK_ID) {
-				ChangeIndexCommand command = new ChangeIndexCommand(diagram,
-						index, dialog.getResultIndex());
+            if (dialog.open() == IDialogConstants.OK_ID) {
+                final ChangeIndexCommand command = new ChangeIndexCommand(diagram, index, dialog.getResultIndex());
 
-				this.execute(command);
-			}
-		}
+                execute(command);
+            }
+        }
 
-		super.performRequest(request);
-	}
+        super.performRequest(request);
+    }
 }

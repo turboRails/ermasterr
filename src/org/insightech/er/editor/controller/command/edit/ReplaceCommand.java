@@ -7,50 +7,47 @@ import org.insightech.er.editor.model.search.ReplaceResult;
 
 public class ReplaceCommand extends AbstractCommand {
 
-	private int type;
+    private final int type;
 
-	private Object object;
+    private final Object object;
 
-	private String keyword;
+    private final String keyword;
 
-	private String replaceWord;
+    private final String replaceWord;
 
-	private ReplaceResult result;
+    private ReplaceResult result;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	public ReplaceCommand(ERDiagram diagram, int type, Object object,
-			String keyword, String replaceWord) {
-		this.diagram = diagram;
+    public ReplaceCommand(final ERDiagram diagram, final int type, final Object object, final String keyword, final String replaceWord) {
+        this.diagram = diagram;
 
-		this.type = type;
-		this.object = object;
-		this.keyword = keyword;
-		this.replaceWord = replaceWord;
-	}
+        this.type = type;
+        this.object = object;
+        this.keyword = keyword;
+        this.replaceWord = replaceWord;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.result = ReplaceManager.replace(this.type, this.object,
-				this.keyword, this.replaceWord, this.diagram.getDatabase());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        result = ReplaceManager.replace(type, object, keyword, replaceWord, diagram.getDatabase());
 
-		this.diagram.refreshVisuals();
-	}
+        diagram.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		if (this.result != null) {
-			ReplaceManager.undo(this.type, this.object,
-					this.result.getOriginal(), this.diagram.getDatabase());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        if (result != null) {
+            ReplaceManager.undo(type, object, result.getOriginal(), diagram.getDatabase());
 
-			this.diagram.refreshVisuals();
-		}
-	}
+            diagram.refreshVisuals();
+        }
+    }
 
 }

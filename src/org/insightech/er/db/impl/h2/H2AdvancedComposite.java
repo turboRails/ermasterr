@@ -5,18 +5,16 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.AdvancedCompo
 
 public class H2AdvancedComposite extends AdvancedComposite {
 
-	public H2AdvancedComposite(Composite parent) {
-		super(parent);
-	}
+    public H2AdvancedComposite(final Composite parent) {
+        super(parent);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initComposite() {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initComposite() {}
 
-	@Override
-	public void setInitFocus() {
-	}
+    @Override
+    public void setInitFocus() {}
 }

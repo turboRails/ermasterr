@@ -2,84 +2,84 @@ package org.insightech.er.editor.model.dbexport.ddl.validator;
 
 public class ValidateResult {
 
-	private String message;
+    private String message;
 
-	private String location;
+    private String location;
 
-	private int severity;
-	
-	private Object object;
+    private int severity;
 
-	/**
-	 * object ‚ğæ“¾‚µ‚Ü‚·.
-	 *
-	 * @return object
-	 */
-	public Object getObject() {
-		return object;
-	}
+    private Object object;
 
-	/**
-	 * object ‚ğİ’è‚µ‚Ü‚·.
-	 *
-	 * @param object object
-	 */
-	public void setObject(Object object) {
-		this.object = object;
-	}
+    /**
+     * object ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     *
+     * @return object
+     */
+    public Object getObject() {
+        return object;
+    }
 
-	/**
-	 * message ‚ğæ“¾‚µ‚Ü‚·.
-	 *
-	 * @return message
-	 */
-	public String getMessage() {
-		return message;
-	}
+    /**
+     * object ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     *
+     * @param object object
+     */
+    public void setObject(final Object object) {
+        this.object = object;
+    }
 
-	/**
-	 * message ‚ğİ’è‚µ‚Ü‚·.
-	 *
-	 * @param message message
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    /**
+     * message ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     *
+     * @return message
+     */
+    public String getMessage() {
+        return message;
+    }
 
-	/**
-	 * location ‚ğæ“¾‚µ‚Ü‚·.
-	 *
-	 * @return location
-	 */
-	public String getLocation() {
-		return location;
-	}
+    /**
+     * message ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     *
+     * @param message message
+     */
+    public void setMessage(final String message) {
+        this.message = message;
+    }
 
-	/**
-	 * location ‚ğİ’è‚µ‚Ü‚·.
-	 *
-	 * @param location location
-	 */
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    /**
+     * location ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     *
+     * @return location
+     */
+    public String getLocation() {
+        return location;
+    }
 
-	/**
-	 * severity ‚ğæ“¾‚µ‚Ü‚·.
-	 *
-	 * @return severity
-	 */
-	public int getSeverity() {
-		return severity;
-	}
+    /**
+     * location ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     *
+     * @param location location
+     */
+    public void setLocation(final String location) {
+        this.location = location;
+    }
 
-	/**
-	 * severity ‚ğİ’è‚µ‚Ü‚·.
-	 *
-	 * @param severity severity
-	 */
-	public void setSeverity(int severity) {
-		this.severity = severity;
-	}
+    /**
+     * severity ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     *
+     * @return severity
+     */
+    public int getSeverity() {
+        return severity;
+    }
+
+    /**
+     * severity ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     *
+     * @param severity severity
+     */
+    public void setSeverity(final int severity) {
+        this.severity = severity;
+    }
 
 }

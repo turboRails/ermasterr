@@ -5,52 +5,50 @@ import org.insightech.er.editor.model.diagram_contents.element.connection.Connec
 
 public class ChangeConnectionColorCommand extends AbstractCommand {
 
-	private ConnectionElement connection;
+    private final ConnectionElement connection;
 
-	private int red;
+    private final int red;
 
-	private int green;
+    private final int green;
 
-	private int blue;
+    private final int blue;
 
-	private int[] oldColor;
+    private int[] oldColor;
 
-	public ChangeConnectionColorCommand(ConnectionElement connection, int red,
-			int green, int blue) {
-		this.connection = connection;
+    public ChangeConnectionColorCommand(final ConnectionElement connection, final int red, final int green, final int blue) {
+        this.connection = connection;
 
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
-	}
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.oldColor = this.connection.getColor();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        oldColor = connection.getColor();
 
-		this.connection.setColor(red, green, blue);
+        connection.setColor(red, green, blue);
 
-		this.connection.refreshVisuals();
-	}
+        connection.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		if (this.oldColor == null) {
-			this.oldColor = new int[3];
-			this.oldColor[0] = 0;
-			this.oldColor[1] = 0;
-			this.oldColor[2] = 0;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        if (oldColor == null) {
+            oldColor = new int[3];
+            oldColor[0] = 0;
+            oldColor[1] = 0;
+            oldColor[2] = 0;
+        }
 
-		this.connection.setColor(this.oldColor[0], this.oldColor[1],
-				this.oldColor[2]);
+        connection.setColor(oldColor[0], oldColor[1], oldColor[2]);
 
-		this.connection.refreshVisuals();
-	}
+        connection.refreshVisuals();
+    }
 }

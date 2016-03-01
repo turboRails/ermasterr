@@ -6,38 +6,37 @@ import org.insightech.er.editor.model.diagram_contents.element.node.category.Cat
 
 public class ChangeCategoryNameCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private String oldName;
+    private final String oldName;
 
-	private String newName;
+    private final String newName;
 
-	private Category category;
+    private final Category category;
 
-	public ChangeCategoryNameCommand(ERDiagram diagram, Category category,
-			String newName) {
-		this.diagram = diagram;
-		this.category = category;
-		this.newName = newName;
+    public ChangeCategoryNameCommand(final ERDiagram diagram, final Category category, final String newName) {
+        this.diagram = diagram;
+        this.category = category;
+        this.newName = newName;
 
-		this.oldName = category.getName();
-	}
+        oldName = category.getName();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.category.setName(this.newName);
-		this.diagram.setCurrentCategoryPageName();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        category.setName(newName);
+        diagram.setCurrentCategoryPageName();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.category.setName(this.oldName);
-		this.diagram.setCurrentCategoryPageName();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        category.setName(oldName);
+        diagram.setCurrentCategoryPageName();
+    }
 }

@@ -15,69 +15,68 @@ import org.insightech.er.db.DBManagerFactory;
 
 public class NewDiagramWizardPage2 extends WizardPage {
 
-	private Combo databaseCombo;
+    private Combo databaseCombo;
 
-	public NewDiagramWizardPage2(IStructuredSelection selection) {
-		super(ResourceString.getResourceString("wizard.new.diagram.title"));
-		this.setTitle(ResourceString
-				.getResourceString("wizard.new.diagram.title"));
-	}
+    public NewDiagramWizardPage2(final IStructuredSelection selection) {
+        super(ResourceString.getResourceString("wizard.new.diagram.title"));
+        setTitle(ResourceString.getResourceString("wizard.new.diagram.title"));
+    }
 
-	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
+    @Override
+    public void createControl(final Composite parent) {
+        final Composite composite = new Composite(parent, SWT.NULL);
 
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        composite.setLayout(layout);
 
-		Label label = new Label(composite, SWT.NULL);
-		label.setText(ResourceString.getResourceString("label.database"));
+        final Label label = new Label(composite, SWT.NULL);
+        label.setText(ResourceString.getResourceString("label.database"));
 
-		this.databaseCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		GridData dbData = new GridData(GridData.FILL_HORIZONTAL);
-		dbData.widthHint = 200;
-		this.databaseCombo.setLayoutData(dbData);
-		this.databaseCombo.setVisibleItemCount(10);
+        databaseCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+        final GridData dbData = new GridData(GridData.FILL_HORIZONTAL);
+        dbData.widthHint = 200;
+        databaseCombo.setLayoutData(dbData);
+        databaseCombo.setVisibleItemCount(10);
 
-		for (String db : DBManagerFactory.getAllDBList()) {
-			this.databaseCombo.add(db);
-		}
+        for (final String db : DBManagerFactory.getAllDBList()) {
+            databaseCombo.add(db);
+        }
 
-		this.databaseCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				validatePage();
-			}
-		});
+        databaseCombo.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(final ModifyEvent e) {
+                validatePage();
+            }
+        });
 
-		this.databaseCombo.setFocus();
+        databaseCombo.setFocus();
 
-		this.validatePage();
+        validatePage();
 
-		this.setControl(composite);
-	}
+        setControl(composite);
+    }
 
-	protected boolean validatePage() {
-		boolean valid = true;
+    protected boolean validatePage() {
+        boolean valid = true;
 
-		if (this.databaseCombo.getText().length() == 0) {
-			setMessage(ResourceString
-					.getResourceString("select.database.message"));
-			valid = false;
+        if (databaseCombo.getText().length() == 0) {
+            setMessage(ResourceString.getResourceString("select.database.message"));
+            valid = false;
 
-			this.setPageComplete(false);
-		}
+            setPageComplete(false);
+        }
 
-		if (valid) {
-			this.setPageComplete(true);
+        if (valid) {
+            setPageComplete(true);
 
-			setMessage(ResourceString
-					.getResourceString("wizard.new.diagram.message"));
-		}
+            setMessage(ResourceString.getResourceString("wizard.new.diagram.message"));
+        }
 
-		return valid;
-	}
+        return valid;
+    }
 
-	public String getDatabase() {
-		return this.databaseCombo.getText();
-	}
+    public String getDatabase() {
+        return databaseCombo.getText();
+    }
 }

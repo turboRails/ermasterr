@@ -23,124 +23,118 @@ import org.insightech.er.util.Check;
 
 public class ExportToDBDialog extends AbstractDialog {
 
-	private Text textArea;
+    private Text textArea;
 
-	private DBSetting dbSetting;
+    private final DBSetting dbSetting;
 
-	private String ddl;
+    private final String ddl;
 
-	public ExportToDBDialog(Shell parentShell, ERDiagram diagram,
-			DBSetting dbSetting, String ddl) {
-		super(parentShell);
+    public ExportToDBDialog(final Shell parentShell, final ERDiagram diagram, final DBSetting dbSetting, final String ddl) {
+        super(parentShell);
 
-		this.dbSetting = dbSetting;
-		this.ddl = ddl;
-	}
+        this.dbSetting = dbSetting;
+        this.ddl = ddl;
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
-		layout.numColumns = 1;
-	}
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
+        layout.numColumns = 1;
+    }
 
-	@Override
-	protected void initialize(Composite composite) {
-		this.textArea = CompositeFactory.createTextArea(null, composite,
-				"dialog.message.export.db.sql", 600, 400, 1, false, false);
-	}
+    @Override
+    protected void initialize(final Composite composite) {
+        textArea = CompositeFactory.createTextArea(null, composite, "dialog.message.export.db.sql", 600, 400, 1, false, false);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		this.createButton(parent, IDialogConstants.OK_ID,
-				ResourceString.getResourceString("label.button.execute"), true);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createButtonsForButtonBar(final Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, ResourceString.getResourceString("label.button.execute"), true);
+    }
 
-	@Override
-	protected String getErrorMessage() {
-		if ("".equals(this.textArea.getText().trim())) {
-			return "";
-		}
+    @Override
+    protected String getErrorMessage() {
+        if ("".equals(textArea.getText().trim())) {
+            return "";
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected String getTitle() {
-		return "dialog.title.export.db";
-	}
+    @Override
+    protected String getTitle() {
+        return "dialog.title.export.db";
+    }
 
-	@Override
-	protected void perfomeOK() throws InputException {
-		String executeDDL = this.textArea.getSelectionText();
-		if (Check.isEmpty(executeDDL)) {
-			executeDDL = this.textArea.getText();
-		}
+    @Override
+    protected void perfomeOK() throws InputException {
+        String executeDDL = textArea.getSelectionText();
+        if (Check.isEmpty(executeDDL)) {
+            executeDDL = textArea.getText();
+        }
 
-		if (!ERDiagramActivator.showConfirmDialog("dialog.message.export.db.confirm")) {
-			return;
-		}
+        if (!ERDiagramActivator.showConfirmDialog("dialog.message.export.db.confirm")) {
+            return;
+        }
 
-		Connection con = null;
+        Connection con = null;
 
-		try {
-			con = this.dbSetting.connect();
+        try {
+            con = dbSetting.connect();
 
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(
-					this.getShell());
+            final ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 
-			ExportToDBManager exportToDBManager = new ExportToDBManager();
-			exportToDBManager.init(con, executeDDL);
+            final ExportToDBManager exportToDBManager = new ExportToDBManager();
+            exportToDBManager.init(con, executeDDL);
 
-			try {
-				dialog.run(true, true, exportToDBManager);
+            try {
+                dialog.run(true, true, exportToDBManager);
 
-				Exception e = exportToDBManager.getException();
-				if (e != null) {
-					ERDiagramActivator.showMessageDialog(e.getMessage());
-					throw new InputException();
+                final Exception e = exportToDBManager.getException();
+                if (e != null) {
+                    ERDiagramActivator.showMessageDialog(e.getMessage());
+                    throw new InputException();
 
-				} else {
+                } else {
 //					Activator
 //							.showMessageDialog("dialog.message.export.db.finish");
-				}
+                }
 
-			} catch (InvocationTargetException e) {
-			} catch (InterruptedException e) {
-			}
+            } catch (final InvocationTargetException e) {} catch (final InterruptedException e) {}
 
-		} catch (InputException e) {
-			throw e;
+        } catch (final InputException e) {
+            throw e;
 
-		} catch (Exception e) {
-			Throwable cause = e.getCause();
+        } catch (final Exception e) {
+            final Throwable cause = e.getCause();
 
-			if (cause instanceof UnknownHostException) {
-				throw new InputException("error.server.not.found");
-			}
+            if (cause instanceof UnknownHostException) {
+                throw new InputException("error.server.not.found");
+            }
 
-			ERDiagramActivator.log(e);
+            ERDiagramActivator.log(e);
 
-			ERDiagramActivator.showMessageDialog(e.getMessage());
-			throw new InputException("error.database.not.found");
+            ERDiagramActivator.showMessageDialog(e.getMessage());
+            throw new InputException("error.database.not.found");
 
-		} finally {
-			if (con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					ERDiagramActivator.showExceptionDialog(e);
-				}
-			}
-		}
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (final SQLException e) {
+                    ERDiagramActivator.showExceptionDialog(e);
+                }
+            }
+        }
 
-	}
+    }
 
-	@Override
-	protected void setData() {
-		this.textArea.setText(this.ddl);
-	}
+    @Override
+    protected void setData() {
+        textArea.setText(ddl);
+    }
 
 }

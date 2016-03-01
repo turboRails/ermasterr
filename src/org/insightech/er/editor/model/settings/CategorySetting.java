@@ -9,99 +9,99 @@ import org.insightech.er.editor.model.diagram_contents.element.node.category.Cat
 
 public class CategorySetting implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = -7691417386790834828L;
+    private static final long serialVersionUID = -7691417386790834828L;
 
-	private List<Category> allCategories;
+    private List<Category> allCategories;
 
-	private List<Category> selectedCategories;
+    private List<Category> selectedCategories;
 
-	private boolean freeLayout;
+    private boolean freeLayout;
 
-	private boolean showReferredTables;
+    private boolean showReferredTables;
 
-	public boolean isFreeLayout() {
-		return freeLayout;
-	}
+    public boolean isFreeLayout() {
+        return freeLayout;
+    }
 
-	public void setFreeLayout(boolean freeLayout) {
-		this.freeLayout = freeLayout;
-	}
+    public void setFreeLayout(final boolean freeLayout) {
+        this.freeLayout = freeLayout;
+    }
 
-	public boolean isShowReferredTables() {
-		return showReferredTables;
-	}
+    public boolean isShowReferredTables() {
+        return showReferredTables;
+    }
 
-	public void setShowReferredTables(boolean showReferredTables) {
-		this.showReferredTables = showReferredTables;
-	}
+    public void setShowReferredTables(final boolean showReferredTables) {
+        this.showReferredTables = showReferredTables;
+    }
 
-	public CategorySetting() {
-		this.allCategories = new ArrayList<Category>();
-		this.selectedCategories = new ArrayList<Category>();
-	}
+    public CategorySetting() {
+        allCategories = new ArrayList<Category>();
+        selectedCategories = new ArrayList<Category>();
+    }
 
-	public void setSelectedCategories(List<Category> selectedCategories) {
-		this.selectedCategories = selectedCategories;
-	}
+    public void setSelectedCategories(final List<Category> selectedCategories) {
+        this.selectedCategories = selectedCategories;
+    }
 
-	public List<Category> getAllCategories() {
-		return this.allCategories;
-	}
+    public List<Category> getAllCategories() {
+        return allCategories;
+    }
 
-	public void addCategory(Category category) {
-		this.allCategories.add(category);
-	}
+    public void addCategory(final Category category) {
+        allCategories.add(category);
+    }
 
-	public void addCategoryAsSelected(Category category) {
-		this.addCategory(category);
-		this.selectedCategories.add(category);
-	}
+    public void addCategoryAsSelected(final Category category) {
+        addCategory(category);
+        selectedCategories.add(category);
+    }
 
-	public void removeCategory(Category category) {
-		this.allCategories.remove(category);
-		this.selectedCategories.remove(category);
-	}
+    public void removeCategory(final Category category) {
+        allCategories.remove(category);
+        selectedCategories.remove(category);
+    }
 
-	public void removeCategory(int index) {
-		this.allCategories.remove(index);
-	}
+    public void removeCategory(final int index) {
+        allCategories.remove(index);
+    }
 
-	public boolean isSelected(Category tableCategory) {
-		if (this.selectedCategories.contains(tableCategory)) {
-			return true;
-		}
+    public boolean isSelected(final Category tableCategory) {
+        if (selectedCategories.contains(tableCategory)) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public List<Category> getSelectedCategories() {
-		return selectedCategories;
-	}
+    public List<Category> getSelectedCategories() {
+        return selectedCategories;
+    }
 
-	public Object clone(Map<Category, Category> categoryCloneMap) {
-		try {
-			CategorySetting clone = (CategorySetting) super.clone();
-			clone.allCategories = new ArrayList<Category>();
-			clone.selectedCategories = new ArrayList<Category>();
+    public Object clone(final Map<Category, Category> categoryCloneMap) {
+        try {
+            final CategorySetting clone = (CategorySetting) super.clone();
+            clone.allCategories = new ArrayList<Category>();
+            clone.selectedCategories = new ArrayList<Category>();
 
-			for (Category category : this.allCategories) {
-				Category cloneCategory = categoryCloneMap.get(category);
-				clone.allCategories.add(cloneCategory);
+            for (final Category category : allCategories) {
+                final Category cloneCategory = categoryCloneMap.get(category);
+                clone.allCategories.add(cloneCategory);
 
-				if (this.selectedCategories.contains(category)) {
-					clone.selectedCategories.add(cloneCategory);
-				}
-			}
+                if (selectedCategories.contains(category)) {
+                    clone.selectedCategories.add(cloneCategory);
+                }
+            }
 
-			return clone;
+            return clone;
 
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-	}
+        } catch (final CloneNotSupportedException e) {
+            return null;
+        }
+    }
 
-	public void setAllCategories(List<Category> allCategories) {
-		this.allCategories = allCategories;
-	}
+    public void setAllCategories(final List<Category> allCategories) {
+        this.allCategories = allCategories;
+    }
 
 }

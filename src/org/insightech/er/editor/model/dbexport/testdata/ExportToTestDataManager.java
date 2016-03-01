@@ -15,63 +15,59 @@ import org.insightech.er.editor.model.testdata.TestData;
 
 public class ExportToTestDataManager extends AbstractExportManager {
 
-	private ExportTestDataSetting exportTestDataSetting;
+    private final ExportTestDataSetting exportTestDataSetting;
 
-	private List<TestData> testDataList;
+    private final List<TestData> testDataList;
 
-	public ExportToTestDataManager(ExportTestDataSetting exportTestDataSetting,
-			List<TestData> testDataList) {
-		super("dialog.message.export.testdata");
+    public ExportToTestDataManager(final ExportTestDataSetting exportTestDataSetting, final List<TestData> testDataList) {
+        super("dialog.message.export.testdata");
 
-		this.exportTestDataSetting = exportTestDataSetting;
-		this.testDataList = testDataList;
-	}
+        this.exportTestDataSetting = exportTestDataSetting;
+        this.testDataList = testDataList;
+    }
 
-	@Override
-	protected int getTotalTaskCount() {
-		return this.testDataList.size();
-	}
+    @Override
+    protected int getTotalTaskCount() {
+        return testDataList.size();
+    }
 
-	@Override
-	public void doProcess(ProgressMonitor monitor) throws Exception {
-		for (TestData testData : this.testDataList) {
-			monitor.subTaskWithCounter("writing : " + testData.getName());
+    @Override
+    public void doProcess(final ProgressMonitor monitor) throws Exception {
+        for (final TestData testData : testDataList) {
+            monitor.subTaskWithCounter("writing : " + testData.getName());
 
-			exportTestData(this.diagram, this.exportTestDataSetting, testData);
+            exportTestData(diagram, exportTestDataSetting, testData);
 
-			monitor.worked(1);
-		}
-	}
+            monitor.worked(1);
+        }
+    }
 
-	public void exportTestData(ERDiagram diagram,
-			ExportTestDataSetting exportTestDataSetting, TestData testData)
-			throws Exception {
-		TestDataCreator testDataCreator = null;
+    public void exportTestData(final ERDiagram diagram, final ExportTestDataSetting exportTestDataSetting, final TestData testData) throws Exception {
+        TestDataCreator testDataCreator = null;
 
-		int format = exportTestDataSetting.getExportFormat();
+        final int format = exportTestDataSetting.getExportFormat();
 
-		if (format == TestData.EXPORT_FORMT_DBUNIT) {
-			testDataCreator = new DBUnitTestDataCreator(
-					exportTestDataSetting.getExportFileEncoding());
+        if (format == TestData.EXPORT_FORMT_DBUNIT) {
+            testDataCreator = new DBUnitTestDataCreator(exportTestDataSetting.getExportFileEncoding());
 
-		} else if (format == TestData.EXPORT_FORMT_DBUNIT_FLAT_XML) {
-			testDataCreator = new DBUnitFlatXmlTestDataCreator(
-					exportTestDataSetting.getExportFileEncoding());
+        } else if (format == TestData.EXPORT_FORMT_DBUNIT_FLAT_XML) {
+            testDataCreator = new DBUnitFlatXmlTestDataCreator(exportTestDataSetting.getExportFileEncoding());
 
-		} else if (format == TestData.EXPORT_FORMT_SQL) {
-			testDataCreator = new SQLTestDataCreator();
+        } else if (format == TestData.EXPORT_FORMT_SQL) {
+            testDataCreator = new SQLTestDataCreator();
 
-		} else if (format == TestData.EXPORT_FORMT_DBUNIT_XLS) {
-			testDataCreator = new DBUnitXLSTestDataCreator();
+        } else if (format == TestData.EXPORT_FORMT_DBUNIT_XLS) {
+            testDataCreator = new DBUnitXLSTestDataCreator();
 
-		}
+        }
 
-		testDataCreator.init(testData, this.projectDir);
-		testDataCreator.write(exportTestDataSetting, diagram);
-	}
+        testDataCreator.init(testData, projectDir);
+        testDataCreator.write(exportTestDataSetting, diagram);
+    }
 
-	public File getOutputFileOrDir() {
-		return new File(this.exportTestDataSetting.getExportFilePath());
-	}
+    @Override
+    public File getOutputFileOrDir() {
+        return new File(exportTestDataSetting.getExportFilePath());
+    }
 
 }

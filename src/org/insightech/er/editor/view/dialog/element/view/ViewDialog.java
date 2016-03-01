@@ -16,32 +16,31 @@ import org.insightech.er.editor.view.dialog.element.view.tab.SqlTabWrapper;
 
 public class ViewDialog extends TableViewDialog {
 
-	private View copyData;
+    private final View copyData;
 
-	public ViewDialog(Shell parentShell, EditPartViewer viewer, View copyData) {
-		super(parentShell, viewer);
+    public ViewDialog(final Shell parentShell, final EditPartViewer viewer, final View copyData) {
+        super(parentShell, viewer);
 
-		this.copyData = copyData;
-	}
+        this.copyData = copyData;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getTitle() {
-		return "dialog.title.view";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getTitle() {
+        return "dialog.title.view";
+    }
 
-	@Override
-	protected List<ValidatableTabWrapper> createTabWrapperList(
-			TabFolder tabFolder) {
-		List<ValidatableTabWrapper> list = new ArrayList<ValidatableTabWrapper>();
+    @Override
+    protected List<ValidatableTabWrapper> createTabWrapperList(final TabFolder tabFolder) {
+        final List<ValidatableTabWrapper> list = new ArrayList<ValidatableTabWrapper>();
 
-		list.add(new AttributeTabWrapper(this, tabFolder, this.copyData));
-		list.add(new SqlTabWrapper(this, tabFolder, this.copyData));
-		list.add(new DescriptionTabWrapper(this, tabFolder, this.copyData));
-		list.add(new AdvancedTabWrapper(this, tabFolder, this.copyData));
+        list.add(new AttributeTabWrapper(this, tabFolder, copyData));
+        list.add(new SqlTabWrapper(this, tabFolder, copyData));
+        list.add(new DescriptionTabWrapper(this, tabFolder, copyData));
+        list.add(new AdvancedTabWrapper(this, tabFolder, copyData));
 
-		return list;
-	}
+        return list;
+    }
 }

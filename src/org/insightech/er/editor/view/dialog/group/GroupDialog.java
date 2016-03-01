@@ -17,103 +17,99 @@ import org.insightech.er.editor.view.dialog.common.ERTableComposite;
 import org.insightech.er.editor.view.dialog.common.ERTableCompositeHolder;
 import org.insightech.er.editor.view.dialog.word.column.real.GroupColumnDialog;
 
-public class GroupDialog extends AbstractDialog implements
-		ERTableCompositeHolder {
+public class GroupDialog extends AbstractDialog implements ERTableCompositeHolder {
 
-	private Text groupNameText;
+    private Text groupNameText;
 
-	private List<CopyGroup> copyColumnGroups;
+    private final List<CopyGroup> copyColumnGroups;
 
-	private int editTargetIndex = -1;
+    private int editTargetIndex = -1;
 
-	private CopyGroup copyData;
+    private CopyGroup copyData;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	public GroupDialog(Shell parentShell, GroupSet columnGroups,
-			ERDiagram diagram, int editTargetIndex) {
-		super(parentShell);
+    public GroupDialog(final Shell parentShell, final GroupSet columnGroups, final ERDiagram diagram, final int editTargetIndex) {
+        super(parentShell);
 
-		this.copyColumnGroups = new ArrayList<CopyGroup>();
+        copyColumnGroups = new ArrayList<CopyGroup>();
 
-		for (ColumnGroup columnGroup : columnGroups) {
-			this.copyColumnGroups.add(new CopyGroup(columnGroup));
-		}
+        for (final ColumnGroup columnGroup : columnGroups) {
+            copyColumnGroups.add(new CopyGroup(columnGroup));
+        }
 
-		this.diagram = diagram;
+        this.diagram = diagram;
 
-		this.editTargetIndex = editTargetIndex;
+        this.editTargetIndex = editTargetIndex;
 
-		if (this.editTargetIndex != -1) {
-			this.copyData = copyColumnGroups.get(editTargetIndex);
-		}
-	}
+        if (this.editTargetIndex != -1) {
+            copyData = copyColumnGroups.get(editTargetIndex);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	protected void initialize(Composite composite) {
-		this.groupNameText = CompositeFactory.createText(this, composite,
-				"label.group.name", 1, 200, true, false);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void initialize(final Composite composite) {
+        groupNameText = CompositeFactory.createText(this, composite, "label.group.name", 1, 200, true, false);
 
-		GroupColumnDialog columnDialog = new GroupColumnDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram);
+        final GroupColumnDialog columnDialog = new GroupColumnDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram);
 
-		new ERTableComposite(this, composite, this.diagram, null,
-				(List) this.copyData.getColumns(), columnDialog, this, 2, true, true);
+        new ERTableComposite(this, composite, diagram, null, (List) copyData.getColumns(), columnDialog, this, 2, true, true);
 
-		this.groupNameText.setFocus();
-	}
+        groupNameText.setFocus();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getErrorMessage() {
-		if (this.groupNameText.getEnabled()) {
-			String text = this.groupNameText.getText().trim();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getErrorMessage() {
+        if (groupNameText.getEnabled()) {
+            final String text = groupNameText.getText().trim();
 
-			if (text.equals("")) {
-				return "error.group.name.empty";
-			}
-		}
+            if (text.equals("")) {
+                return "error.group.name.empty";
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void perfomeOK() {
-		this.copyData.setGroupName(this.groupNameText.getText());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void perfomeOK() {
+        copyData.setGroupName(groupNameText.getText());
+    }
 
-	@Override
-	protected String getTitle() {
-		return "dialog.title.group";
-	}
+    @Override
+    protected String getTitle() {
+        return "dialog.title.group";
+    }
 
-	@Override
-	protected void setData() {
-		if (this.editTargetIndex != -1) {
-			String text = this.copyData.getGroupName();
+    @Override
+    protected void setData() {
+        if (editTargetIndex != -1) {
+            String text = copyData.getGroupName();
 
-			if (text == null) {
-				text = "";
-			}
+            if (text == null) {
+                text = "";
+            }
 
-			this.groupNameText.setText(text);
-		}
-	}
+            groupNameText.setText(text);
+        }
+    }
 
-	public List<CopyGroup> getCopyColumnGroups() {
-		return copyColumnGroups;
-	}
+    public List<CopyGroup> getCopyColumnGroups() {
+        return copyColumnGroups;
+    }
 
-	public void selectGroup(ColumnGroup selectedColumn) {
-		// do nothing
-	}
+    @Override
+    public void selectGroup(final ColumnGroup selectedColumn) {
+        // do nothing
+    }
 }

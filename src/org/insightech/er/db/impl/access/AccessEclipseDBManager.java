@@ -7,16 +7,19 @@ import org.insightech.er.editor.view.dialog.outline.tablespace.TablespaceDialog;
 
 public class AccessEclipseDBManager extends EclipseDBManagerBase {
 
-	public String getId() {
-		return AccessDBManager.ID;
-	}
+    @Override
+    public String getId() {
+        return AccessDBManager.ID;
+    }
 
-	public AdvancedComposite createAdvancedComposite(Composite composite) {
-		return new AccessAdvancedComposite(composite);
-	}
+    @Override
+    public AdvancedComposite createAdvancedComposite(final Composite composite) {
+        return new AccessAdvancedComposite(composite);
+    }
 
-	public TablespaceDialog createTablespaceDialog() {
-		return null;
-	}
+    @Override
+    public TablespaceDialog createTablespaceDialog() {
+        return null;
+    }
 
 }

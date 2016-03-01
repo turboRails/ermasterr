@@ -19,141 +19,129 @@ import org.insightech.er.editor.model.diagram_contents.element.node.image.Insert
 import org.insightech.er.editor.view.dialog.element.InsertedImageDialog;
 import org.insightech.er.editor.view.figure.InsertedImageFigure;
 
-public class InsertedImageEditPart extends NodeElementEditPart implements
-		IResizable {
+public class InsertedImageEditPart extends NodeElementEditPart implements IResizable {
 
-	private Image image;
+    private Image image;
 
-	private ImageData imageData;
+    private ImageData imageData;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected IFigure createFigure() {
-		InsertedImage model = (InsertedImage) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected IFigure createFigure() {
+        final InsertedImage model = (InsertedImage) getModel();
 
-		byte[] data = Base64.decodeBase64((model.getBase64EncodedData()
-				.getBytes()));
-		ByteArrayInputStream in = new ByteArrayInputStream(data);
+        final byte[] data = Base64.decodeBase64((model.getBase64EncodedData().getBytes()));
+        final ByteArrayInputStream in = new ByteArrayInputStream(data);
 
-		this.imageData = new ImageData(in);
-		this.changeImage();
+        imageData = new ImageData(in);
+        changeImage();
 
-		InsertedImageFigure figure = new InsertedImageFigure(this.image,
-				model.isFixAspectRatio(), model.getAlpha());
-		figure.setMinimumSize(new Dimension(1, 1));
+        final InsertedImageFigure figure = new InsertedImageFigure(image, model.isFixAspectRatio(), model.getAlpha());
+        figure.setMinimumSize(new Dimension(1, 1));
 
-		return figure;
-	}
+        return figure;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deactivate() {
-		super.deactivate();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deactivate() {
+        super.deactivate();
 
-		if (this.image != null && !this.image.isDisposed()) {
-			this.image.dispose();
-		}
-	}
+        if (image != null && !image.isDisposed()) {
+            image.dispose();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new NodeElementComponentEditPolicy());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new NodeElementComponentEditPolicy());
 
-		super.createEditPolicies();
-	}
+        super.createEditPolicies();
+    }
 
-	@Override
-	protected void doRefreshVisuals() {
-		changeImage();
+    @Override
+    protected void doRefreshVisuals() {
+        changeImage();
 
-		InsertedImageFigure figure = (InsertedImageFigure) this.getFigure();
-		InsertedImage model = (InsertedImage) this.getModel();
+        final InsertedImageFigure figure = (InsertedImageFigure) getFigure();
+        final InsertedImage model = (InsertedImage) getModel();
 
-		figure.setImg(this.image, model.isFixAspectRatio(), model.getAlpha());
-	}
+        figure.setImg(image, model.isFixAspectRatio(), model.getAlpha());
+    }
 
-	private void changeImage() {
-		InsertedImage model = (InsertedImage) this.getModel();
+    private void changeImage() {
+        final InsertedImage model = (InsertedImage) getModel();
 
-		ImageData newImageData = new ImageData(this.imageData.width,
-				this.imageData.height, this.imageData.depth,
-				this.imageData.palette);
+        final ImageData newImageData = new ImageData(imageData.width, imageData.height, imageData.depth, imageData.palette);
 
-		for (int x = 0; x < this.imageData.width; x++) {
-			for (int y = 0; y < this.imageData.height; y++) {
-				RGB rgb = this.imageData.palette.getRGB(this.imageData
-						.getPixel(x, y));
-				float[] hsb = rgb.getHSB();
+        for (int x = 0; x < imageData.width; x++) {
+            for (int y = 0; y < imageData.height; y++) {
+                final RGB rgb = imageData.palette.getRGB(imageData.getPixel(x, y));
+                final float[] hsb = rgb.getHSB();
 
-				if (model.getHue() != 0) {
-					hsb[0] = model.getHue() & 360;
-				}
+                if (model.getHue() != 0) {
+                    hsb[0] = model.getHue() & 360;
+                }
 
-				hsb[1] = hsb[1] + (model.getSaturation() / 100f);
-				if (hsb[1] > 1.0f) {
-					hsb[1] = 1.0f;
-				} else if (hsb[1] < 0) {
-					hsb[1] = 0f;
-				}
+                hsb[1] = hsb[1] + (model.getSaturation() / 100f);
+                if (hsb[1] > 1.0f) {
+                    hsb[1] = 1.0f;
+                } else if (hsb[1] < 0) {
+                    hsb[1] = 0f;
+                }
 
-				hsb[2] = hsb[2] + (model.getBrightness() / 100f);
-				if (hsb[2] > 1.0f) {
-					hsb[2] = 1.0f;
+                hsb[2] = hsb[2] + (model.getBrightness() / 100f);
+                if (hsb[2] > 1.0f) {
+                    hsb[2] = 1.0f;
 
-				} else if (hsb[2] < 0) {
-					hsb[2] = 0f;
-				}
+                } else if (hsb[2] < 0) {
+                    hsb[2] = 0f;
+                }
 
-				RGB newRGB = new RGB(hsb[0], hsb[1], hsb[2]);
+                final RGB newRGB = new RGB(hsb[0], hsb[1], hsb[2]);
 
-				int pixel = imageData.palette.getPixel(newRGB);
+                final int pixel = imageData.palette.getPixel(newRGB);
 
-				newImageData.setPixel(x, y, pixel);
-			}
-		}
+                newImageData.setPixel(x, y, pixel);
+            }
+        }
 
-		if (this.image != null && !this.image.isDisposed()) {
-			this.image.dispose();
-		}
+        if (image != null && !image.isDisposed()) {
+            image.dispose();
+        }
 
-		this.image = new Image(Display.getDefault(), newImageData);
-	}
+        image = new Image(Display.getDefault(), newImageData);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequestOpen() {
-		InsertedImage insertedImage = (InsertedImage) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequestOpen() {
+        final InsertedImage insertedImage = (InsertedImage) getModel();
 
-		InsertedImage oldInsertedImage = (InsertedImage) insertedImage.clone();
+        final InsertedImage oldInsertedImage = (InsertedImage) insertedImage.clone();
 
-		ERDiagram diagram = this.getDiagram();
+        final ERDiagram diagram = getDiagram();
 
-		InsertedImageDialog dialog = new InsertedImageDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				insertedImage);
+        final InsertedImageDialog dialog = new InsertedImageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), insertedImage);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			ChangeInsertedImagePropertyCommand command = new ChangeInsertedImagePropertyCommand(
-					diagram, insertedImage, dialog.getNewInsertedImage(),
-					oldInsertedImage);
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            final ChangeInsertedImagePropertyCommand command = new ChangeInsertedImagePropertyCommand(diagram, insertedImage, dialog.getNewInsertedImage(), oldInsertedImage);
 
-			this.executeCommand(command);
+            executeCommand(command);
 
-		} else {
-			ChangeInsertedImagePropertyCommand command = new ChangeInsertedImagePropertyCommand(
-					diagram, insertedImage, oldInsertedImage, oldInsertedImage);
-			command.execute();
+        } else {
+            final ChangeInsertedImagePropertyCommand command = new ChangeInsertedImagePropertyCommand(diagram, insertedImage, oldInsertedImage, oldInsertedImage);
+            command.execute();
 
-		}
-	}
+        }
+    }
 }

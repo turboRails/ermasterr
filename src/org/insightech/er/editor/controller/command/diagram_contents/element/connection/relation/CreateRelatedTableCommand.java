@@ -9,174 +9,171 @@ import org.insightech.er.editor.model.diagram_contents.element.node.Location;
 import org.insightech.er.editor.model.diagram_contents.element.node.NodeElement;
 import org.insightech.er.editor.model.diagram_contents.element.node.category.Category;
 import org.insightech.er.editor.model.diagram_contents.element.node.table.ERTable;
+import org.insightech.er.editor.model.diagram_contents.element.node.table.TableView;
 
 public class CreateRelatedTableCommand extends AbstractCreateRelationCommand {
 
-	private Relation relation1;
+    private Relation relation1;
 
-	private Relation relation2;
+    private Relation relation2;
 
-	private ERTable relatedTable;
+    private final ERTable relatedTable;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private int sourceX;
+    private int sourceX;
 
-	private int sourceY;
+    private int sourceY;
 
-	private int targetX;
+    private int targetX;
 
-	private int targetY;
+    private int targetY;
 
-	private Category category;
+    private final Category category;
 
-	protected Location newCategoryLocation;
+    protected Location newCategoryLocation;
 
-	protected Location oldCategoryLocation;
+    protected Location oldCategoryLocation;
 
-	public CreateRelatedTableCommand(ERDiagram diagram) {
-		super();
+    public CreateRelatedTableCommand(final ERDiagram diagram) {
+        super();
 
-		this.relatedTable = new ERTable();
+        relatedTable = new ERTable();
 
-		this.diagram = diagram;
-		this.category = this.diagram.getCurrentCategory();
-		if (this.category != null) {
-			this.oldCategoryLocation = this.category.getLocation();
-		}
-	}
+        this.diagram = diagram;
+        category = this.diagram.getCurrentCategory();
+        if (category != null) {
+            oldCategoryLocation = category.getLocation();
+        }
+    }
 
-	public void setSourcePoint(int x, int y) {
-		this.sourceX = x;
-		this.sourceY = y;
-	}
+    public void setSourcePoint(final int x, final int y) {
+        sourceX = x;
+        sourceY = y;
+    }
 
-	private void setTargetPoint(int x, int y) {
-		this.targetX = x;
-		this.targetY = y;
-	}
+    private void setTargetPoint(final int x, final int y) {
+        targetX = x;
+        targetY = y;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setTarget(EditPart target) {
-		super.setTarget(target);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTarget(final EditPart target) {
+        super.setTarget(target);
 
-		if (target != null) {
-			if (target instanceof TableViewEditPart) {
-				TableViewEditPart tableEditPart = (TableViewEditPart) target;
+        if (target != null) {
+            if (target instanceof TableViewEditPart) {
+                final TableViewEditPart tableEditPart = (TableViewEditPart) target;
 
-				Point point = tableEditPart.getFigure().getBounds().getCenter();
-				this.setTargetPoint(point.x, point.y);
-			}
-		}
-	}
+                final Point point = tableEditPart.getFigure().getBounds().getCenter();
+                setTargetPoint(point.x, point.y);
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		// ERDiagramEditPart.setUpdateable(false);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        // ERDiagramEditPart.setUpdateable(false);
 
-		this.init();
+        init();
 
-		this.diagram.addNewContent(this.relatedTable);
-		this.addToCategory(this.relatedTable);
+        diagram.addNewContent(relatedTable);
+        addToCategory(relatedTable);
 
-		this.relation1.setSource((ERTable) this.source.getModel());
-		this.relation1.setTargetTableView(this.relatedTable);
+        relation1.setSource((ERTable) source.getModel());
+        relation1.setTargetTableView(relatedTable);
 
-		this.relation2.setSource((ERTable) this.target.getModel());
-		this.relation2.setTargetTableView(this.relatedTable);
+        relation2.setSource((ERTable) target.getModel());
+        relation2.setTargetTableView(relatedTable);
 
-		this.diagram.refreshChildren();
-		this.getTargetModel().refresh();
-		this.getSourceModel().refresh();
+        diagram.refreshChildren();
+        getTargetModel().refresh();
+        getSourceModel().refresh();
 
-		if (this.category != null) {
-			this.category.refresh();
-		}
-	}
+        if (category != null) {
+            category.refresh();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.diagram.removeContent(this.relatedTable);
-		this.removeFromCategory(this.category);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        diagram.removeContent(relatedTable);
+        removeFromCategory(category);
 
-		this.relation1.setSource(null);
-		this.relation1.setTargetTableView(null);
+        relation1.setSource(null);
+        relation1.setTargetTableView(null);
 
-		this.relation2.setSource(null);
-		this.relation2.setTargetTableView(null);
+        relation2.setSource(null);
+        relation2.setTargetTableView(null);
 
-		this.diagram.refreshChildren();
-		this.getTargetModel().refresh();
-		this.getSourceModel().refresh();
+        diagram.refreshChildren();
+        getTargetModel().refresh();
+        getSourceModel().refresh();
 
-		if (this.category != null) {
-			this.category.refresh();
-		}
-	}
+        if (category != null) {
+            category.refresh();
+        }
+    }
 
-	private void init() {
-		ERTable sourceTable = (ERTable) this.getSourceModel();
+    private void init() {
+        final ERTable sourceTable = (ERTable) getSourceModel();
 
-		this.relation1 = sourceTable.createRelation();
+        relation1 = sourceTable.createRelation();
 
-		ERTable targetTable = (ERTable) this.getTargetModel();
-		this.relation2 = targetTable.createRelation();
+        final ERTable targetTable = (ERTable) getTargetModel();
+        relation2 = targetTable.createRelation();
 
-		this.relatedTable.setLocation(new Location(
-				(this.sourceX + this.targetX - ERTable.DEFAULT_WIDTH) / 2,
-				(this.sourceY + this.targetY - ERTable.DEFAULT_HEIGHT) / 2,
-				ERTable.DEFAULT_WIDTH, ERTable.DEFAULT_HEIGHT));
+        relatedTable.setLocation(new Location((sourceX + targetX - TableView.DEFAULT_WIDTH) / 2, (sourceY + targetY - TableView.DEFAULT_HEIGHT) / 2, TableView.DEFAULT_WIDTH, TableView.DEFAULT_HEIGHT));
 
-		this.relatedTable.setLogicalName(ERTable.NEW_LOGICAL_NAME);
-		this.relatedTable.setPhysicalName(ERTable.NEW_PHYSICAL_NAME);
-	}
+        relatedTable.setLogicalName(ERTable.NEW_LOGICAL_NAME);
+        relatedTable.setPhysicalName(ERTable.NEW_PHYSICAL_NAME);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean canExecute() {
-		if (!super.canExecute()) {
-			return false;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canExecute() {
+        if (!super.canExecute()) {
+            return false;
+        }
 
-		if (!(this.getSourceModel() instanceof ERTable)
-				|| !(this.getTargetModel() instanceof ERTable)) {
-			return false;
-		}
+        if (!(getSourceModel() instanceof ERTable) || !(getTargetModel() instanceof ERTable)) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	protected void addToCategory(NodeElement nodeElement) {
-		if (this.category != null) {
-			this.category.add(nodeElement);
-			Location newLocation = category.getNewCategoryLocation(nodeElement);
+    protected void addToCategory(final NodeElement nodeElement) {
+        if (category != null) {
+            category.add(nodeElement);
+            final Location newLocation = category.getNewCategoryLocation(nodeElement);
 
-			if (newLocation != null) {
-				this.newCategoryLocation = newLocation;
-				this.category.setLocation(this.newCategoryLocation);
-			}
-		}
-	}
+            if (newLocation != null) {
+                newCategoryLocation = newLocation;
+                category.setLocation(newCategoryLocation);
+            }
+        }
+    }
 
-	protected void removeFromCategory(NodeElement nodeElement) {
-		if (this.category != null) {
-			this.category.remove(nodeElement);
+    protected void removeFromCategory(final NodeElement nodeElement) {
+        if (category != null) {
+            category.remove(nodeElement);
 
-			if (this.newCategoryLocation != null) {
-				this.category.setLocation(this.oldCategoryLocation);
-			}
-		}
-	}
+            if (newCategoryLocation != null) {
+                category.setLocation(oldCategoryLocation);
+            }
+        }
+    }
 
 }

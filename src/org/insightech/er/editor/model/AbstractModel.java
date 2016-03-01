@@ -6,72 +6,69 @@ import java.io.Serializable;
 
 public abstract class AbstractModel implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 4266969076408212298L;
+    private static final long serialVersionUID = 4266969076408212298L;
 
-	private PropertyChangeSupport support;
+    private PropertyChangeSupport support;
 
-	private static boolean updateable = true;
+    private static boolean updateable = true;
 
-	public static void setUpdateable(boolean enabled) {
-		updateable = enabled;
-	}
+    public static void setUpdateable(final boolean enabled) {
+        updateable = enabled;
+    }
 
-	public static boolean isUpdateable() {
-		return updateable;
-	}
+    public static boolean isUpdateable() {
+        return updateable;
+    }
 
-	public AbstractModel() {
-		this.support = new PropertyChangeSupport(this);
-	}
+    public AbstractModel() {
+        support = new PropertyChangeSupport(this);
+    }
 
-	protected void firePropertyChange(String name, Object oldValue,
-			Object newValue) {
-		this.support.firePropertyChange(name, oldValue, newValue);
-	}
+    protected void firePropertyChange(final String name, final Object oldValue, final Object newValue) {
+        support.firePropertyChange(name, oldValue, newValue);
+    }
 
-	protected void firePropertyChange(String name, int oldValue, int newValue) {
-		this.support.firePropertyChange(name, oldValue, newValue);
-	}
+    protected void firePropertyChange(final String name, final int oldValue, final int newValue) {
+        support.firePropertyChange(name, oldValue, newValue);
+    }
 
-	protected void firePropertyChange(String name, boolean oldValue,
-			boolean newValue) {
-		this.support.firePropertyChange(name, oldValue, newValue);
-	}
+    protected void firePropertyChange(final String name, final boolean oldValue, final boolean newValue) {
+        support.firePropertyChange(name, oldValue, newValue);
+    }
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		this.support.addPropertyChangeListener(listener);
-	}
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
+    }
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		this.support.removePropertyChangeListener(listener);
-	}
+    public void removePropertyChangeListener(final PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
+    }
 
-	public void refresh() {
-		if (updateable) {
-			this.firePropertyChange("refresh", null, null);
-		}
-	}
+    public void refresh() {
+        if (updateable) {
+            this.firePropertyChange("refresh", null, null);
+        }
+    }
 
-	public void refreshVisuals() {
-		if (updateable) {
-			this.firePropertyChange("refreshVisuals", null, null);
-		}
-	}
+    public void refreshVisuals() {
+        if (updateable) {
+            this.firePropertyChange("refreshVisuals", null, null);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public AbstractModel clone() {
-		AbstractModel clone = null;
-		try {
-			clone = (AbstractModel) super.clone();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractModel clone() {
+        AbstractModel clone = null;
+        try {
+            clone = (AbstractModel) super.clone();
 
-			clone.support = new PropertyChangeSupport(clone);
+            clone.support = new PropertyChangeSupport(clone);
 
-		} catch (CloneNotSupportedException e) {
-		}
+        } catch (final CloneNotSupportedException e) {}
 
-		return clone;
-	}
+        return clone;
+    }
 }

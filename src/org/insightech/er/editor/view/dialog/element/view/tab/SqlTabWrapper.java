@@ -11,45 +11,43 @@ import org.insightech.er.util.Format;
 
 public class SqlTabWrapper extends ValidatableTabWrapper {
 
-	private View copyData;
+    private final View copyData;
 
-	private Text sqlText;
+    private Text sqlText;
 
-	public SqlTabWrapper(ViewDialog viewDialog, TabFolder parent, View copyData) {
-		super(viewDialog, parent, "label.sql");
+    public SqlTabWrapper(final ViewDialog viewDialog, final TabFolder parent, final View copyData) {
+        super(viewDialog, parent, "label.sql");
 
-		this.copyData = copyData;
-	}
+        this.copyData = copyData;
+    }
 
-	@Override
-	public void initComposite() {
-		this.sqlText = CompositeFactory.createTextArea(this.dialog, this,
-				"label.sql", -1, 400, 1, true, false);
+    @Override
+    public void initComposite() {
+        sqlText = CompositeFactory.createTextArea(dialog, this, "label.sql", -1, 400, 1, true, false);
 
-		this.sqlText.setText(Format.null2blank(copyData.getSql()));
-	}
+        sqlText.setText(Format.null2blank(copyData.getSql()));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-		String text = sqlText.getText().trim();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {
+        final String text = sqlText.getText().trim();
 
-		if (text.equals("")) {
-			throw new InputException("error.view.sql.empty");
-		}
+        if (text.equals("")) {
+            throw new InputException("error.view.sql.empty");
+        }
 
-		this.copyData.setSql(text);
-	}
+        copyData.setSql(text);
+    }
 
-	@Override
-	public void setInitFocus() {
-		this.sqlText.setFocus();
-	}
+    @Override
+    public void setInitFocus() {
+        sqlText.setFocus();
+    }
 
-	@Override
-	public void perfomeOK() {
-	}
+    @Override
+    public void perfomeOK() {}
 
 }

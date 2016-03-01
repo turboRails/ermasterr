@@ -6,49 +6,46 @@ import org.insightech.er.editor.controller.command.diagram_contents.element.conn
 import org.insightech.er.editor.model.diagram_contents.element.node.table.ERTable;
 import org.insightech.er.editor.model.diagram_contents.element.node.table.TableView;
 
-public class RelationByExistingColumnsCreationTool extends
-		ConnectionCreationTool {
+public class RelationByExistingColumnsCreationTool extends ConnectionCreationTool {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean handleCreateConnection() {
-		try {
-			CreateRelationByExistingColumnsCommand command = (CreateRelationByExistingColumnsCommand) this
-					.getCommand();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean handleCreateConnection() {
+        try {
+            final CreateRelationByExistingColumnsCommand command = (CreateRelationByExistingColumnsCommand) getCommand();
 
-			if (command == null) {
-				return false;
-			}
+            if (command == null) {
+                return false;
+            }
 
-			TableView source = (TableView) command.getSourceModel();
-			TableView target = (TableView) command.getTargetModel();
+            final TableView source = (TableView) command.getSourceModel();
+            final TableView target = (TableView) command.getTargetModel();
 
-			if (ERTable.isRecursive(source, target)) {
-				ERDiagramActivator.showErrorDialog("error.recursive.relation");
+            if (ERTable.isRecursive(source, target)) {
+                ERDiagramActivator.showErrorDialog("error.recursive.relation");
 
-				this.eraseSourceFeedback();
+                eraseSourceFeedback();
 
-				return false;
-			}
+                return false;
+            }
 
-			this.eraseSourceFeedback();
-			CreateRelationByExistingColumnsCommand endCommand = (CreateRelationByExistingColumnsCommand) this
-					.getCommand();
+            eraseSourceFeedback();
+            final CreateRelationByExistingColumnsCommand endCommand = (CreateRelationByExistingColumnsCommand) getCommand();
 
-			if (!endCommand.selectColumns()) {
-				return false;
-			}
+            if (!endCommand.selectColumns()) {
+                return false;
+            }
 
-			this.setCurrentCommand(endCommand);
-			this.executeCurrentCommand();
-		
-		} catch (Exception e) {
-			ERDiagramActivator.showExceptionDialog(e);
-		}
-		
-		return true;
-	}
+            setCurrentCommand(endCommand);
+            executeCurrentCommand();
+
+        } catch (final Exception e) {
+            ERDiagramActivator.showExceptionDialog(e);
+        }
+
+        return true;
+    }
 
 }

@@ -13,76 +13,61 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.TableV
 
 public class ImagePartGenerator {
 
-	private Map<Object, Integer> idMap;
+    private final Map<Object, Integer> idMap;
 
-	private Category category;
+    private Category category;
 
-	public ImagePartGenerator(Map<Object, Integer> idMap) {
-		this.idMap = idMap;
-	}
+    public ImagePartGenerator(final Map<Object, Integer> idMap) {
+        this.idMap = idMap;
+    }
 
-	public String getObjectId(Object object) {
-		Integer id = (Integer) idMap.get(object);
+    public String getObjectId(final Object object) {
+        Integer id = idMap.get(object);
 
-		if (id == null) {
-			id = new Integer(idMap.size());
-			this.idMap.put(object, id);
-		}
+        if (id == null) {
+            id = new Integer(idMap.size());
+            idMap.put(object, id);
+        }
 
-		return String.valueOf(id);
-	}
+        return String.valueOf(id);
+    }
 
-	public String generateImage(ImageInfo imageInfo, String relativePath)
-			throws IOException {
-		if (imageInfo.getPath() == null) {
-			return "";
-		}
+    public String generateImage(final ImageInfo imageInfo, final String relativePath) throws IOException {
+        if (imageInfo.getPath() == null) {
+            return "";
+        }
 
-		String template = ExportToHtmlManager
-				.getTemplate("overview/overview-summary_image_template.html");
+        final String template = ExportToHtmlManager.getTemplate("overview/overview-summary_image_template.html");
 
-		String pathToImageFile = relativePath + ExportToHtmlManager.IMAGE_DIR
-				+ File.separator + imageInfo.getPath();
+        final String pathToImageFile = relativePath + ExportToHtmlManager.IMAGE_DIR + File.separator + imageInfo.getPath();
 
-		Object[] args = {
-				pathToImageFile,
-				this.generateImageMap(imageInfo.getTableLocationMap(),
-						relativePath) };
+        final Object[] args = {pathToImageFile, generateImageMap(imageInfo.getTableLocationMap(), relativePath)};
 
-		return MessageFormat.format(template, args);
-	}
+        return MessageFormat.format(template, args);
+    }
 
-	private String generateImageMap(Map<TableView, Location> tableLocationMap,
-			String relativePath) throws IOException {
-		StringBuilder sb = new StringBuilder();
+    private String generateImageMap(final Map<TableView, Location> tableLocationMap, final String relativePath) throws IOException {
+        final StringBuilder sb = new StringBuilder();
 
-		if (tableLocationMap != null) {
-			String template = ExportToHtmlManager
-					.getTemplate("overview/overview-summary_image_map_template.html");
+        if (tableLocationMap != null) {
+            final String template = ExportToHtmlManager.getTemplate("overview/overview-summary_image_map_template.html");
 
-			for (Map.Entry<TableView, Location> entry : tableLocationMap
-					.entrySet()) {
-				if (this.category == null
-						|| this.category.contains(entry.getKey())) {
-					Location location = entry.getValue();
+            for (final Map.Entry<TableView, Location> entry : tableLocationMap.entrySet()) {
+                if (category == null || category.contains(entry.getKey())) {
+                    final Location location = entry.getValue();
 
-					String pathToHtmlFile = entry.getKey().getObjectType()
-							+ "/" + this.getObjectId(entry.getKey()) + ".html";
+                    String pathToHtmlFile = entry.getKey().getObjectType() + "/" + getObjectId(entry.getKey()) + ".html";
 
-					pathToHtmlFile = relativePath + pathToHtmlFile;
+                    pathToHtmlFile = relativePath + pathToHtmlFile;
 
-					Object[] args = { String.valueOf(location.x),
-							String.valueOf(location.y),
-							String.valueOf(location.x + location.width),
-							String.valueOf(location.y + location.height),
-							pathToHtmlFile, };
-					String row = MessageFormat.format(template, args);
+                    final Object[] args = {String.valueOf(location.x), String.valueOf(location.y), String.valueOf(location.x + location.width), String.valueOf(location.y + location.height), pathToHtmlFile,};
+                    final String row = MessageFormat.format(template, args);
 
-					sb.append(row);
-				}
-			}
-		}
+                    sb.append(row);
+                }
+            }
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

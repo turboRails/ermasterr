@@ -14,62 +14,55 @@ import org.insightech.er.util.io.FileUtils;
 
 public class ExportToDDLManager extends AbstractExportManager {
 
-	private ExportDDLSetting exportDDLSetting;
+    private final ExportDDLSetting exportDDLSetting;
 
-	public ExportToDDLManager(ExportDDLSetting exportDDLSetting) {
-		super("dialog.message.export.ddl");
-		this.exportDDLSetting = exportDDLSetting;
-	}
+    public ExportToDDLManager(final ExportDDLSetting exportDDLSetting) {
+        super("dialog.message.export.ddl");
+        this.exportDDLSetting = exportDDLSetting;
+    }
 
-	@Override
-	protected int getTotalTaskCount() {
-		return 2;
-	}
+    @Override
+    protected int getTotalTaskCount() {
+        return 2;
+    }
 
-	@Override
-	protected void doProcess(ProgressMonitor monitor) throws Exception {
+    @Override
+    protected void doProcess(final ProgressMonitor monitor) throws Exception {
 
-		PrintWriter out = null;
+        PrintWriter out = null;
 
-		try {
-			DDLCreator ddlCreator = DBManagerFactory.getDBManager(this.diagram)
-					.getDDLCreator(this.diagram,
-							this.exportDDLSetting.getCategory(), true);
+        try {
+            final DDLCreator ddlCreator = DBManagerFactory.getDBManager(diagram).getDDLCreator(diagram, exportDDLSetting.getCategory(), true);
 
-			ddlCreator.init(this.exportDDLSetting.getEnvironment(),
-					this.exportDDLSetting.getDdlTarget(),
-					this.exportDDLSetting.getLineFeed());
+            ddlCreator.init(exportDDLSetting.getEnvironment(), exportDDLSetting.getDdlTarget(), exportDDLSetting.getLineFeed());
 
-			File file = FileUtils.getFile(this.projectDir,
-					this.exportDDLSetting.getDdlOutput());
-			file.getParentFile().mkdirs();
+            final File file = FileUtils.getFile(projectDir, exportDDLSetting.getDdlOutput());
+            file.getParentFile().mkdirs();
 
-			out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(file),
-					this.exportDDLSetting.getSrcFileEncoding())));
+            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), exportDDLSetting.getSrcFileEncoding())));
 
-			monitor.subTaskWithCounter("writing drop ddl");
+            monitor.subTaskWithCounter("writing drop ddl");
 
-			out.print(ddlCreator.getDropDDL(this.diagram));
+            out.print(ddlCreator.getDropDDL(diagram));
 
-			monitor.worked(1);
+            monitor.worked(1);
 
-			monitor.subTaskWithCounter("writing create ddl");
+            monitor.subTaskWithCounter("writing create ddl");
 
-			out.print(ddlCreator.getCreateDDL(this.diagram));
+            out.print(ddlCreator.getCreateDDL(diagram));
 
-			monitor.worked(1);
+            monitor.worked(1);
 
-		} finally {
-			if (out != null) {
-				out.close();
-			}
-		}
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
 
-	}
+    }
 
-	public File getOutputFileOrDir() {
-		return FileUtils.getFile(this.projectDir,
-				this.exportDDLSetting.getDdlOutput());
-	}
+    @Override
+    public File getOutputFileOrDir() {
+        return FileUtils.getFile(projectDir, exportDDLSetting.getDdlOutput());
+    }
 }

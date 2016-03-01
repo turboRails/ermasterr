@@ -12,73 +12,66 @@ import org.insightech.er.util.Format;
 
 public class ConstraintTabWrapper extends ValidatableTabWrapper {
 
-	private ERTable copyData;
+    private final ERTable copyData;
 
-	private Text constraintText;
+    private Text constraintText;
 
-	private Text primaryKeyNameText;
+    private Text primaryKeyNameText;
 
-	private Text optionText;
+    private Text optionText;
 
-	public ConstraintTabWrapper(TableDialog tableDialog, TabFolder parent,
-			ERTable copyData) {
-		super(tableDialog, parent, "label.constraint.and.option");
+    public ConstraintTabWrapper(final TableDialog tableDialog, final TabFolder parent, final ERTable copyData) {
+        super(tableDialog, parent, "label.constraint.and.option");
 
-		this.copyData = copyData;
-	}
+        this.copyData = copyData;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-		String text = constraintText.getText().trim();
-		this.copyData.setConstraint(text);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {
+        String text = constraintText.getText().trim();
+        copyData.setConstraint(text);
 
-		text = primaryKeyNameText.getText().trim();
-		if (!Check.isAlphabet(text)) {
-			throw new InputException("error.primary.key.name.not.alphabet");
-		}
-		this.copyData.setPrimaryKeyName(text);
+        text = primaryKeyNameText.getText().trim();
+        if (!Check.isAlphabet(text)) {
+            throw new InputException("error.primary.key.name.not.alphabet");
+        }
+        copyData.setPrimaryKeyName(text);
 
-		text = optionText.getText().trim();
-		this.copyData.setOption(text);
-	}
+        text = optionText.getText().trim();
+        copyData.setOption(text);
+    }
 
-	@Override
-	public void initComposite() {
-		CompositeFactory.createLeftLabel(this, "label.table.constraint", 1);
+    @Override
+    public void initComposite() {
+        CompositeFactory.createLeftLabel(this, "label.table.constraint", 1);
 
-		this.constraintText = CompositeFactory.createTextArea(this.dialog,
-				this, null, -1, 100, 1, false);
+        constraintText = CompositeFactory.createTextArea(dialog, this, null, -1, 100, 1, false);
 
-		this.constraintText
-				.setText(Format.null2blank(copyData.getConstraint()));
+        constraintText.setText(Format.null2blank(copyData.getConstraint()));
 
-		CompositeFactory.fillLine(this);
+        CompositeFactory.fillLine(this);
 
-		this.primaryKeyNameText = CompositeFactory.createText(this.dialog,
-				this, "label.primary.key.name", 1, false, false);
-		this.primaryKeyNameText.setText(Format.null2blank(copyData
-				.getPrimaryKeyName()));
+        primaryKeyNameText = CompositeFactory.createText(dialog, this, "label.primary.key.name", 1, false, false);
+        primaryKeyNameText.setText(Format.null2blank(copyData.getPrimaryKeyName()));
 
-		CompositeFactory.fillLine(this);
+        CompositeFactory.fillLine(this);
 
-		CompositeFactory.createLeftLabel(this, "label.option", 1);
+        CompositeFactory.createLeftLabel(this, "label.option", 1);
 
-		this.optionText = CompositeFactory.createTextArea(this.dialog, this,
-				null, -1, 100, 1, false);
+        optionText = CompositeFactory.createTextArea(dialog, this, null, -1, 100, 1, false);
 
-		this.optionText.setText(Format.null2blank(copyData.getOption()));
-	}
+        optionText.setText(Format.null2blank(copyData.getOption()));
+    }
 
-	@Override
-	public void setInitFocus() {
-		this.constraintText.setFocus();
-	}
+    @Override
+    public void setInitFocus() {
+        constraintText.setFocus();
+    }
 
-	@Override
-	public void perfomeOK() {
-	}
+    @Override
+    public void perfomeOK() {}
 
 }

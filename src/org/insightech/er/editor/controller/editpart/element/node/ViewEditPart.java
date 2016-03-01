@@ -13,52 +13,47 @@ import org.insightech.er.editor.view.figure.view.ViewFigure;
 
 public class ViewEditPart extends TableViewEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected IFigure createFigure() {
-		ERDiagram diagram = this.getDiagram();
-		Settings settings = diagram.getDiagramContents().getSettings();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected IFigure createFigure() {
+        final ERDiagram diagram = getDiagram();
+        final Settings settings = diagram.getDiagramContents().getSettings();
 
-		ViewFigure figure = new ViewFigure(settings.getTableStyle());
+        final ViewFigure figure = new ViewFigure(settings.getTableStyle());
 
-		this.changeFont(figure);
+        this.changeFont(figure);
 
-		return figure;
-	}
+        return figure;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequestOpen() {
-		View view = (View) this.getModel();
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequestOpen() {
+        final View view = (View) getModel();
+        final ERDiagram diagram = getDiagram();
 
-		View copyView = view.copyData();
+        final View copyView = view.copyData();
 
-		ViewDialog dialog = new ViewDialog(PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getShell(), this.getViewer(),
-				copyView);
+        final ViewDialog dialog = new ViewDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), getViewer(), copyView);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			CompoundCommand command = createChangeViewPropertyCommand(diagram,
-					view, copyView);
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            final CompoundCommand command = createChangeViewPropertyCommand(diagram, view, copyView);
 
-			this.executeCommand(command.unwrap());
-		}
-	}
+            executeCommand(command.unwrap());
+        }
+    }
 
-	public static CompoundCommand createChangeViewPropertyCommand(
-			ERDiagram diagram, View view, View copyView) {
-		CompoundCommand command = new CompoundCommand();
+    public static CompoundCommand createChangeViewPropertyCommand(final ERDiagram diagram, final View view, final View copyView) {
+        final CompoundCommand command = new CompoundCommand();
 
-		ChangeTableViewPropertyCommand changeViewPropertyCommand = new ChangeTableViewPropertyCommand(
-				view, copyView);
-		command.add(changeViewPropertyCommand);
+        final ChangeTableViewPropertyCommand changeViewPropertyCommand = new ChangeTableViewPropertyCommand(view, copyView);
+        command.add(changeViewPropertyCommand);
 
-		return command;
-	}
+        return command;
+    }
 
 }

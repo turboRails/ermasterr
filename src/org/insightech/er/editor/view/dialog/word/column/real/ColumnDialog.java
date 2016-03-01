@@ -26,389 +26,354 @@ import org.insightech.er.util.Format;
 
 public class ColumnDialog extends AbstractRealColumnDialog {
 
-	private ERTable erTable;
+    private final ERTable erTable;
 
-	private Sequence autoIncrementSetting;
+    private Sequence autoIncrementSetting;
 
-	protected Button primaryKeyCheck;
+    protected Button primaryKeyCheck;
 
-	protected Text uniqueKeyNameText;
+    protected Text uniqueKeyNameText;
 
-	protected Combo characterSetCombo;
+    protected Combo characterSetCombo;
 
-	protected Combo collationCombo;
+    protected Combo collationCombo;
 
-	protected Button autoIncrementCheck;
+    protected Button autoIncrementCheck;
 
-	protected Button autoIncrementSettingButton;
+    protected Button autoIncrementSettingButton;
 
-	public ColumnDialog(Shell parentShell, ERTable erTable) {
-		super(parentShell, erTable.getDiagram());
+    public ColumnDialog(final Shell parentShell, final ERTable erTable) {
+        super(parentShell, erTable.getDiagram());
 
-		this.erTable = erTable;
-	}
+        this.erTable = erTable;
+    }
 
-	@Override
-	protected void initializeDetailTab(Composite composite) {
-		this.uniqueKeyNameText = CompositeFactory.createText(this, composite,
-				"label.unique.key.name", false, true);
+    @Override
+    protected void initializeDetailTab(final Composite composite) {
+        uniqueKeyNameText = CompositeFactory.createText(this, composite, "label.unique.key.name", false, true);
 
-		super.initializeDetailTab(composite);
+        super.initializeDetailTab(composite);
 
-		DBManager manager = DBManagerFactory.getDBManager(this.diagram);
+        final DBManager manager = DBManagerFactory.getDBManager(diagram);
 
-		if (MySQLDBManager.ID.equals(this.diagram.getDatabase())) {
-			this.characterSetCombo = CompositeFactory.createCombo(this,
-					composite, "label.character.set");
-			this.collationCombo = CompositeFactory.createCombo(this, composite,
-					"label.collation");
-		}
+        if (MySQLDBManager.ID.equals(diagram.getDatabase())) {
+            characterSetCombo = CompositeFactory.createCombo(this, composite, "label.character.set");
+            collationCombo = CompositeFactory.createCombo(this, composite, "label.collation");
+        }
 
-		if (manager.isSupported(DBManager.SUPPORT_AUTO_INCREMENT_SETTING)) {
-			CompositeFactory.fillLine(composite);
+        if (manager.isSupported(DBManager.SUPPORT_AUTO_INCREMENT_SETTING)) {
+            CompositeFactory.fillLine(composite);
 
-			this.autoIncrementSettingButton = CompositeFactory
-					.createLargeButton(composite,
-							"label.auto.increment.setting", 2);
-			this.autoIncrementSettingButton.setEnabled(false);
-		}
-	}
+            autoIncrementSettingButton = CompositeFactory.createLargeButton(composite, "label.auto.increment.setting", 2);
+            autoIncrementSettingButton.setEnabled(false);
+        }
+    }
 
-	@Override
-	protected int getCheckBoxCompositeNumColumns() {
-		DBManager manager = DBManagerFactory.getDBManager(this.diagram);
+    @Override
+    protected int getCheckBoxCompositeNumColumns() {
+        final DBManager manager = DBManagerFactory.getDBManager(diagram);
 
-		if (manager.isSupported(DBManager.SUPPORT_AUTO_INCREMENT)) {
-			return 4;
-		}
+        if (manager.isSupported(DBManager.SUPPORT_AUTO_INCREMENT)) {
+            return 4;
+        }
 
-		return 3;
-	}
+        return 3;
+    }
 
-	@Override
-	protected void initializeCheckBoxComposite(Composite composite) {
-		this.primaryKeyCheck = CompositeFactory.createCheckbox(this, composite,
-				"label.primary.key", false);
+    @Override
+    protected void initializeCheckBoxComposite(final Composite composite) {
+        primaryKeyCheck = CompositeFactory.createCheckbox(this, composite, "label.primary.key", false);
 
-		super.initializeCheckBoxComposite(composite);
+        super.initializeCheckBoxComposite(composite);
 
-		DBManager manager = DBManagerFactory.getDBManager(this.diagram);
+        final DBManager manager = DBManagerFactory.getDBManager(diagram);
 
-		if (manager.isSupported(DBManager.SUPPORT_AUTO_INCREMENT)) {
-			this.autoIncrementCheck = CompositeFactory.createCheckbox(this,
-					composite, "label.auto.increment", false);
-		}
+        if (manager.isSupported(DBManager.SUPPORT_AUTO_INCREMENT)) {
+            autoIncrementCheck = CompositeFactory.createCheckbox(this, composite, "label.auto.increment", false);
+        }
 
-		if (this.isRefered) {
-			this.uniqueKeyCheck.setEnabled(false);
-		}
+        if (isRefered) {
+            uniqueKeyCheck.setEnabled(false);
+        }
 
-		this.enableAutoIncrement(false);
-	}
+        enableAutoIncrement(false);
+    }
 
-	protected int getStyle(int style) {
-		if (this.foreignKey) {
-			style |= SWT.READ_ONLY;
-		}
+    protected int getStyle(int style) {
+        if (foreignKey) {
+            style |= SWT.READ_ONLY;
+        }
 
-		return style;
-	}
+        return style;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initializeComposite(Composite composite) {
-		super.initializeComposite(composite);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initializeComposite(final Composite composite) {
+        super.initializeComposite(composite);
 
-		if (this.foreignKey) {
-			this.wordCombo.setEnabled(false);
-			this.typeCombo.setEnabled(false);
-			this.defaultText.setEnabled(false);
-			this.lengthText.setEnabled(false);
-			this.decimalText.setEnabled(false);
-		}
-	}
-
-	@Override
-	protected void initData() {
-		super.initData();
-
-		if (this.characterSetCombo != null) {
-			this.characterSetCombo.add("");
-
-			for (String characterSet : MySQLDBManager.getCharacterSetList()) {
-				this.characterSetCombo.add(characterSet);
-			}
-
-			this.collationCombo.add("");
-		}
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void setWordData() {
-		super.setWordData();
-
-		this.primaryKeyCheck.setSelection(this.targetColumn.isPrimaryKey());
-
-		if (this.autoIncrementCheck != null) {
-			this.autoIncrementCheck.setSelection(this.targetColumn
-					.isAutoIncrement());
-		}
-
-		if (this.primaryKeyCheck.getSelection()) {
-			this.notNullCheck.setSelection(true);
-			this.notNullCheck.setEnabled(false);
-		} else {
-			this.notNullCheck.setEnabled(true);
-		}
-
-		final NormalColumn autoIncrementColumn = this.erTable
-				.getAutoIncrementColumn();
-
-		if (this.primaryKeyCheck.getSelection()) {
-			if (autoIncrementColumn == null
-					|| autoIncrementColumn == targetColumn) {
-				this.enableAutoIncrement(true);
-
-			} else {
-				this.enableAutoIncrement(false);
-			}
-
-		} else {
-			this.enableAutoIncrement(false);
-		}
-
-		this.defaultText.setText(Format.null2blank(this.targetColumn
-				.getDefaultValue()));
-
-		this.uniqueKeyNameText.setText(Format.null2blank(this.targetColumn
-				.getUniqueKeyName()));
-
-		if (this.characterSetCombo != null) {
-			this.characterSetCombo.setText(Format.null2blank(this.targetColumn
-					.getCharacterSet()));
-
-			for (String collation : MySQLDBManager
-					.getCollationList(this.targetColumn.getCharacterSet())) {
-				this.collationCombo.add(collation);
-			}
-
-			this.collationCombo.setText(Format.null2blank(this.targetColumn
-					.getCollation()));
-		}
-	}
-
-	@Override
-	protected String getTitle() {
-		return "dialog.title.column";
-	}
-
-	private void enableAutoIncrement(boolean enabled) {
-		if (this.autoIncrementCheck != null) {
-			if (!enabled) {
-				this.autoIncrementCheck.setSelection(false);
-			}
-
-			this.autoIncrementCheck.setEnabled(enabled);
-
-			if (autoIncrementSettingButton != null) {
-				this.autoIncrementSettingButton.setEnabled(enabled
-						&& this.autoIncrementCheck.getSelection());
-			}
-		}
-	}
-
-	@Override
-	protected void setEnabledBySqlType() {
-		super.setEnabledBySqlType();
-
-		SqlType selectedType = SqlType.valueOf(diagram.getDatabase(),
-				typeCombo.getText());
-
-		if (selectedType != null) {
-			if (PostgresDBManager.ID.equals(this.diagram.getDatabase())) {
-				if (SqlType.SQL_TYPE_ID_BIG_SERIAL.equals(selectedType.getId())
-						|| SqlType.SQL_TYPE_ID_SERIAL.equals(selectedType
-								.getId())) {
-					this.autoIncrementSettingButton.setEnabled(true);
-				} else {
-					this.autoIncrementSettingButton.setEnabled(false);
-				}
-			}
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void perfomeOK() {
-		super.perfomeOK();
-
-		this.returnColumn.setPrimaryKey(primaryKeyCheck.getSelection());
-
-		if (this.autoIncrementCheck != null) {
-			this.returnColumn.setAutoIncrement(this.autoIncrementCheck
-					.getSelection());
-		}
-
-		this.returnColumn.setAutoIncrementSetting(this.autoIncrementSetting);
-
-		this.returnColumn.setUniqueKeyName(this.uniqueKeyNameText.getText());
-
-		if (this.characterSetCombo != null) {
-			this.returnColumn.setCharacterSet(this.characterSetCombo.getText());
-			this.returnColumn.setCollation(this.collationCombo.getText());
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getErrorMessage() {
-		if (this.autoIncrementCheck != null
-				&& this.autoIncrementCheck.getSelection()) {
-			SqlType selectedType = SqlType.valueOf(this.diagram.getDatabase(),
-					this.typeCombo.getText());
-			if (selectedType == null || !selectedType.isNumber()) {
-				return "error.no.auto.increment.column";
-			}
-		}
-
-		String text = uniqueKeyNameText.getText().trim();
-		if (!Check.isAlphabet(text)) {
-			return "error.unique.key.name.not.alphabet";
-		}
-
-		return super.getErrorMessage();
-	}
-
-	@Override
-	protected void addListener() {
-		super.addListener();
-
-		if (this.autoIncrementSettingButton != null) {
-			this.autoIncrementSettingButton
-					.addSelectionListener(new SelectionAdapter() {
-
-						/**
-						 * {@inheritDoc}
-						 */
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							AutoIncrementSettingDialog dialog = new AutoIncrementSettingDialog(
-									PlatformUI.getWorkbench()
-											.getActiveWorkbenchWindow()
-											.getShell(), autoIncrementSetting,
-									diagram.getDatabase());
-
-							if (dialog.open() == IDialogConstants.OK_ID) {
-								autoIncrementSetting = dialog.getResult();
-							}
-						}
-					});
-		}
-
-		final NormalColumn autoIncrementColumn = this.erTable
-				.getAutoIncrementColumn();
-
-		this.primaryKeyCheck.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (primaryKeyCheck.getSelection()) {
-					notNullCheck.setSelection(true);
-					notNullCheck.setEnabled(false);
-
-					if (autoIncrementColumn == null
-							|| autoIncrementColumn == targetColumn) {
-						enableAutoIncrement(true);
-
-					} else {
-						enableAutoIncrement(false);
-					}
-
-				} else {
-					notNullCheck.setEnabled(true);
-					enableAutoIncrement(false);
-				}
-			}
-		});
-
-		this.uniqueKeyCheck.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				uniqueKeyNameText.setEnabled(uniqueKeyCheck.getSelection());
-			}
-		});
-
-		if (autoIncrementSettingButton != null
-				&& this.autoIncrementCheck != null) {
-			this.autoIncrementCheck
-					.addSelectionListener(new SelectionAdapter() {
-
-						/**
-						 * {@inheritDoc}
-						 */
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-
-							autoIncrementSettingButton
-									.setEnabled(autoIncrementCheck
-											.getSelection());
-						}
-
-					});
-		}
-
-		if (this.characterSetCombo != null) {
-
-			this.characterSetCombo.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					String selectedCollation = collationCombo.getText();
-
-					collationCombo.removeAll();
-					collationCombo.add("");
-
-					for (String collation : MySQLDBManager
-							.getCollationList(characterSetCombo.getText())) {
-						collationCombo.add(collation);
-					}
-
-					int index = collationCombo.indexOf(selectedCollation);
-
-					collationCombo.select(index);
-				}
-			});
-		}
-	}
-
-	@Override
-	public void setTargetColumn(CopyColumn targetColumn, boolean foreignKey,
-			boolean isRefered) {
-		super.setTargetColumn(targetColumn, foreignKey, isRefered);
-
-		if (targetColumn != null) {
-			this.autoIncrementSetting = targetColumn.getAutoIncrementSetting();
-
-		} else {
-			this.autoIncrementSetting = new Sequence();
-		}
-	}
+        if (foreignKey) {
+            wordCombo.setEnabled(false);
+            typeCombo.setEnabled(false);
+            defaultText.setEnabled(false);
+            lengthText.setEnabled(false);
+            decimalText.setEnabled(false);
+        }
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+
+        if (characterSetCombo != null) {
+            characterSetCombo.add("");
+
+            for (final String characterSet : MySQLDBManager.getCharacterSetList()) {
+                characterSetCombo.add(characterSet);
+            }
+
+            collationCombo.add("");
+        }
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setWordData() {
+        super.setWordData();
+
+        primaryKeyCheck.setSelection(targetColumn.isPrimaryKey());
+
+        if (autoIncrementCheck != null) {
+            autoIncrementCheck.setSelection(targetColumn.isAutoIncrement());
+        }
+
+        if (primaryKeyCheck.getSelection()) {
+            notNullCheck.setSelection(true);
+            notNullCheck.setEnabled(false);
+        } else {
+            notNullCheck.setEnabled(true);
+        }
+
+        final NormalColumn autoIncrementColumn = erTable.getAutoIncrementColumn();
+
+        if (primaryKeyCheck.getSelection()) {
+            if (autoIncrementColumn == null || autoIncrementColumn == targetColumn) {
+                enableAutoIncrement(true);
+
+            } else {
+                enableAutoIncrement(false);
+            }
+
+        } else {
+            enableAutoIncrement(false);
+        }
+
+        defaultText.setText(Format.null2blank(targetColumn.getDefaultValue()));
+
+        uniqueKeyNameText.setText(Format.null2blank(targetColumn.getUniqueKeyName()));
+
+        if (characterSetCombo != null) {
+            characterSetCombo.setText(Format.null2blank(targetColumn.getCharacterSet()));
+
+            for (final String collation : MySQLDBManager.getCollationList(targetColumn.getCharacterSet())) {
+                collationCombo.add(collation);
+            }
+
+            collationCombo.setText(Format.null2blank(targetColumn.getCollation()));
+        }
+    }
+
+    @Override
+    protected String getTitle() {
+        return "dialog.title.column";
+    }
+
+    private void enableAutoIncrement(final boolean enabled) {
+        if (autoIncrementCheck != null) {
+            if (!enabled) {
+                autoIncrementCheck.setSelection(false);
+            }
+
+            autoIncrementCheck.setEnabled(enabled);
+
+            if (autoIncrementSettingButton != null) {
+                autoIncrementSettingButton.setEnabled(enabled && autoIncrementCheck.getSelection());
+            }
+        }
+    }
+
+    @Override
+    protected void setEnabledBySqlType() {
+        super.setEnabledBySqlType();
+
+        final SqlType selectedType = SqlType.valueOf(diagram.getDatabase(), typeCombo.getText());
+
+        if (selectedType != null) {
+            if (PostgresDBManager.ID.equals(diagram.getDatabase())) {
+                if (SqlType.SQL_TYPE_ID_BIG_SERIAL.equals(selectedType.getId()) || SqlType.SQL_TYPE_ID_SERIAL.equals(selectedType.getId())) {
+                    autoIncrementSettingButton.setEnabled(true);
+                } else {
+                    autoIncrementSettingButton.setEnabled(false);
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void perfomeOK() {
+        super.perfomeOK();
+
+        returnColumn.setPrimaryKey(primaryKeyCheck.getSelection());
+
+        if (autoIncrementCheck != null) {
+            returnColumn.setAutoIncrement(autoIncrementCheck.getSelection());
+        }
+
+        returnColumn.setAutoIncrementSetting(autoIncrementSetting);
+
+        returnColumn.setUniqueKeyName(uniqueKeyNameText.getText());
+
+        if (characterSetCombo != null) {
+            returnColumn.setCharacterSet(characterSetCombo.getText());
+            returnColumn.setCollation(collationCombo.getText());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getErrorMessage() {
+        if (autoIncrementCheck != null && autoIncrementCheck.getSelection()) {
+            final SqlType selectedType = SqlType.valueOf(diagram.getDatabase(), typeCombo.getText());
+            if (selectedType == null || !selectedType.isNumber()) {
+                return "error.no.auto.increment.column";
+            }
+        }
+
+        final String text = uniqueKeyNameText.getText().trim();
+        if (!Check.isAlphabet(text)) {
+            return "error.unique.key.name.not.alphabet";
+        }
+
+        return super.getErrorMessage();
+    }
+
+    @Override
+    protected void addListener() {
+        super.addListener();
+
+        if (autoIncrementSettingButton != null) {
+            autoIncrementSettingButton.addSelectionListener(new SelectionAdapter() {
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    final AutoIncrementSettingDialog dialog = new AutoIncrementSettingDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), autoIncrementSetting, diagram.getDatabase());
+
+                    if (dialog.open() == IDialogConstants.OK_ID) {
+                        autoIncrementSetting = dialog.getResult();
+                    }
+                }
+            });
+        }
+
+        final NormalColumn autoIncrementColumn = erTable.getAutoIncrementColumn();
+
+        primaryKeyCheck.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                if (primaryKeyCheck.getSelection()) {
+                    notNullCheck.setSelection(true);
+                    notNullCheck.setEnabled(false);
+
+                    if (autoIncrementColumn == null || autoIncrementColumn == targetColumn) {
+                        enableAutoIncrement(true);
+
+                    } else {
+                        enableAutoIncrement(false);
+                    }
+
+                } else {
+                    notNullCheck.setEnabled(true);
+                    enableAutoIncrement(false);
+                }
+            }
+        });
+
+        uniqueKeyCheck.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                uniqueKeyNameText.setEnabled(uniqueKeyCheck.getSelection());
+            }
+        });
+
+        if (autoIncrementSettingButton != null && autoIncrementCheck != null) {
+            autoIncrementCheck.addSelectionListener(new SelectionAdapter() {
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+
+                    autoIncrementSettingButton.setEnabled(autoIncrementCheck.getSelection());
+                }
+
+            });
+        }
+
+        if (characterSetCombo != null) {
+
+            characterSetCombo.addSelectionListener(new SelectionAdapter() {
+
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    final String selectedCollation = collationCombo.getText();
+
+                    collationCombo.removeAll();
+                    collationCombo.add("");
+
+                    for (final String collation : MySQLDBManager.getCollationList(characterSetCombo.getText())) {
+                        collationCombo.add(collation);
+                    }
+
+                    final int index = collationCombo.indexOf(selectedCollation);
+
+                    collationCombo.select(index);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void setTargetColumn(final CopyColumn targetColumn, final boolean foreignKey, final boolean isRefered) {
+        super.setTargetColumn(targetColumn, foreignKey, isRefered);
+
+        if (targetColumn != null) {
+            autoIncrementSetting = targetColumn.getAutoIncrementSetting();
+
+        } else {
+            autoIncrementSetting = new Sequence();
+        }
+    }
 
 }

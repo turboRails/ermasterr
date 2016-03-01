@@ -9,104 +9,101 @@ import org.insightech.er.editor.model.diagram_contents.not_element.sequence.Sequ
 
 public class H2TableImportManager extends ImportFromDBManagerEclipseBase {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getViewDefinitionSQL(String schema) {
-		return "SELECT VIEW_DEFINITION FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getViewDefinitionSQL(final String schema) {
+        return "SELECT VIEW_DEFINITION FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ";
+    }
 
-	@Override
-	protected ColumnData createColumnData(ResultSet columnSet)
-			throws SQLException {
-		ColumnData columnData = super.createColumnData(columnSet);
-		String type = columnData.type.toLowerCase();
+    @Override
+    protected ColumnData createColumnData(final ResultSet columnSet) throws SQLException {
+        final ColumnData columnData = super.createColumnData(columnSet);
+        final String type = columnData.type.toLowerCase();
 
-		if ("bigint".equals(type)) {
-			
-		} else if (type.startsWith("timestamp")) {
-			columnData.size = columnData.decimalDegits;
-		}
+        if ("bigint".equals(type)) {
 
-		return columnData;
-	}
+        } else if (type.startsWith("timestamp")) {
+            columnData.size = columnData.decimalDegits;
+        }
 
-	// TODO for identity column
-	// private String getRestrictType(String tableName, String schema,
-	// ColumnData columnData) throws SQLException {
-	// String type = null;
-	//
-	// PreparedStatement ps = null;
-	// ResultSet rs = null;
-	//
-	// try {
-	// ps =
-	// con.prepareStatement("select sequence_name from INFORMATION_SCHEMA.COLUMNS "
-	// + " where table_name = ? "
-	// + " and table_schema = ? "
-	// + " and column_name = ?");
-	//
-	// ps.setString(1, tableName);
-	// ps.setString(2, schema);
-	// ps.setString(3, columnData.columnName);
-	//
-	// rs = ps.executeQuery();
-	//
-	// if (rs.next()) {
-	// if (!Check.isEmpty(rs.getString("sequence_name"))) {
-	// type = "identity";
-	// }
-	// }
-	//
-	// } finally {
-	// if (rs != null) {
-	// rs.close();
-	// }
-	// if (ps != null) {
-	// ps.close();
-	// }
-	// }
-	//
-	// return type;
-	// }
+        return columnData;
+    }
 
-	@Override
-	protected Sequence importSequence(String schema, String sequenceName)
-			throws SQLException {
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
+    // TODO for identity column
+    // private String getRestrictType(String tableName, String schema,
+    // ColumnData columnData) throws SQLException {
+    // String type = null;
+    //
+    // PreparedStatement ps = null;
+    // ResultSet rs = null;
+    //
+    // try {
+    // ps =
+    // con.prepareStatement("select sequence_name from INFORMATION_SCHEMA.COLUMNS "
+    // + " where table_name = ? "
+    // + " and table_schema = ? "
+    // + " and column_name = ?");
+    //
+    // ps.setString(1, tableName);
+    // ps.setString(2, schema);
+    // ps.setString(3, columnData.columnName);
+    //
+    // rs = ps.executeQuery();
+    //
+    // if (rs.next()) {
+    // if (!Check.isEmpty(rs.getString("sequence_name"))) {
+    // type = "identity";
+    // }
+    // }
+    //
+    // } finally {
+    // if (rs != null) {
+    // rs.close();
+    // }
+    // if (ps != null) {
+    // ps.close();
+    // }
+    // }
+    //
+    // return type;
+    // }
 
-		try {
-			stmt = con
-					.prepareStatement("SELECT * FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA = ? AND SEQUENCE_NAME = ?");
-			stmt.setString(1, schema);
-			stmt.setString(2, sequenceName);
+    @Override
+    protected Sequence importSequence(final String schema, final String sequenceName) throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
 
-			rs = stmt.executeQuery();
+        try {
+            stmt = con.prepareStatement("SELECT * FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA = ? AND SEQUENCE_NAME = ?");
+            stmt.setString(1, schema);
+            stmt.setString(2, sequenceName);
 
-			if (rs.next()) {
-				Sequence sequence = new Sequence();
+            rs = stmt.executeQuery();
 
-				sequence.setName(sequenceName);
-				sequence.setSchema(schema);
-				sequence.setIncrement(rs.getInt("INCREMENT"));
-				sequence.setCache(rs.getInt("CACHE"));
+            if (rs.next()) {
+                final Sequence sequence = new Sequence();
 
-				return sequence;
-			}
+                sequence.setName(sequenceName);
+                sequence.setSchema(schema);
+                sequence.setIncrement(rs.getInt("INCREMENT"));
+                sequence.setCache(rs.getInt("CACHE"));
 
-			return null;
+                return sequence;
+            }
 
-		} finally {
-			this.close(rs);
-			this.close(stmt);
-		}
-	}
+            return null;
 
-	@Override
-	protected void cacheForeignKeyData() throws SQLException {
-		this.tableForeignKeyDataMap = null;
-	}
+        } finally {
+            this.close(rs);
+            this.close(stmt);
+        }
+    }
+
+    @Override
+    protected void cacheForeignKeyData() throws SQLException {
+        tableForeignKeyDataMap = null;
+    }
 
 }

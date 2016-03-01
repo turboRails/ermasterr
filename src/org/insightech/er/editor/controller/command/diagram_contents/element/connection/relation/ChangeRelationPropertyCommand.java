@@ -11,91 +11,81 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.column
 
 public class ChangeRelationPropertyCommand extends AbstractCommand {
 
-	private Relation oldCopyRelation;
+    private final Relation oldCopyRelation;
 
-	private Relation newCopyRelation;
+    private final Relation newCopyRelation;
 
-	private Relation relation;
+    private final Relation relation;
 
-	private TableView oldTargetTable;
+    private final TableView oldTargetTable;
 
-	private boolean isChildNotNull;
+    private boolean isChildNotNull;
 
-	private Map<NormalColumn, Boolean> foreignKeyNotNullMap;
+    private final Map<NormalColumn, Boolean> foreignKeyNotNullMap;
 
-	public ChangeRelationPropertyCommand(Relation relation,
-			Relation newCopyRelation) {
-		this.relation = relation;
-		this.oldCopyRelation = relation.copy();
-		this.newCopyRelation = newCopyRelation;
+    public ChangeRelationPropertyCommand(final Relation relation, final Relation newCopyRelation) {
+        this.relation = relation;
+        oldCopyRelation = relation.copy();
+        this.newCopyRelation = newCopyRelation;
 
-		this.oldTargetTable = relation.getTargetTableView().copyData();
+        oldTargetTable = relation.getTargetTableView().copyData();
 
-		this.foreignKeyNotNullMap = new HashMap<NormalColumn, Boolean>();
+        foreignKeyNotNullMap = new HashMap<NormalColumn, Boolean>();
 
-		if (Relation.PARENT_CARDINALITY_1.equals(newCopyRelation
-				.getParentCardinality())) {
-			this.isChildNotNull = true;
-		}
-	}
+        if (Relation.PARENT_CARDINALITY_1.equals(newCopyRelation.getParentCardinality())) {
+            isChildNotNull = true;
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.newCopyRelation.restructureRelationData(this.relation);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        newCopyRelation.restructureRelationData(relation);
 
-		if (this.newCopyRelation.isReferenceForPK()) {
-			this.relation.setForeignKeyColumnForPK();
+        if (newCopyRelation.isReferenceForPK()) {
+            relation.setForeignKeyColumnForPK();
 
-		} else if (this.newCopyRelation.getReferencedComplexUniqueKey() != null) {
-			this.relation.setForeignKeyForComplexUniqueKey(this.newCopyRelation
-					.getReferencedComplexUniqueKey());
+        } else if (newCopyRelation.getReferencedComplexUniqueKey() != null) {
+            relation.setForeignKeyForComplexUniqueKey(newCopyRelation.getReferencedComplexUniqueKey());
 
-		} else {
-			this.relation.setForeignKeyColumn(this.newCopyRelation
-					.getReferencedColumn());
-		}
+        } else {
+            relation.setForeignKeyColumn(newCopyRelation.getReferencedColumn());
+        }
 
-		for (NormalColumn foreignKeyColumn : this.relation
-				.getForeignKeyColumns()) {
-			this.foreignKeyNotNullMap.put(foreignKeyColumn,
-					foreignKeyColumn.isNotNull());
+        for (final NormalColumn foreignKeyColumn : relation.getForeignKeyColumns()) {
+            foreignKeyNotNullMap.put(foreignKeyColumn, foreignKeyColumn.isNotNull());
 
-			foreignKeyColumn.setNotNull(this.isChildNotNull);
-		}
-		
-		this.relation.getTarget().refresh();
-		this.relation.getSource().refresh();
-		this.relation.refreshVisuals();
-	}
+            foreignKeyColumn.setNotNull(isChildNotNull);
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.oldCopyRelation.restructureRelationData(this.relation);
+        relation.getTarget().refresh();
+        relation.getSource().refresh();
+        relation.refreshVisuals();
+    }
 
-		this.relation
-				.setReferenceForPK(this.oldCopyRelation.isReferenceForPK());
-		this.relation.setReferencedComplexUniqueKey(this.oldCopyRelation
-				.getReferencedComplexUniqueKey());
-		this.relation.setReferencedColumn(this.oldCopyRelation
-				.getReferencedColumn());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        oldCopyRelation.restructureRelationData(relation);
 
-		this.oldTargetTable.restructureData(this.relation.getTargetTableView());
+        relation.setReferenceForPK(oldCopyRelation.isReferenceForPK());
+        relation.setReferencedComplexUniqueKey(oldCopyRelation.getReferencedComplexUniqueKey());
+        relation.setReferencedColumn(oldCopyRelation.getReferencedColumn());
 
-		for (Entry<NormalColumn, Boolean> foreignKeyEntry : this.foreignKeyNotNullMap
-				.entrySet()) {
-			foreignKeyEntry.getKey().setNotNull(foreignKeyEntry.getValue());
-		}
-		
-		this.relation.getTargetTableView().setDirty();
-		
-		this.relation.getTarget().refresh();
-		this.relation.getSource().refresh();
-		this.relation.refreshVisuals();
-	}
+        oldTargetTable.restructureData(relation.getTargetTableView());
+
+        for (final Entry<NormalColumn, Boolean> foreignKeyEntry : foreignKeyNotNullMap.entrySet()) {
+            foreignKeyEntry.getKey().setNotNull(foreignKeyEntry.getValue());
+        }
+
+        relation.getTargetTableView().setDirty();
+
+        relation.getTarget().refresh();
+        relation.getSource().refresh();
+        relation.refreshVisuals();
+    }
 }

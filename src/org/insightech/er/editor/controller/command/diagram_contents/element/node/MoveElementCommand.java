@@ -14,167 +14,149 @@ import org.insightech.er.editor.model.diagram_contents.element.node.category.Cat
 
 public class MoveElementCommand extends AbstractCommand {
 
-	protected int x;
+    protected int x;
 
-	protected int oldX;
+    protected int oldX;
 
-	protected int y;
+    protected int y;
 
-	protected int oldY;
+    protected int oldY;
 
-	protected int width;
+    protected int width;
 
-	protected int oldWidth;
+    protected int oldWidth;
 
-	protected int height;
+    protected int height;
 
-	protected int oldHeight;
+    protected int oldHeight;
 
-	private NodeElement element;
+    private final NodeElement element;
 
-	private Map<Category, Location> oldCategoryLocationMap;
+    private final Map<Category, Location> oldCategoryLocationMap;
 
-	private Map<Category, Location> newCategoryLocationMap;
+    private final Map<Category, Location> newCategoryLocationMap;
 
-	private List<Category> removedCategories;
+    private final List<Category> removedCategories;
 
-	private List<Category> addCategories;
+    private final List<Category> addCategories;
 
-	protected ERDiagram diagram;
+    protected ERDiagram diagram;
 
-	private Category currentCategory;
+    private final Category currentCategory;
 
-	private Rectangle bounds;
+    private final Rectangle bounds;
 
-	public MoveElementCommand(ERDiagram diagram, Rectangle bounds, int x,
-			int y, int width, int height, NodeElement element) {
+    public MoveElementCommand(final ERDiagram diagram, final Rectangle bounds, final int x, final int y, final int width, final int height, final NodeElement element) {
 
-		this.element = element;
-		this.setNewRectangle(x, y, width, height);
+        this.element = element;
+        setNewRectangle(x, y, width, height);
 
-		this.oldX = element.getX();
-		this.oldY = element.getY();
-		this.oldWidth = element.getWidth();
-		this.oldHeight = element.getHeight();
+        oldX = element.getX();
+        oldY = element.getY();
+        oldWidth = element.getWidth();
+        oldHeight = element.getHeight();
 
-		this.removedCategories = new ArrayList<Category>();
-		this.addCategories = new ArrayList<Category>();
+        removedCategories = new ArrayList<Category>();
+        addCategories = new ArrayList<Category>();
 
-		this.bounds = bounds;
-		this.diagram = diagram;
-		this.currentCategory = diagram.getCurrentCategory();
+        this.bounds = bounds;
+        this.diagram = diagram;
+        currentCategory = diagram.getCurrentCategory();
 
-		this.oldCategoryLocationMap = new HashMap<Category, Location>();
-		this.newCategoryLocationMap = new HashMap<Category, Location>();
-	}
+        oldCategoryLocationMap = new HashMap<Category, Location>();
+        newCategoryLocationMap = new HashMap<Category, Location>();
+    }
 
-	protected void setNewRectangle(int x, int y, int width, int height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-	}
+    protected void setNewRectangle(final int x, final int y, final int width, final int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
 
-	private void initCategory(ERDiagram diagram, Location elementLocation) {
-		for (Category category : diagram.getDiagramContents().getSettings()
-				.getCategorySetting().getSelectedCategories()) {
-			if (category.contains(element)) {
-				if (this.currentCategory == null) {
-					if (elementLocation.x + elementLocation.width < category
-							.getX()
-							|| elementLocation.x > category.getX()
-									+ category.getWidth()
-							|| elementLocation.y + elementLocation.height < category
-									.getY()
-							|| elementLocation.y > category.getY()
-									+ category.getHeight()) {
+    private void initCategory(final ERDiagram diagram, final Location elementLocation) {
+        for (final Category category : diagram.getDiagramContents().getSettings().getCategorySetting().getSelectedCategories()) {
+            if (category.contains(element)) {
+                if (currentCategory == null) {
+                    if (elementLocation.x + elementLocation.width < category.getX() || elementLocation.x > category.getX() + category.getWidth() || elementLocation.y + elementLocation.height < category.getY() || elementLocation.y > category.getY() + category.getHeight()) {
 
-						this.removedCategories.add(category);
+                        removedCategories.add(category);
 
-						continue;
-					}
-				}
+                        continue;
+                    }
+                }
 
-				Location newCategoryLocation = category
-						.getNewCategoryLocation(elementLocation);
+                final Location newCategoryLocation = category.getNewCategoryLocation(elementLocation);
 
-				if (newCategoryLocation != null) {
-					this.newCategoryLocationMap.put(category,
-							newCategoryLocation);
-					this.oldCategoryLocationMap.put(category,
-							category.getLocation());
-				}
+                if (newCategoryLocation != null) {
+                    newCategoryLocationMap.put(category, newCategoryLocation);
+                    oldCategoryLocationMap.put(category, category.getLocation());
+                }
 
-			} else {
-				if (diagram.getCurrentCategory() == null) {
-					if (elementLocation.x >= category.getX()
-							&& elementLocation.x + elementLocation.width <= category
-									.getX() + category.getWidth()
-							&& elementLocation.y >= category.getY()
-							&& elementLocation.y + bounds.height <= category
-									.getY() + category.getHeight()) {
-						this.addCategories.add(category);
-					}
-				}
-			}
-		}
-	}
+            } else {
+                if (diagram.getCurrentCategory() == null) {
+                    if (elementLocation.x >= category.getX() && elementLocation.x + elementLocation.width <= category.getX() + category.getWidth() && elementLocation.y >= category.getY() && elementLocation.y + bounds.height <= category.getY() + category.getHeight()) {
+                        addCategories.add(category);
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		if (this.bounds != null) {
-			Location elementLocation = new Location(x, y, bounds.width,
-					bounds.height);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        if (bounds != null) {
+            final Location elementLocation = new Location(x, y, bounds.width, bounds.height);
 
-			if (elementLocation.width < width) {
-				elementLocation.width = width;
-			}
-			if (elementLocation.height < height) {
-				elementLocation.height = height;
-			}
+            if (elementLocation.width < width) {
+                elementLocation.width = width;
+            }
+            if (elementLocation.height < height) {
+                elementLocation.height = height;
+            }
 
-			this.initCategory(diagram, elementLocation);
-		}
+            initCategory(diagram, elementLocation);
+        }
 
-		for (Category category : this.newCategoryLocationMap.keySet()) {
-			category.setLocation(this.newCategoryLocationMap.get(category));
-			category.refreshVisuals();
-		}
+        for (final Category category : newCategoryLocationMap.keySet()) {
+            category.setLocation(newCategoryLocationMap.get(category));
+            category.refreshVisuals();
+        }
 
-		for (Category category : this.removedCategories) {
-			category.remove(this.element);
-		}
+        for (final Category category : removedCategories) {
+            category.remove(element);
+        }
 
-		for (Category category : this.addCategories) {
-			category.add(this.element);
-		}
+        for (final Category category : addCategories) {
+            category.add(element);
+        }
 
-		this.element.setLocation(new Location(x, y, width, height));
-		this.element.refreshVisuals();
-	}
+        element.setLocation(new Location(x, y, width, height));
+        element.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.element.setLocation(new Location(oldX, oldY, oldWidth, oldHeight));
-		this.element.refreshVisuals();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        element.setLocation(new Location(oldX, oldY, oldWidth, oldHeight));
+        element.refreshVisuals();
 
-		for (Category category : this.oldCategoryLocationMap.keySet()) {
-			category.setLocation(this.oldCategoryLocationMap.get(category));
-			category.refreshVisuals();
-		}
+        for (final Category category : oldCategoryLocationMap.keySet()) {
+            category.setLocation(oldCategoryLocationMap.get(category));
+            category.refreshVisuals();
+        }
 
-		for (Category category : this.removedCategories) {
-			category.add(this.element);
-		}
+        for (final Category category : removedCategories) {
+            category.add(element);
+        }
 
-		for (Category category : this.addCategories) {
-			category.remove(this.element);
-		}
-	}
+        for (final Category category : addCategories) {
+            category.remove(element);
+        }
+    }
 }

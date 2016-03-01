@@ -26,198 +26,181 @@ import org.insightech.er.editor.view.action.AbstractBaseSelectionAction;
 
 public class HorizontalLineAction extends AbstractBaseSelectionAction {
 
-	public static final String ID = HorizontalLineAction.class.getName();
+    public static final String ID = HorizontalLineAction.class.getName();
 
-	public HorizontalLineAction(ERDiagramEditor editor) {
-		super(ID, ResourceString
-				.getResourceString("action.title.horizontal.line"), editor);
+    public HorizontalLineAction(final ERDiagramEditor editor) {
+        super(ID, ResourceString.getResourceString("action.title.horizontal.line"), editor);
 
-		this.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.HORIZONTAL_LINE));
-		// this.setDisabledImageDescriptor(Activator
-		// .getImageDescriptor(ImageKey.HORIZONTAL_LINE_DISABLED));
-		this.setToolTipText(ResourceString
-				.getResourceString("action.title.horizontal.line"));
-	}
+        setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.HORIZONTAL_LINE));
+        // this.setDisabledImageDescriptor(Activator
+        // .getImageDescriptor(ImageKey.HORIZONTAL_LINE_DISABLED));
+        setToolTipText(ResourceString.getResourceString("action.title.horizontal.line"));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean calculateEnabled() {
-		Command cmd = this.createCommand();
-		if (cmd == null) {
-			return false;
-		}
-		return cmd.canExecute();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean calculateEnabled() {
+        final Command cmd = createCommand();
+        if (cmd == null) {
+            return false;
+        }
+        return cmd.canExecute();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void execute(Event event) {
-		execute(createCommand());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void execute(final Event event) {
+        execute(createCommand());
+    }
 
-	private Command createCommand() {
-		Command command = null;
+    private Command createCommand() {
+        Command command = null;
 
-		List<NodeElementEditPart> list = new ArrayList<NodeElementEditPart>();
+        final List<NodeElementEditPart> list = new ArrayList<NodeElementEditPart>();
 
-		for (Object object : this.getSelectedObjects()) {
-			if (object instanceof ERTableEditPart
-					|| object instanceof NoteEditPart) {
-				list.add((NodeElementEditPart) object);
-			}
-		}
+        for (final Object object : getSelectedObjects()) {
+            if (object instanceof ERTableEditPart || object instanceof NoteEditPart) {
+                list.add((NodeElementEditPart) object);
+            }
+        }
 
-		if (list.size() < 3) {
-			return null;
-		}
+        if (list.size() < 3) {
+            return null;
+        }
 
-		NodeElementEditPart firstEditPart = this.getFirstEditPart(list);
-		list.remove(firstEditPart);
+        final NodeElementEditPart firstEditPart = getFirstEditPart(list);
+        list.remove(firstEditPart);
 
-		Collections.sort(list, comparator);
+        Collections.sort(list, comparator);
 
-		Rectangle firstRectangle = firstEditPart.getFigure().getBounds();
-		int start = firstRectangle.x;
-		int left = firstRectangle.x + firstRectangle.width;
+        final Rectangle firstRectangle = firstEditPart.getFigure().getBounds();
+        final int start = firstRectangle.x;
+        final int left = firstRectangle.x + firstRectangle.width;
 
-		Rectangle lastRectangle = list.remove(list.size() - 1).getFigure()
-				.getBounds();
-		int right = lastRectangle.x;
+        final Rectangle lastRectangle = list.remove(list.size() - 1).getFigure().getBounds();
+        final int right = lastRectangle.x;
 
-		if (left > right) {
-			command = this.alignToStart(start, list);
+        if (left > right) {
+            command = alignToStart(start, list);
 
-		} else {
-			command = this.adjustSpace(start, left, right, list);
-		}
+        } else {
+            command = adjustSpace(start, left, right, list);
+        }
 
-		return command;
-	}
+        return command;
+    }
 
-	private Command alignToStart(int start, List<NodeElementEditPart> list) {
-		CompoundCommand command = new CompoundCommand();
+    private Command alignToStart(final int start, final List<NodeElementEditPart> list) {
+        final CompoundCommand command = new CompoundCommand();
 
-		ERDiagram diagram = this.getDiagram();
+        final ERDiagram diagram = getDiagram();
 
-		for (AbstractModelEditPart editPart : list) {
-			NodeElement nodeElement = (NodeElement) editPart.getModel();
+        for (final AbstractModelEditPart editPart : list) {
+            final NodeElement nodeElement = (NodeElement) editPart.getModel();
 
-			MoveElementCommand moveCommand = new MoveElementCommand(diagram,
-					editPart.getFigure().getBounds(), start,
-					nodeElement.getY(), nodeElement.getWidth(),
-					nodeElement.getHeight(), nodeElement);
+            final MoveElementCommand moveCommand = new MoveElementCommand(diagram, editPart.getFigure().getBounds(), start, nodeElement.getY(), nodeElement.getWidth(), nodeElement.getHeight(), nodeElement);
 
-			command.add(moveCommand);
+            command.add(moveCommand);
 
-		}
+        }
 
-		return command.unwrap();
-	}
+        return command.unwrap();
+    }
 
-	private Command adjustSpace(int start, int left, int right,
-			List<NodeElementEditPart> list) {
-		CompoundCommand command = new CompoundCommand();
+    private Command adjustSpace(final int start, final int left, final int right, final List<NodeElementEditPart> list) {
+        final CompoundCommand command = new CompoundCommand();
 
-		ERDiagram diagram = this.getDiagram();
+        final ERDiagram diagram = getDiagram();
 
-		int totalWidth = 0;
+        int totalWidth = 0;
 
-		for (AbstractModelEditPart editPart : list) {
-			totalWidth += editPart.getFigure().getBounds().width;
-		}
+        for (final AbstractModelEditPart editPart : list) {
+            totalWidth += editPart.getFigure().getBounds().width;
+        }
 
-		int space = (right - left - totalWidth) / (list.size() + 1);
+        final int space = (right - left - totalWidth) / (list.size() + 1);
 
-		int x = left;
+        int x = left;
 
-		for (AbstractModelEditPart editPart : list) {
-			NodeElement nodeElement = (NodeElement) editPart.getModel();
+        for (final AbstractModelEditPart editPart : list) {
+            final NodeElement nodeElement = (NodeElement) editPart.getModel();
 
-			x += space;
+            x += space;
 
-			int nextX = x + editPart.getFigure().getBounds().width;
+            final int nextX = x + editPart.getFigure().getBounds().width;
 
-			if (x < start) {
-				x = start;
-			}
+            if (x < start) {
+                x = start;
+            }
 
-			MoveElementCommand moveCommand = new MoveElementCommand(diagram,
-					editPart.getFigure().getBounds(), x, nodeElement.getY(),
-					nodeElement.getWidth(), nodeElement.getHeight(),
-					nodeElement);
-			command.add(moveCommand);
+            final MoveElementCommand moveCommand = new MoveElementCommand(diagram, editPart.getFigure().getBounds(), x, nodeElement.getY(), nodeElement.getWidth(), nodeElement.getHeight(), nodeElement);
+            command.add(moveCommand);
 
-			x = nextX;
-		}
+            x = nextX;
+        }
 
-		return command.unwrap();
-	}
+        return command.unwrap();
+    }
 
-	private NodeElementEditPart getFirstEditPart(List<NodeElementEditPart> list) {
-		NodeElementEditPart firstEditPart = null;
+    private NodeElementEditPart getFirstEditPart(final List<NodeElementEditPart> list) {
+        NodeElementEditPart firstEditPart = null;
 
-		for (NodeElementEditPart editPart : list) {
-			if (firstEditPart == null) {
-				firstEditPart = editPart;
+        for (final NodeElementEditPart editPart : list) {
+            if (firstEditPart == null) {
+                firstEditPart = editPart;
 
-			} else {
-				if (firstEditPart.getFigure().getBounds().x > editPart
-						.getFigure().getBounds().x) {
-					firstEditPart = editPart;
-				}
-			}
-		}
+            } else {
+                if (firstEditPart.getFigure().getBounds().x > editPart.getFigure().getBounds().x) {
+                    firstEditPart = editPart;
+                }
+            }
+        }
 
-		return firstEditPart;
-	}
+        return firstEditPart;
+    }
 
-	private static final Comparator<AbstractModelEditPart> comparator = new AbstractModelEditPartHorizontalComparator();
+    private static final Comparator<AbstractModelEditPart> comparator = new AbstractModelEditPartHorizontalComparator();
 
-	private static class AbstractModelEditPartHorizontalComparator implements
-			Comparator<AbstractModelEditPart> {
+    private static class AbstractModelEditPartHorizontalComparator implements Comparator<AbstractModelEditPart> {
 
-		public int compare(AbstractModelEditPart o1, AbstractModelEditPart o2) {
-			if (o1 == null) {
-				return -1;
-			}
-			if (o2 == null) {
-				return 1;
-			}
+        @Override
+        public int compare(final AbstractModelEditPart o1, final AbstractModelEditPart o2) {
+            if (o1 == null) {
+                return -1;
+            }
+            if (o2 == null) {
+                return 1;
+            }
 
-			Rectangle bounds1 = o1.getFigure().getBounds();
-			Rectangle bounds2 = o2.getFigure().getBounds();
+            final Rectangle bounds1 = o1.getFigure().getBounds();
+            final Rectangle bounds2 = o2.getFigure().getBounds();
 
-			int rightX1 = bounds1.x + bounds1.width;
-			int rightX2 = bounds2.x + bounds2.width;
+            final int rightX1 = bounds1.x + bounds1.width;
+            final int rightX2 = bounds2.x + bounds2.width;
 
-			return rightX1 - rightX2;
-		}
+            return rightX1 - rightX2;
+        }
 
-	}
+    }
 
-	public static class HorizontalLineRetargetAction extends
-			LabelRetargetAction {
-		public HorizontalLineRetargetAction() {
-			super(ID, ResourceString
-					.getResourceString("action.title.horizontal.line"));
+    public static class HorizontalLineRetargetAction extends LabelRetargetAction {
+        public HorizontalLineRetargetAction() {
+            super(ID, ResourceString.getResourceString("action.title.horizontal.line"));
 
-			this.setImageDescriptor(ERDiagramActivator
-					.getImageDescriptor(ImageKey.HORIZONTAL_LINE));
-			// this.setDisabledImageDescriptor(Activator
-			// .getImageDescriptor(ImageKey.HORIZONTAL_LINE_DISABLED));
-			this.setToolTipText(ResourceString
-					.getResourceString("action.title.horizontal.line"));
-		}
+            setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.HORIZONTAL_LINE));
+            // this.setDisabledImageDescriptor(Activator
+            // .getImageDescriptor(ImageKey.HORIZONTAL_LINE_DISABLED));
+            setToolTipText(ResourceString.getResourceString("action.title.horizontal.line"));
+        }
 
-	}
+    }
 
-	@Override
-	protected List<Command> getCommand(EditPart editPart, Event event) {
-		return null;
-	}
+    @Override
+    protected List<Command> getCommand(final EditPart editPart, final Event event) {
+        return null;
+    }
 }

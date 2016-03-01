@@ -8,30 +8,29 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.TableV
 
 public class RelationCreationTool extends ConnectionCreationTool {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean handleCreateConnection() {
-		CreateRelationCommand command = (CreateRelationCommand) this
-				.getCommand();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean handleCreateConnection() {
+        final CreateRelationCommand command = (CreateRelationCommand) getCommand();
 
-		if (command == null) {
-			return false;
-		}
+        if (command == null) {
+            return false;
+        }
 
-		TableView source = (TableView) command.getSourceModel();
-		TableView target = (TableView) command.getTargetModel();
+        final TableView source = (TableView) command.getSourceModel();
+        final TableView target = (TableView) command.getTargetModel();
 
-		if (ERTable.isRecursive(source, target)) {
-			ERDiagramActivator.showErrorDialog("error.recursive.relation");
+        if (ERTable.isRecursive(source, target)) {
+            ERDiagramActivator.showErrorDialog("error.recursive.relation");
 
-			this.eraseSourceFeedback();
+            eraseSourceFeedback();
 
-			return false;
-		}
+            return false;
+        }
 
-		return super.handleCreateConnection();
-	}
+        return super.handleCreateConnection();
+    }
 
 }

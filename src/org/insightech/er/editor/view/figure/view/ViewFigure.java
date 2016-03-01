@@ -5,13 +5,13 @@ import org.insightech.er.editor.view.figure.table.TableFigure;
 
 public class ViewFigure extends TableFigure {
 
-	public ViewFigure(String tableStyle) {
-		super(tableStyle);
-	}
+    public ViewFigure(final String tableStyle) {
+        super(tableStyle);
+    }
 
-	@Override
-	public String getImageKey() {
-		return ImageKey.VIEW;
-	}
+    @Override
+    public String getImageKey() {
+        return ImageKey.VIEW;
+    }
 
 }

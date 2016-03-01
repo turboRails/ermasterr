@@ -16,90 +16,86 @@ import org.insightech.er.util.io.FileUtils;
 
 public abstract class AbstractPathText {
 
-	// private String PROJECT_BASE_STRING = "<project_dir>" + File.separator;
+    // private String PROJECT_BASE_STRING = "<project_dir>" + File.separator;
 
-	private Text text;
+    private final Text text;
 
-	private Button openBrowseButton;
+    private final Button openBrowseButton;
 
-	protected File projectDir;
+    protected File projectDir;
 
-	public AbstractPathText(Composite parent, final File argProjectDir,
-			boolean indent) {
-		this.text = new Text(parent, SWT.BORDER);
-		this.projectDir = argProjectDir;
+    public AbstractPathText(final Composite parent, final File argProjectDir, final boolean indent) {
+        text = new Text(parent, SWT.BORDER);
+        projectDir = argProjectDir;
 
-		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1,
-				1);
-		gridData.grabExcessHorizontalSpace = true;
+        final GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        gridData.grabExcessHorizontalSpace = true;
 
-		if (indent) {
-			gridData.horizontalIndent = Resources.INDENT;
-		}
+        if (indent) {
+            gridData.horizontalIndent = Resources.INDENT;
+        }
 
-		this.text.setLayoutData(gridData);
+        text.setLayoutData(gridData);
 
-		this.openBrowseButton = new Button(parent, SWT.LEFT);
-		this.openBrowseButton.setText(" "
-				+ JFaceResources.getString("openBrowse") + " ");
+        openBrowseButton = new Button(parent, SWT.LEFT);
+        openBrowseButton.setText(" " + JFaceResources.getString("openBrowse") + " ");
 
-		this.openBrowseButton.addSelectionListener(new SelectionAdapter() {
+        openBrowseButton.addSelectionListener(new SelectionAdapter() {
 
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String saveFilePath = selectPathByDilaog();
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                String saveFilePath = selectPathByDilaog();
 
-				if (saveFilePath != null) {
-					saveFilePath = FileUtils.getRelativeFilePath(projectDir,
-							saveFilePath);
-					setText(saveFilePath);
-				}
-			}
-		});
-	}
+                if (saveFilePath != null) {
+                    saveFilePath = FileUtils.getRelativeFilePath(projectDir, saveFilePath);
+                    setText(saveFilePath);
+                }
+            }
+        });
+    }
 
-	protected abstract String selectPathByDilaog();
+    protected abstract String selectPathByDilaog();
 
-	public void setLayoutData(Object layoutData) {
-		this.text.setLayoutData(layoutData);
-	}
+    public void setLayoutData(final Object layoutData) {
+        text.setLayoutData(layoutData);
+    }
 
-	public void setText(String text) {
-		// if (!FileUtils.isAbsolutePath(text)) {
-		// text = PROJECT_BASE_STRING + Format.null2blank(text);
-		// }
+    public void setText(final String text) {
+        // if (!FileUtils.isAbsolutePath(text)) {
+        // text = PROJECT_BASE_STRING + Format.null2blank(text);
+        // }
 
-		this.text.setText(text);
-		this.text.setSelection(text.length());
-	}
+        this.text.setText(text);
+        this.text.setSelection(text.length());
+    }
 
-	public boolean isBlank() {
-		if (this.text.getText().trim().length() == 0) {
-			return true;
-		}
+    public boolean isBlank() {
+        if (text.getText().trim().length() == 0) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public String getFilePath() {
-		String path = this.text.getText().trim();
-		// if (path.startsWith(PROJECT_BASE_STRING)) {
-		// path = path.substring(PROJECT_BASE_STRING.length());
-		// }
+    public String getFilePath() {
+        final String path = text.getText().trim();
+        // if (path.startsWith(PROJECT_BASE_STRING)) {
+        // path = path.substring(PROJECT_BASE_STRING.length());
+        // }
 
-		return path;
-	}
+        return path;
+    }
 
-	public void addModifyListener(ModifyListener listener) {
-		this.text.addModifyListener(listener);
-	}
+    public void addModifyListener(final ModifyListener listener) {
+        text.addModifyListener(listener);
+    }
 
-	public void setEnabled(boolean enabled) {
-		this.text.setEnabled(enabled);
-		this.openBrowseButton.setEnabled(enabled);
-	}
+    public void setEnabled(final boolean enabled) {
+        text.setEnabled(enabled);
+        openBrowseButton.setEnabled(enabled);
+    }
 
 }

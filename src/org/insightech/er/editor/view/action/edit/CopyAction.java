@@ -19,67 +19,63 @@ import org.insightech.er.editor.model.edit.CopyManager;
 
 public class CopyAction extends SelectionAction {
 
-	public CopyAction(IWorkbenchPart part) {
-		super(part);
+    public CopyAction(final IWorkbenchPart part) {
+        super(part);
 
-		this.setText(ResourceString.getResourceString("action.title.copy"));
+        setText(ResourceString.getResourceString("action.title.copy"));
 
-		ISharedImages sharedImages = PlatformUI.getWorkbench()
-				.getSharedImages();
-		setImageDescriptor(sharedImages
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-		setDisabledImageDescriptor(sharedImages
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+        final ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+        setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+        setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 
-		this.setId(ActionFactory.COPY.getId());
-	}
+        setId(ActionFactory.COPY.getId());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	protected boolean calculateEnabled() {
-		List<EditPart> list = new ArrayList<EditPart>(this.getSelectedObjects());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    protected boolean calculateEnabled() {
+        final List<EditPart> list = new ArrayList<EditPart>(getSelectedObjects());
 
-		if (list.isEmpty()) {
-			return false;
-		}
-		if (list.size() == 1 && list.get(0) instanceof ModelPropertiesEditPart
-				|| list.get(0) instanceof ERDiagramEditPart) {
-			return false;
-		}
+        if (list.isEmpty()) {
+            return false;
+        }
+        if (list.size() == 1 && list.get(0) instanceof ModelPropertiesEditPart || list.get(0) instanceof ERDiagramEditPart) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void run() {
-		copy();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+        copy();
+    }
 
-	private void copy() {
-		if (!calculateEnabled()) {
-			return;
-		}
+    private void copy() {
+        if (!calculateEnabled()) {
+            return;
+        }
 
-		CopyManager.clear();
+        CopyManager.clear();
 
-		NodeSet nodeElementList = new NodeSet();
+        final NodeSet nodeElementList = new NodeSet();
 
-		for (Object object : this.getSelectedObjects()) {
-			if (object instanceof NodeElementEditPart) {
-				NodeElementEditPart editPart = (NodeElementEditPart) object;
+        for (final Object object : getSelectedObjects()) {
+            if (object instanceof NodeElementEditPart) {
+                final NodeElementEditPart editPart = (NodeElementEditPart) object;
 
-				NodeElement nodeElement = (NodeElement) editPart.getModel();
-				nodeElementList.addNodeElement(nodeElement);
-			}
-		}
+                final NodeElement nodeElement = (NodeElement) editPart.getModel();
+                nodeElementList.addNodeElement(nodeElement);
+            }
+        }
 
-		CopyManager.copy(nodeElementList);
-	}
+        CopyManager.copy(nodeElementList);
+    }
 
 }

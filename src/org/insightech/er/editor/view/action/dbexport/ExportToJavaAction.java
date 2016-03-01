@@ -7,14 +7,14 @@ import org.insightech.er.editor.view.dialog.dbexport.ExportToJavaDialog;
 
 public class ExportToJavaAction extends AbstractExportWithDialogAction {
 
-	public static final String ID = ExportToJavaAction.class.getName();
+    public static final String ID = ExportToJavaAction.class.getName();
 
-	public ExportToJavaAction(ERDiagramEditor editor) {
-		super(ID, "action.title.export.java", ImageKey.EXPORT_TO_JAVA, editor);
-	}
+    public ExportToJavaAction(final ERDiagramEditor editor) {
+        super(ID, "action.title.export.java", ImageKey.EXPORT_TO_JAVA, editor);
+    }
 
-	@Override
-	protected AbstractExportDialog getExportDialog() {
-		return new ExportToJavaDialog();
-	}
+    @Override
+    protected AbstractExportDialog getExportDialog() {
+        return new ExportToJavaDialog();
+    }
 }

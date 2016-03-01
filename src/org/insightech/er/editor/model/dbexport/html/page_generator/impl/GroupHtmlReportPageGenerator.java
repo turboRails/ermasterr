@@ -10,64 +10,61 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.TableV
 import org.insightech.er.editor.model.diagram_contents.element.node.table.column.NormalColumn;
 import org.insightech.er.editor.model.diagram_contents.not_element.group.ColumnGroup;
 
-public class GroupHtmlReportPageGenerator extends
-		AbstractHtmlReportPageGenerator {
+public class GroupHtmlReportPageGenerator extends AbstractHtmlReportPageGenerator {
 
-	public GroupHtmlReportPageGenerator(Map<Object, Integer> idMap) {
-		super(idMap);
-	}
+    public GroupHtmlReportPageGenerator(final Map<Object, Integer> idMap) {
+        super(idMap);
+    }
 
-	public String getType() {
-		return "group";
-	}
+    @Override
+    public String getType() {
+        return "group";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Object> getObjectList(ERDiagram diagram) {
-		List list = diagram.getDiagramContents().getGroups().getGroupList();
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Object> getObjectList(final ERDiagram diagram) {
+        final List list = diagram.getDiagramContents().getGroups().getGroupList();
 
-		return list;
-	}
+        return list;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String[] getContentArgs(ERDiagram diagram, Object object)
-			throws IOException {
-		ColumnGroup columnGroup = (ColumnGroup) object;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String[] getContentArgs(final ERDiagram diagram, final Object object) throws IOException {
+        final ColumnGroup columnGroup = (ColumnGroup) object;
 
-		List<NormalColumn> normalColumnList = columnGroup.getColumns();
+        final List<NormalColumn> normalColumnList = columnGroup.getColumns();
 
-		String attributeTable = this.generateAttributeTable(diagram,
-				normalColumnList);
+        final String attributeTable = generateAttributeTable(diagram, normalColumnList);
 
-		List<TableView> usedTableList = columnGroup.getUsedTalbeList(diagram);
+        final List<TableView> usedTableList = columnGroup.getUsedTalbeList(diagram);
 
-		String usedTableTable = this.generateUsedTableTable(usedTableList);
+        final String usedTableTable = generateUsedTableTable(usedTableList);
 
-		String attributeDetailTable = this.generateAttributeDetailTable(
-				diagram, normalColumnList);
+        final String attributeDetailTable = generateAttributeDetailTable(diagram, normalColumnList);
 
-		return new String[] { attributeTable, usedTableTable,
-				attributeDetailTable };
-	}
+        return new String[] {attributeTable, usedTableTable, attributeDetailTable};
+    }
 
-	public String getObjectName(Object object) {
-		ColumnGroup columnGroup = (ColumnGroup) object;
+    @Override
+    public String getObjectName(final Object object) {
+        final ColumnGroup columnGroup = (ColumnGroup) object;
 
-		return columnGroup.getGroupName();
-	}
+        return columnGroup.getGroupName();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getObjectSummary(Object object) {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getObjectSummary(final Object object) {
+        return null;
+    }
 
 }

@@ -5,35 +5,35 @@ import org.insightech.er.editor.model.diagram_contents.element.node.note.Note;
 
 public class NoteEditCommand extends AbstractCommand {
 
-	private String oldText;
+    private final String oldText;
 
-	private String text;
+    private final String text;
 
-	private Note note;
+    private final Note note;
 
-	public NoteEditCommand(Note note, String text) {
-		this.note = note;
-		this.oldText = this.note.getText();
-		this.text = text;
-	}
+    public NoteEditCommand(final Note note, final String text) {
+        this.note = note;
+        oldText = this.note.getText();
+        this.text = text;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.note.setText(text);
-		
-		this.note.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        note.setText(text);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.note.setText(oldText);
-		
-		this.note.refreshVisuals();
-	}
+        note.refreshVisuals();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        note.setText(oldText);
+
+        note.refreshVisuals();
+    }
 }

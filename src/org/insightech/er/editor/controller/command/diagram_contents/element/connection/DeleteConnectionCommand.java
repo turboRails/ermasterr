@@ -5,31 +5,31 @@ import org.insightech.er.editor.model.diagram_contents.element.connection.Connec
 
 public class DeleteConnectionCommand extends AbstractCommand {
 
-	private ConnectionElement connection;
+    private final ConnectionElement connection;
 
-	public DeleteConnectionCommand(ConnectionElement connection) {
-		this.connection = connection;
-	}
+    public DeleteConnectionCommand(final ConnectionElement connection) {
+        this.connection = connection;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.connection.delete();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        connection.delete();
 
-		this.connection.getTarget().refreshTargetConnections();
-		this.connection.getSource().refreshSourceConnections();
-	}
+        connection.getTarget().refreshTargetConnections();
+        connection.getSource().refreshSourceConnections();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.connection.connect();
-		
-		this.connection.getTarget().refreshTargetConnections();
-		this.connection.getSource().refreshSourceConnections();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        connection.connect();
+
+        connection.getTarget().refreshTargetConnections();
+        connection.getSource().refreshSourceConnections();
+    }
 }

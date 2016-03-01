@@ -17,126 +17,102 @@ import org.insightech.er.util.POIUtils;
 
 public class CategorySheetGenerator extends TableSheetGenerator {
 
-	@Override
-	public void generate(ProgressMonitor monitor, HSSFWorkbook workbook,
-			int sheetNo, boolean useLogicalNameAsSheetName,
-			Map<String, Integer> sheetNameMap,
-			Map<String, ObjectModel> sheetObjectMap, ERDiagram diagram,
-			Map<String, LoopDefinition> loopDefinitionMap)
-			throws InterruptedException {
-		this.clear();
+    @Override
+    public void generate(final ProgressMonitor monitor, final HSSFWorkbook workbook, final int sheetNo, final boolean useLogicalNameAsSheetName, final Map<String, Integer> sheetNameMap, final Map<String, ObjectModel> sheetObjectMap, final ERDiagram diagram, final Map<String, LoopDefinition> loopDefinitionMap) throws InterruptedException {
+        clear();
 
-		if (diagram.getCurrentCategory() != null) {
-			return;
-		}
+        if (diagram.getCurrentCategory() != null) {
+            return;
+        }
 
-		LoopDefinition loopDefinition = loopDefinitionMap.get(this
-				.getTemplateSheetName());
-		HSSFSheet oldSheet = workbook.getSheetAt(sheetNo);
+        final LoopDefinition loopDefinition = loopDefinitionMap.get(getTemplateSheetName());
+        final HSSFSheet oldSheet = workbook.getSheetAt(sheetNo);
 
-		List<ERTable> allTables = new ArrayList<ERTable>(diagram
-				.getDiagramContents().getContents().getTableSet().getList());
+        final List<ERTable> allTables = new ArrayList<ERTable>(diagram.getDiagramContents().getContents().getTableSet().getList());
 
-		for (Category category : diagram.getDiagramContents().getSettings()
-				.getCategorySetting().getSelectedCategories()) {
-			HSSFSheet newSheet = createNewSheet(workbook, sheetNo,
-					category.getName(), sheetNameMap);
+        for (final Category category : diagram.getDiagramContents().getSettings().getCategorySetting().getSelectedCategories()) {
+            final HSSFSheet newSheet = createNewSheet(workbook, sheetNo, category.getName(), sheetNameMap);
 
-			String sheetName = workbook.getSheetName(workbook
-					.getSheetIndex(newSheet));
-			monitor.subTaskWithCounter("[Category] " + sheetName);
+            final String sheetName = workbook.getSheetName(workbook.getSheetIndex(newSheet));
+            monitor.subTaskWithCounter("[Category] " + sheetName);
 
-			sheetObjectMap.put(sheetName, category);
+            sheetObjectMap.put(sheetName, category);
 
-			boolean first = true;
+            boolean first = true;
 
-			for (ERTable table : category.getTableContents()) {
-				if (allTables.contains(table)) {
-					allTables.remove(table);
-					monitor.worked(1);
-				}
+            for (final ERTable table : category.getTableContents()) {
+                if (allTables.contains(table)) {
+                    allTables.remove(table);
+                    monitor.worked(1);
+                }
 
-				if (first) {
-					first = false;
+                if (first) {
+                    first = false;
 
-				} else {
-					POIUtils.copyRow(oldSheet, newSheet,
-							loopDefinition.startLine - 1,
-							oldSheet.getLastRowNum(), newSheet.getLastRowNum()
-									+ loopDefinition.spaceLine + 1);
-				}
+                } else {
+                    POIUtils.copyRow(oldSheet, newSheet, loopDefinition.startLine - 1, oldSheet.getLastRowNum(), newSheet.getLastRowNum() + loopDefinition.spaceLine + 1);
+                }
 
-				this.setTableData(workbook, newSheet, table);
+                setTableData(workbook, newSheet, table);
 
-				newSheet.setRowBreak(newSheet.getLastRowNum()
-						+ loopDefinition.spaceLine);
-			}
+                newSheet.setRowBreak(newSheet.getLastRowNum() + loopDefinition.spaceLine);
+            }
 
-			if (first) {
-				int rowIndex = loopDefinition.startLine - 1;
+            if (first) {
+                int rowIndex = loopDefinition.startLine - 1;
 
-				while (rowIndex <= newSheet.getLastRowNum()) {
-					HSSFRow row = newSheet.getRow(rowIndex);
-					if (row != null) {
-						newSheet.removeRow(row);
-					}
+                while (rowIndex <= newSheet.getLastRowNum()) {
+                    final HSSFRow row = newSheet.getRow(rowIndex);
+                    if (row != null) {
+                        newSheet.removeRow(row);
+                    }
 
-					rowIndex++;
-				}
-			}
+                    rowIndex++;
+                }
+            }
 
-			monitor.worked(1);
-		}
+            monitor.worked(1);
+        }
 
-		if (!allTables.isEmpty()) {
-			HSSFSheet newSheet = createNewSheet(workbook, sheetNo,
-					loopDefinition.sheetName, sheetNameMap);
+        if (!allTables.isEmpty()) {
+            final HSSFSheet newSheet = createNewSheet(workbook, sheetNo, loopDefinition.sheetName, sheetNameMap);
 
-			String sheetName = workbook.getSheetName(workbook
-					.getSheetIndex(newSheet));
+            final String sheetName = workbook.getSheetName(workbook.getSheetIndex(newSheet));
 
-			sheetObjectMap.put(sheetName, diagram.getDiagramContents()
-					.getContents().getTableSet());
+            sheetObjectMap.put(sheetName, diagram.getDiagramContents().getContents().getTableSet());
 
-			boolean first = true;
+            boolean first = true;
 
-			for (ERTable table : allTables) {
-				monitor.subTaskWithCounter("[Category] "
-						+ newSheet.getSheetName() + " - " + table.getName());
+            for (final ERTable table : allTables) {
+                monitor.subTaskWithCounter("[Category] " + newSheet.getSheetName() + " - " + table.getName());
 
-				if (first) {
-					first = false;
+                if (first) {
+                    first = false;
 
-				} else {
-					POIUtils.copyRow(oldSheet, newSheet,
-							loopDefinition.startLine - 1,
-							oldSheet.getLastRowNum(), newSheet.getLastRowNum()
-									+ loopDefinition.spaceLine + 1);
-				}
+                } else {
+                    POIUtils.copyRow(oldSheet, newSheet, loopDefinition.startLine - 1, oldSheet.getLastRowNum(), newSheet.getLastRowNum() + loopDefinition.spaceLine + 1);
+                }
 
-				this.setTableData(workbook, newSheet, table);
-				newSheet.setRowBreak(newSheet.getLastRowNum()
-						+ loopDefinition.spaceLine);
+                setTableData(workbook, newSheet, table);
+                newSheet.setRowBreak(newSheet.getLastRowNum() + loopDefinition.spaceLine);
 
-				monitor.worked(1);
-			}
-		}
-	}
+                monitor.worked(1);
+            }
+        }
+    }
 
-	@Override
-	public String getTemplateSheetName() {
-		return "category_template";
-	}
+    @Override
+    public String getTemplateSheetName() {
+        return "category_template";
+    }
 
-	@Override
-	public int count(ERDiagram diagram) {
-		int count = diagram.getDiagramContents().getSettings()
-				.getCategorySetting().getSelectedCategories().size();
+    @Override
+    public int count(final ERDiagram diagram) {
+        int count = diagram.getDiagramContents().getSettings().getCategorySetting().getSelectedCategories().size();
 
-		count += diagram.getDiagramContents().getContents().getTableSet()
-				.getList().size();
+        count += diagram.getDiagramContents().getContents().getTableSet().getList().size();
 
-		return count;
-	}
+        return count;
+    }
 
 }

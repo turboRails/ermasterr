@@ -9,32 +9,30 @@ import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Ta
 
 public class AccessDDLCreator extends DDLCreator {
 
-	public AccessDDLCreator(ERDiagram diagram, Category targetCategory,
-			boolean semicolon) {
-		super(diagram, targetCategory, semicolon);
-	}
+    public AccessDDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        super(diagram, targetCategory, semicolon);
+    }
 
-	@Override
-	public String getDropDDL(Index index, ERTable table) {
-		StringBuilder ddl = new StringBuilder();
+    @Override
+    public String getDropDDL(final Index index, final ERTable table) {
+        final StringBuilder ddl = new StringBuilder();
 
-		ddl.append("DROP INDEX ");
-		ddl.append(this.getIfExistsOption());
-		ddl.append(filterName(index.getName()));
-		ddl.append(" ON ");
-		ddl.append(filterName(table.getNameWithSchema(this.getDiagram()
-				.getDatabase())));
+        ddl.append("DROP INDEX ");
+        ddl.append(getIfExistsOption());
+        ddl.append(filterName(index.getName()));
+        ddl.append(" ON ");
+        ddl.append(filterName(table.getNameWithSchema(getDiagram().getDatabase())));
 
-		if (this.semicolon) {
-			ddl.append(";");
-		}
+        if (semicolon) {
+            ddl.append(";");
+        }
 
-		return ddl.toString();
-	}
+        return ddl.toString();
+    }
 
-	@Override
-	protected String getDDL(Tablespace object) {
-		return null;
-	}
+    @Override
+    protected String getDDL(final Tablespace object) {
+        return null;
+    }
 
 }

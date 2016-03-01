@@ -10,48 +10,40 @@ import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.insightech.er.editor.ERDiagramEditor;
 import org.insightech.er.editor.model.ERDiagram;
 
-public class ERDiagramMultiPageEditorActionBarContributor extends
-		MultiPageEditorActionBarContributor {
+public class ERDiagramMultiPageEditorActionBarContributor extends MultiPageEditorActionBarContributor {
 
-	private ZoomComboContributionItem zoomComboContributionItem;
+    private ZoomComboContributionItem zoomComboContributionItem;
 
-	public ERDiagramMultiPageEditorActionBarContributor() {
-	}
+    public ERDiagramMultiPageEditorActionBarContributor() {}
 
-	@Override
-	public void setActivePage(IEditorPart activeEditor) {
-		IActionBars actionBars = this.getActionBars();
+    @Override
+    public void setActivePage(final IEditorPart activeEditor) {
+        final IActionBars actionBars = getActionBars();
 
-		actionBars.clearGlobalActionHandlers();
-		actionBars.getToolBarManager().removeAll();
+        actionBars.clearGlobalActionHandlers();
+        actionBars.getToolBarManager().removeAll();
 
-		ERDiagramEditor editor = (ERDiagramEditor) activeEditor;
+        final ERDiagramEditor editor = (ERDiagramEditor) activeEditor;
 
-		ERDiagramActionBarContributor activeContributor = editor
-				.getActionBarContributor();
-		if (this.zoomComboContributionItem == null) {
-			this.zoomComboContributionItem = new ZoomComboContributionItem(
-					this.getPage());
-		}
+        final ERDiagramActionBarContributor activeContributor = editor.getActionBarContributor();
+        if (zoomComboContributionItem == null) {
+            zoomComboContributionItem = new ZoomComboContributionItem(getPage());
+        }
 
-		activeContributor.setActiveEditor(editor);
+        activeContributor.setActiveEditor(editor);
 
-		EditPart editPart = editor.getGraphicalViewer().getContents();
-		ERDiagram diagram = (ERDiagram) editPart.getModel();
+        final EditPart editPart = editor.getGraphicalViewer().getContents();
+        final ERDiagram diagram = (ERDiagram) editPart.getModel();
 
-		activeContributor.contributeToToolBar(diagram,
-				actionBars.getToolBarManager(), this.zoomComboContributionItem);
+        activeContributor.contributeToToolBar(diagram, actionBars.getToolBarManager(), zoomComboContributionItem);
 
-		ZoomComboContributionItem item = (ZoomComboContributionItem) getActionBars()
-				.getToolBarManager().find(
-						GEFActionConstants.ZOOM_TOOLBAR_WIDGET);
-		if (item != null) {
-			ZoomManager zoomManager = (ZoomManager) editor
-					.getAdapter(ZoomManager.class);
-			item.setZoomManager(zoomManager);
-		}
+        final ZoomComboContributionItem item = (ZoomComboContributionItem) getActionBars().getToolBarManager().find(GEFActionConstants.ZOOM_TOOLBAR_WIDGET);
+        if (item != null) {
+            final ZoomManager zoomManager = (ZoomManager) editor.getAdapter(ZoomManager.class);
+            item.setZoomManager(zoomManager);
+        }
 
-		actionBars.updateActionBars();
-	}
+        actionBars.updateActionBars();
+    }
 
 }

@@ -7,19 +7,18 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.insightech.er.editor.model.progress_monitor.EclipseProgressMonitor;
 import org.insightech.er.editor.model.progress_monitor.EmptyProgressMonitor;
 
-public abstract class ImportFromDBManagerEclipseBase extends
-		ImportFromDBManagerBase implements IRunnableWithProgress {
+public abstract class ImportFromDBManagerEclipseBase extends ImportFromDBManagerBase implements IRunnableWithProgress {
 
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
+    @Override
+    public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
-		EclipseProgressMonitor eclipseProgressMonitor = new EclipseProgressMonitor(
-				monitor);
-		this.run(eclipseProgressMonitor);
-	}
+        final EclipseProgressMonitor eclipseProgressMonitor = new EclipseProgressMonitor(monitor);
+        this.run(eclipseProgressMonitor);
+    }
 
-	public void run() throws InvocationTargetException, InterruptedException {
-		this.run(new EmptyProgressMonitor());
-	}
+    @Override
+    public void run() throws InvocationTargetException, InterruptedException {
+        this.run(new EmptyProgressMonitor());
+    }
 
 }

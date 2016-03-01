@@ -8,22 +8,24 @@ import org.insightech.er.editor.model.dbexport.ddl.validator.Validator;
 
 public abstract class BaseRule implements Rule {
 
-	private List<ValidateResult> errorList;
+    private final List<ValidateResult> errorList;
 
-	public BaseRule() {
-		this.errorList = new ArrayList<ValidateResult>();
-		Validator.addRule(this);
-	}
+    public BaseRule() {
+        errorList = new ArrayList<ValidateResult>();
+        Validator.addRule(this);
+    }
 
-	protected void addError(ValidateResult errorMessage) {
-		this.errorList.add(errorMessage);
-	}
+    protected void addError(final ValidateResult errorMessage) {
+        errorList.add(errorMessage);
+    }
 
-	public List<ValidateResult> getErrorList() {
-		return this.errorList;
-	}
+    @Override
+    public List<ValidateResult> getErrorList() {
+        return errorList;
+    }
 
-	public void clear() {
-		this.errorList.clear();
-	}
+    @Override
+    public void clear() {
+        errorList.clear();
+    }
 }

@@ -34,407 +34,373 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.column
 import org.insightech.er.editor.view.dialog.common.EditableTable;
 import org.insightech.er.util.Format;
 
-public class TablespaceSizeCaluculatorDialog extends AbstractDialog implements
-		EditableTable {
+public class TablespaceSizeCaluculatorDialog extends AbstractDialog implements EditableTable {
 
-	private static final int NAME_WIDTH = 200;
+    private static final int NAME_WIDTH = 200;
 
-	private static final int NUM_WIDTH = 50;
+    private static final int NUM_WIDTH = 50;
 
-	private static final int TABLE_NUM_WIDTH = 100;
+    private static final int TABLE_NUM_WIDTH = 100;
 
-	private static final int INDENT = 30;
+    private static final int INDENT = 30;
 
-	private Table tableTable;
+    private Table tableTable;
 
-	private TableEditor tableEditor;
+    private TableEditor tableEditor;
 
-	private String errorMessage;
+    private String errorMessage;
 
-	private ERDiagram diagram;
+    private ERDiagram diagram;
 
-	private List<ERTable> tableList;
+    private List<ERTable> tableList;
 
-	private Map<ERTable, Integer> tableNumMap;
+    private Map<ERTable, Integer> tableNumMap;
 
-	private Integer kcbh;
+    private Integer kcbh;
 
-	private Integer ub4;
+    private Integer ub4;
 
-	private Integer ktbbh;
+    private Integer ktbbh;
 
-	private Integer ktbit;
+    private Integer ktbit;
 
-	private Integer kdbh;
+    private Integer kdbh;
 
-	private Integer kdbt;
+    private Integer kdbt;
 
-	private Integer ub1;
+    private Integer ub1;
 
-	private Integer sb2;
+    private Integer sb2;
 
-	private Integer dbBlockSize;
+    private Integer dbBlockSize;
 
-	private Text kcbhText;
+    private Text kcbhText;
 
-	private Text ub4Text;
+    private Text ub4Text;
 
-	private Text ktbbhText;
+    private Text ktbbhText;
 
-	private Text ktbitText;
+    private Text ktbitText;
 
-	private Text kdbhText;
+    private Text kdbhText;
 
-	private Text kdbtText;
+    private Text kdbtText;
 
-	private Text ub1Text;
+    private Text ub1Text;
 
-	private Text sb2Text;
+    private Text sb2Text;
 
-	private Text dbBlockSizeText;
+    private Text dbBlockSizeText;
 
-	Button restoreDefaultButton1;
+    Button restoreDefaultButton1;
 
-	Button restoreDefaultButton2;
+    Button restoreDefaultButton2;
 
-	private int initrans = 1;
+    private final int initrans = 1;
 
-	private int pctfree = 10;
+    private final int pctfree = 10;
 
-	private Text tablespaceSizeText;
+    private Text tablespaceSizeText;
 
-	private void setDefault() {
-		this.kcbh = 20;
-		this.ub4 = 4;
-		this.ktbbh = 48;
-		this.ktbit = 24;
-		this.kdbh = 14;
-		this.kdbt = 4;
-		this.ub1 = 1;
-		this.sb2 = 2;
+    private void setDefault() {
+        kcbh = 20;
+        ub4 = 4;
+        ktbbh = 48;
+        ktbit = 24;
+        kdbh = 14;
+        kdbt = 4;
+        ub1 = 1;
+        sb2 = 2;
 
-		this.dbBlockSize = 8192;
-	}
+        dbBlockSize = 8192;
+    }
 
-	public TablespaceSizeCaluculatorDialog() {
-		super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-	}
+    public TablespaceSizeCaluculatorDialog() {
+        super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
 
-		layout.numColumns = 4;
-	}
+        layout.numColumns = 4;
+    }
 
-	public void init(ERDiagram diagram) {
-		this.diagram = diagram;
-		this.tableList = new ArrayList<ERTable>(this.diagram
-				.getDiagramContents().getContents().getTableSet().getList());
-		Collections.sort(this.tableList);
+    public void init(final ERDiagram diagram) {
+        this.diagram = diagram;
+        tableList = new ArrayList<ERTable>(this.diagram.getDiagramContents().getContents().getTableSet().getList());
+        Collections.sort(tableList);
 
-		this.tableNumMap = new HashMap<ERTable, Integer>();
-	}
-
-	@Override
-	protected void initialize(Composite composite) {
-		CompositeFactory.createLabel(composite,
-				"label.tablespace.size.calculate.1", 3);
-
-		this.restoreDefaultButton1 = new Button(composite, SWT.NONE);
-		this.restoreDefaultButton1.setText(ResourceString
-				.getResourceString("label.restore.default"));
-
-		CompositeFactory.filler(composite, 1, INDENT);
-		this.kcbhText = CompositeFactory.createNumText(this, composite, "KCBH",
-				1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 1, INDENT);
-		this.ub4Text = CompositeFactory.createNumText(this, composite, "UB4",
-				1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 1, INDENT);
-		this.ktbbhText = CompositeFactory.createNumText(this, composite,
-				"KTBBH", 1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 1, INDENT);
-		this.ktbitText = CompositeFactory.createNumText(this, composite,
-				"KTBIT", 1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 1);
-		this.kdbhText = CompositeFactory.createNumText(this, composite, "KDBH",
-				1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 1, INDENT);
-		this.kdbtText = CompositeFactory.createNumText(this, composite, "KDBT",
-				1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 1);
-		this.ub1Text = CompositeFactory.createNumText(this, composite, "UB1",
-				1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 1, INDENT);
-		this.sb2Text = CompositeFactory.createNumText(this, composite, "SB2",
-				1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 4);
-
-		CompositeFactory.createLabel(composite,
-				"label.tablespace.size.calculate.2", 3);
-		this.restoreDefaultButton2 = new Button(composite, SWT.NONE);
-		this.restoreDefaultButton2.setText(ResourceString
-				.getResourceString("label.restore.default"));
-
-		CompositeFactory.filler(composite, 1, INDENT);
-		this.dbBlockSizeText = CompositeFactory.createNumText(this, composite,
-				"DB_BLOCK_SIZE", 1, NUM_WIDTH);
-		CompositeFactory.filler(composite, 1);
-
-		CompositeFactory.filler(composite, 4);
-
-		CompositeFactory.createLabel(composite,
-				"label.tablespace.size.calculate.3", 4);
-
-		CompositeFactory.filler(composite, 4);
-
-		GridData tableGridData = new GridData();
-		tableGridData.horizontalSpan = 4;
-		tableGridData.horizontalAlignment = GridData.FILL;
-		tableGridData.grabExcessHorizontalSpace = true;
-		tableGridData.heightHint = 100;
-
-		this.tableTable = new Table(composite, SWT.SINGLE | SWT.BORDER
-				| SWT.FULL_SELECTION);
-		this.tableTable.setLayoutData(tableGridData);
-		this.tableTable.setHeaderVisible(true);
-		this.tableTable.setLinesVisible(true);
-
-		TableColumn tableLogicalName = new TableColumn(this.tableTable,
-				SWT.NONE);
-		tableLogicalName.setWidth(NAME_WIDTH);
-		tableLogicalName.setText(ResourceString
-				.getResourceString("label.table.logical.name"));
-
-		TableColumn num = new TableColumn(this.tableTable, SWT.RIGHT);
-		num.setWidth(TABLE_NUM_WIDTH);
-		num.setText(ResourceString.getResourceString("label.record.num"));
-
-		this.tableEditor = new TableEditor(this.tableTable);
-		this.tableEditor.grabHorizontal = true;
-
-		CompositeFactory.createLabel(composite,
-				"label.tablespace.size.calculated", 2);
-
-		this.tablespaceSizeText = new Text(composite, SWT.BORDER
-				| SWT.READ_ONLY | SWT.RIGHT);
-		GridData textGridData = new GridData();
-		textGridData.horizontalAlignment = GridData.FILL;
-		textGridData.grabExcessHorizontalSpace = true;
-		this.tablespaceSizeText.setLayoutData(textGridData);
-
-		CompositeFactory.filler(composite, 1);
-	}
-
-	@Override
-	protected String getErrorMessage() {
-		if (this.errorMessage == null) {
-			this.calculate();
-		}
-		return this.errorMessage;
-	}
-
-	@Override
-	protected String getTitle() {
-		return "dialog.title.tablespace.size.calculator";
-	}
-
-	@Override
-	protected void perfomeOK() {
-	}
-
-	@Override
-	protected void setData() {
-		for (ERTable table : this.tableList) {
-			TableItem tableItem = new TableItem(this.tableTable, SWT.NONE);
-			this.column2TableItem(table, this.tableNumMap.get(table), tableItem);
-		}
-
-		this.setDefault();
-
-		setParameterData1();
-		setParameterData2();
-	}
-
-	private void setParameterData1() {
-		this.kcbhText.setText(Format.toString(this.kcbh));
-		this.ub4Text.setText(Format.toString(this.ub4));
-		this.ktbbhText.setText(Format.toString(this.ktbbh));
-		this.ktbitText.setText(Format.toString(this.ktbit));
-		this.kdbhText.setText(Format.toString(this.kdbh));
-		this.kdbtText.setText(Format.toString(this.kdbt));
-		this.ub1Text.setText(Format.toString(this.ub1));
-		this.sb2Text.setText(Format.toString(this.sb2));
-	}
-
-	private void setParameterData2() {
-		this.dbBlockSizeText.setText(Format.toString(this.dbBlockSize));
-	}
-
-	private void column2TableItem(ERTable table, Integer num,
-			TableItem tableItem) {
-		if (table != null) {
-			tableItem.setText(0, Format.null2blank(table.getLogicalName()));
-		}
-		tableItem.setText(1, Format.toString(num));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void addListener() {
-		ListenerAppender.addTableEditListener(this.tableTable,
-				this.tableEditor, this);
-
-		this.restoreDefaultButton1.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setParameterData1();
-				calculate();
-			}
-
-		});
-
-		this.restoreDefaultButton2.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setParameterData2();
-				calculate();
-			}
-
-		});
-	}
-
-	public Control getControl(Point xy) {
-		if (xy.x == 1) {
-			return new Text(this.tableTable, SWT.BORDER | SWT.RIGHT);
-		}
-
-		return null;
-	}
-
-	public void setData(Point xy, Control control) {
-		this.errorMessage = null;
-
-		String text = ((Text) control).getText().trim();
-
-		try {
-			if (!text.equals("")) {
-				int num = Integer.parseInt(text);
-				if (num < 0) {
-					this.errorMessage = "error.record.num.zero";
-					return;
-				}
-
-				this.tableNumMap.put(this.tableList.get(xy.y), num);
-
-				TableItem tableItem = this.tableTable.getItem(xy.y);
-				this.column2TableItem(null, num, tableItem);
-			}
-
-		} catch (NumberFormatException e) {
-			this.errorMessage = "error.record.num.degit";
-			return;
-		}
-	}
-
-	private void calculate() {
-		double bytesOfBlockHeader = this.getValue(this.kcbhText)
-				+ this.getValue(this.ub4Text) + this.getValue(this.ktbbhText)
-				+ ((initrans - 1) * this.getValue(this.ktbitText))
-				+ this.getValue(this.kdbhText);
-
-		// 20 + 4 + 48 + (1-1) * 24 + 14;
-
-		// this.kcbh = 20;
-		// this.ub4 = 4;
-		// this.ktbbh = 48;
-		// this.ktbit = 24;
-		// this.kdbh = 14;
-		// this.kdbt = 4;
-		// this.ub1 = 1;
-		// this.sb2 = 2;
-
-		double bytesOfDataPerBlock = Math.ceil((this
-				.getValue(this.dbBlockSizeText) - bytesOfBlockHeader)
-				* (1 - (this.pctfree / 100))) + this.getValue(this.kdbtText);
-
-		int total = 0;
-
-		for (ERTable table : this.tableList) {
-			double bytesPerRow = 3 * this.getValue(this.ub1Text)
-					+ this.getTotalColumnSize(table)
-					+ this.getValue(this.sb2Text);
-
-			double rowNumPerBlock = Math.floor(bytesOfDataPerBlock
-					/ bytesPerRow);
-			Integer recordNum = tableNumMap.get(table);
-			if (recordNum == null) {
-				recordNum = 0;
-			}
-
-			double totalBlockNum = Math.ceil(recordNum / rowNumPerBlock);
-			int totalBytes = (int) (totalBlockNum * this
-					.getValue(this.dbBlockSizeText));
-
-			total += totalBytes;
-		}
-
-		this.tablespaceSizeText.setText(Format.toString(total));
-	}
-
-	private int getTotalColumnSize(ERTable table) {
-		int total = 0;
-
-		DBManager dbManager = DBManagerFactory.getDBManager(diagram);
-		SqlTypeManager manager = dbManager.getSqlTypeManager();
-
-		for (NormalColumn column : table.getExpandedColumns()) {
-			total += manager.getByteLength(column.getType(), column
-					.getTypeData().getLength(), column.getTypeData()
-					.getDecimal());
-		}
-
-		return total;
-	}
-
-	private double getValue(Text text) {
-		double value = 0;
-
-		try {
-			value = Double.parseDouble(text.getText());
-		} catch (NumberFormatException e) {
-		}
-
-		return value;
-	}
-
-	public void onDoubleClicked(Point xy) {
-	}
+        tableNumMap = new HashMap<ERTable, Integer>();
+    }
+
+    @Override
+    protected void initialize(final Composite composite) {
+        CompositeFactory.createLabel(composite, "label.tablespace.size.calculate.1", 3);
+
+        restoreDefaultButton1 = new Button(composite, SWT.NONE);
+        restoreDefaultButton1.setText(ResourceString.getResourceString("label.restore.default"));
+
+        CompositeFactory.filler(composite, 1, INDENT);
+        kcbhText = CompositeFactory.createNumText(this, composite, "KCBH", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 1, INDENT);
+        ub4Text = CompositeFactory.createNumText(this, composite, "UB4", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 1, INDENT);
+        ktbbhText = CompositeFactory.createNumText(this, composite, "KTBBH", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 1, INDENT);
+        ktbitText = CompositeFactory.createNumText(this, composite, "KTBIT", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 1);
+        kdbhText = CompositeFactory.createNumText(this, composite, "KDBH", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 1, INDENT);
+        kdbtText = CompositeFactory.createNumText(this, composite, "KDBT", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 1);
+        ub1Text = CompositeFactory.createNumText(this, composite, "UB1", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 1, INDENT);
+        sb2Text = CompositeFactory.createNumText(this, composite, "SB2", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 4);
+
+        CompositeFactory.createLabel(composite, "label.tablespace.size.calculate.2", 3);
+        restoreDefaultButton2 = new Button(composite, SWT.NONE);
+        restoreDefaultButton2.setText(ResourceString.getResourceString("label.restore.default"));
+
+        CompositeFactory.filler(composite, 1, INDENT);
+        dbBlockSizeText = CompositeFactory.createNumText(this, composite, "DB_BLOCK_SIZE", 1, NUM_WIDTH);
+        CompositeFactory.filler(composite, 1);
+
+        CompositeFactory.filler(composite, 4);
+
+        CompositeFactory.createLabel(composite, "label.tablespace.size.calculate.3", 4);
+
+        CompositeFactory.filler(composite, 4);
+
+        final GridData tableGridData = new GridData();
+        tableGridData.horizontalSpan = 4;
+        tableGridData.horizontalAlignment = GridData.FILL;
+        tableGridData.grabExcessHorizontalSpace = true;
+        tableGridData.heightHint = 100;
+
+        tableTable = new Table(composite, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
+        tableTable.setLayoutData(tableGridData);
+        tableTable.setHeaderVisible(true);
+        tableTable.setLinesVisible(true);
+
+        final TableColumn tableLogicalName = new TableColumn(tableTable, SWT.NONE);
+        tableLogicalName.setWidth(NAME_WIDTH);
+        tableLogicalName.setText(ResourceString.getResourceString("label.table.logical.name"));
+
+        final TableColumn num = new TableColumn(tableTable, SWT.RIGHT);
+        num.setWidth(TABLE_NUM_WIDTH);
+        num.setText(ResourceString.getResourceString("label.record.num"));
+
+        tableEditor = new TableEditor(tableTable);
+        tableEditor.grabHorizontal = true;
+
+        CompositeFactory.createLabel(composite, "label.tablespace.size.calculated", 2);
+
+        tablespaceSizeText = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.RIGHT);
+        final GridData textGridData = new GridData();
+        textGridData.horizontalAlignment = GridData.FILL;
+        textGridData.grabExcessHorizontalSpace = true;
+        tablespaceSizeText.setLayoutData(textGridData);
+
+        CompositeFactory.filler(composite, 1);
+    }
+
+    @Override
+    protected String getErrorMessage() {
+        if (errorMessage == null) {
+            calculate();
+        }
+        return errorMessage;
+    }
+
+    @Override
+    protected String getTitle() {
+        return "dialog.title.tablespace.size.calculator";
+    }
+
+    @Override
+    protected void perfomeOK() {}
+
+    @Override
+    protected void setData() {
+        for (final ERTable table : tableList) {
+            final TableItem tableItem = new TableItem(tableTable, SWT.NONE);
+            column2TableItem(table, tableNumMap.get(table), tableItem);
+        }
+
+        setDefault();
+
+        setParameterData1();
+        setParameterData2();
+    }
+
+    private void setParameterData1() {
+        kcbhText.setText(Format.toString(kcbh));
+        ub4Text.setText(Format.toString(ub4));
+        ktbbhText.setText(Format.toString(ktbbh));
+        ktbitText.setText(Format.toString(ktbit));
+        kdbhText.setText(Format.toString(kdbh));
+        kdbtText.setText(Format.toString(kdbt));
+        ub1Text.setText(Format.toString(ub1));
+        sb2Text.setText(Format.toString(sb2));
+    }
+
+    private void setParameterData2() {
+        dbBlockSizeText.setText(Format.toString(dbBlockSize));
+    }
+
+    private void column2TableItem(final ERTable table, final Integer num, final TableItem tableItem) {
+        if (table != null) {
+            tableItem.setText(0, Format.null2blank(table.getLogicalName()));
+        }
+        tableItem.setText(1, Format.toString(num));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addListener() {
+        ListenerAppender.addTableEditListener(tableTable, tableEditor, this);
+
+        restoreDefaultButton1.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                setParameterData1();
+                calculate();
+            }
+
+        });
+
+        restoreDefaultButton2.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                setParameterData2();
+                calculate();
+            }
+
+        });
+    }
+
+    @Override
+    public Control getControl(final Point xy) {
+        if (xy.x == 1) {
+            return new Text(tableTable, SWT.BORDER | SWT.RIGHT);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setData(final Point xy, final Control control) {
+        errorMessage = null;
+
+        final String text = ((Text) control).getText().trim();
+
+        try {
+            if (!text.equals("")) {
+                final int num = Integer.parseInt(text);
+                if (num < 0) {
+                    errorMessage = "error.record.num.zero";
+                    return;
+                }
+
+                tableNumMap.put(tableList.get(xy.y), num);
+
+                final TableItem tableItem = tableTable.getItem(xy.y);
+                column2TableItem(null, num, tableItem);
+            }
+
+        } catch (final NumberFormatException e) {
+            errorMessage = "error.record.num.degit";
+            return;
+        }
+    }
+
+    private void calculate() {
+        final double bytesOfBlockHeader = getValue(kcbhText) + getValue(ub4Text) + getValue(ktbbhText) + ((initrans - 1) * getValue(ktbitText)) + getValue(kdbhText);
+
+        // 20 + 4 + 48 + (1-1) * 24 + 14;
+
+        // this.kcbh = 20;
+        // this.ub4 = 4;
+        // this.ktbbh = 48;
+        // this.ktbit = 24;
+        // this.kdbh = 14;
+        // this.kdbt = 4;
+        // this.ub1 = 1;
+        // this.sb2 = 2;
+
+        final double bytesOfDataPerBlock = Math.ceil((getValue(dbBlockSizeText) - bytesOfBlockHeader) * (1 - (pctfree / 100))) + getValue(kdbtText);
+
+        int total = 0;
+
+        for (final ERTable table : tableList) {
+            final double bytesPerRow = 3 * getValue(ub1Text) + getTotalColumnSize(table) + getValue(sb2Text);
+
+            final double rowNumPerBlock = Math.floor(bytesOfDataPerBlock / bytesPerRow);
+            Integer recordNum = tableNumMap.get(table);
+            if (recordNum == null) {
+                recordNum = 0;
+            }
+
+            final double totalBlockNum = Math.ceil(recordNum / rowNumPerBlock);
+            final int totalBytes = (int) (totalBlockNum * getValue(dbBlockSizeText));
+
+            total += totalBytes;
+        }
+
+        tablespaceSizeText.setText(Format.toString(total));
+    }
+
+    private int getTotalColumnSize(final ERTable table) {
+        int total = 0;
+
+        final DBManager dbManager = DBManagerFactory.getDBManager(diagram);
+        final SqlTypeManager manager = dbManager.getSqlTypeManager();
+
+        for (final NormalColumn column : table.getExpandedColumns()) {
+            total += manager.getByteLength(column.getType(), column.getTypeData().getLength(), column.getTypeData().getDecimal());
+        }
+
+        return total;
+    }
+
+    private double getValue(final Text text) {
+        double value = 0;
+
+        try {
+            value = Double.parseDouble(text.getText());
+        } catch (final NumberFormatException e) {}
+
+        return value;
+    }
+
+    @Override
+    public void onDoubleClicked(final Point xy) {}
 }

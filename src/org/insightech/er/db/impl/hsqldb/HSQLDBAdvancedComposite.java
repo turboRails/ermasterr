@@ -5,18 +5,16 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.AdvancedCompo
 
 public class HSQLDBAdvancedComposite extends AdvancedComposite {
 
-	public HSQLDBAdvancedComposite(Composite parent) {
-		super(parent);
-	}
+    public HSQLDBAdvancedComposite(final Composite parent) {
+        super(parent);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initComposite() {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initComposite() {}
 
-	@Override
-	public void setInitFocus() {
-	}
+    @Override
+    public void setInitFocus() {}
 }

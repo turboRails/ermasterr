@@ -5,15 +5,15 @@ import org.insightech.er.util.Check;
 
 public class SqlServerPreTableImportManager extends PreImportFromDBManager {
 
-	@Override
-	protected String getTableNameWithSchema(String schema, String tableName) {
-		if (!Check.isEmpty(schema)) {
-			schema = "[" + schema + "]";
-		}
+    @Override
+    protected String getTableNameWithSchema(String schema, String tableName) {
+        if (!Check.isEmpty(schema)) {
+            schema = "[" + schema + "]";
+        }
 
-		tableName = "[" + tableName + "]";
+        tableName = "[" + tableName + "]";
 
-		return super.getTableNameWithSchema(schema, tableName);
-	}
+        return super.getTableNameWithSchema(schema, tableName);
+    }
 
 }

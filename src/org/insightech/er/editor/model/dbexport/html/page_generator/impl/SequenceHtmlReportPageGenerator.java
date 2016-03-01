@@ -11,75 +11,72 @@ import org.insightech.er.editor.model.dbexport.html.page_generator.AbstractHtmlR
 import org.insightech.er.editor.model.diagram_contents.not_element.sequence.Sequence;
 import org.insightech.er.util.Format;
 
-public class SequenceHtmlReportPageGenerator extends
-		AbstractHtmlReportPageGenerator {
+public class SequenceHtmlReportPageGenerator extends AbstractHtmlReportPageGenerator {
 
-	public SequenceHtmlReportPageGenerator(Map<Object, Integer> idMap) {
-		super(idMap);
-	}
+    public SequenceHtmlReportPageGenerator(final Map<Object, Integer> idMap) {
+        super(idMap);
+    }
 
-	public String getType() {
-		return "sequence";
-	}
+    @Override
+    public String getType() {
+        return "sequence";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Object> getObjectList(ERDiagram diagram) {
-		List list = diagram.getDiagramContents().getSequenceSet()
-				.getObjectList();
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Object> getObjectList(final ERDiagram diagram) {
+        final List list = diagram.getDiagramContents().getSequenceSet().getObjectList();
 
-		return list;
-	}
+        return list;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String[] getContentArgs(ERDiagram diagram, Object object) {
-		Sequence sequence = (Sequence) object;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String[] getContentArgs(final ERDiagram diagram, final Object object) {
+        final Sequence sequence = (Sequence) object;
 
-		String cache = Format.toString(sequence.getCache());
+        String cache = Format.toString(sequence.getCache());
 
-		if (DBManagerFactory.getDBManager(diagram).isSupported(
-				DBManager.SUPPORT_SEQUENCE_NOCACHE)) {
-			if (sequence.isNocache()) {
-				cache = "NO CACHE";
-			}
-		}
+        if (DBManagerFactory.getDBManager(diagram).isSupported(DBManager.SUPPORT_SEQUENCE_NOCACHE)) {
+            if (sequence.isNocache()) {
+                cache = "NO CACHE";
+            }
+        }
 
-		String min = Format.toString(sequence.getMinValue());
-		String max = Format.toString(sequence.getMaxValue());
-		String start = Format.toString(sequence.getStart());
-		String cycle = String.valueOf(sequence.isCycle()).toUpperCase();
+        String min = Format.toString(sequence.getMinValue());
+        String max = Format.toString(sequence.getMaxValue());
+        String start = Format.toString(sequence.getStart());
+        String cycle = String.valueOf(sequence.isCycle()).toUpperCase();
 
-		if (H2DBManager.ID.equals(diagram.getDatabase())) {
-			min = "-";
-			max = "-";
-			start = "-";
-			cycle = "-";
-		}
+        if (H2DBManager.ID.equals(diagram.getDatabase())) {
+            min = "-";
+            max = "-";
+            start = "-";
+            cycle = "-";
+        }
 
-		return new String[] { Format.null2blank(sequence.getDescription()),
-				Format.toString(sequence.getIncrement()), min, max, start, cache,
-				cycle };
-	}
+        return new String[] {Format.null2blank(sequence.getDescription()), Format.toString(sequence.getIncrement()), min, max, start, cache, cycle};
+    }
 
-	public String getObjectName(Object object) {
-		Sequence sequence = (Sequence) object;
+    @Override
+    public String getObjectName(final Object object) {
+        final Sequence sequence = (Sequence) object;
 
-		return sequence.getName();
-	}
+        return sequence.getName();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getObjectSummary(Object object) {
-		Sequence sequence = (Sequence) object;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getObjectSummary(final Object object) {
+        final Sequence sequence = (Sequence) object;
 
-		return sequence.getDescription();
-	}
+        return sequence.getDescription();
+    }
 }

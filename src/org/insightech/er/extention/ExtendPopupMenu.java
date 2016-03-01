@@ -14,85 +14,76 @@ import org.insightech.er.editor.ERDiagramEditor;
 
 public class ExtendPopupMenu {
 
-	/** 拡張ポイントのID */
-	private static final String EXTENSION_POINT_ID = "org.insightech.er.popupMenus";
+    /** 拡張ポイントのID */
+    private static final String EXTENSION_POINT_ID = "org.insightech.er.popupMenus";
 
-	/** 拡張ポイントの element の名前 */
-	private static final String EXTENSION_NAME = "popupMenu";
+    /** 拡張ポイントの element の名前 */
+    private static final String EXTENSION_NAME = "popupMenu";
 
-	/** メニューを追加する位置を指定する Attribute の名前 */
-	private static final String ATTRIBUTE_PATH = "path";
+    /** メニューを追加する位置を指定する Attribute の名前 */
+    private static final String ATTRIBUTE_PATH = "path";
 
-	/** 追加するメニューのアクションファクトリークラスを指定する Attribute の名前 */
-	private static final String ATTRIBUTE_CLASS = "class";
+    /** 追加するメニューのアクションファクトリークラスを指定する Attribute の名前 */
+    private static final String ATTRIBUTE_CLASS = "class";
 
-	private IAction action;
+    private IAction action;
 
-	private String path;
+    private String path;
 
-	public IAction getAction() {
-		return action;
-	}
+    public IAction getAction() {
+        return action;
+    }
 
-	public String getPath() {
-		return path;
-	}
+    public String getPath() {
+        return path;
+    }
 
-	public static ExtendPopupMenu createExtendPopupMenu(
-			IConfigurationElement configurationElement, ERDiagramEditor editor)
-			throws CoreException {
-		ExtendPopupMenu menu = null;
+    public static ExtendPopupMenu createExtendPopupMenu(final IConfigurationElement configurationElement, final ERDiagramEditor editor) throws CoreException {
+        ExtendPopupMenu menu = null;
 
-		if (ExtendPopupMenu.EXTENSION_NAME.equals(configurationElement
-				.getName())) {
+        if (ExtendPopupMenu.EXTENSION_NAME.equals(configurationElement.getName())) {
 
-		}
-		String path = configurationElement.getAttribute(ATTRIBUTE_PATH);
-		Object obj = configurationElement
-				.createExecutableExtension(ATTRIBUTE_CLASS);
+        }
+        final String path = configurationElement.getAttribute(ATTRIBUTE_PATH);
+        final Object obj = configurationElement.createExecutableExtension(ATTRIBUTE_CLASS);
 
-		if (obj instanceof IERDiagramActionFactory) {
-			menu = new ExtendPopupMenu();
-			IERDiagramActionFactory actionFactory = (IERDiagramActionFactory) obj;
+        if (obj instanceof IERDiagramActionFactory) {
+            menu = new ExtendPopupMenu();
+            final IERDiagramActionFactory actionFactory = (IERDiagramActionFactory) obj;
 
-			menu.action = actionFactory.createIAction(editor);
-			menu.path = path;
-		}
+            menu.action = actionFactory.createIAction(editor);
+            menu.path = path;
+        }
 
-		return menu;
-	}
+        return menu;
+    }
 
-	/**
-	 * plugin.xmlからタグを読み込む.
-	 * 
-	 * @throws CoreException
-	 * 
-	 * @throws CoreException
-	 */
-	public static List<ExtendPopupMenu> loadExtensions(ERDiagramEditor editor)
-			throws CoreException {
-		List<ExtendPopupMenu> extendPopupMenuList = new ArrayList<ExtendPopupMenu>();
+    /**
+     * plugin.xmlからタグを読み込む.
+     * 
+     * @throws CoreException
+     * @throws CoreException
+     */
+    public static List<ExtendPopupMenu> loadExtensions(final ERDiagramEditor editor) throws CoreException {
+        final List<ExtendPopupMenu> extendPopupMenuList = new ArrayList<ExtendPopupMenu>();
 
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint extensionPoint = registry
-				.getExtensionPoint(EXTENSION_POINT_ID);
+        final IExtensionRegistry registry = Platform.getExtensionRegistry();
+        final IExtensionPoint extensionPoint = registry.getExtensionPoint(EXTENSION_POINT_ID);
 
-		if (extensionPoint != null) {
-			for (IExtension extension : extensionPoint.getExtensions()) {
-				for (IConfigurationElement configurationElement : extension
-						.getConfigurationElements()) {
+        if (extensionPoint != null) {
+            for (final IExtension extension : extensionPoint.getExtensions()) {
+                for (final IConfigurationElement configurationElement : extension.getConfigurationElements()) {
 
-					ExtendPopupMenu extendPopupMenu = ExtendPopupMenu
-							.createExtendPopupMenu(configurationElement, editor);
+                    final ExtendPopupMenu extendPopupMenu = ExtendPopupMenu.createExtendPopupMenu(configurationElement, editor);
 
-					if (extendPopupMenu != null) {
-						extendPopupMenuList.add(extendPopupMenu);
-					}
-				}
-			}
-		}
+                    if (extendPopupMenu != null) {
+                        extendPopupMenuList.add(extendPopupMenu);
+                    }
+                }
+            }
+        }
 
-		return extendPopupMenuList;
-	}
+        return extendPopupMenuList;
+    }
 
 }

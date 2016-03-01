@@ -12,26 +12,24 @@ import org.insightech.er.editor.view.dialog.dbexport.AbstractExportDialog;
 
 public abstract class AbstractExportWithDialogAction extends AbstractBaseAction {
 
-	public AbstractExportWithDialogAction(String id, String titleResource,
-			String imageKey, ERDiagramEditor editor) {
-		super(id, ResourceString.getResourceString(titleResource), editor);
-		this.setImageDescriptor(ERDiagramActivator.getImageDescriptor(imageKey));
-	}
+    public AbstractExportWithDialogAction(final String id, final String titleResource, final String imageKey, final ERDiagramEditor editor) {
+        super(id, ResourceString.getResourceString(titleResource), editor);
+        setImageDescriptor(ERDiagramActivator.getImageDescriptor(imageKey));
+    }
 
-	@Override
-	public void execute(Event event) {
-		ERDiagram diagram = this.getDiagram();
+    @Override
+    public void execute(final Event event) {
+        final ERDiagram diagram = getDiagram();
 
-		AbstractExportDialog dialog = this.getExportDialog();
-		dialog.init(diagram);
+        final AbstractExportDialog dialog = getExportDialog();
+        dialog.init(diagram);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			ChangeSettingsCommand command = new ChangeSettingsCommand(diagram,
-					dialog.getSettings(), false);
-			this.execute(command);
-		}
-	}
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            final ChangeSettingsCommand command = new ChangeSettingsCommand(diagram, dialog.getSettings(), false);
+            this.execute(command);
+        }
+    }
 
-	protected abstract AbstractExportDialog getExportDialog();
+    protected abstract AbstractExportDialog getExportDialog();
 
 }

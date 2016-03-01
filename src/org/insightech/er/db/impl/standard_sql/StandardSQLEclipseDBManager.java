@@ -7,16 +7,19 @@ import org.insightech.er.editor.view.dialog.outline.tablespace.TablespaceDialog;
 
 public class StandardSQLEclipseDBManager extends EclipseDBManagerBase {
 
-	public String getId() {
-		return StandardSQLDBManager.ID;
-	}
+    @Override
+    public String getId() {
+        return StandardSQLDBManager.ID;
+    }
 
-	public AdvancedComposite createAdvancedComposite(Composite composite) {
-		return new StandardSQLAdvancedComposite(composite);
-	}
+    @Override
+    public AdvancedComposite createAdvancedComposite(final Composite composite) {
+        return new StandardSQLAdvancedComposite(composite);
+    }
 
-	public TablespaceDialog createTablespaceDialog() {
-		return null;
-	}
+    @Override
+    public TablespaceDialog createTablespaceDialog() {
+        return null;
+    }
 
 }

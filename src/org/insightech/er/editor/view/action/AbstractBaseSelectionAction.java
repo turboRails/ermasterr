@@ -17,89 +17,85 @@ import org.insightech.er.editor.model.ERDiagram;
 
 public abstract class AbstractBaseSelectionAction extends SelectionAction {
 
-	private ERDiagramEditor editor;
+    private final ERDiagramEditor editor;
 
-	public AbstractBaseSelectionAction(String id, String text,
-			ERDiagramEditor editor) {
-		this(id, text, SWT.NONE, editor);
-	}
+    public AbstractBaseSelectionAction(final String id, final String text, final ERDiagramEditor editor) {
+        this(id, text, SWT.NONE, editor);
+    }
 
-	public AbstractBaseSelectionAction(String id, String text, int style,
-			ERDiagramEditor editor) {
-		super(editor, style);
-		this.setId(id);
-		this.setText(text);
+    public AbstractBaseSelectionAction(final String id, final String text, final int style, final ERDiagramEditor editor) {
+        super(editor, style);
+        setId(id);
+        setText(text);
 
-		this.editor = editor;
-	}
+        this.editor = editor;
+    }
 
-	protected ERDiagram getDiagram() {
-		EditPart editPart = this.editor.getGraphicalViewer().getContents();
-		ERDiagram diagram = (ERDiagram) editPart.getModel();
+    protected ERDiagram getDiagram() {
+        final EditPart editPart = editor.getGraphicalViewer().getContents();
+        final ERDiagram diagram = (ERDiagram) editPart.getModel();
 
-		return diagram;
-	}
+        return diagram;
+    }
 
-	protected GraphicalViewer getGraphicalViewer() {
-		return this.editor.getGraphicalViewer();
-	}
+    protected GraphicalViewer getGraphicalViewer() {
+        return editor.getGraphicalViewer();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void runWithEvent(Event event) {
-		try {
-			execute(event);
-		} catch (Exception e) {
-			ERDiagramActivator.showExceptionDialog(e);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void runWithEvent(final Event event) {
+        try {
+            execute(event);
+        } catch (final Exception e) {
+            ERDiagramActivator.showExceptionDialog(e);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void execute(Command command) {
-		this.editor.getGraphicalViewer().getEditDomain().getCommandStack()
-				.execute(command);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void execute(final Command command) {
+        editor.getGraphicalViewer().getEditDomain().getCommandStack().execute(command);
+    }
 
-	protected IEditorPart getEditorPart() {
-		return this.editor;
-	}
+    protected IEditorPart getEditorPart() {
+        return editor;
+    }
 
-	protected void execute(Event event) {
-		GraphicalViewer viewer = this.getGraphicalViewer();
+    protected void execute(final Event event) {
+        final GraphicalViewer viewer = getGraphicalViewer();
 
-		List<Command> commandList = new ArrayList<Command>();
+        final List<Command> commandList = new ArrayList<Command>();
 
-		for (Object object : viewer.getSelectedEditParts()) {
-			List<Command> subCommandList = this.getCommand((EditPart) object,
-					event);
-			commandList.addAll(subCommandList);
-		}
+        for (final Object object : viewer.getSelectedEditParts()) {
+            final List<Command> subCommandList = getCommand((EditPart) object, event);
+            commandList.addAll(subCommandList);
+        }
 
-		if (!commandList.isEmpty()) {
-			CompoundCommand compoundCommand = new CompoundCommand();
-			for (Command command : commandList) {
-				compoundCommand.add(command);
-			}
+        if (!commandList.isEmpty()) {
+            final CompoundCommand compoundCommand = new CompoundCommand();
+            for (final Command command : commandList) {
+                compoundCommand.add(command);
+            }
 
-			this.execute(compoundCommand);
-		}
-	}
+            this.execute(compoundCommand);
+        }
+    }
 
-	abstract protected List<Command> getCommand(EditPart editPart, Event event);
+    abstract protected List<Command> getCommand(EditPart editPart, Event event);
 
-	@Override
-	protected boolean calculateEnabled() {
-		GraphicalViewer viewer = this.getGraphicalViewer();
+    @Override
+    protected boolean calculateEnabled() {
+        final GraphicalViewer viewer = getGraphicalViewer();
 
-		if (viewer.getSelectedEditParts().isEmpty()) {
-			return false;
-		}
+        if (viewer.getSelectedEditParts().isEmpty()) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

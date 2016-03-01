@@ -49,265 +49,204 @@ import org.insightech.er.editor.view.action.zoom.ZoomAdjustRetargetAction;
 
 public class ERDiagramActionBarContributor extends ActionBarContributor {
 
-	public ERDiagramActionBarContributor() {
-	}
+    public ERDiagramActionBarContributor() {}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void buildActions() {
-		this.addRetargetAction(new RetargetAction(ActionFactory.SELECT_ALL
-				.getId(), "selectAll"));
-		this.addRetargetAction(new RetargetAction(ActionFactory.PRINT.getId(),
-				"print"));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void buildActions() {
+        addRetargetAction(new RetargetAction(ActionFactory.SELECT_ALL.getId(), "selectAll"));
+        addRetargetAction(new RetargetAction(ActionFactory.PRINT.getId(), "print"));
 
-		this.addRetargetAction(new DeleteRetargetAction());
-		this.addRetargetAction(new RetargetAction(ActionFactory.COPY.getId(),
-				"copy"));
-		this.addRetargetAction(new RetargetAction(ActionFactory.PASTE.getId(),
-				"paste"));
+        addRetargetAction(new DeleteRetargetAction());
+        addRetargetAction(new RetargetAction(ActionFactory.COPY.getId(), "copy"));
+        addRetargetAction(new RetargetAction(ActionFactory.PASTE.getId(), "paste"));
 
-		this.addRetargetAction(new UndoRetargetAction());
-		this.addRetargetAction(new RedoRetargetAction());
+        addRetargetAction(new UndoRetargetAction());
+        addRetargetAction(new RedoRetargetAction());
 
-		ZoomInRetargetAction zoomInAction = new ZoomInRetargetAction();
-		zoomInAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.ZOOM_IN));
-		ZoomOutRetargetAction zoomOutAction = new ZoomOutRetargetAction();
-		zoomOutAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.ZOOM_OUT));
-		this.addRetargetAction(zoomInAction);
-		this.addRetargetAction(zoomOutAction);
-		this.addRetargetAction(new ZoomAdjustRetargetAction());
+        final ZoomInRetargetAction zoomInAction = new ZoomInRetargetAction();
+        zoomInAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.ZOOM_IN));
+        final ZoomOutRetargetAction zoomOutAction = new ZoomOutRetargetAction();
+        zoomOutAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.ZOOM_OUT));
+        addRetargetAction(zoomInAction);
+        addRetargetAction(zoomOutAction);
+        addRetargetAction(new ZoomAdjustRetargetAction());
 
-		RetargetAction gridAction = new RetargetAction(
-				GEFActionConstants.TOGGLE_GRID_VISIBILITY,
-				ResourceString.getResourceString("action.title.grid"),
-				IAction.AS_CHECK_BOX);
-		gridAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.GRID));
+        final RetargetAction gridAction = new RetargetAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY, ResourceString.getResourceString("action.title.grid"), IAction.AS_CHECK_BOX);
+        gridAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.GRID));
 
-		this.addRetargetAction(gridAction);
+        addRetargetAction(gridAction);
 
-		RetargetAction gridSnapAction = new RetargetAction(
-				GEFActionConstants.TOGGLE_SNAP_TO_GEOMETRY,
-				ResourceString.getResourceString("action.title.grid.snap"),
-				IAction.AS_CHECK_BOX);
-		gridSnapAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.GRID_SNAP));
+        final RetargetAction gridSnapAction = new RetargetAction(GEFActionConstants.TOGGLE_SNAP_TO_GEOMETRY, ResourceString.getResourceString("action.title.grid.snap"), IAction.AS_CHECK_BOX);
+        gridSnapAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.GRID_SNAP));
 
-		this.addRetargetAction(gridSnapAction);
+        addRetargetAction(gridSnapAction);
 
-		RetargetAction tooltipAction = new RetargetAction(TooltipAction.ID,
-				ResourceString.getResourceString("action.title.tooltip"),
-				IAction.AS_CHECK_BOX);
-		tooltipAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.TOOLTIP));
-		this.addRetargetAction(tooltipAction);
+        final RetargetAction tooltipAction = new RetargetAction(TooltipAction.ID, ResourceString.getResourceString("action.title.tooltip"), IAction.AS_CHECK_BOX);
+        tooltipAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.TOOLTIP));
+        addRetargetAction(tooltipAction);
 
-		RetargetAction lockEditAction = new RetargetAction(LockEditAction.ID,
-				ResourceString.getResourceString("action.title.lock.edit"),
-				IAction.AS_CHECK_BOX);
-		lockEditAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.LOCK_EDIT));
-		this.addRetargetAction(lockEditAction);
+        final RetargetAction lockEditAction = new RetargetAction(LockEditAction.ID, ResourceString.getResourceString("action.title.lock.edit"), IAction.AS_CHECK_BOX);
+        lockEditAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.LOCK_EDIT));
+        addRetargetAction(lockEditAction);
 
-		this.addRetargetAction(new ExportToDBRetargetAction());
+        addRetargetAction(new ExportToDBRetargetAction());
 
-		AlignmentRetargetAction alignLeftAction = new AlignmentRetargetAction(
-				PositionConstants.LEFT);
-		alignLeftAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.ALIGN_LEFT));
-		alignLeftAction.setDisabledImageDescriptor(null);
-		this.addRetargetAction(alignLeftAction);
-		AlignmentRetargetAction alignCenterAction = new AlignmentRetargetAction(
-				PositionConstants.CENTER);
-		alignCenterAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.ALIGN_CENTER));
-		alignCenterAction.setDisabledImageDescriptor(null);
-		this.addRetargetAction(alignCenterAction);
-		AlignmentRetargetAction alignRightAction = new AlignmentRetargetAction(
-				PositionConstants.RIGHT);
-		alignRightAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.ALIGN_RIGHT));
-		alignRightAction.setDisabledImageDescriptor(null);
-		this.addRetargetAction(alignRightAction);
-		AlignmentRetargetAction alignTopAction = new AlignmentRetargetAction(
-				PositionConstants.TOP);
-		alignTopAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.ALIGN_TOP));
-		alignTopAction.setDisabledImageDescriptor(null);
-		this.addRetargetAction(alignTopAction);
-		AlignmentRetargetAction alignMiddleAction = new AlignmentRetargetAction(
-				PositionConstants.MIDDLE);
-		alignMiddleAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.ALIGN_MIDDLE));
-		alignMiddleAction.setDisabledImageDescriptor(null);
-		this.addRetargetAction(alignMiddleAction);
-		AlignmentRetargetAction alignBottomAction = new AlignmentRetargetAction(
-				PositionConstants.BOTTOM);
-		alignBottomAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.ALIGN_BOTTOM));
-		alignBottomAction.setDisabledImageDescriptor(null);
-		this.addRetargetAction(alignBottomAction);
+        final AlignmentRetargetAction alignLeftAction = new AlignmentRetargetAction(PositionConstants.LEFT);
+        alignLeftAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.ALIGN_LEFT));
+        alignLeftAction.setDisabledImageDescriptor(null);
+        addRetargetAction(alignLeftAction);
+        final AlignmentRetargetAction alignCenterAction = new AlignmentRetargetAction(PositionConstants.CENTER);
+        alignCenterAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.ALIGN_CENTER));
+        alignCenterAction.setDisabledImageDescriptor(null);
+        addRetargetAction(alignCenterAction);
+        final AlignmentRetargetAction alignRightAction = new AlignmentRetargetAction(PositionConstants.RIGHT);
+        alignRightAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.ALIGN_RIGHT));
+        alignRightAction.setDisabledImageDescriptor(null);
+        addRetargetAction(alignRightAction);
+        final AlignmentRetargetAction alignTopAction = new AlignmentRetargetAction(PositionConstants.TOP);
+        alignTopAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.ALIGN_TOP));
+        alignTopAction.setDisabledImageDescriptor(null);
+        addRetargetAction(alignTopAction);
+        final AlignmentRetargetAction alignMiddleAction = new AlignmentRetargetAction(PositionConstants.MIDDLE);
+        alignMiddleAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.ALIGN_MIDDLE));
+        alignMiddleAction.setDisabledImageDescriptor(null);
+        addRetargetAction(alignMiddleAction);
+        final AlignmentRetargetAction alignBottomAction = new AlignmentRetargetAction(PositionConstants.BOTTOM);
+        alignBottomAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.ALIGN_BOTTOM));
+        alignBottomAction.setDisabledImageDescriptor(null);
+        addRetargetAction(alignBottomAction);
 
-		MatchWidthRetargetAction matchWidthAction = new MatchWidthRetargetAction();
-		matchWidthAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.MATCH_WIDTH));
-		matchWidthAction.setDisabledImageDescriptor(null);
-		this.addRetargetAction(matchWidthAction);
-		MatchHeightRetargetAction matchHeightAction = new MatchHeightRetargetAction();
-		matchHeightAction.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.MATCH_HEIGHT));
-		matchHeightAction.setDisabledImageDescriptor(null);
-		this.addRetargetAction(matchHeightAction);
+        final MatchWidthRetargetAction matchWidthAction = new MatchWidthRetargetAction();
+        matchWidthAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.MATCH_WIDTH));
+        matchWidthAction.setDisabledImageDescriptor(null);
+        addRetargetAction(matchWidthAction);
+        final MatchHeightRetargetAction matchHeightAction = new MatchHeightRetargetAction();
+        matchHeightAction.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.MATCH_HEIGHT));
+        matchHeightAction.setDisabledImageDescriptor(null);
+        addRetargetAction(matchHeightAction);
 
-		this.addRetargetAction(new HorizontalLineRetargetAction());
-		this.addRetargetAction(new VerticalLineRetargetAction());
+        addRetargetAction(new HorizontalLineRetargetAction());
+        addRetargetAction(new VerticalLineRetargetAction());
 
-		this.addRetargetAction(new ChangeBackgroundColorRetargetAction());
-	}
+        addRetargetAction(new ChangeBackgroundColorRetargetAction());
+    }
 
-	public void contributeToToolBar(ERDiagram diagram,
-			IToolBarManager toolBarManager,
-			ZoomComboContributionItem zoomComboContributionItem) {
-		toolBarManager.add(this.getAction(ActionFactory.DELETE.getId()));
-		toolBarManager.add(this.getAction(ActionFactory.UNDO.getId()));
-		toolBarManager.add(this.getAction(ActionFactory.REDO.getId()));
-		toolBarManager.add(new Separator());
+    public void contributeToToolBar(final ERDiagram diagram, final IToolBarManager toolBarManager, final ZoomComboContributionItem zoomComboContributionItem) {
+        toolBarManager.add(getAction(ActionFactory.DELETE.getId()));
+        toolBarManager.add(getAction(ActionFactory.UNDO.getId()));
+        toolBarManager.add(getAction(ActionFactory.REDO.getId()));
+        toolBarManager.add(new Separator());
 
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.ZOOM_IN));
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.ZOOM_OUT));
-		toolBarManager.add(getActionRegistry().getAction(ZoomAdjustAction.ID));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.ZOOM_IN));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.ZOOM_OUT));
+        toolBarManager.add(getActionRegistry().getAction(ZoomAdjustAction.ID));
 
-		toolBarManager.add(zoomComboContributionItem);
+        toolBarManager.add(zoomComboContributionItem);
 
-		toolBarManager.add(new Separator());
+        toolBarManager.add(new Separator());
 
-		toolBarManager.add(this
-				.getAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY));
-		toolBarManager.add(this
-				.getAction(GEFActionConstants.TOGGLE_SNAP_TO_GEOMETRY));
-		toolBarManager.add(this.getAction(TooltipAction.ID));
-		toolBarManager.add(this.getAction(LockEditAction.ID));
+        toolBarManager.add(getAction(GEFActionConstants.TOGGLE_GRID_VISIBILITY));
+        toolBarManager.add(getAction(GEFActionConstants.TOGGLE_SNAP_TO_GEOMETRY));
+        toolBarManager.add(getAction(TooltipAction.ID));
+        toolBarManager.add(getAction(LockEditAction.ID));
 
-		toolBarManager.add(new Separator());
+        toolBarManager.add(new Separator());
 
-		toolBarManager.add(this.getAction(ExportToDBAction.ID));
+        toolBarManager.add(getAction(ExportToDBAction.ID));
 
-		toolBarManager.add(new Separator());
+        toolBarManager.add(new Separator());
 
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.ALIGN_LEFT));
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.ALIGN_CENTER));
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.ALIGN_RIGHT));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.ALIGN_LEFT));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.ALIGN_CENTER));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.ALIGN_RIGHT));
 
-		toolBarManager.add(new Separator());
+        toolBarManager.add(new Separator());
 
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.ALIGN_TOP));
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.ALIGN_MIDDLE));
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.ALIGN_BOTTOM));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.ALIGN_TOP));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.ALIGN_MIDDLE));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.ALIGN_BOTTOM));
 
-		toolBarManager.add(new Separator());
+        toolBarManager.add(new Separator());
 
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.MATCH_WIDTH));
-		toolBarManager.add(getActionRegistry().getAction(
-				GEFActionConstants.MATCH_HEIGHT));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.MATCH_WIDTH));
+        toolBarManager.add(getActionRegistry().getAction(GEFActionConstants.MATCH_HEIGHT));
 
-		toolBarManager.add(new Separator());
+        toolBarManager.add(new Separator());
 
-		toolBarManager.add(getActionRegistry().getAction(
-				HorizontalLineAction.ID));
-		toolBarManager
-				.add(getActionRegistry().getAction(VerticalLineAction.ID));
+        toolBarManager.add(getActionRegistry().getAction(HorizontalLineAction.ID));
+        toolBarManager.add(getActionRegistry().getAction(VerticalLineAction.ID));
 
-		toolBarManager.add(getActionRegistry().getAction(
-				ChangeBackgroundColorAction.ID));
+        toolBarManager.add(getActionRegistry().getAction(ChangeBackgroundColorAction.ID));
 
-		toolBarManager.add(new Separator());
+        toolBarManager.add(new Separator());
 
-		final FontNameContributionItem fontNameContributionItem = new FontNameContributionItem(
-				getPage());
-		final FontSizeContributionItem fontSizeContributionItem = new FontSizeContributionItem(
-				getPage());
+        final FontNameContributionItem fontNameContributionItem = new FontNameContributionItem(getPage());
+        final FontSizeContributionItem fontSizeContributionItem = new FontSizeContributionItem(getPage());
 
-		toolBarManager.add(fontNameContributionItem);
-		toolBarManager.add(fontSizeContributionItem);
+        toolBarManager.add(fontNameContributionItem);
+        toolBarManager.add(fontSizeContributionItem);
 
-		this.getPage().addSelectionListener(new ISelectionListener() {
+        getPage().addSelectionListener(new ISelectionListener() {
 
-			public void selectionChanged(IWorkbenchPart part,
-					ISelection selection) {
+            @Override
+            public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
 
-				if (selection instanceof IStructuredSelection) {
-					List selectedEditParts = ((IStructuredSelection) selection)
-							.toList();
+                if (selection instanceof IStructuredSelection) {
+                    final List selectedEditParts = ((IStructuredSelection) selection).toList();
 
-					if (!selectedEditParts.isEmpty()) {
-						if (selectedEditParts.get(0) instanceof EditPart) {
-							Object model = ((EditPart) selectedEditParts.get(0))
-									.getModel();
+                    if (!selectedEditParts.isEmpty()) {
+                        if (selectedEditParts.get(0) instanceof EditPart) {
+                            final Object model = ((EditPart) selectedEditParts.get(0)).getModel();
 
-							if (model instanceof ViewableModel) {
-								ViewableModel viewableModel = (ViewableModel) model;
+                            if (model instanceof ViewableModel) {
+                                final ViewableModel viewableModel = (ViewableModel) model;
 
-								String fontName = viewableModel.getFontName();
-								int fontSize = viewableModel.getFontSize();
+                                final String fontName = viewableModel.getFontName();
+                                final int fontSize = viewableModel.getFontSize();
 
-								if (fontName != null) {
-									fontNameContributionItem.setText(fontName);
+                                if (fontName != null) {
+                                    fontNameContributionItem.setText(fontName);
 
-								} else {
-									FontData fontData = Display.getCurrent()
-											.getSystemFont().getFontData()[0];
-									fontNameContributionItem.setText(fontData
-											.getName());
-									viewableModel.setFontName(fontData
-											.getName());
-								}
+                                } else {
+                                    final FontData fontData = Display.getCurrent().getSystemFont().getFontData()[0];
+                                    fontNameContributionItem.setText(fontData.getName());
+                                    viewableModel.setFontName(fontData.getName());
+                                }
 
-								if (fontSize > 0) {
-									fontSizeContributionItem.setText(String
-											.valueOf(fontSize));
+                                if (fontSize > 0) {
+                                    fontSizeContributionItem.setText(String.valueOf(fontSize));
 
-								} else {
-									fontSizeContributionItem.setText(String
-											.valueOf(ViewableModel.DEFAULT_FONT_SIZE));
-									viewableModel.setFontSize(fontSize);
-								}
-							}
-						}
-					}
-				}
-			}
-		});
-	}
+                                } else {
+                                    fontSizeContributionItem.setText(String.valueOf(ViewableModel.DEFAULT_FONT_SIZE));
+                                    viewableModel.setFontSize(fontSize);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void declareGlobalActionKeys() {
-		addGlobalActionKey(IWorkbenchActionConstants.PRINT_EXT);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void declareGlobalActionKeys() {
+        addGlobalActionKey(IWorkbenchActionConstants.PRINT_EXT);
+    }
 
-	public void initRetargetActions(EditorPart newEditor) {
-		Iterator iter = this.getActionRegistry().getActions();
+    public void initRetargetActions(final EditorPart newEditor) {
+        final Iterator iter = getActionRegistry().getActions();
 
-		while (iter.hasNext()) {
-			IAction action = (IAction) iter.next();
-			if (action instanceof RetargetAction) {
-				((RetargetAction) action).partActivated(newEditor);
-			}
-		}
-	}
+        while (iter.hasNext()) {
+            final IAction action = (IAction) iter.next();
+            if (action instanceof RetargetAction) {
+                ((RetargetAction) action).partActivated(newEditor);
+            }
+        }
+    }
 }

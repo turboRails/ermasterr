@@ -8,16 +8,19 @@ import org.insightech.er.editor.view.dialog.outline.tablespace.TablespaceDialog;
 
 public class PostgresEclipseDBManager extends EclipseDBManagerBase {
 
-	public String getId() {
-		return PostgresDBManager.ID;
-	}
+    @Override
+    public String getId() {
+        return PostgresDBManager.ID;
+    }
 
-	public AdvancedComposite createAdvancedComposite(Composite composite) {
-		return new PostgresAdvancedComposite(composite);
-	}
+    @Override
+    public AdvancedComposite createAdvancedComposite(final Composite composite) {
+        return new PostgresAdvancedComposite(composite);
+    }
 
-	public TablespaceDialog createTablespaceDialog() {
-		return new PostgresTablespaceDialog();
-	}
+    @Override
+    public TablespaceDialog createTablespaceDialog() {
+        return new PostgresTablespaceDialog();
+    }
 
 }

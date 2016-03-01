@@ -5,7 +5,7 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.AdvancedCompo
 
 public class SQLiteAdvancedComposite extends AdvancedComposite {
 
-	public SQLiteAdvancedComposite(Composite parent) {
-		super(parent);
-	}
+    public SQLiteAdvancedComposite(final Composite parent) {
+        super(parent);
+    }
 }

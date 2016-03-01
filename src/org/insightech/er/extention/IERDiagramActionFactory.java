@@ -8,12 +8,12 @@ import org.insightech.er.editor.ERDiagramEditor;
  */
 public interface IERDiagramActionFactory {
 
-	/**
-	 * IAction を実装したクラスを返す
-	 * 
-	 * @param editor
-	 * @return IAction
-	 */
-	public IAction createIAction(ERDiagramEditor editor);
+    /**
+     * IAction を実装したクラスを返す
+     * 
+     * @param editor
+     * @return IAction
+     */
+    public IAction createIAction(ERDiagramEditor editor);
 
 }

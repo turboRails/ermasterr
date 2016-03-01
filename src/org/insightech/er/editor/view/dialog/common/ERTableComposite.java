@@ -41,711 +41,672 @@ import org.insightech.er.util.Format;
 
 public class ERTableComposite extends Composite {
 
-	private static final int DEFAULT_HEIGHT = 200;
+    private static final int DEFAULT_HEIGHT = 200;
 
-	// private static final int KEY_WIDTH = 45;
+    // private static final int KEY_WIDTH = 45;
 
-	public static final int NAME_WIDTH = 150;
+    public static final int NAME_WIDTH = 150;
 
-	private static final int TYPE_WIDTH = 130;
+    private static final int TYPE_WIDTH = 130;
 
-	// private static final int NOT_NULL_WIDTH = 90;
+    // private static final int NOT_NULL_WIDTH = 90;
 
-	public static final int UNIQUE_KEY_WIDTH = 90;
+    public static final int UNIQUE_KEY_WIDTH = 90;
 
-	private Table table;
+    private Table table;
 
-	private Button columnAddButton;
+    private Button columnAddButton;
 
-	private Button columnEditButton;
+    private Button columnEditButton;
 
-	private Button columnDeleteButton;
+    private Button columnDeleteButton;
 
-	private Button upButton;
+    private Button upButton;
 
-	private Button downButton;
+    private Button downButton;
 
-	private Button quickAddButton;
+    private Button quickAddButton;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private ERTable ertable;
+    private final ERTable ertable;
 
-	private List<Column> columnList;
+    private List<Column> columnList;
 
-	private AbstractColumnDialog columnDialog;
+    private final AbstractColumnDialog columnDialog;
 
-	private AbstractDialog parentDialog;
+    private final AbstractDialog parentDialog;
 
-	private Map<Column, TableEditor[]> columnNotNullCheckMap = new HashMap<Column, TableEditor[]>();
+    private final Map<Column, TableEditor[]> columnNotNullCheckMap = new HashMap<Column, TableEditor[]>();
 
-	private boolean buttonDisplay;
+    private final boolean buttonDisplay;
 
-	private boolean checkboxEnabled;
+    private final boolean checkboxEnabled;
 
-	private int height;
+    private final int height;
 
-	private ERTableCompositeHolder holder;
+    private final ERTableCompositeHolder holder;
 
-	public ERTableComposite(ERTableCompositeHolder holder, Composite parent,
-			ERDiagram diagram, ERTable erTable, List<Column> columnList,
-			AbstractColumnDialog columnDialog, AbstractDialog parentDialog,
-			int horizontalSpan, boolean buttonDisplay, boolean checkboxEnabled) {
-		this(holder, parent, diagram, erTable, columnList, columnDialog,
-				parentDialog, horizontalSpan, buttonDisplay, checkboxEnabled,
-				DEFAULT_HEIGHT);
-	}
+    public ERTableComposite(final ERTableCompositeHolder holder, final Composite parent, final ERDiagram diagram, final ERTable erTable, final List<Column> columnList, final AbstractColumnDialog columnDialog, final AbstractDialog parentDialog, final int horizontalSpan, final boolean buttonDisplay, final boolean checkboxEnabled) {
+        this(holder, parent, diagram, erTable, columnList, columnDialog, parentDialog, horizontalSpan, buttonDisplay, checkboxEnabled, DEFAULT_HEIGHT);
+    }
 
-	public ERTableComposite(ERTableCompositeHolder holder, Composite parent,
-			ERDiagram diagram, ERTable erTable, List<Column> columnList,
-			AbstractColumnDialog columnDialog, AbstractDialog parentDialog,
-			int horizontalSpan, boolean buttonDisplay, boolean checkboxEnabled,
-			int height) {
-		super(parent, SWT.NONE);
+    public ERTableComposite(final ERTableCompositeHolder holder, final Composite parent, final ERDiagram diagram, final ERTable erTable, final List<Column> columnList, final AbstractColumnDialog columnDialog, final AbstractDialog parentDialog, final int horizontalSpan, final boolean buttonDisplay, final boolean checkboxEnabled, final int height) {
+        super(parent, SWT.NONE);
 
-		this.holder = holder;
-		this.height = height;
-		this.buttonDisplay = buttonDisplay;
-		this.checkboxEnabled = checkboxEnabled;
+        this.holder = holder;
+        this.height = height;
+        this.buttonDisplay = buttonDisplay;
+        this.checkboxEnabled = checkboxEnabled;
 
-		this.diagram = diagram;
-		this.ertable = erTable;
-		this.columnList = columnList;
+        this.diagram = diagram;
+        ertable = erTable;
+        this.columnList = columnList;
 
-		this.columnDialog = columnDialog;
-		this.parentDialog = parentDialog;
+        this.columnDialog = columnDialog;
+        this.parentDialog = parentDialog;
 
-		GridData gridData = new GridData();
-		gridData.horizontalSpan = horizontalSpan;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.verticalAlignment = GridData.FILL;
+        final GridData gridData = new GridData();
+        gridData.horizontalSpan = horizontalSpan;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.verticalAlignment = GridData.FILL;
 
-		this.setLayoutData(gridData);
+        setLayoutData(gridData);
 
-		this.createComposite();
-		this.initComposite();
-	}
+        createComposite();
+        initComposite();
+    }
 
-	private void createComposite() {
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.marginWidth = 0;
-		gridLayout.numColumns = 1;
+    private void createComposite() {
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.marginWidth = 0;
+        gridLayout.numColumns = 1;
 
-		this.setLayout(gridLayout);
+        setLayout(gridLayout);
 
-		this.createTable();
+        createTable();
 
-		if (this.buttonDisplay) {
-			this.createButton();
-			this.setButtonEnabled(false);
-		}
-	}
+        if (buttonDisplay) {
+            createButton();
+            setButtonEnabled(false);
+        }
+    }
 
-	private void createTable() {
-		this.table = CompositeFactory.createTable(this, this.height, 3);
-
-		table.addListener(SWT.PaintItem, new Listener() {
-
-			public void handleEvent(Event event) {
-				if (event.index == 0 || event.index == 1) {
-					TableItem tableItem = (TableItem) event.item;
-
-					Image tmpImage = (Image) tableItem.getData(String
-							.valueOf(event.index));
-
-					if (tmpImage != null) {
-						int tmpWidth = tableItem.getBounds(event.index).width;
-						int tmpHeight = tableItem.getBounds().height;
-
-						int tmpX = tmpImage.getBounds().width;
-						tmpX = (tmpWidth / 2 - tmpX / 2);
-						int tmpY = tmpImage.getBounds().height;
-						tmpY = (tmpHeight / 2 - tmpY / 2);
-						if (tmpX <= 0)
-							tmpX = event.x;
-						else
-							tmpX += event.x;
-						if (tmpY <= 0)
-							tmpY = event.y;
-						else
-							tmpY += event.y;
-
-						event.gc.drawImage(tmpImage, tmpX, tmpY);
-					}
-				}
-			}
-		});
-
-		CompositeFactory.createTableColumn(this.table, "PK", -1, SWT.CENTER);
-		CompositeFactory.createTableColumn(this.table, "FK", -1, SWT.CENTER);
-		CompositeFactory.createTableColumn(this.table, "label.physical.name",
-				NAME_WIDTH, SWT.NONE);
-		CompositeFactory.createTableColumn(this.table, "label.logical.name",
-				NAME_WIDTH, SWT.NONE);
-		CompositeFactory.createTableColumn(this.table, "label.column.type",
-				TYPE_WIDTH, SWT.NONE);
-		CompositeFactory.createTableColumn(this.table, "label.not.null", -1,
-				SWT.CENTER);
-		CompositeFactory.createTableColumn(this.table, "label.unique.key", -1,
-				SWT.CENTER);
-
-		this.table.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = table.getSelectionIndex();
-				selectTable(index);
-
-				Column selectedColumn = columnList.get(index);
-				if (selectedColumn instanceof ColumnGroup) {
-					holder.selectGroup((ColumnGroup) selectedColumn);
-				}
-			}
-		});
-
-		if (this.buttonDisplay) {
-			this.table.addMouseListener(new MouseAdapter() {
-
-				/**
-				 * {@inheritDoc}
-				 */
-				@Override
-				public void mouseDoubleClick(MouseEvent e) {
-					Column targetColumn = getTargetColumn();
-
-					if (targetColumn == null
-							|| !(targetColumn instanceof CopyColumn)) {
-						return;
-					}
-
-					addOrEditColumn((CopyColumn) targetColumn, false);
-				}
-			});
-		}
-
-		this.table.pack();
-	}
-
-	/**
-	 * This method initializes composite2
-	 * 
-	 */
-	private void createButton() {
-		Composite buttonComposite = CompositeFactory.createChildComposite(this,
-				1, 8);
-
-		this.columnAddButton = CompositeFactory.createSmallButton(
-				buttonComposite, "label.button.add");
-
-		this.columnAddButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				addOrEditColumn(null, true);
-			}
-		});
-
-		this.columnEditButton = CompositeFactory.createSmallButton(
-				buttonComposite, "label.button.edit");
-
-		this.columnEditButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Column targetColumn = getTargetColumn();
-
-				if (targetColumn == null
-						|| !(targetColumn instanceof CopyColumn)) {
-					return;
-				}
-
-				addOrEditColumn((CopyColumn) targetColumn, false);
-			}
-
-		});
-
-		this.columnDeleteButton = CompositeFactory.createSmallButton(
-				buttonComposite, "label.button.delete");
-
-		this.columnDeleteButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = table.getSelectionIndex();
-
-				removeColumn();
-
-				if (index >= table.getItemCount()) {
-					index = table.getItemCount() - 1;
-				}
-
-				selectTable(index);
-			}
-
-		});
-
-		CompositeFactory.filler(buttonComposite, 1, 30);
-
-		this.upButton = CompositeFactory.createSmallButton(buttonComposite,
-				"label.up.arrow");
-
-		this.upButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				upColumn();
-			}
-
-		});
-
-		this.downButton = CompositeFactory.createSmallButton(buttonComposite,
-				"label.down.arrow");
-
-		this.downButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				downColumn();
-			}
-
-		});
-
-		CompositeFactory.filler(buttonComposite, 1, 30);
-
-		this.quickAddButton = new Button(buttonComposite, SWT.NONE);
-		this.quickAddButton.setText(ResourceString
-				.getResourceString("label.button.quick.add"));
-
-		this.quickAddButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				QuickAddDialog dialog = new QuickAddDialog(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						diagram);
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					List<NormalColumn> columnList = dialog.getColumnList();
-
-					for (NormalColumn column : columnList) {
-						addTableData(column, true);
-					}
-				}
-			}
-
-		});
-
-		this.quickAddButton.setEnabled(true);
-	}
-
-	private void initComposite() {
-		if (this.columnList != null) {
-			for (Column column : this.columnList) {
-				TableItem tableItem = new TableItem(this.table, SWT.NONE);
-				this.column2TableItem(column, tableItem);
-			}
-		}
-	}
-
-	private void disposeCheckBox(Column column) {
-		TableEditor[] oldEditors = this.columnNotNullCheckMap.get(column);
-
-		if (oldEditors != null) {
-			for (TableEditor oldEditor : oldEditors) {
-				if (oldEditor.getEditor() != null) {
-					oldEditor.getEditor().dispose();
-					oldEditor.dispose();
-				}
-			}
-
-			this.columnNotNullCheckMap.remove(column);
-		}
-	}
-
-	private void column2TableItem(Column column, TableItem tableItem) {
-		this.disposeCheckBox(column);
-
-		if (column instanceof NormalColumn) {
-			// tableItem.setBackground(ColorConstants.white);
-
-			NormalColumn normalColumn = (NormalColumn) column;
-
-			if (normalColumn.isPrimaryKey()) {
-				tableItem.setData("0",
-						ERDiagramActivator.getImage(ImageKey.PRIMARY_KEY));
-			} else {
-				tableItem.setData("0", null);
-			}
-
-			if (normalColumn.isForeignKey()) {
-				tableItem.setData("1",
-						ERDiagramActivator.getImage(ImageKey.FOREIGN_KEY));
-			} else {
-				tableItem.setData("1", null);
-			}
-
-			tableItem.setText(2,
-					Format.null2blank(normalColumn.getPhysicalName()));
-			tableItem.setText(3,
-					Format.null2blank(normalColumn.getLogicalName()));
-
-			SqlType sqlType = normalColumn.getType();
-
-			tableItem.setText(4, Format.formatType(sqlType,
-					normalColumn.getTypeData(), this.diagram.getDatabase(),
-					true));
-
-			this.setTableEditor(normalColumn, tableItem);
-
-		} else {
-			// tableItem.setBackground(ColorConstants.white);
-			tableItem.setData("0", ERDiagramActivator.getImage(ImageKey.GROUP));
-			tableItem.setData("1", null);
-			tableItem.setText(2, column.getName());
-			tableItem.setText(3, "");
-			tableItem.setText(4, "");
-		}
-
-	}
-
-	private void setTableEditor(final NormalColumn normalColumn,
-			TableItem tableItem) {
-
-		final Button notNullCheckButton = new Button(this.table, SWT.CHECK);
-		notNullCheckButton.pack();
-
-		final Button uniqueCheckButton = new Button(this.table, SWT.CHECK);
-		uniqueCheckButton.pack();
-
-		TableEditor[] editors = new TableEditor[2];
-
-		editors[0] = new TableEditor(this.table);
-
-		editors[0].minimumWidth = notNullCheckButton.getSize().x;
-		editors[0].horizontalAlignment = SWT.CENTER;
-		editors[0].setEditor(notNullCheckButton, tableItem, 5);
-
-		editors[1] = new TableEditor(this.table);
-
-		editors[1].minimumWidth = uniqueCheckButton.getSize().x;
-		editors[1].horizontalAlignment = SWT.CENTER;
-		editors[1].setEditor(uniqueCheckButton, tableItem, 6);
-
-		if (normalColumn.isNotNull()) {
-			notNullCheckButton.setSelection(true);
-		} else {
-			notNullCheckButton.setSelection(false);
-		}
-		if (normalColumn.isUniqueKey()) {
-			uniqueCheckButton.setSelection(true);
-		} else {
-			uniqueCheckButton.setSelection(false);
-		}
-
-		if (normalColumn.isPrimaryKey()) {
-			notNullCheckButton.setEnabled(false);
-		}
-
-		if (this.ertable != null) {
-			if (normalColumn.isRefered()) {
-				uniqueCheckButton.setEnabled(false);
-			}
-		}
-
-		this.columnNotNullCheckMap.put(normalColumn, editors);
-
-		if (this.checkboxEnabled) {
-			notNullCheckButton.addSelectionListener(new SelectionAdapter() {
-
-				/**
-				 * {@inheritDoc}
-				 */
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					boolean notnull = notNullCheckButton.getSelection();
-
-					setNotNull(normalColumn, notnull);
-
-					super.widgetSelected(e);
-				}
-			});
-
-			uniqueCheckButton.addSelectionListener(new SelectionAdapter() {
-
-				/**
-				 * {@inheritDoc}
-				 */
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					normalColumn.setUniqueKey(uniqueCheckButton.getSelection());
-					super.widgetSelected(e);
-				}
-			});
-
-		} else {
-			notNullCheckButton.setEnabled(false);
-			uniqueCheckButton.setEnabled(false);
-		}
-	}
-
-	private void setNotNull(NormalColumn normalColumn, boolean notnull) {
-		normalColumn.setNotNull(notnull);
-
-		if (ertable != null) {
-			for (NormalColumn anotherColumn : ertable.getNormalColumns()) {
-				if (anotherColumn.isForeignKey()) {
-					Relation anotherColumnsRelation = anotherColumn
-							.getRelationList().get(0);
-
-					for (Relation relation : normalColumn.getRelationList()) {
-						if (anotherColumnsRelation == relation) {
-							((Button) columnNotNullCheckMap.get(anotherColumn)[0]
-									.getEditor()).setSelection(notnull);
-							anotherColumn.setNotNull(notnull);
-
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private void addTableData(NormalColumn column, boolean add) {
-		int index = this.table.getSelectionIndex();
-
-		TableItem tableItem = null;
-		CopyColumn copyColumn = null;
-
-		if (add) {
-			tableItem = new TableItem(table, SWT.NONE);
-
-			copyColumn = new CopyColumn(column);
-			this.columnList.add(copyColumn);
-
-		} else {
-			tableItem = this.table.getItem(index);
-
-			copyColumn = (CopyColumn) this.columnList.get(index);
-			CopyColumn.copyData(column, copyColumn);
-
-			setNotNull(copyColumn, copyColumn.isNotNull());
-		}
-
-		this.column2TableItem(copyColumn, tableItem);
-
-		this.parentDialog.validate();
-	}
-
-	public void addTableData(ColumnGroup column) {
-		TableItem tableItem = null;
-		tableItem = new TableItem(table, SWT.NONE);
-
-		this.columnList.add(column);
-		this.column2TableItem(column, tableItem);
-
-		this.parentDialog.validate();
-	}
-
-	private void removeColumn() {
-		int index = this.table.getSelectionIndex();
-
-		if (index != -1) {
-			Column column = this.columnList.get(index);
-
-			if (column instanceof NormalColumn) {
-				NormalColumn normalColumn = (NormalColumn) column;
-
-				if (normalColumn.isForeignKey()) {
-					this.setMessage(ResourceString
-							.getResourceString("error.foreign.key.not.deleteable"));
-
-				} else {
-					if (this.ertable != null && normalColumn.isRefered()) {
-						this.setMessage(ResourceString
-								.getResourceString("error.reference.key.not.deleteable"));
-
-					} else {
-						removeColumn(index);
-					}
-				}
-
-			} else {
-				this.removeColumn(index);
-			}
-		}
-
-		this.parentDialog.validate();
-	}
-
-	public void removeColumn(int index) {
-		Column column = this.columnList.get(index);
-
-		this.table.remove(index);
-
-		this.columnList.remove(index);
-
-		this.disposeCheckBox(column);
-
-		for (int i = index; i < this.table.getItemCount(); i++) {
-			TableItem tableItem = this.table.getItem(i);
-			column = this.columnList.get(i);
-
-			this.disposeCheckBox(column);
-
-			if (column instanceof NormalColumn) {
-				this.setTableEditor((NormalColumn) column, tableItem);
-			}
-		}
-	}
-
-	private CopyColumn getTargetColumn() {
-		CopyColumn column = null;
-
-		int index = this.table.getSelectionIndex();
-
-		if (index != -1) {
-			Column targetColumn = this.columnList.get(index);
-
-			if (targetColumn instanceof CopyColumn) {
-				column = (CopyColumn) targetColumn;
-			}
-		}
-
-		return column;
-	}
-
-	private void setMessage(String message) {
-		MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-		messageBox.setText(ResourceString
-				.getResourceString("dialog.title.error"));
-		messageBox.setMessage(message);
-		messageBox.open();
-	}
-
-	private void upColumn() {
-		int index = this.table.getSelectionIndex();
-
-		if (index != -1 && index != 0) {
-			this.changeColumn(index - 1, index);
-			this.table.setSelection(index - 1);
-		}
-	}
-
-	private void downColumn() {
-		int index = this.table.getSelectionIndex();
-
-		if (index != -1 && index != table.getItemCount() - 1) {
-			this.changeColumn(index, index + 1);
-			table.setSelection(index + 1);
-		}
-	}
-
-	private void changeColumn(int index1, int index2) {
-		Column column1 = this.columnList.remove(index1);
-		Column column2 = null;
-
-		if (index1 < index2) {
-			column2 = this.columnList.remove(index2 - 1);
-			this.columnList.add(index1, column2);
-			this.columnList.add(index2, column1);
-
-		} else if (index1 > index2) {
-			column2 = this.columnList.remove(index2);
-			this.columnList.add(index1 - 1, column2);
-			this.columnList.add(index2, column1);
-		}
-
-		TableItem[] tableItems = this.table.getItems();
-
-		this.column2TableItem(column1, tableItems[index2]);
-		this.column2TableItem(column2, tableItems[index1]);
-	}
-
-	private void addOrEditColumn(CopyColumn targetColumn, boolean add) {
-		boolean foreignKey = false;
-		boolean isRefered = false;
-
-		if (targetColumn != null) {
-			foreignKey = targetColumn.isForeignKey();
-			if (this.ertable != null) {
-				isRefered = targetColumn.isRefered();
-			}
-		}
-		this.columnDialog.setTargetColumn(targetColumn, foreignKey, isRefered);
-
-		if (this.columnDialog.open() == IDialogConstants.OK_ID) {
-			NormalColumn column = this.columnDialog.getColumn();
-			addTableData(column, add);
-		}
-	}
-
-	public void setColumnList(List<Column> columnList) {
-		this.table.removeAll();
-
-		if (this.columnList != null) {
-			for (Column column : this.columnList) {
-				this.disposeCheckBox(column);
-			}
-		}
-
-		this.columnList = columnList;
-
-		initComposite();
-	}
-
-	@Override
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-
-		if (this.buttonDisplay) {
-			this.columnAddButton.setEnabled(enabled);
-			this.columnEditButton.setEnabled(false);
-			this.columnDeleteButton.setEnabled(false);
-			this.upButton.setEnabled(false);
-			this.downButton.setEnabled(false);
-			this.quickAddButton.setEnabled(enabled);
-		}
-	}
-
-	private void setButtonEnabled(boolean enabled) {
-		if (this.buttonDisplay) {
-			this.columnEditButton.setEnabled(enabled);
-			this.columnDeleteButton.setEnabled(enabled);
-			this.upButton.setEnabled(enabled);
-			this.downButton.setEnabled(enabled);
-		}
-	}
-
-	private void selectTable(int index) {
-		this.table.select(index);
-
-		if (index >= 0) {
-			this.setButtonEnabled(true);
-		} else {
-			this.setButtonEnabled(false);
-		}
-	}
+    private void createTable() {
+        table = CompositeFactory.createTable(this, height, 3);
+
+        table.addListener(SWT.PaintItem, new Listener() {
+
+            @Override
+            public void handleEvent(final Event event) {
+                if (event.index == 0 || event.index == 1) {
+                    final TableItem tableItem = (TableItem) event.item;
+
+                    final Image tmpImage = (Image) tableItem.getData(String.valueOf(event.index));
+
+                    if (tmpImage != null) {
+                        final int tmpWidth = tableItem.getBounds(event.index).width;
+                        final int tmpHeight = tableItem.getBounds().height;
+
+                        int tmpX = tmpImage.getBounds().width;
+                        tmpX = (tmpWidth / 2 - tmpX / 2);
+                        int tmpY = tmpImage.getBounds().height;
+                        tmpY = (tmpHeight / 2 - tmpY / 2);
+                        if (tmpX <= 0)
+                            tmpX = event.x;
+                        else
+                            tmpX += event.x;
+                        if (tmpY <= 0)
+                            tmpY = event.y;
+                        else
+                            tmpY += event.y;
+
+                        event.gc.drawImage(tmpImage, tmpX, tmpY);
+                    }
+                }
+            }
+        });
+
+        CompositeFactory.createTableColumn(table, "PK", -1, SWT.CENTER);
+        CompositeFactory.createTableColumn(table, "FK", -1, SWT.CENTER);
+        CompositeFactory.createTableColumn(table, "label.physical.name", NAME_WIDTH, SWT.NONE);
+        CompositeFactory.createTableColumn(table, "label.logical.name", NAME_WIDTH, SWT.NONE);
+        CompositeFactory.createTableColumn(table, "label.column.type", TYPE_WIDTH, SWT.NONE);
+        CompositeFactory.createTableColumn(table, "label.not.null", -1, SWT.CENTER);
+        CompositeFactory.createTableColumn(table, "label.unique.key", -1, SWT.CENTER);
+
+        table.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int index = table.getSelectionIndex();
+                selectTable(index);
+
+                final Column selectedColumn = columnList.get(index);
+                if (selectedColumn instanceof ColumnGroup) {
+                    holder.selectGroup((ColumnGroup) selectedColumn);
+                }
+            }
+        });
+
+        if (buttonDisplay) {
+            table.addMouseListener(new MouseAdapter() {
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void mouseDoubleClick(final MouseEvent e) {
+                    final Column targetColumn = getTargetColumn();
+
+                    if (targetColumn == null || !(targetColumn instanceof CopyColumn)) {
+                        return;
+                    }
+
+                    addOrEditColumn((CopyColumn) targetColumn, false);
+                }
+            });
+        }
+
+        table.pack();
+    }
+
+    /**
+     * This method initializes composite2
+     */
+    private void createButton() {
+        final Composite buttonComposite = CompositeFactory.createChildComposite(this, 1, 8);
+
+        columnAddButton = CompositeFactory.createSmallButton(buttonComposite, "label.button.add");
+
+        columnAddButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                addOrEditColumn(null, true);
+            }
+        });
+
+        columnEditButton = CompositeFactory.createSmallButton(buttonComposite, "label.button.edit");
+
+        columnEditButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final Column targetColumn = getTargetColumn();
+
+                if (targetColumn == null || !(targetColumn instanceof CopyColumn)) {
+                    return;
+                }
+
+                addOrEditColumn((CopyColumn) targetColumn, false);
+            }
+
+        });
+
+        columnDeleteButton = CompositeFactory.createSmallButton(buttonComposite, "label.button.delete");
+
+        columnDeleteButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                int index = table.getSelectionIndex();
+
+                removeColumn();
+
+                if (index >= table.getItemCount()) {
+                    index = table.getItemCount() - 1;
+                }
+
+                selectTable(index);
+            }
+
+        });
+
+        CompositeFactory.filler(buttonComposite, 1, 30);
+
+        upButton = CompositeFactory.createSmallButton(buttonComposite, "label.up.arrow");
+
+        upButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                upColumn();
+            }
+
+        });
+
+        downButton = CompositeFactory.createSmallButton(buttonComposite, "label.down.arrow");
+
+        downButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                downColumn();
+            }
+
+        });
+
+        CompositeFactory.filler(buttonComposite, 1, 30);
+
+        quickAddButton = new Button(buttonComposite, SWT.NONE);
+        quickAddButton.setText(ResourceString.getResourceString("label.button.quick.add"));
+
+        quickAddButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final QuickAddDialog dialog = new QuickAddDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram);
+                if (dialog.open() == IDialogConstants.OK_ID) {
+                    final List<NormalColumn> columnList = dialog.getColumnList();
+
+                    for (final NormalColumn column : columnList) {
+                        addTableData(column, true);
+                    }
+                }
+            }
+
+        });
+
+        quickAddButton.setEnabled(true);
+    }
+
+    private void initComposite() {
+        if (columnList != null) {
+            for (final Column column : columnList) {
+                final TableItem tableItem = new TableItem(table, SWT.NONE);
+                column2TableItem(column, tableItem);
+            }
+        }
+    }
+
+    private void disposeCheckBox(final Column column) {
+        final TableEditor[] oldEditors = columnNotNullCheckMap.get(column);
+
+        if (oldEditors != null) {
+            for (final TableEditor oldEditor : oldEditors) {
+                if (oldEditor.getEditor() != null) {
+                    oldEditor.getEditor().dispose();
+                    oldEditor.dispose();
+                }
+            }
+
+            columnNotNullCheckMap.remove(column);
+        }
+    }
+
+    private void column2TableItem(final Column column, final TableItem tableItem) {
+        disposeCheckBox(column);
+
+        if (column instanceof NormalColumn) {
+            // tableItem.setBackground(ColorConstants.white);
+
+            final NormalColumn normalColumn = (NormalColumn) column;
+
+            if (normalColumn.isPrimaryKey()) {
+                tableItem.setData("0", ERDiagramActivator.getImage(ImageKey.PRIMARY_KEY));
+            } else {
+                tableItem.setData("0", null);
+            }
+
+            if (normalColumn.isForeignKey()) {
+                tableItem.setData("1", ERDiagramActivator.getImage(ImageKey.FOREIGN_KEY));
+            } else {
+                tableItem.setData("1", null);
+            }
+
+            tableItem.setText(2, Format.null2blank(normalColumn.getPhysicalName()));
+            tableItem.setText(3, Format.null2blank(normalColumn.getLogicalName()));
+
+            final SqlType sqlType = normalColumn.getType();
+
+            tableItem.setText(4, Format.formatType(sqlType, normalColumn.getTypeData(), diagram.getDatabase(), true));
+
+            setTableEditor(normalColumn, tableItem);
+
+        } else {
+            // tableItem.setBackground(ColorConstants.white);
+            tableItem.setData("0", ERDiagramActivator.getImage(ImageKey.GROUP));
+            tableItem.setData("1", null);
+            tableItem.setText(2, column.getName());
+            tableItem.setText(3, "");
+            tableItem.setText(4, "");
+        }
+
+    }
+
+    private void setTableEditor(final NormalColumn normalColumn, final TableItem tableItem) {
+
+        final Button notNullCheckButton = new Button(table, SWT.CHECK);
+        notNullCheckButton.pack();
+
+        final Button uniqueCheckButton = new Button(table, SWT.CHECK);
+        uniqueCheckButton.pack();
+
+        final TableEditor[] editors = new TableEditor[2];
+
+        editors[0] = new TableEditor(table);
+
+        editors[0].minimumWidth = notNullCheckButton.getSize().x;
+        editors[0].horizontalAlignment = SWT.CENTER;
+        editors[0].setEditor(notNullCheckButton, tableItem, 5);
+
+        editors[1] = new TableEditor(table);
+
+        editors[1].minimumWidth = uniqueCheckButton.getSize().x;
+        editors[1].horizontalAlignment = SWT.CENTER;
+        editors[1].setEditor(uniqueCheckButton, tableItem, 6);
+
+        if (normalColumn.isNotNull()) {
+            notNullCheckButton.setSelection(true);
+        } else {
+            notNullCheckButton.setSelection(false);
+        }
+        if (normalColumn.isUniqueKey()) {
+            uniqueCheckButton.setSelection(true);
+        } else {
+            uniqueCheckButton.setSelection(false);
+        }
+
+        if (normalColumn.isPrimaryKey()) {
+            notNullCheckButton.setEnabled(false);
+        }
+
+        if (ertable != null) {
+            if (normalColumn.isRefered()) {
+                uniqueCheckButton.setEnabled(false);
+            }
+        }
+
+        columnNotNullCheckMap.put(normalColumn, editors);
+
+        if (checkboxEnabled) {
+            notNullCheckButton.addSelectionListener(new SelectionAdapter() {
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    final boolean notnull = notNullCheckButton.getSelection();
+
+                    setNotNull(normalColumn, notnull);
+
+                    super.widgetSelected(e);
+                }
+            });
+
+            uniqueCheckButton.addSelectionListener(new SelectionAdapter() {
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void widgetSelected(final SelectionEvent e) {
+                    normalColumn.setUniqueKey(uniqueCheckButton.getSelection());
+                    super.widgetSelected(e);
+                }
+            });
+
+        } else {
+            notNullCheckButton.setEnabled(false);
+            uniqueCheckButton.setEnabled(false);
+        }
+    }
+
+    private void setNotNull(final NormalColumn normalColumn, final boolean notnull) {
+        normalColumn.setNotNull(notnull);
+
+        if (ertable != null) {
+            for (final NormalColumn anotherColumn : ertable.getNormalColumns()) {
+                if (anotherColumn.isForeignKey()) {
+                    final Relation anotherColumnsRelation = anotherColumn.getRelationList().get(0);
+
+                    for (final Relation relation : normalColumn.getRelationList()) {
+                        if (anotherColumnsRelation == relation) {
+                            ((Button) columnNotNullCheckMap.get(anotherColumn)[0].getEditor()).setSelection(notnull);
+                            anotherColumn.setNotNull(notnull);
+
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void addTableData(final NormalColumn column, final boolean add) {
+        final int index = table.getSelectionIndex();
+
+        TableItem tableItem = null;
+        CopyColumn copyColumn = null;
+
+        if (add) {
+            tableItem = new TableItem(table, SWT.NONE);
+
+            copyColumn = new CopyColumn(column);
+            columnList.add(copyColumn);
+
+        } else {
+            tableItem = table.getItem(index);
+
+            copyColumn = (CopyColumn) columnList.get(index);
+            NormalColumn.copyData(column, copyColumn);
+
+            setNotNull(copyColumn, copyColumn.isNotNull());
+        }
+
+        column2TableItem(copyColumn, tableItem);
+
+        parentDialog.validate();
+    }
+
+    public void addTableData(final ColumnGroup column) {
+        TableItem tableItem = null;
+        tableItem = new TableItem(table, SWT.NONE);
+
+        columnList.add(column);
+        column2TableItem(column, tableItem);
+
+        parentDialog.validate();
+    }
+
+    private void removeColumn() {
+        final int index = table.getSelectionIndex();
+
+        if (index != -1) {
+            final Column column = columnList.get(index);
+
+            if (column instanceof NormalColumn) {
+                final NormalColumn normalColumn = (NormalColumn) column;
+
+                if (normalColumn.isForeignKey()) {
+                    setMessage(ResourceString.getResourceString("error.foreign.key.not.deleteable"));
+
+                } else {
+                    if (ertable != null && normalColumn.isRefered()) {
+                        setMessage(ResourceString.getResourceString("error.reference.key.not.deleteable"));
+
+                    } else {
+                        removeColumn(index);
+                    }
+                }
+
+            } else {
+                this.removeColumn(index);
+            }
+        }
+
+        parentDialog.validate();
+    }
+
+    public void removeColumn(final int index) {
+        Column column = columnList.get(index);
+
+        table.remove(index);
+
+        columnList.remove(index);
+
+        disposeCheckBox(column);
+
+        for (int i = index; i < table.getItemCount(); i++) {
+            final TableItem tableItem = table.getItem(i);
+            column = columnList.get(i);
+
+            disposeCheckBox(column);
+
+            if (column instanceof NormalColumn) {
+                setTableEditor((NormalColumn) column, tableItem);
+            }
+        }
+    }
+
+    private CopyColumn getTargetColumn() {
+        CopyColumn column = null;
+
+        final int index = table.getSelectionIndex();
+
+        if (index != -1) {
+            final Column targetColumn = columnList.get(index);
+
+            if (targetColumn instanceof CopyColumn) {
+                column = (CopyColumn) targetColumn;
+            }
+        }
+
+        return column;
+    }
+
+    private void setMessage(final String message) {
+        final MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+        messageBox.setText(ResourceString.getResourceString("dialog.title.error"));
+        messageBox.setMessage(message);
+        messageBox.open();
+    }
+
+    private void upColumn() {
+        final int index = table.getSelectionIndex();
+
+        if (index != -1 && index != 0) {
+            changeColumn(index - 1, index);
+            table.setSelection(index - 1);
+        }
+    }
+
+    private void downColumn() {
+        final int index = table.getSelectionIndex();
+
+        if (index != -1 && index != table.getItemCount() - 1) {
+            changeColumn(index, index + 1);
+            table.setSelection(index + 1);
+        }
+    }
+
+    private void changeColumn(final int index1, final int index2) {
+        final Column column1 = columnList.remove(index1);
+        Column column2 = null;
+
+        if (index1 < index2) {
+            column2 = columnList.remove(index2 - 1);
+            columnList.add(index1, column2);
+            columnList.add(index2, column1);
+
+        } else if (index1 > index2) {
+            column2 = columnList.remove(index2);
+            columnList.add(index1 - 1, column2);
+            columnList.add(index2, column1);
+        }
+
+        final TableItem[] tableItems = table.getItems();
+
+        column2TableItem(column1, tableItems[index2]);
+        column2TableItem(column2, tableItems[index1]);
+    }
+
+    private void addOrEditColumn(final CopyColumn targetColumn, final boolean add) {
+        boolean foreignKey = false;
+        boolean isRefered = false;
+
+        if (targetColumn != null) {
+            foreignKey = targetColumn.isForeignKey();
+            if (ertable != null) {
+                isRefered = targetColumn.isRefered();
+            }
+        }
+        columnDialog.setTargetColumn(targetColumn, foreignKey, isRefered);
+
+        if (columnDialog.open() == IDialogConstants.OK_ID) {
+            final NormalColumn column = columnDialog.getColumn();
+            addTableData(column, add);
+        }
+    }
+
+    public void setColumnList(final List<Column> columnList) {
+        table.removeAll();
+
+        if (this.columnList != null) {
+            for (final Column column : this.columnList) {
+                disposeCheckBox(column);
+            }
+        }
+
+        this.columnList = columnList;
+
+        initComposite();
+    }
+
+    @Override
+    public void setEnabled(final boolean enabled) {
+        super.setEnabled(enabled);
+
+        if (buttonDisplay) {
+            columnAddButton.setEnabled(enabled);
+            columnEditButton.setEnabled(false);
+            columnDeleteButton.setEnabled(false);
+            upButton.setEnabled(false);
+            downButton.setEnabled(false);
+            quickAddButton.setEnabled(enabled);
+        }
+    }
+
+    private void setButtonEnabled(final boolean enabled) {
+        if (buttonDisplay) {
+            columnEditButton.setEnabled(enabled);
+            columnDeleteButton.setEnabled(enabled);
+            upButton.setEnabled(enabled);
+            downButton.setEnabled(enabled);
+        }
+    }
+
+    private void selectTable(final int index) {
+        table.select(index);
+
+        if (index >= 0) {
+            setButtonEnabled(true);
+        } else {
+            setButtonEnabled(false);
+        }
+    }
 
 }

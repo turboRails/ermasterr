@@ -9,115 +9,112 @@ import org.insightech.er.preference.PreferenceInitializer;
 
 public class TranslationSetting implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = -7691417386790834828L;
+    private static final long serialVersionUID = -7691417386790834828L;
 
-	private List<String> selectedTranslations;
+    private List<String> selectedTranslations;
 
-	private boolean use;
+    private boolean use;
 
-	public TranslationSetting() {
-		this.selectedTranslations = new ArrayList<String>();
-	}
+    public TranslationSetting() {
+        selectedTranslations = new ArrayList<String>();
+    }
 
-	/**
-	 * allTranslations ‚ğæ“¾‚µ‚Ü‚·.
-	 * 
-	 * @return allTranslations
-	 */
-	public List<String> getAllTranslations() {
-		List<String> list = PreferenceInitializer.getAllUserTranslations();
+    /**
+     * allTranslations ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     * 
+     * @return allTranslations
+     */
+    public List<String> getAllTranslations() {
+        final List<String> list = PreferenceInitializer.getAllUserTranslations();
 
-		list.add(ResourceString.getResourceString("label.translation.default"));
+        list.add(ResourceString.getResourceString("label.translation.default"));
 
-		return list;
-	}
+        return list;
+    }
 
-	/**
-	 * selectedTranslations ‚ğæ“¾‚µ‚Ü‚·.
-	 * 
-	 * @return selectedTranslations
-	 */
-	public List<String> getSelectedTranslations() {
-		return selectedTranslations;
-	}
+    /**
+     * selectedTranslations ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     * 
+     * @return selectedTranslations
+     */
+    public List<String> getSelectedTranslations() {
+        return selectedTranslations;
+    }
 
-	/**
-	 * selectedTranslations ‚ğİ’è‚µ‚Ü‚·.
-	 * 
-	 * @param selectedTranslations
-	 *            selectedTranslations
-	 */
-	public void setSelectedTranslations(List<String> selectedTranslations) {
-		this.selectedTranslations = selectedTranslations;
-	}
+    /**
+     * selectedTranslations ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     * 
+     * @param selectedTranslations
+     *            selectedTranslations
+     */
+    public void setSelectedTranslations(final List<String> selectedTranslations) {
+        this.selectedTranslations = selectedTranslations;
+    }
 
-	/**
-	 * selectedTranslations ‚ğİ’è‚µ‚Ü‚·.
-	 * 
-	 * @param selectedTranslations
-	 *            selectedTranslations
-	 */
-	public void selectDefault() {
-		this.selectedTranslations.add(ResourceString
-				.getResourceString("label.translation.default"));
-	}
+    /**
+     * selectedTranslations ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     * 
+     * @param selectedTranslations
+     *            selectedTranslations
+     */
+    public void selectDefault() {
+        selectedTranslations.add(ResourceString.getResourceString("label.translation.default"));
+    }
 
-	/**
-	 * use ‚ğæ“¾‚µ‚Ü‚·.
-	 * 
-	 * @return use
-	 */
-	public boolean isUse() {
-		return use;
-	}
+    /**
+     * use ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½.
+     * 
+     * @return use
+     */
+    public boolean isUse() {
+        return use;
+    }
 
-	/**
-	 * use ‚ğİ’è‚µ‚Ü‚·.
-	 * 
-	 * @param use
-	 *            use
-	 */
-	public void setUse(boolean use) {
-		this.use = use;
-	}
+    /**
+     * use ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½.
+     * 
+     * @param use
+     *            use
+     */
+    public void setUse(final boolean use) {
+        this.use = use;
+    }
 
-	public boolean isSelected(String translationName) {
-		for (String translation : this.selectedTranslations) {
-			if (translation.equals(translationName)) {
-				return true;
-			}
-		}
+    public boolean isSelected(final String translationName) {
+        for (final String translation : selectedTranslations) {
+            if (translation.equals(translationName)) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public void addTranslationAsSelected(String translation) {
-		this.selectedTranslations.add(translation);
-	}
+    public void addTranslationAsSelected(final String translation) {
+        selectedTranslations.add(translation);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object clone() {
-		try {
-			TranslationSetting settings = (TranslationSetting) super.clone();
-			settings.selectedTranslations = new ArrayList<String>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object clone() {
+        try {
+            final TranslationSetting settings = (TranslationSetting) super.clone();
+            settings.selectedTranslations = new ArrayList<String>();
 
-			for (String selectedTranslation : this.selectedTranslations) {
-				settings.selectedTranslations.add(selectedTranslation);
-			}
+            for (final String selectedTranslation : selectedTranslations) {
+                settings.selectedTranslations.add(selectedTranslation);
+            }
 
-			return settings;
+            return settings;
 
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-	}
+        } catch (final CloneNotSupportedException e) {
+            return null;
+        }
+    }
 
-	public void load() {
-	}
+    public void load() {}
 
-	protected void parseString(String stringList) {
-	}
+    protected void parseString(final String stringList) {}
 }

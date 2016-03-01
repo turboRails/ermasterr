@@ -6,37 +6,36 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ChangeNotationExpandGroupCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private boolean oldNotationExpandGroup;
+    private final boolean oldNotationExpandGroup;
 
-	private boolean newNotationExpandGroup;
+    private final boolean newNotationExpandGroup;
 
-	private Settings settings;
+    private final Settings settings;
 
-	public ChangeNotationExpandGroupCommand(ERDiagram diagram,
-			boolean notationExpandGroup) {
-		this.diagram = diagram;
-		this.settings = this.diagram.getDiagramContents().getSettings();
-		this.newNotationExpandGroup = notationExpandGroup;
-		this.oldNotationExpandGroup = this.settings.isNotationExpandGroup();
-	}
+    public ChangeNotationExpandGroupCommand(final ERDiagram diagram, final boolean notationExpandGroup) {
+        this.diagram = diagram;
+        settings = this.diagram.getDiagramContents().getSettings();
+        newNotationExpandGroup = notationExpandGroup;
+        oldNotationExpandGroup = settings.isNotationExpandGroup();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.settings.setNotationExpandGroup(this.newNotationExpandGroup);
-		this.diagram.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        settings.setNotationExpandGroup(newNotationExpandGroup);
+        diagram.refreshVisuals();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.settings.setNotationExpandGroup(this.oldNotationExpandGroup);
-		this.diagram.refreshVisuals();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        settings.setNotationExpandGroup(oldNotationExpandGroup);
+        diagram.refreshVisuals();
+    }
 }

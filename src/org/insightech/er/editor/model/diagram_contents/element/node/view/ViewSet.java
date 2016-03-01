@@ -9,72 +9,75 @@ import org.insightech.er.ResourceString;
 import org.insightech.er.editor.model.AbstractModel;
 import org.insightech.er.editor.model.ObjectListModel;
 
-public class ViewSet extends AbstractModel implements ObjectListModel,
-		Iterable<View> {
+public class ViewSet extends AbstractModel implements ObjectListModel, Iterable<View> {
 
-	private static final long serialVersionUID = -120487815554383179L;
+    private static final long serialVersionUID = -120487815554383179L;
 
-	private List<View> viewList;
+    private List<View> viewList;
 
-	public ViewSet() {
-		this.viewList = new ArrayList<View>();
-	}
+    public ViewSet() {
+        viewList = new ArrayList<View>();
+    }
 
-	public void sort() {
-		Collections.sort(this.viewList);
-	}
-	
-	public void add(View view) {
-		this.viewList.add(view);
-	}
+    public void sort() {
+        Collections.sort(viewList);
+    }
 
-	public void add(int index, View view) {
-		this.viewList.add(index, view);
-	}
+    public void add(final View view) {
+        viewList.add(view);
+    }
 
-	public int remove(View view) {
-		int index = this.viewList.indexOf(view);
-		this.viewList.remove(index);
+    public void add(final int index, final View view) {
+        viewList.add(index, view);
+    }
 
-		return index;
-	}
+    public int remove(final View view) {
+        final int index = viewList.indexOf(view);
+        viewList.remove(index);
 
-	public List<View> getList() {
-		;
-		return this.viewList;
-	}
+        return index;
+    }
 
-	public Iterator<View> iterator() {
-		return this.viewList.iterator();
-	}
+    public List<View> getList() {
+        ;
+        return viewList;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ViewSet clone() {
-		ViewSet viewSet = (ViewSet) super.clone();
-		List<View> newViewList = new ArrayList<View>();
+    @Override
+    public Iterator<View> iterator() {
+        return viewList.iterator();
+    }
 
-		for (View view : viewList) {
-			View newView = (View) view.clone();
-			newViewList.add(newView);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ViewSet clone() {
+        final ViewSet viewSet = (ViewSet) super.clone();
+        final List<View> newViewList = new ArrayList<View>();
 
-		viewSet.viewList = newViewList;
+        for (final View view : viewList) {
+            final View newView = view.clone();
+            newViewList.add(newView);
+        }
 
-		return viewSet;
-	}
+        viewSet.viewList = newViewList;
 
-	public String getDescription() {
-		return "";
-	}
+        return viewSet;
+    }
 
-	public String getName() {
-		return ResourceString.getResourceString("label.object.type.view_list");
-	}
+    @Override
+    public String getDescription() {
+        return "";
+    }
 
-	public String getObjectType() {
-		return "list";
-	}
+    @Override
+    public String getName() {
+        return ResourceString.getResourceString("label.object.type.view_list");
+    }
+
+    @Override
+    public String getObjectType() {
+        return "list";
+    }
 }

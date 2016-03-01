@@ -16,202 +16,161 @@ import org.insightech.er.editor.model.diagram_contents.not_element.dictionary.Wo
 
 public class GlobalGroupSet {
 
-	private static final String COLUMN_GOURP_SETTINGS_FILENAME = "column_group.xml"; //$NON-NLS-1$
+    private static final String COLUMN_GOURP_SETTINGS_FILENAME = "column_group.xml"; //$NON-NLS-1$
 
-	public static GroupSet load() {
-		GroupSet columnGroups = new GroupSet();
+    public static GroupSet load() {
+        final GroupSet columnGroups = new GroupSet();
 
-		try {
-			IDialogSettings settings = new DialogSettings("column_group_list");
-			String database = settings.get("database");
-			if (database == null) {
-				database = DBManagerFactory.getAllDBList().get(0);
-			}
-			columnGroups.setDatabase(database);
+        try {
+            final IDialogSettings settings = new DialogSettings("column_group_list");
+            String database = settings.get("database");
+            if (database == null) {
+                database = DBManagerFactory.getAllDBList().get(0);
+            }
+            columnGroups.setDatabase(database);
 
-			String path = getPath();
-			File columnGroupListFile = new File(path);
+            final String path = getPath();
+            final File columnGroupListFile = new File(path);
 
-			if (columnGroupListFile.exists()) {
-				settings.load(path);
+            if (columnGroupListFile.exists()) {
+                settings.load(path);
 
-				UniqueWordDictionary dictionary = new UniqueWordDictionary();
+                final UniqueWordDictionary dictionary = new UniqueWordDictionary();
 
-				for (IDialogSettings columnGroupSection : settings
-						.getSections()) {
-					ColumnGroup columnGroup = new ColumnGroup();
+                for (final IDialogSettings columnGroupSection : settings.getSections()) {
+                    final ColumnGroup columnGroup = new ColumnGroup();
 
-					columnGroup.setGroupName(columnGroupSection
-							.get("group_name"));
+                    columnGroup.setGroupName(columnGroupSection.get("group_name"));
 
-					for (IDialogSettings columnSection : columnGroupSection
-							.getSections()) {
-						String physicalName = columnSection
-								.get("physical_name");
-						String logicalName = columnSection.get("logical_name");
-						SqlType sqlType = SqlType.valueOfId(columnSection
-								.get("type"));
-						String defaultValue = columnSection
-								.get("default_value");
-						String description = columnSection.get("description");
-						String constraint = columnSection.get("constraint");
-						boolean notNull = Boolean.valueOf(
-								columnSection.get("not_null")).booleanValue();
-						boolean unique = Boolean.valueOf(
-								columnSection.get("unique")).booleanValue();
-						Integer length = toInteger(columnSection.get("length"));
-						Integer decimal = toInteger(columnSection
-								.get("decimal"));
-						boolean array = Boolean.valueOf(
-								columnSection.get("array")).booleanValue();
-						Integer arrayDimension = toInteger(columnSection
-								.get("array_dimension"));
-						boolean unsigned = Boolean.valueOf(
-								columnSection.get("unsigned")).booleanValue();
-						boolean zerofill = Boolean.valueOf(
-								columnSection.get("zerofill")).booleanValue();
-						boolean binary = Boolean.valueOf(
-								columnSection.get("binary")).booleanValue();
-						String args = columnSection.get("args");
-						boolean charSemantics = Boolean.valueOf(
-								columnSection.get("char_semantics"))
-								.booleanValue();
+                    for (final IDialogSettings columnSection : columnGroupSection.getSections()) {
+                        final String physicalName = columnSection.get("physical_name");
+                        final String logicalName = columnSection.get("logical_name");
+                        final SqlType sqlType = SqlType.valueOfId(columnSection.get("type"));
+                        final String defaultValue = columnSection.get("default_value");
+                        final String description = columnSection.get("description");
+                        final String constraint = columnSection.get("constraint");
+                        final boolean notNull = Boolean.valueOf(columnSection.get("not_null")).booleanValue();
+                        final boolean unique = Boolean.valueOf(columnSection.get("unique")).booleanValue();
+                        final Integer length = toInteger(columnSection.get("length"));
+                        final Integer decimal = toInteger(columnSection.get("decimal"));
+                        final boolean array = Boolean.valueOf(columnSection.get("array")).booleanValue();
+                        final Integer arrayDimension = toInteger(columnSection.get("array_dimension"));
+                        final boolean unsigned = Boolean.valueOf(columnSection.get("unsigned")).booleanValue();
+                        final boolean zerofill = Boolean.valueOf(columnSection.get("zerofill")).booleanValue();
+                        final boolean binary = Boolean.valueOf(columnSection.get("binary")).booleanValue();
+                        final String args = columnSection.get("args");
+                        final boolean charSemantics = Boolean.valueOf(columnSection.get("char_semantics")).booleanValue();
 
-						TypeData typeData = new TypeData(length, decimal,
-								array, arrayDimension, unsigned, zerofill,
-								binary, args, charSemantics);
+                        final TypeData typeData = new TypeData(length, decimal, array, arrayDimension, unsigned, zerofill, binary, args, charSemantics);
 
-						Word word = new Word(physicalName, logicalName,
-								sqlType, typeData, description, database);
-						word = dictionary.getUniqueWord(word, true);
+                        Word word = new Word(physicalName, logicalName, sqlType, typeData, description, database);
+                        word = dictionary.getUniqueWord(word, true);
 
-						NormalColumn column = new NormalColumn(word, notNull,
-								false, unique, false, defaultValue, constraint,
-								null, null, null);
+                        final NormalColumn column = new NormalColumn(word, notNull, false, unique, false, defaultValue, constraint, null, null, null);
 
-						columnGroup.addColumn(column);
-					}
+                        columnGroup.addColumn(column);
+                    }
 
-					columnGroups.add(columnGroup);
-				}
-			}
-		} catch (IOException e) {
-			ERDiagramActivator.showExceptionDialog(e);
-		}
+                    columnGroups.add(columnGroup);
+                }
+            }
+        } catch (final IOException e) {
+            ERDiagramActivator.showExceptionDialog(e);
+        }
 
-		return columnGroups;
-	}
+        return columnGroups;
+    }
 
-	public static void save(GroupSet columnGroups) {
-		try {
-			IDialogSettings settings = new DialogSettings("column_group_list");
+    public static void save(final GroupSet columnGroups) {
+        try {
+            final IDialogSettings settings = new DialogSettings("column_group_list");
 
-			settings.put("database", columnGroups.getDatabase());
+            settings.put("database", columnGroups.getDatabase());
 
-			int index = 0;
+            int index = 0;
 
-			for (ColumnGroup columnGroup : columnGroups) {
-				IDialogSettings columnGroupSection = new DialogSettings(
-						"column_group_" + index);
-				index++;
+            for (final ColumnGroup columnGroup : columnGroups) {
+                final IDialogSettings columnGroupSection = new DialogSettings("column_group_" + index);
+                index++;
 
-				columnGroupSection
-						.put("group_name", columnGroup.getGroupName());
+                columnGroupSection.put("group_name", columnGroup.getGroupName());
 
-				int columnIndex = 0;
+                int columnIndex = 0;
 
-				for (NormalColumn normalColumn : columnGroup.getColumns()) {
-					IDialogSettings columnSection = new DialogSettings(
-							"column_" + columnIndex);
-					columnIndex++;
+                for (final NormalColumn normalColumn : columnGroup.getColumns()) {
+                    final IDialogSettings columnSection = new DialogSettings("column_" + columnIndex);
+                    columnIndex++;
 
-					columnSection.put("physical_name",
-							null2Blank(normalColumn.getPhysicalName()));
-					columnSection.put("logical_name",
-							null2Blank(normalColumn.getLogicalName()));
-					columnSection.put("type",
-							null2Blank(normalColumn.getType()));
-					columnSection.put("length", null2Blank(normalColumn
-							.getTypeData().getLength()));
-					columnSection.put("decimal", null2Blank(normalColumn
-							.getTypeData().getDecimal()));
-					columnSection.put("array", normalColumn.getTypeData()
-							.isArray());
-					columnSection.put("array_dimension",
-							null2Blank(normalColumn.getTypeData()
-									.getArrayDimension()));
-					columnSection.put("unsigned", normalColumn.getTypeData()
-							.isUnsigned());
-					columnSection.put("zerofill", normalColumn.getTypeData()
-							.isZerofill());
-					columnSection.put("binary", normalColumn.getTypeData()
-							.isBinary());
+                    columnSection.put("physical_name", null2Blank(normalColumn.getPhysicalName()));
+                    columnSection.put("logical_name", null2Blank(normalColumn.getLogicalName()));
+                    columnSection.put("type", null2Blank(normalColumn.getType()));
+                    columnSection.put("length", null2Blank(normalColumn.getTypeData().getLength()));
+                    columnSection.put("decimal", null2Blank(normalColumn.getTypeData().getDecimal()));
+                    columnSection.put("array", normalColumn.getTypeData().isArray());
+                    columnSection.put("array_dimension", null2Blank(normalColumn.getTypeData().getArrayDimension()));
+                    columnSection.put("unsigned", normalColumn.getTypeData().isUnsigned());
+                    columnSection.put("zerofill", normalColumn.getTypeData().isZerofill());
+                    columnSection.put("binary", normalColumn.getTypeData().isBinary());
 
-					columnSection.put("not_null", normalColumn.isNotNull());
-					columnSection.put("unique", normalColumn.isUniqueKey());
-					columnSection.put("default_value",
-							null2Blank(normalColumn.getDefaultValue()));
-					columnSection.put("constraint",
-							null2Blank(normalColumn.getConstraint()));
-					columnSection.put("description",
-							null2Blank(normalColumn.getDescription()));
-					columnSection.put("char_semantics", normalColumn
-							.getTypeData().isCharSemantics());
+                    columnSection.put("not_null", normalColumn.isNotNull());
+                    columnSection.put("unique", normalColumn.isUniqueKey());
+                    columnSection.put("default_value", null2Blank(normalColumn.getDefaultValue()));
+                    columnSection.put("constraint", null2Blank(normalColumn.getConstraint()));
+                    columnSection.put("description", null2Blank(normalColumn.getDescription()));
+                    columnSection.put("char_semantics", normalColumn.getTypeData().isCharSemantics());
 
-					columnGroupSection.addSection(columnSection);
-				}
+                    columnGroupSection.addSection(columnSection);
+                }
 
-				settings.addSection(columnGroupSection);
-			}
+                settings.addSection(columnGroupSection);
+            }
 
-			settings.save(getPath());
+            settings.save(getPath());
 
-		} catch (IOException e) {
-			ERDiagramActivator.showExceptionDialog(e);
-		}
-	}
+        } catch (final IOException e) {
+            ERDiagramActivator.showExceptionDialog(e);
+        }
+    }
 
-	private static String getPath() {
-		IPath dataLocation = ERDiagramActivator.getDefault().getStateLocation();
-		String path = dataLocation.append(COLUMN_GOURP_SETTINGS_FILENAME)
-				.toOSString();
-		return path;
-	}
+    private static String getPath() {
+        final IPath dataLocation = ERDiagramActivator.getDefault().getStateLocation();
+        final String path = dataLocation.append(COLUMN_GOURP_SETTINGS_FILENAME).toOSString();
+        return path;
+    }
 
-	private static String null2Blank(String str) {
-		if (str == null) {
-			return "";
-		}
+    private static String null2Blank(final String str) {
+        if (str == null) {
+            return "";
+        }
 
-		return str;
-	}
+        return str;
+    }
 
-	private static String null2Blank(Object object) {
-		if (object == null) {
-			return "";
-		}
+    private static String null2Blank(final Object object) {
+        if (object == null) {
+            return "";
+        }
 
-		return object.toString();
-	}
+        return object.toString();
+    }
 
-	private static String null2Blank(SqlType sqlType) {
-		if (sqlType == null) {
-			return "";
-		}
+    private static String null2Blank(final SqlType sqlType) {
+        if (sqlType == null) {
+            return "";
+        }
 
-		return sqlType.getId();
-	}
+        return sqlType.getId();
+    }
 
-	private static Integer toInteger(String str) {
-		if (str == null || str.equals("")) {
-			return null;
-		}
+    private static Integer toInteger(final String str) {
+        if (str == null || str.equals("")) {
+            return null;
+        }
 
-		try {
-			return Integer.valueOf(str);
-		} catch (NumberFormatException e) {
-		}
+        try {
+            return Integer.valueOf(str);
+        } catch (final NumberFormatException e) {}
 
-		return null;
-	}
+        return null;
+    }
 }

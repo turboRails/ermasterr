@@ -2,66 +2,65 @@ package org.insightech.er.editor.model;
 
 public abstract class ViewableModel extends AbstractModel {
 
-	private static final long serialVersionUID = 5866202173090969615L;
+    private static final long serialVersionUID = 5866202173090969615L;
 
-	public static final int DEFAULT_FONT_SIZE = 9;
+    public static final int DEFAULT_FONT_SIZE = 9;
 
-	private String fontName;
+    private String fontName;
 
-	private int fontSize;
+    private int fontSize;
 
-	private int[] color;
+    private int[] color;
 
-	public ViewableModel() {
-		this.fontName = null;
-		this.fontSize = DEFAULT_FONT_SIZE;
-	}
+    public ViewableModel() {
+        fontName = null;
+        fontSize = DEFAULT_FONT_SIZE;
+    }
 
-	public int getFontSize() {
-		return fontSize;
-	}
+    public int getFontSize() {
+        return fontSize;
+    }
 
-	public void setFontSize(int fontSize) {
-		this.fontSize = fontSize;
-	}
+    public void setFontSize(final int fontSize) {
+        this.fontSize = fontSize;
+    }
 
-	public String getFontName() {
-		return fontName;
-	}
+    public String getFontName() {
+        return fontName;
+    }
 
-	public void setFontName(String fontName) {
-		this.fontName = fontName;
-	}
+    public void setFontName(final String fontName) {
+        this.fontName = fontName;
+    }
 
-	public void setColor(int red, int green, int blue) {
-		this.color = new int[3];
-		this.color[0] = red;
-		this.color[1] = green;
-		this.color[2] = blue;
-	}
+    public void setColor(final int red, final int green, final int blue) {
+        color = new int[3];
+        color[0] = red;
+        color[1] = green;
+        color[2] = blue;
+    }
 
-	public int[] getColor() {
-		return this.color;
-	}
+    public int[] getColor() {
+        return color;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ViewableModel clone() {
-		ViewableModel clone = (ViewableModel) super.clone();
-		if (this.color != null) {
-			clone.color = new int[] { this.color[0], this.color[1],
-					this.color[2] };
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ViewableModel clone() {
+        final ViewableModel clone = (ViewableModel) super.clone();
+        if (color != null) {
+            clone.color = new int[] {color[0], color[1], color[2]};
+        }
 
-		return clone;
-	}
+        return clone;
+    }
 
-	public void refreshFont() {
-		if (isUpdateable()) {
-			this.firePropertyChange("refreshFont", null, null);
-		}
-	}
+    public void refreshFont() {
+        if (isUpdateable()) {
+            this.firePropertyChange("refreshFont", null, null);
+        }
+    }
 
 }

@@ -8,48 +8,46 @@ import org.insightech.er.editor.model.diagram_contents.not_element.dictionary.Wo
 
 public class AddWordCommand extends AbstractCommand {
 
-	private TableView tableView;
+    private final TableView tableView;
 
-	private Dictionary dictionary;
+    private final Dictionary dictionary;
 
-	private Word word;
+    private final Word word;
 
-	private NormalColumn column;
+    private final NormalColumn column;
 
-	private int index;
+    private final int index;
 
-	public AddWordCommand(TableView tableView, Word word, int index) {
-		this.tableView = tableView;
-		this.word = word;
-		this.index = index;
+    public AddWordCommand(final TableView tableView, final Word word, final int index) {
+        this.tableView = tableView;
+        this.word = word;
+        this.index = index;
 
-		this.dictionary = this.tableView.getDiagram().getDiagramContents()
-				.getDictionary();
+        dictionary = this.tableView.getDiagram().getDiagramContents().getDictionary();
 
-		this.column = new NormalColumn(this.word, true, false, false, false,
-				null, null, null, null, null);
-	}
+        column = new NormalColumn(this.word, true, false, false, false, null, null, null, null, null);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.tableView.addColumn(this.index, this.column);
-		this.dictionary.add(this.column);
-		
-		this.tableView.refresh();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        tableView.addColumn(index, column);
+        dictionary.add(column);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.tableView.removeColumn(this.column);
-		this.dictionary.remove(this.column);
-		
-		this.tableView.refresh();
-	}
+        tableView.refresh();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        tableView.removeColumn(column);
+        dictionary.remove(column);
+
+        tableView.refresh();
+    }
 
 }

@@ -22,90 +22,80 @@ import org.insightech.er.editor.view.dialog.element.view.ViewDialog;
 
 public abstract class ColumnEditPart extends AbstractModelEditPart {
 
-	public abstract void refreshTableColumns(UpdatedNodeElement updated);
+    public abstract void refreshTableColumns(UpdatedNodeElement updated);
 
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE,
-				new ColumnSelectionHandlesEditPolicy());
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new NormalColumnComponentEditPolicy());
-	}
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new ColumnSelectionHandlesEditPolicy());
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new NormalColumnComponentEditPolicy());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public EditPart getTargetEditPart(Request request) {
-		EditPart editPart = super.getTargetEditPart(request);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EditPart getTargetEditPart(final Request request) {
+        final EditPart editPart = super.getTargetEditPart(request);
 
-		if (!this.getDiagram().isDisableSelectColumn()) {
-			return editPart;
-		}
+        if (!getDiagram().isDisableSelectColumn()) {
+            return editPart;
+        }
 
-		if (editPart != null) {
-			return editPart.getParent();
-		}
+        if (editPart != null) {
+            return editPart.getParent();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		if (request.getType().equals(RequestConstants.REQ_OPEN)) {
-			try {
-				performRequestOpen();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        if (request.getType().equals(RequestConstants.REQ_OPEN)) {
+            try {
+                performRequestOpen();
 
-			} catch (Exception e) {
-				ERDiagramActivator.showExceptionDialog(e);
-			}
-		}
+            } catch (final Exception e) {
+                ERDiagramActivator.showExceptionDialog(e);
+            }
+        }
 
-		super.performRequest(request);
-	}
+        super.performRequest(request);
+    }
 
-	public void performRequestOpen() {
-		Object parent = this.getParent().getModel();
+    public void performRequestOpen() {
+        final Object parent = getParent().getModel();
 
-		ERDiagram diagram = this.getDiagram();
+        final ERDiagram diagram = getDiagram();
 
-		if (parent instanceof ERTable) {
-			ERTable table = (ERTable) parent;
+        if (parent instanceof ERTable) {
+            final ERTable table = (ERTable) parent;
 
-			ERTable copyTable = table.copyData();
+            final ERTable copyTable = table.copyData();
 
-			TableDialog dialog = new TableDialog(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), this.getViewer(),
-					copyTable);
+            final TableDialog dialog = new TableDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), getViewer(), copyTable);
 
-			if (dialog.open() == IDialogConstants.OK_ID) {
-				CompoundCommand command = ERTableEditPart
-						.createChangeTablePropertyCommand(diagram, table,
-								copyTable);
+            if (dialog.open() == IDialogConstants.OK_ID) {
+                final CompoundCommand command = ERTableEditPart.createChangeTablePropertyCommand(diagram, table, copyTable);
 
-				this.executeCommand(command.unwrap());
-			}
+                executeCommand(command.unwrap());
+            }
 
-		} else if (parent instanceof View) {
-			View view = (View) parent;
+        } else if (parent instanceof View) {
+            final View view = (View) parent;
 
-			View copyView = view.copyData();
+            final View copyView = view.copyData();
 
-			ViewDialog dialog = new ViewDialog(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), this.getViewer(),
-					copyView);
+            final ViewDialog dialog = new ViewDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), getViewer(), copyView);
 
-			if (dialog.open() == IDialogConstants.OK_ID) {
-				CompoundCommand command = ViewEditPart
-						.createChangeViewPropertyCommand(diagram, view,
-								copyView);
+            if (dialog.open() == IDialogConstants.OK_ID) {
+                final CompoundCommand command = ViewEditPart.createChangeViewPropertyCommand(diagram, view, copyView);
 
-				this.executeCommand(command.unwrap());
-			}
-		}
-	}
+                executeCommand(command.unwrap());
+            }
+        }
+    }
 
 }

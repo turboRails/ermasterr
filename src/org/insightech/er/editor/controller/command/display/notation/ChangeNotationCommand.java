@@ -6,36 +6,36 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ChangeNotationCommand extends AbstractCommand {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private String oldNotation;
+    private final String oldNotation;
 
-	private String newNotation;
+    private final String newNotation;
 
-	private Settings settings;
+    private final Settings settings;
 
-	public ChangeNotationCommand(ERDiagram diagram, String notation) {
-		this.diagram = diagram;
-		this.settings = diagram.getDiagramContents().getSettings();
-		this.newNotation = notation;
-		this.oldNotation = this.settings.getNotation();
-	}
+    public ChangeNotationCommand(final ERDiagram diagram, final String notation) {
+        this.diagram = diagram;
+        settings = diagram.getDiagramContents().getSettings();
+        newNotation = notation;
+        oldNotation = settings.getNotation();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.settings.setNotation(this.newNotation);
-		this.diagram.refreshConnection();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        settings.setNotation(newNotation);
+        diagram.refreshConnection();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.settings.setNotation(this.oldNotation);
-		this.diagram.refreshConnection();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        settings.setNotation(oldNotation);
+        diagram.refreshConnection();
+    }
 }

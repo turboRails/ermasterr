@@ -9,22 +9,21 @@ import org.insightech.er.editor.view.dialog.word.column.ViewColumnDialog;
 
 public class AttributeTabWrapper extends AbstractAttributeTabWrapper {
 
-	private View copyData;
+    private final View copyData;
 
-	public AttributeTabWrapper(ViewDialog viewDialog, TabFolder parent,
-			View copyData) {
-		super(viewDialog, parent, copyData);
+    public AttributeTabWrapper(final ViewDialog viewDialog, final TabFolder parent, final View copyData) {
+        super(viewDialog, parent, copyData);
 
-		this.copyData = copyData;
-	}
+        this.copyData = copyData;
+    }
 
-	@Override
-	protected AbstractColumnDialog createColumnDialog() {
-		return new ViewColumnDialog(this.getShell(), this.copyData);
-	}
+    @Override
+    protected AbstractColumnDialog createColumnDialog() {
+        return new ViewColumnDialog(getShell(), copyData);
+    }
 
-	@Override
-	protected String getGroupAddButtonLabel() {
-		return "label.button.add.group.to.view";
-	}
+    @Override
+    protected String getGroupAddButtonLabel() {
+        return "label.button.add.group.to.view";
+    }
 }

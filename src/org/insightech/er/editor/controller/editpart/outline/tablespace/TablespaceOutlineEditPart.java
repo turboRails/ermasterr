@@ -17,67 +17,63 @@ import org.insightech.er.editor.model.ERDiagram;
 import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Tablespace;
 import org.insightech.er.editor.view.dialog.outline.tablespace.TablespaceDialog;
 
-public class TablespaceOutlineEditPart extends AbstractOutlineEditPart
-		implements DeleteableEditPart {
+public class TablespaceOutlineEditPart extends AbstractOutlineEditPart implements DeleteableEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		Tablespace tablespace = (Tablespace) this.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        final Tablespace tablespace = (Tablespace) getModel();
 
-		this.setWidgetText(this.getDiagram().filter(tablespace.getName()));
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.TABLESPACE));
-	}
+        setWidgetText(getDiagram().filter(tablespace.getName()));
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.TABLESPACE));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performRequest(Request request) {
-		Tablespace tablespace = (Tablespace) this.getModel();
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void performRequest(final Request request) {
+        final Tablespace tablespace = (Tablespace) getModel();
+        final ERDiagram diagram = getDiagram();
 
-		if (request.getType().equals(RequestConstants.REQ_OPEN)) {
-			TablespaceDialog dialog = EclipseDBManagerFactory
-					.getEclipseDBManager(diagram).createTablespaceDialog();
+        if (request.getType().equals(RequestConstants.REQ_OPEN)) {
+            final TablespaceDialog dialog = EclipseDBManagerFactory.getEclipseDBManager(diagram).createTablespaceDialog();
 
-			if (dialog == null) {
-				ERDiagramActivator
-						.showMessageDialog("dialog.message.tablespace.not.supported");
-			} else {
-				dialog.init(tablespace, diagram);
+            if (dialog == null) {
+                ERDiagramActivator.showMessageDialog("dialog.message.tablespace.not.supported");
+            } else {
+                dialog.init(tablespace, diagram);
 
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					EditTablespaceCommand command = new EditTablespaceCommand(
-							diagram, tablespace, dialog.getResult());
-					this.execute(command);
-				}
-			}
-		}
+                if (dialog.open() == IDialogConstants.OK_ID) {
+                    final EditTablespaceCommand command = new EditTablespaceCommand(diagram, tablespace, dialog.getResult());
+                    execute(command);
+                }
+            }
+        }
 
-		super.performRequest(request);
-	}
+        super.performRequest(request);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new TablespaceComponentEditPolicy());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new TablespaceComponentEditPolicy());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DragTracker getDragTracker(Request req) {
-		return new SelectEditPartTracker(this);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DragTracker getDragTracker(final Request req) {
+        return new SelectEditPartTracker(this);
+    }
 
-	public boolean isDeleteable() {
-		return true;
-	}
+    @Override
+    public boolean isDeleteable() {
+        return true;
+    }
 }

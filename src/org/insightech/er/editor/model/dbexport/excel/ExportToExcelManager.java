@@ -47,353 +47,319 @@ import org.insightech.er.util.io.FileUtils;
 
 public class ExportToExcelManager extends AbstractExportManager {
 
-	private static final String WORDS_SHEET_NAME = "words";
+    private static final String WORDS_SHEET_NAME = "words";
 
-	private static final String LOOPS_SHEET_NAME = "loops";
+    private static final String LOOPS_SHEET_NAME = "loops";
 
-	private Map<String, Integer> sheetNameMap;
+    private final Map<String, Integer> sheetNameMap;
 
-	private Map<String, ObjectModel> sheetObjectMap;
+    private final Map<String, ObjectModel> sheetObjectMap;
 
-	private static final List<AbstractSheetGenerator> SHHET_GENERATOR_LIST = new ArrayList<AbstractSheetGenerator>();
+    private static final List<AbstractSheetGenerator> SHHET_GENERATOR_LIST = new ArrayList<AbstractSheetGenerator>();
 
-	static {
-		SHHET_GENERATOR_LIST.add(new TableSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new IndexSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new SequenceSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new ViewSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new TriggerSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new ColumnSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new AllTablesSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new AllIndicesSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new AllSequencesSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new AllViewSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new AllTriggerSheetGenerator());
-		SHHET_GENERATOR_LIST.add(new CategorySheetGenerator());
-		SHHET_GENERATOR_LIST.add(new HistorySheetGenerator());
-	}
+    static {
+        SHHET_GENERATOR_LIST.add(new TableSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new IndexSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new SequenceSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new ViewSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new TriggerSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new ColumnSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new AllTablesSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new AllIndicesSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new AllSequencesSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new AllViewSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new AllTriggerSheetGenerator());
+        SHHET_GENERATOR_LIST.add(new CategorySheetGenerator());
+        SHHET_GENERATOR_LIST.add(new HistorySheetGenerator());
+    }
 
-	public static class LoopDefinition {
+    public static class LoopDefinition {
 
-		public int startLine;
+        public int startLine;
 
-		public int spaceLine;
+        public int spaceLine;
 
-		public String sheetName;
+        public String sheetName;
 
-		public LoopDefinition(int startLine, int spaceLine, String sheetName) {
-			this.startLine = startLine;
-			this.spaceLine = spaceLine;
-			this.sheetName = sheetName;
-		}
-	}
+        public LoopDefinition(final int startLine, final int spaceLine, final String sheetName) {
+            this.startLine = startLine;
+            this.spaceLine = spaceLine;
+            this.sheetName = sheetName;
+        }
+    }
 
-	private PictureSheetGenerator pictureSheetGenerator;
+    private PictureSheetGenerator pictureSheetGenerator;
 
-	private SheetIndexSheetGenerator sheetIndexSheetGenerator;
+    private SheetIndexSheetGenerator sheetIndexSheetGenerator;
 
-	private Map<String, LoopDefinition> loopDefinitionMap;
+    private final Map<String, LoopDefinition> loopDefinitionMap;
 
-	private ExportExcelSetting exportExcelSetting;
+    private final ExportExcelSetting exportExcelSetting;
 
-	private HSSFWorkbook workbook;
+    private HSSFWorkbook workbook;
 
-	private File excelFile;
+    private File excelFile;
 
-	public ExportToExcelManager(ExportExcelSetting exportExcelSetting)
-			throws FileNotFoundException {
-		super("dialog.message.export.excel");
+    public ExportToExcelManager(final ExportExcelSetting exportExcelSetting) throws FileNotFoundException {
+        super("dialog.message.export.excel");
 
-		this.exportExcelSetting = exportExcelSetting;
+        this.exportExcelSetting = exportExcelSetting;
 
-		this.sheetNameMap = new HashMap<String, Integer>();
-		this.sheetObjectMap = new LinkedHashMap<String, ObjectModel>();
+        sheetNameMap = new HashMap<String, Integer>();
+        sheetObjectMap = new LinkedHashMap<String, ObjectModel>();
 
-		this.loopDefinitionMap = new HashMap<String, LoopDefinition>();
-	}
+        loopDefinitionMap = new HashMap<String, LoopDefinition>();
+    }
 
-	@Override
-	public void init(ERDiagram diagram, File projectDir) throws Exception {
-		super.init(diagram, projectDir);
+    @Override
+    public void init(final ERDiagram diagram, final File projectDir) throws Exception {
+        super.init(diagram, projectDir);
 
-		this.excelFile = FileUtils.getFile(this.projectDir,
-				this.exportExcelSetting.getExcelOutput());
-		this.excelFile.getParentFile().mkdirs();
+        excelFile = FileUtils.getFile(this.projectDir, exportExcelSetting.getExcelOutput());
+        excelFile.getParentFile().mkdirs();
 
-		// this.backup(this.excelFile, true);
+        // this.backup(this.excelFile, true);
 
-		InputStream templateStream = null;
+        InputStream templateStream = null;
 
-		try {
-			templateStream = this.getSelectedTemplate();
-			workbook = this.loadTemplateWorkbook(templateStream, this.diagram);
+        try {
+            templateStream = getSelectedTemplate();
+            workbook = loadTemplateWorkbook(templateStream, this.diagram);
 
-		} finally {
-			if (templateStream != null) {
-				templateStream.close();
-			}
-		}
+        } finally {
+            if (templateStream != null) {
+                templateStream.close();
+            }
+        }
 
-		// check whether the file is not opened by another process.
-		POIUtils.writeExcelFile(excelFile, workbook);
-	}
+        // check whether the file is not opened by another process.
+        POIUtils.writeExcelFile(excelFile, workbook);
+    }
 
-	private InputStream getSelectedTemplate() throws FileNotFoundException {
-		if (!Check.isEmpty(this.exportExcelSetting.getExcelTemplatePath())) {
-			return new FileInputStream(FileUtils.getFile(this.projectDir,
-					this.exportExcelSetting.getExcelTemplatePath()));
-		}
+    private InputStream getSelectedTemplate() throws FileNotFoundException {
+        if (!Check.isEmpty(exportExcelSetting.getExcelTemplatePath())) {
+            return new FileInputStream(FileUtils.getFile(projectDir, exportExcelSetting.getExcelTemplatePath()));
+        }
 
-		String lang = this.exportExcelSetting.getUsedDefaultTemplateLang();
+        final String lang = exportExcelSetting.getUsedDefaultTemplateLang();
 
-		if ("en".equals(lang)) {
-			return TemplatePreferencePage.getDefaultExcelTemplateEn();
+        if ("en".equals(lang)) {
+            return TemplatePreferencePage.getDefaultExcelTemplateEn();
 
-		} else if ("ja".equals(lang)) {
-			return TemplatePreferencePage.getDefaultExcelTemplateJa();
+        } else if ("ja".equals(lang)) {
+            return TemplatePreferencePage.getDefaultExcelTemplateJa();
 
-		}
+        }
 
-		String templateName = this.exportExcelSetting.getExcelTemplate();
+        final String templateName = exportExcelSetting.getExcelTemplate();
 
-		File file = new File(
-				PreferenceInitializer.getTemplatePath(templateName));
+        final File file = new File(PreferenceInitializer.getTemplatePath(templateName));
 
-		return new FileInputStream(file);
-	}
+        return new FileInputStream(file);
+    }
 
-	@Override
-	protected int getTotalTaskCount() {
-		return this.countSheetFromTemplate(workbook, this.diagram);
-	}
+    @Override
+    protected int getTotalTaskCount() {
+        return countSheetFromTemplate(workbook, diagram);
+    }
 
-	@Override
-	protected void doProcess(ProgressMonitor monitor) throws Exception {
-		if (this.exportExcelSetting.isPutERDiagramOnExcel()) {
-			this.pictureSheetGenerator = this.createPictureSheetGenerator(
-					monitor, workbook);
-		}
+    @Override
+    protected void doProcess(final ProgressMonitor monitor) throws Exception {
+        if (exportExcelSetting.isPutERDiagramOnExcel()) {
+            pictureSheetGenerator = createPictureSheetGenerator(monitor, workbook);
+        }
 
-		this.createSheetFromTemplate(monitor, workbook, diagram,
-				this.exportExcelSetting.isUseLogicalNameAsSheet());
-
-		for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-			workbook.getSheetAt(i).setSelected(false);
-		}
+        createSheetFromTemplate(monitor, workbook, diagram, exportExcelSetting.isUseLogicalNameAsSheet());
 
-		if (workbook.getNumberOfSheets() > 0) {
-			workbook.getSheetAt(0).setSelected(true);
-			workbook.setActiveSheet(0);
-			workbook.setFirstVisibleTab(0);
-		}
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            workbook.getSheetAt(i).setSelected(false);
+        }
 
-		POIUtils.writeExcelFile(excelFile, workbook);
-	}
+        if (workbook.getNumberOfSheets() > 0) {
+            workbook.getSheetAt(0).setSelected(true);
+            workbook.setActiveSheet(0);
+            workbook.setFirstVisibleTab(0);
+        }
 
-	private PictureSheetGenerator createPictureSheetGenerator(
-			ProgressMonitor monitor, HSSFWorkbook workbook) throws Exception {
-		ImageInfoSet imageInfoSet = ExportToImageManager.outputImage(
-				this.diagram, this.exportExcelSetting.getCategory(),
-				this.projectDir, monitor);
+        POIUtils.writeExcelFile(excelFile, workbook);
+    }
 
-		ImageInfo imageInfo = imageInfoSet.getDiagramImageInfo();
+    private PictureSheetGenerator createPictureSheetGenerator(final ProgressMonitor monitor, final HSSFWorkbook workbook) throws Exception {
+        final ImageInfoSet imageInfoSet = ExportToImageManager.outputImage(diagram, exportExcelSetting.getCategory(), projectDir, monitor);
 
-		return new PictureSheetGenerator(workbook, imageInfo.getImageData(),
-				imageInfo.getExcelPictureType());
-	}
+        final ImageInfo imageInfo = imageInfoSet.getDiagramImageInfo();
 
-	private HSSFWorkbook loadTemplateWorkbook(InputStream template,
-			ERDiagram diagram) throws IOException {
+        return new PictureSheetGenerator(workbook, imageInfo.getImageData(), imageInfo.getExcelPictureType());
+    }
 
-		HSSFWorkbook workbook = POIUtils.readExcelBook(template);
+    private HSSFWorkbook loadTemplateWorkbook(final InputStream template, final ERDiagram diagram) throws IOException {
 
-		if (workbook == null) {
-			throw new IOException(
-					ResourceString.getResourceString("error.read.file"));
-		}
+        final HSSFWorkbook workbook = POIUtils.readExcelBook(template);
 
-		HSSFSheet wordsSheet = workbook.getSheet(WORDS_SHEET_NAME);
+        if (workbook == null) {
+            throw new IOException(ResourceString.getResourceString("error.read.file"));
+        }
 
-		if (wordsSheet == null) {
-			throw new IOException(
-					ResourceString
-							.getResourceString("error.not.found.words.sheet"));
-		}
+        final HSSFSheet wordsSheet = workbook.getSheet(WORDS_SHEET_NAME);
 
-		HSSFSheet loopsSheet = workbook.getSheet(LOOPS_SHEET_NAME);
+        if (wordsSheet == null) {
+            throw new IOException(ResourceString.getResourceString("error.not.found.words.sheet"));
+        }
 
-		if (loopsSheet == null) {
-			throw new IOException(
-					ResourceString
-							.getResourceString("error.not.found.loops.sheet"));
-		}
+        final HSSFSheet loopsSheet = workbook.getSheet(LOOPS_SHEET_NAME);
 
-		this.initLoopDefinitionMap(loopsSheet);
+        if (loopsSheet == null) {
+            throw new IOException(ResourceString.getResourceString("error.not.found.loops.sheet"));
+        }
 
-		for (AbstractSheetGenerator sheetGenerator : SHHET_GENERATOR_LIST) {
-			sheetGenerator.init(wordsSheet);
-		}
+        initLoopDefinitionMap(loopsSheet);
 
-		this.sheetIndexSheetGenerator = new SheetIndexSheetGenerator();
-		this.sheetIndexSheetGenerator.init(wordsSheet);
+        for (final AbstractSheetGenerator sheetGenerator : SHHET_GENERATOR_LIST) {
+            sheetGenerator.init(wordsSheet);
+        }
 
-		return workbook;
-	}
+        sheetIndexSheetGenerator = new SheetIndexSheetGenerator();
+        sheetIndexSheetGenerator.init(wordsSheet);
 
-	private void initLoopDefinitionMap(HSSFSheet loopsSheet) {
-		for (int i = 2; i <= loopsSheet.getLastRowNum(); i++) {
-			String templateSheetName = POIUtils.getCellValue(loopsSheet, i, 0);
-			if (templateSheetName == null) {
-				break;
-			}
+        return workbook;
+    }
 
-			int firstLine = POIUtils.getIntCellValue(loopsSheet, i, 1);
-			int spaceLine = POIUtils.getIntCellValue(loopsSheet, i, 2);
-			String sheetName = POIUtils.getCellValue(loopsSheet, i, 3);
+    private void initLoopDefinitionMap(final HSSFSheet loopsSheet) {
+        for (int i = 2; i <= loopsSheet.getLastRowNum(); i++) {
+            final String templateSheetName = POIUtils.getCellValue(loopsSheet, i, 0);
+            if (templateSheetName == null) {
+                break;
+            }
 
-			this.loopDefinitionMap.put(templateSheetName, new LoopDefinition(
-					firstLine, spaceLine, sheetName));
-		}
-	}
+            final int firstLine = POIUtils.getIntCellValue(loopsSheet, i, 1);
+            final int spaceLine = POIUtils.getIntCellValue(loopsSheet, i, 2);
+            final String sheetName = POIUtils.getCellValue(loopsSheet, i, 3);
 
-	private AbstractSheetGenerator getSheetGenerator(String templateSheetName) {
-		for (AbstractSheetGenerator sheetGenerator : SHHET_GENERATOR_LIST) {
-			if (sheetGenerator.getTemplateSheetName().equals(templateSheetName)) {
-				return sheetGenerator;
-			}
-		}
+            loopDefinitionMap.put(templateSheetName, new LoopDefinition(firstLine, spaceLine, sheetName));
+        }
+    }
 
-		return null;
-	}
+    private AbstractSheetGenerator getSheetGenerator(final String templateSheetName) {
+        for (final AbstractSheetGenerator sheetGenerator : SHHET_GENERATOR_LIST) {
+            if (sheetGenerator.getTemplateSheetName().equals(templateSheetName)) {
+                return sheetGenerator;
+            }
+        }
 
-	private void initSheetNameMap(HSSFWorkbook workbook) {
-		for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-			String sheetName = workbook.getSheetName(i);
-			this.sheetNameMap.put(sheetName.toUpperCase(), 0);
-		}
-	}
+        return null;
+    }
 
-	private void createSheetFromTemplate(ProgressMonitor monitor,
-			HSSFWorkbook workbook, ERDiagram diagram,
-			boolean useLogicalNameAsSheetName) throws InterruptedException {
-		this.initSheetNameMap(workbook);
+    private void initSheetNameMap(final HSSFWorkbook workbook) {
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            final String sheetName = workbook.getSheetName(i);
+            sheetNameMap.put(sheetName.toUpperCase(), 0);
+        }
+    }
 
-		int originalSheetNum = workbook.getNumberOfSheets();
+    private void createSheetFromTemplate(final ProgressMonitor monitor, final HSSFWorkbook workbook, final ERDiagram diagram, final boolean useLogicalNameAsSheetName) throws InterruptedException {
+        initSheetNameMap(workbook);
 
-		int sheetIndexSheetNo = -1;
+        int originalSheetNum = workbook.getNumberOfSheets();
 
-		while (originalSheetNum > 0) {
-			String templateSheetName = workbook.getSheetName(0);
+        int sheetIndexSheetNo = -1;
 
-			AbstractSheetGenerator sheetGenerator = this
-					.getSheetGenerator(templateSheetName);
+        while (originalSheetNum > 0) {
+            final String templateSheetName = workbook.getSheetName(0);
 
-			if (sheetGenerator != null) {
-				sheetGenerator.generate(monitor, workbook, 0,
-						useLogicalNameAsSheetName, this.sheetNameMap,
-						this.sheetObjectMap, diagram, loopDefinitionMap);
-				workbook.removeSheetAt(0);
+            final AbstractSheetGenerator sheetGenerator = getSheetGenerator(templateSheetName);
 
-			} else {
-				if (!isExcludeTarget(templateSheetName)) {
-					moveSheet(workbook, 0);
-					HSSFSheet sheet = workbook.getSheetAt(workbook
-							.getNumberOfSheets() - 1);
+            if (sheetGenerator != null) {
+                sheetGenerator.generate(monitor, workbook, 0, useLogicalNameAsSheetName, sheetNameMap, sheetObjectMap, diagram, loopDefinitionMap);
+                workbook.removeSheetAt(0);
 
-					this.sheetObjectMap.put(templateSheetName,
-							new StringObjectModel(templateSheetName));
+            } else {
+                if (!isExcludeTarget(templateSheetName)) {
+                    moveSheet(workbook, 0);
+                    final HSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
 
-					if (this.pictureSheetGenerator != null) {
-						this.pictureSheetGenerator.setImage(workbook, sheet);
-					}
+                    sheetObjectMap.put(templateSheetName, new StringObjectModel(templateSheetName));
 
-					if (this.sheetIndexSheetGenerator.getTemplateSheetName()
-							.equals(templateSheetName)) {
-						sheetIndexSheetNo = workbook.getNumberOfSheets()
-								- originalSheetNum;
+                    if (pictureSheetGenerator != null) {
+                        pictureSheetGenerator.setImage(workbook, sheet);
+                    }
 
-						String name = this.sheetIndexSheetGenerator
-								.getSheetName();
+                    if (sheetIndexSheetGenerator.getTemplateSheetName().equals(templateSheetName)) {
+                        sheetIndexSheetNo = workbook.getNumberOfSheets() - originalSheetNum;
 
-						name = AbstractSheetGenerator.decideSheetName(name,
-								sheetNameMap);
+                        String name = sheetIndexSheetGenerator.getSheetName();
 
-						monitor.subTaskWithCounter(name);
+                        name = AbstractSheetGenerator.decideSheetName(name, sheetNameMap);
 
-						workbook.setSheetName(workbook.getNumberOfSheets() - 1,
-								name);
-					} else {
-						monitor.subTaskWithCounter(sheet.getSheetName());
-					}
+                        monitor.subTaskWithCounter(name);
 
-				} else {
-					monitor.subTaskWithCounter("Removing template sheet");
-					workbook.removeSheetAt(0);
-				}
+                        workbook.setSheetName(workbook.getNumberOfSheets() - 1, name);
+                    } else {
+                        monitor.subTaskWithCounter(sheet.getSheetName());
+                    }
 
-				monitor.worked(1);
-			}
+                } else {
+                    monitor.subTaskWithCounter("Removing template sheet");
+                    workbook.removeSheetAt(0);
+                }
 
-			originalSheetNum--;
-		}
+                monitor.worked(1);
+            }
 
-		if (sheetIndexSheetNo != -1) {
-			this.sheetIndexSheetGenerator.generate(monitor, workbook,
-					sheetIndexSheetNo, useLogicalNameAsSheetName,
-					this.sheetNameMap, this.sheetObjectMap, diagram,
-					loopDefinitionMap);
-		}
-	}
+            originalSheetNum--;
+        }
 
-	public static HSSFSheet moveSheet(HSSFWorkbook workbook, int sheetNo) {
-		HSSFSheet oldSheet = workbook.getSheetAt(sheetNo);
-		String sheetName = oldSheet.getSheetName();
+        if (sheetIndexSheetNo != -1) {
+            sheetIndexSheetGenerator.generate(monitor, workbook, sheetIndexSheetNo, useLogicalNameAsSheetName, sheetNameMap, sheetObjectMap, diagram, loopDefinitionMap);
+        }
+    }
 
-		HSSFSheet newSheet = workbook.cloneSheet(sheetNo);
-		int newSheetNo = workbook.getSheetIndex(newSheet);
+    public static HSSFSheet moveSheet(final HSSFWorkbook workbook, final int sheetNo) {
+        final HSSFSheet oldSheet = workbook.getSheetAt(sheetNo);
+        final String sheetName = oldSheet.getSheetName();
 
-		workbook.removeSheetAt(sheetNo);
+        final HSSFSheet newSheet = workbook.cloneSheet(sheetNo);
+        final int newSheetNo = workbook.getSheetIndex(newSheet);
 
-		workbook.setSheetName(newSheetNo - 1, sheetName);
+        workbook.removeSheetAt(sheetNo);
 
-		return newSheet;
-	}
+        workbook.setSheetName(newSheetNo - 1, sheetName);
 
-	private int countSheetFromTemplate(HSSFWorkbook workbook, ERDiagram diagram) {
-		int count = 0;
+        return newSheet;
+    }
 
-		for (int sheetNo = 0; sheetNo < workbook.getNumberOfSheets(); sheetNo++) {
-			String templateSheetName = workbook.getSheetName(sheetNo);
+    private int countSheetFromTemplate(final HSSFWorkbook workbook, final ERDiagram diagram) {
+        int count = 0;
 
-			AbstractSheetGenerator sheetGenerator = this
-					.getSheetGenerator(templateSheetName);
+        for (int sheetNo = 0; sheetNo < workbook.getNumberOfSheets(); sheetNo++) {
+            final String templateSheetName = workbook.getSheetName(sheetNo);
 
-			if (sheetGenerator != null) {
-				count += sheetGenerator.count(diagram);
+            final AbstractSheetGenerator sheetGenerator = getSheetGenerator(templateSheetName);
 
-			} else {
-				count++;
-			}
-		}
+            if (sheetGenerator != null) {
+                count += sheetGenerator.count(diagram);
 
-		if (this.exportExcelSetting.isPutERDiagramOnExcel()) {
-			count += 1;
-		}
+            } else {
+                count++;
+            }
+        }
 
-		return count;
-	}
+        if (exportExcelSetting.isPutERDiagramOnExcel()) {
+            count += 1;
+        }
 
-	private boolean isExcludeTarget(String templateSheetName) {
-		if (WORDS_SHEET_NAME.equals(templateSheetName)
-				|| LOOPS_SHEET_NAME.equals(templateSheetName)) {
-			return true;
-		}
+        return count;
+    }
 
-		return false;
-	}
+    private boolean isExcludeTarget(final String templateSheetName) {
+        if (WORDS_SHEET_NAME.equals(templateSheetName) || LOOPS_SHEET_NAME.equals(templateSheetName)) {
+            return true;
+        }
 
-	public File getOutputFileOrDir() {
-		return FileUtils.getFile(this.projectDir,
-				this.exportExcelSetting.getExcelOutput());
-	}
+        return false;
+    }
+
+    @Override
+    public File getOutputFileOrDir() {
+        return FileUtils.getFile(projectDir, exportExcelSetting.getExcelOutput());
+    }
 }

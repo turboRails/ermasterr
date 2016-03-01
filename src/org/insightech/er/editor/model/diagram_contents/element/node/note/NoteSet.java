@@ -9,68 +9,71 @@ import org.insightech.er.ResourceString;
 import org.insightech.er.editor.model.AbstractModel;
 import org.insightech.er.editor.model.ObjectListModel;
 
-public class NoteSet extends AbstractModel implements ObjectListModel,
-		Iterable<Note> {
+public class NoteSet extends AbstractModel implements ObjectListModel, Iterable<Note> {
 
-	private static final long serialVersionUID = -7000722010136664297L;
+    private static final long serialVersionUID = -7000722010136664297L;
 
-	private List<Note> noteList;
+    private List<Note> noteList;
 
-	public NoteSet() {
-		this.noteList = new ArrayList<Note>();
-	}
+    public NoteSet() {
+        noteList = new ArrayList<Note>();
+    }
 
-	public void sort() {
-		Collections.sort(this.noteList);
-	}
-	
-	public void add(Note note) {
-		this.noteList.add(note);
-	}
+    public void sort() {
+        Collections.sort(noteList);
+    }
 
-	public int remove(Note note) {
-		int index = this.noteList.indexOf(note);
-		this.noteList.remove(index);
+    public void add(final Note note) {
+        noteList.add(note);
+    }
 
-		return index;
-	}
+    public int remove(final Note note) {
+        final int index = noteList.indexOf(note);
+        noteList.remove(index);
 
-	public List<Note> getList() {
-		return this.noteList;
-	}
+        return index;
+    }
 
-	public Iterator<Note> iterator() {
-		return this.noteList.iterator();
-	}
+    public List<Note> getList() {
+        return noteList;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NoteSet clone() {
-		NoteSet noteSet = (NoteSet) super.clone();
-		List<Note> newNoteList = new ArrayList<Note>();
+    @Override
+    public Iterator<Note> iterator() {
+        return noteList.iterator();
+    }
 
-		for (Note note : this.noteList) {
-			Note newNote = (Note) note.clone();
-			newNoteList.add(newNote);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NoteSet clone() {
+        final NoteSet noteSet = (NoteSet) super.clone();
+        final List<Note> newNoteList = new ArrayList<Note>();
 
-		noteSet.noteList = newNoteList;
+        for (final Note note : noteList) {
+            final Note newNote = (Note) note.clone();
+            newNoteList.add(newNote);
+        }
 
-		return noteSet;
-	}
+        noteSet.noteList = newNoteList;
 
-	public String getDescription() {
-		return "";
-	}
+        return noteSet;
+    }
 
-	public String getName() {
-		return ResourceString.getResourceString("label.object.type.note_list");
-	}
+    @Override
+    public String getDescription() {
+        return "";
+    }
 
-	public String getObjectType() {
-		return "list";
-	}
+    @Override
+    public String getName() {
+        return ResourceString.getResourceString("label.object.type.note_list");
+    }
+
+    @Override
+    public String getObjectType() {
+        return "list";
+    }
 
 }

@@ -6,21 +6,21 @@ import org.eclipse.draw2d.SchemeBorder;
 
 public class ImageFrameBorder extends FrameBorder {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createBorders() {
-		inner = new ImageTitleBarBorder();
-		outer = new SchemeBorder(SCHEME_FRAME);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createBorders() {
+        inner = new ImageTitleBarBorder();
+        outer = new SchemeBorder(SCHEME_FRAME);
+    }
 
-	/**
-	 * ƒ^ƒCƒgƒ‹—Ìˆæ‚Ì•‚ğ•Ô‚µ‚Ü‚·
-	 * 
-	 * @return ƒ^ƒCƒgƒ‹—Ìˆæ‚Ì•
-	 */
-	public int getTitleBarWidth(IFigure figure) {
-		return ((ImageTitleBarBorder) this.inner).getWidth(figure);
-	}
+    /**
+     * ï¿½^ï¿½Cï¿½gï¿½ï¿½ï¿½Ìˆï¿½Ì•ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
+     * 
+     * @return ï¿½^ï¿½Cï¿½gï¿½ï¿½ï¿½Ìˆï¿½Ì•ï¿½
+     */
+    public int getTitleBarWidth(final IFigure figure) {
+        return ((ImageTitleBarBorder) inner).getWidth(figure);
+    }
 }

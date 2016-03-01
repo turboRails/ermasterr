@@ -19,501 +19,457 @@ import org.insightech.er.util.NameValue;
 
 public class ReplaceManager {
 
-	private static final int[] ALPHABET_TYPES = new int[] {
-			SearchResultRow.TYPE_RELATION_NAME,
-			SearchResultRow.TYPE_INDEX_NAME,
-			SearchResultRow.TYPE_TABLE_PHYSICAL_NAME,
-			SearchResultRow.TYPE_WORD_PHYSICAL_NAME,
-			SearchResultRow.TYPE_COLUMN_PHYSICAL_NAME,
-			SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_PHYSICAL_NAME };
+    private static final int[] ALPHABET_TYPES = new int[] {SearchResultRow.TYPE_RELATION_NAME, SearchResultRow.TYPE_INDEX_NAME, SearchResultRow.TYPE_TABLE_PHYSICAL_NAME, SearchResultRow.TYPE_WORD_PHYSICAL_NAME, SearchResultRow.TYPE_COLUMN_PHYSICAL_NAME, SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_PHYSICAL_NAME};
 
-	private static final int[] DEGIT_TYPES = new int[] {
-			SearchResultRow.TYPE_WORD_LENGTH,
-			SearchResultRow.TYPE_WORD_DECIMAL,
-			SearchResultRow.TYPE_COLUMN_LENGTH,
-			SearchResultRow.TYPE_COLUMN_DECIMAL,
-			SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_LENGTH,
-			SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_DECIMAL };
+    private static final int[] DEGIT_TYPES = new int[] {SearchResultRow.TYPE_WORD_LENGTH, SearchResultRow.TYPE_WORD_DECIMAL, SearchResultRow.TYPE_COLUMN_LENGTH, SearchResultRow.TYPE_COLUMN_DECIMAL, SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_LENGTH, SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_DECIMAL};
 
-	private static final int[] REQUIRED_TYPES = new int[] {
-			SearchResultRow.TYPE_INDEX_NAME,
-			SearchResultRow.TYPE_TABLE_LOGICAL_NAME,
-			SearchResultRow.TYPE_WORD_LOGICAL_NAME,
-			SearchResultRow.TYPE_COLUMN_LOGICAL_NAME,
-			SearchResultRow.TYPE_COLUMN_GROUP_NAME,
-			SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_LOGICAL_NAME };
+    private static final int[] REQUIRED_TYPES = new int[] {SearchResultRow.TYPE_INDEX_NAME, SearchResultRow.TYPE_TABLE_LOGICAL_NAME, SearchResultRow.TYPE_WORD_LOGICAL_NAME, SearchResultRow.TYPE_COLUMN_LOGICAL_NAME, SearchResultRow.TYPE_COLUMN_GROUP_NAME, SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_LOGICAL_NAME};
 
-	private static final int[] EXCLUDE_TYPES = new int[] {
-			SearchResultRow.TYPE_INDEX_COLUMN_NAME,
-			SearchResultRow.TYPE_COLUMN_TYPE,
-			SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_TYPE };
+    private static final int[] EXCLUDE_TYPES = new int[] {SearchResultRow.TYPE_INDEX_COLUMN_NAME, SearchResultRow.TYPE_COLUMN_TYPE, SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_TYPE};
 
-	private static final List<String> replaceWordList = new ArrayList<String>();
+    private static final List<String> replaceWordList = new ArrayList<String>();
 
-	public static ReplaceResult replace(int type, Object object,
-			String keyword, String replaceWord, String database) {
+    public static ReplaceResult replace(final int type, final Object object, final String keyword, final String replaceWord, final String database) {
 
-		addReplaceWord(replaceWord);
+        addReplaceWord(replaceWord);
 
-		for (int excludeType : EXCLUDE_TYPES) {
-			if (type == excludeType) {
-				return null;
-			}
-		}
+        for (final int excludeType : EXCLUDE_TYPES) {
+            if (type == excludeType) {
+                return null;
+            }
+        }
 
-		checkAlphabet(type, replaceWord);
-		checkDegit(type, replaceWord);
+        checkAlphabet(type, replaceWord);
+        checkDegit(type, replaceWord);
 
-		if (type == SearchResultRow.TYPE_RELATION_NAME) {
-			Relation relation = (Relation) object;
-			String original = relation.getName();
+        if (type == SearchResultRow.TYPE_RELATION_NAME) {
+            final Relation relation = (Relation) object;
+            final String original = relation.getName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			relation.setName(str);
+            relation.setName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_INDEX_NAME) {
-			Index index = (Index) object;
-			String original = index.getName();
+        } else if (type == SearchResultRow.TYPE_INDEX_NAME) {
+            final Index index = (Index) object;
+            final String original = index.getName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			index.setName(str);
+            index.setName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_INDEX_COLUMN_NAME) {
+        } else if (type == SearchResultRow.TYPE_INDEX_COLUMN_NAME) {
 
-			return null;
+            return null;
 
-		} else if (type == SearchResultRow.TYPE_NOTE) {
-			Note note = (Note) object;
-			String original = note.getText();
+        } else if (type == SearchResultRow.TYPE_NOTE) {
+            final Note note = (Note) object;
+            final String original = note.getText();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			note.setText(str);
+            note.setText(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_MODEL_PROPERTY_NAME) {
-			NameValue property = (NameValue) object;
-			String original = property.getName();
+        } else if (type == SearchResultRow.TYPE_MODEL_PROPERTY_NAME) {
+            final NameValue property = (NameValue) object;
+            final String original = property.getName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			property.setName(str);
+            property.setName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_MODEL_PROPERTY_VALUE) {
-			NameValue property = (NameValue) object;
-			String original = property.getValue();
+        } else if (type == SearchResultRow.TYPE_MODEL_PROPERTY_VALUE) {
+            final NameValue property = (NameValue) object;
+            final String original = property.getValue();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			property.setValue(str);
+            property.setValue(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_TABLE_PHYSICAL_NAME) {
-			ERTable table = (ERTable) object;
-			String original = table.getPhysicalName();
+        } else if (type == SearchResultRow.TYPE_TABLE_PHYSICAL_NAME) {
+            final ERTable table = (ERTable) object;
+            final String original = table.getPhysicalName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			table.setPhysicalName(str);
+            table.setPhysicalName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_TABLE_LOGICAL_NAME) {
-			ERTable table = (ERTable) object;
-			String original = table.getLogicalName();
+        } else if (type == SearchResultRow.TYPE_TABLE_LOGICAL_NAME) {
+            final ERTable table = (ERTable) object;
+            final String original = table.getLogicalName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			table.setLogicalName(str);
+            table.setLogicalName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_PHYSICAL_NAME
-				|| type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_PHYSICAL_NAME) {
-			NormalColumn column = (NormalColumn) object;
-			String original = column.getForeignKeyPhysicalName();
+        } else if (type == SearchResultRow.TYPE_COLUMN_PHYSICAL_NAME || type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_PHYSICAL_NAME) {
+            final NormalColumn column = (NormalColumn) object;
+            final String original = column.getForeignKeyPhysicalName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			column.setForeignKeyPhysicalName(str);
+            column.setForeignKeyPhysicalName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_LOGICAL_NAME
-				|| type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_LOGICAL_NAME) {
-			NormalColumn column = (NormalColumn) object;
-			String original = column.getForeignKeyLogicalName();
+        } else if (type == SearchResultRow.TYPE_COLUMN_LOGICAL_NAME || type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_LOGICAL_NAME) {
+            final NormalColumn column = (NormalColumn) object;
+            final String original = column.getForeignKeyLogicalName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			checkRequired(type, str);
+            checkRequired(type, str);
 
-			column.setForeignKeyLogicalName(str);
+            column.setForeignKeyLogicalName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_DEFAULT_VALUE
-				|| type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_DEFAULT_VALUE) {
+        } else if (type == SearchResultRow.TYPE_COLUMN_DEFAULT_VALUE || type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_DEFAULT_VALUE) {
 
-			NormalColumn column = (NormalColumn) object;
-			String original = column.getDefaultValue();
+            final NormalColumn column = (NormalColumn) object;
+            final String original = column.getDefaultValue();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			column.setDefaultValue(str);
+            column.setDefaultValue(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_COMMENT) {
-			NormalColumn column = (NormalColumn) object;
-			String original = column.getForeignKeyDescription();
+        } else if (type == SearchResultRow.TYPE_COLUMN_COMMENT) {
+            final NormalColumn column = (NormalColumn) object;
+            final String original = column.getForeignKeyDescription();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			column.setForeignKeyDescription(str);
+            column.setForeignKeyDescription(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_GROUP_NAME
-				|| type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_COMMENT) {
-			ColumnGroup group = (ColumnGroup) object;
-			String original = group.getGroupName();
+        } else if (type == SearchResultRow.TYPE_COLUMN_GROUP_NAME || type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_COMMENT) {
+            final ColumnGroup group = (ColumnGroup) object;
+            final String original = group.getGroupName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			group.setGroupName(str);
+            group.setGroupName(str);
 
-			return new ReplaceResult(original);
-		} else if (type == SearchResultRow.TYPE_WORD_PHYSICAL_NAME) {
-			Word word = (Word) object;
-			String original = word.getPhysicalName();
+            return new ReplaceResult(original);
+        } else if (type == SearchResultRow.TYPE_WORD_PHYSICAL_NAME) {
+            final Word word = (Word) object;
+            final String original = word.getPhysicalName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			word.setPhysicalName(str);
+            word.setPhysicalName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_WORD_LOGICAL_NAME) {
-			Word word = (Word) object;
-			String original = word.getLogicalName();
+        } else if (type == SearchResultRow.TYPE_WORD_LOGICAL_NAME) {
+            final Word word = (Word) object;
+            final String original = word.getLogicalName();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			checkRequired(type, str);
+            checkRequired(type, str);
 
-			word.setLogicalName(str);
+            word.setLogicalName(str);
 
-			return new ReplaceResult(original);
+            return new ReplaceResult(original);
 
-		} else if (type == SearchResultRow.TYPE_WORD_LENGTH) {
-			Word word = (Word) object;
-			String original = String.valueOf(word.getTypeData().getLength());
+        } else if (type == SearchResultRow.TYPE_WORD_LENGTH) {
+            final Word word = (Word) object;
+            final String original = String.valueOf(word.getTypeData().getLength());
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			Integer newLength = null;
-			try {
-				newLength = Integer.parseInt(str);
-			} catch (NumberFormatException e) {
-			}
+            Integer newLength = null;
+            try {
+                newLength = Integer.parseInt(str);
+            } catch (final NumberFormatException e) {}
 
-			TypeData oldTypeData = word.getTypeData();
-			TypeData newTypeData = new TypeData(newLength,
-					oldTypeData.getDecimal(), oldTypeData.isArray(),
-					oldTypeData.getArrayDimension(), oldTypeData.isUnsigned(),
-					oldTypeData.isZerofill(), oldTypeData.isBinary(),
-					oldTypeData.getArgs(), oldTypeData.isCharSemantics());
+            final TypeData oldTypeData = word.getTypeData();
+            final TypeData newTypeData = new TypeData(newLength, oldTypeData.getDecimal(), oldTypeData.isArray(), oldTypeData.getArrayDimension(), oldTypeData.isUnsigned(), oldTypeData.isZerofill(), oldTypeData.isBinary(), oldTypeData.getArgs(), oldTypeData.isCharSemantics());
 
-			word.setType(word.getType(), newTypeData, database);
+            word.setType(word.getType(), newTypeData, database);
 
-			return new ReplaceResult(oldTypeData);
+            return new ReplaceResult(oldTypeData);
 
-		} else if (type == SearchResultRow.TYPE_WORD_DECIMAL) {
-			Word word = (Word) object;
-			String original = String.valueOf(word.getTypeData().getDecimal());
+        } else if (type == SearchResultRow.TYPE_WORD_DECIMAL) {
+            final Word word = (Word) object;
+            final String original = String.valueOf(word.getTypeData().getDecimal());
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			Integer newDecimal = null;
-			try {
-				newDecimal = Integer.parseInt(str);
-			} catch (NumberFormatException e) {
-			}
+            Integer newDecimal = null;
+            try {
+                newDecimal = Integer.parseInt(str);
+            } catch (final NumberFormatException e) {}
 
-			TypeData oldTypeData = word.getTypeData();
-			TypeData newTypeData = new TypeData(oldTypeData.getLength(),
-					newDecimal, oldTypeData.isArray(),
-					oldTypeData.getArrayDimension(), oldTypeData.isUnsigned(),
-					oldTypeData.isZerofill(), oldTypeData.isBinary(),
-					oldTypeData.getArgs(), oldTypeData.isCharSemantics());
+            final TypeData oldTypeData = word.getTypeData();
+            final TypeData newTypeData = new TypeData(oldTypeData.getLength(), newDecimal, oldTypeData.isArray(), oldTypeData.getArrayDimension(), oldTypeData.isUnsigned(), oldTypeData.isZerofill(), oldTypeData.isBinary(), oldTypeData.getArgs(), oldTypeData.isCharSemantics());
 
-			word.setType(word.getType(), newTypeData, database);
+            word.setType(word.getType(), newTypeData, database);
 
-			return new ReplaceResult(oldTypeData);
+            return new ReplaceResult(oldTypeData);
 
-		} else if (type == SearchResultRow.TYPE_WORD_TYPE) {
-			Word word = (Word) object;
-			String original = String.valueOf(word.getType().getAlias(database));
+        } else if (type == SearchResultRow.TYPE_WORD_TYPE) {
+            final Word word = (Word) object;
+            final String original = String.valueOf(word.getType().getAlias(database));
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			SqlType newSqlType = SqlType.valueOf(database, str);
+            SqlType newSqlType = SqlType.valueOf(database, str);
 
-			if (Check.isEmpty(str)) {
-				newSqlType = null;
+            if (Check.isEmpty(str)) {
+                newSqlType = null;
 
-			} else {
-				newSqlType = SqlType.valueOf(database, str);
-				if (newSqlType == null) {
-					return null;
-				}
-			}
+            } else {
+                newSqlType = SqlType.valueOf(database, str);
+                if (newSqlType == null) {
+                    return null;
+                }
+            }
 
-			SqlType oldSqlType = word.getType();
-			TypeData oldTypeData = word.getTypeData();
+            final SqlType oldSqlType = word.getType();
+            final TypeData oldTypeData = word.getTypeData();
 
-			word.setType(newSqlType, word.getTypeData(), database);
+            word.setType(newSqlType, word.getTypeData(), database);
 
-			return new ReplaceResult(new Object[] { oldSqlType, oldTypeData });
+            return new ReplaceResult(new Object[] {oldSqlType, oldTypeData});
 
-		} else if (type == SearchResultRow.TYPE_WORD_COMMENT) {
-			Word word = (Word) object;
-			String original = word.getDescription();
+        } else if (type == SearchResultRow.TYPE_WORD_COMMENT) {
+            final Word word = (Word) object;
+            final String original = word.getDescription();
 
-			String str = replace(original, keyword, replaceWord);
+            final String str = replace(original, keyword, replaceWord);
 
-			if (!checkRequired(type, str)) {
-				return null;
-			}
+            if (!checkRequired(type, str)) {
+                return null;
+            }
 
-			word.setDescription(str);
+            word.setDescription(str);
 
-			return new ReplaceResult(original);
-		}
+            return new ReplaceResult(original);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private static boolean checkAlphabet(int type, String str) {
-		if (str == null || str.equals("")) {
-			return true;
-		}
+    private static boolean checkAlphabet(final int type, final String str) {
+        if (str == null || str.equals("")) {
+            return true;
+        }
 
-		for (int alphabetType : ALPHABET_TYPES) {
-			if (type == alphabetType) {
-				if (!Check.isAlphabet(str)) {
-					return false;
-				}
-			}
-		}
+        for (final int alphabetType : ALPHABET_TYPES) {
+            if (type == alphabetType) {
+                if (!Check.isAlphabet(str)) {
+                    return false;
+                }
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	private static boolean checkDegit(int type, String str) {
-		if (str == null || str.equals("")) {
-			return true;
-		}
+    private static boolean checkDegit(final int type, final String str) {
+        if (str == null || str.equals("")) {
+            return true;
+        }
 
-		for (int degitType : DEGIT_TYPES) {
-			if (type == degitType) {
-				try {
-					int len = Integer.parseInt(str);
-					if (len < 0) {
-						return false;
-					}
+        for (final int degitType : DEGIT_TYPES) {
+            if (type == degitType) {
+                try {
+                    final int len = Integer.parseInt(str);
+                    if (len < 0) {
+                        return false;
+                    }
 
-				} catch (NumberFormatException e) {
-					return false;
-				}
-			}
-		}
+                } catch (final NumberFormatException e) {
+                    return false;
+                }
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	private static boolean checkRequired(int type, String str) {
-		for (int requiredType : REQUIRED_TYPES) {
-			if (type == requiredType) {
-				if (str == null || str.trim().equals("")) {
-					return false;
-				}
-			}
-		}
+    private static boolean checkRequired(final int type, final String str) {
+        for (final int requiredType : REQUIRED_TYPES) {
+            if (type == requiredType) {
+                if (str == null || str.trim().equals("")) {
+                    return false;
+                }
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	private static String replace(String str, String keyword, String replaceWord) {
-		return Pattern
-				.compile(Pattern.quote(keyword), Pattern.CASE_INSENSITIVE)
-				.matcher(str).replaceAll(Matcher.quoteReplacement(replaceWord));
-	}
+    private static String replace(final String str, final String keyword, final String replaceWord) {
+        return Pattern.compile(Pattern.quote(keyword), Pattern.CASE_INSENSITIVE).matcher(str).replaceAll(Matcher.quoteReplacement(replaceWord));
+    }
 
-	private static void addReplaceWord(String replaceWord) {
-		if (!replaceWordList.contains(replaceWord)) {
-			replaceWordList.add(0, replaceWord);
-		}
+    private static void addReplaceWord(final String replaceWord) {
+        if (!replaceWordList.contains(replaceWord)) {
+            replaceWordList.add(0, replaceWord);
+        }
 
-		if (replaceWordList.size() > 20) {
-			replaceWordList.remove(replaceWordList.size() - 1);
-		}
-	}
+        if (replaceWordList.size() > 20) {
+            replaceWordList.remove(replaceWordList.size() - 1);
+        }
+    }
 
-	public static List<String> getReplaceWordList() {
-		return replaceWordList;
-	}
+    public static List<String> getReplaceWordList() {
+        return replaceWordList;
+    }
 
-	public static void undo(int type, Object object, Object original,
-			String database) {
+    public static void undo(final int type, final Object object, final Object original, final String database) {
 
-		if (type == SearchResultRow.TYPE_RELATION_NAME) {
-			Relation relation = (Relation) object;
-			relation.setName((String) original);
+        if (type == SearchResultRow.TYPE_RELATION_NAME) {
+            final Relation relation = (Relation) object;
+            relation.setName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_INDEX_NAME) {
-			Index index = (Index) object;
-			index.setName((String) original);
+        } else if (type == SearchResultRow.TYPE_INDEX_NAME) {
+            final Index index = (Index) object;
+            index.setName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_INDEX_COLUMN_NAME) {
+        } else if (type == SearchResultRow.TYPE_INDEX_COLUMN_NAME) {
 
-		} else if (type == SearchResultRow.TYPE_NOTE) {
-			Note note = (Note) object;
-			note.setText((String) original);
+        } else if (type == SearchResultRow.TYPE_NOTE) {
+            final Note note = (Note) object;
+            note.setText((String) original);
 
-		} else if (type == SearchResultRow.TYPE_MODEL_PROPERTY_NAME) {
-			NameValue property = (NameValue) object;
-			property.setName((String) original);
+        } else if (type == SearchResultRow.TYPE_MODEL_PROPERTY_NAME) {
+            final NameValue property = (NameValue) object;
+            property.setName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_MODEL_PROPERTY_VALUE) {
-			NameValue property = (NameValue) object;
-			property.setValue((String) original);
+        } else if (type == SearchResultRow.TYPE_MODEL_PROPERTY_VALUE) {
+            final NameValue property = (NameValue) object;
+            property.setValue((String) original);
 
-		} else if (type == SearchResultRow.TYPE_TABLE_PHYSICAL_NAME) {
-			ERTable table = (ERTable) object;
-			table.setPhysicalName((String) original);
+        } else if (type == SearchResultRow.TYPE_TABLE_PHYSICAL_NAME) {
+            final ERTable table = (ERTable) object;
+            table.setPhysicalName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_TABLE_LOGICAL_NAME) {
-			ERTable table = (ERTable) object;
-			table.setLogicalName((String) original);
+        } else if (type == SearchResultRow.TYPE_TABLE_LOGICAL_NAME) {
+            final ERTable table = (ERTable) object;
+            table.setLogicalName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_PHYSICAL_NAME
-				|| type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_PHYSICAL_NAME) {
-			NormalColumn column = (NormalColumn) object;
-			column.setForeignKeyPhysicalName((String) original);
+        } else if (type == SearchResultRow.TYPE_COLUMN_PHYSICAL_NAME || type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_PHYSICAL_NAME) {
+            final NormalColumn column = (NormalColumn) object;
+            column.setForeignKeyPhysicalName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_LOGICAL_NAME
-				|| type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_LOGICAL_NAME) {
-			NormalColumn column = (NormalColumn) object;
-			column.setForeignKeyLogicalName((String) original);
+        } else if (type == SearchResultRow.TYPE_COLUMN_LOGICAL_NAME || type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_LOGICAL_NAME) {
+            final NormalColumn column = (NormalColumn) object;
+            column.setForeignKeyLogicalName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_DEFAULT_VALUE
-				|| type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_DEFAULT_VALUE) {
-			NormalColumn column = (NormalColumn) object;
-			column.setDefaultValue((String) original);
+        } else if (type == SearchResultRow.TYPE_COLUMN_DEFAULT_VALUE || type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_DEFAULT_VALUE) {
+            final NormalColumn column = (NormalColumn) object;
+            column.setDefaultValue((String) original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_COMMENT) {
-			NormalColumn column = (NormalColumn) object;
-			column.setForeignKeyDescription((String) original);
+        } else if (type == SearchResultRow.TYPE_COLUMN_COMMENT) {
+            final NormalColumn column = (NormalColumn) object;
+            column.setForeignKeyDescription((String) original);
 
-		} else if (type == SearchResultRow.TYPE_COLUMN_GROUP_NAME
-				|| type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_COMMENT) {
-			ColumnGroup group = (ColumnGroup) object;
-			group.setGroupName((String) original);
+        } else if (type == SearchResultRow.TYPE_COLUMN_GROUP_NAME || type == SearchResultRow.TYPE_COLUMN_GROUP_COLUMN_COMMENT) {
+            final ColumnGroup group = (ColumnGroup) object;
+            group.setGroupName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_WORD_COMMENT) {
-			Word word = (Word) object;
-			word.setDescription((String) original);
+        } else if (type == SearchResultRow.TYPE_WORD_COMMENT) {
+            final Word word = (Word) object;
+            word.setDescription((String) original);
 
-		} else if (type == SearchResultRow.TYPE_WORD_DECIMAL) {
-			Word word = (Word) object;
-			word.setType(word.getType(), (TypeData) original, database);
+        } else if (type == SearchResultRow.TYPE_WORD_DECIMAL) {
+            final Word word = (Word) object;
+            word.setType(word.getType(), (TypeData) original, database);
 
-		} else if (type == SearchResultRow.TYPE_WORD_LENGTH) {
-			Word word = (Word) object;
-			word.setType(word.getType(), (TypeData) original, database);
+        } else if (type == SearchResultRow.TYPE_WORD_LENGTH) {
+            final Word word = (Word) object;
+            word.setType(word.getType(), (TypeData) original, database);
 
-		} else if (type == SearchResultRow.TYPE_WORD_TYPE) {
-			Word word = (Word) object;
-			Object[] originals = (Object[]) original;
-			word.setType((SqlType) originals[0], (TypeData) originals[1],
-					database);
+        } else if (type == SearchResultRow.TYPE_WORD_TYPE) {
+            final Word word = (Word) object;
+            final Object[] originals = (Object[]) original;
+            word.setType((SqlType) originals[0], (TypeData) originals[1], database);
 
-		} else if (type == SearchResultRow.TYPE_WORD_LOGICAL_NAME) {
-			Word word = (Word) object;
-			word.setLogicalName((String) original);
+        } else if (type == SearchResultRow.TYPE_WORD_LOGICAL_NAME) {
+            final Word word = (Word) object;
+            word.setLogicalName((String) original);
 
-		} else if (type == SearchResultRow.TYPE_WORD_PHYSICAL_NAME) {
-			Word word = (Word) object;
-			word.setPhysicalName((String) original);
+        } else if (type == SearchResultRow.TYPE_WORD_PHYSICAL_NAME) {
+            final Word word = (Word) object;
+            word.setPhysicalName((String) original);
 
-		}
-	}
+        }
+    }
 }

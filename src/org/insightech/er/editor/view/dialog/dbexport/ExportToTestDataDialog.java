@@ -28,280 +28,252 @@ import org.insightech.er.util.Check;
 
 public class ExportToTestDataDialog extends AbstractExportDialog {
 
-	private ContainerCheckedTreeViewer testDataTable;
-
-	private Button formatSqlRadio;
+    private ContainerCheckedTreeViewer testDataTable;
 
-	private Button formatDBUnitRadio;
+    private Button formatSqlRadio;
 
-	private Button formatDBUnitFlatXmlRadio;
+    private Button formatDBUnitRadio;
 
-	private Button formatDBUnitXlsRadio;
-
-	private DirectoryText outputDirectoryText;
+    private Button formatDBUnitFlatXmlRadio;
 
-	private Combo fileEncodingCombo;
+    private Button formatDBUnitXlsRadio;
 
-	private List<TestData> testDataList;
+    private DirectoryText outputDirectoryText;
 
-	private int targetIndex;
+    private Combo fileEncodingCombo;
 
-	public ExportToTestDataDialog(List<TestData> testDataList) {
-		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				testDataList, -1);
-	}
+    private final List<TestData> testDataList;
 
-	public ExportToTestDataDialog(Shell parentShell,
-			List<TestData> testDataList, int targetIndex) {
-		super(parentShell);
+    private final int targetIndex;
 
-		// from TestDataManagementDialog
-		// testDataList is different from
-		// diagram.getDiagramContents().getTestDataList()
-		this.testDataList = testDataList;
-		this.targetIndex = targetIndex;
-	}
+    public ExportToTestDataDialog(final List<TestData> testDataList) {
+        this(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), testDataList, -1);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite parent) {
-		this.createTestDataTableGroup(parent);
-		this.createFormatGroup(parent);
-		this.createFileGroup(parent);
-	}
+    public ExportToTestDataDialog(final Shell parentShell, final List<TestData> testDataList, final int targetIndex) {
+        super(parentShell);
 
-	private void createTestDataTableGroup(Composite parent) {
-		this.testDataTable = CompositeFactory.createCheckedTreeViewer(this,
-				parent, 100, 3);
-	}
+        // from TestDataManagementDialog
+        // testDataList is different from
+        // diagram.getDiagramContents().getTestDataList()
+        this.testDataList = testDataList;
+        this.targetIndex = targetIndex;
+    }
 
-	private void createFormatGroup(Composite parent) {
-		Group group = CompositeFactory
-				.createGroup(parent, "label.format", 3, 2);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite parent) {
+        createTestDataTableGroup(parent);
+        createFormatGroup(parent);
+        createFileGroup(parent);
+    }
 
-		this.formatSqlRadio = CompositeFactory.createRadio(this, group,
-				"label.sql", 2);
-		this.formatDBUnitRadio = CompositeFactory.createRadio(this, group,
-				"label.dbunit", 2);
-		this.formatDBUnitFlatXmlRadio = CompositeFactory.createRadio(this,
-				group, "label.dbunit.flat.xml", 2);
-		this.formatDBUnitXlsRadio = CompositeFactory.createRadio(this, group,
-				"label.dbunit.xls", 2);
+    private void createTestDataTableGroup(final Composite parent) {
+        testDataTable = CompositeFactory.createCheckedTreeViewer(this, parent, 100, 3);
+    }
 
-		CompositeFactory.fillLine(group);
+    private void createFormatGroup(final Composite parent) {
+        final Group group = CompositeFactory.createGroup(parent, "label.format", 3, 2);
 
-		this.fileEncodingCombo = CompositeFactory.createFileEncodingCombo(
-				this.diagram.getEditor().getDefaultCharset(), this, group,
-				"label.output.file.encoding", 1);
-	}
+        formatSqlRadio = CompositeFactory.createRadio(this, group, "label.sql", 2);
+        formatDBUnitRadio = CompositeFactory.createRadio(this, group, "label.dbunit", 2);
+        formatDBUnitFlatXmlRadio = CompositeFactory.createRadio(this, group, "label.dbunit.flat.xml", 2);
+        formatDBUnitXlsRadio = CompositeFactory.createRadio(this, group, "label.dbunit.xls", 2);
 
-	private void createFileGroup(Composite parent) {
-		this.outputDirectoryText = CompositeFactory.createDirectoryText(this,
-				parent, "label.output.dir", this.getBaseDir(), "");
-	}
+        CompositeFactory.fillLine(group);
 
-	@Override
-	protected void addListener() {
-		super.addListener();
+        fileEncodingCombo = CompositeFactory.createFileEncodingCombo(diagram.getEditor().getDefaultCharset(), this, group, "label.output.file.encoding", 1);
+    }
 
-		this.formatSqlRadio.addSelectionListener(new SelectionAdapter() {
+    private void createFileGroup(final Composite parent) {
+        outputDirectoryText = CompositeFactory.createDirectoryText(this, parent, "label.output.dir", getBaseDir(), "");
+    }
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fileEncodingCombo.setEnabled(true);
-			}
-		});
+    @Override
+    protected void addListener() {
+        super.addListener();
 
-		this.formatDBUnitRadio.addSelectionListener(new SelectionAdapter() {
+        formatSqlRadio.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fileEncodingCombo.setEnabled(true);
-			}
-		});
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                fileEncodingCombo.setEnabled(true);
+            }
+        });
 
-		this.formatDBUnitFlatXmlRadio
-				.addSelectionListener(new SelectionAdapter() {
+        formatDBUnitRadio.addSelectionListener(new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						fileEncodingCombo.setEnabled(true);
-					}
-				});
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                fileEncodingCombo.setEnabled(true);
+            }
+        });
 
-		this.formatDBUnitXlsRadio.addSelectionListener(new SelectionAdapter() {
+        formatDBUnitFlatXmlRadio.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fileEncodingCombo.setEnabled(false);
-			}
-		});
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                fileEncodingCombo.setEnabled(true);
+            }
+        });
 
-	}
+        formatDBUnitXlsRadio.addSelectionListener(new SelectionAdapter() {
 
-	@Override
-	protected String getErrorMessage() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                fileEncodingCombo.setEnabled(false);
+            }
+        });
 
-		if (this.testDataTable.getCheckedElements().length == 0) {
-			return "error.testdata.not.selected";
-		}
+    }
 
-		// if (this.outputDirectoryText.isBlank()) {
-		// return "error.output.dir.is.empty";
-		// }
+    @Override
+    protected String getErrorMessage() {
 
-		if (!Charset.isSupported(this.fileEncodingCombo.getText())) {
-			return "error.file.encoding.is.not.supported";
-		}
+        if (testDataTable.getCheckedElements().length == 0) {
+            return "error.testdata.not.selected";
+        }
 
-		return null;
-	}
+        // if (this.outputDirectoryText.isBlank()) {
+        // return "error.output.dir.is.empty";
+        // }
 
-	@Override
-	protected ExportWithProgressManager getExportWithProgressManager(
-			ExportSetting exportSetting) {
+        if (!Charset.isSupported(fileEncodingCombo.getText())) {
+            return "error.file.encoding.is.not.supported";
+        }
 
-		ExportTestDataSetting exportTestDataSetting = exportSetting
-				.getExportTestDataSetting();
+        return null;
+    }
 
-		if (this.formatSqlRadio.getSelection()) {
-			exportTestDataSetting.setExportFormat(TestData.EXPORT_FORMT_SQL);
+    @Override
+    protected ExportWithProgressManager getExportWithProgressManager(final ExportSetting exportSetting) {
 
-		} else if (this.formatDBUnitRadio.getSelection()) {
-			exportTestDataSetting.setExportFormat(TestData.EXPORT_FORMT_DBUNIT);
+        final ExportTestDataSetting exportTestDataSetting = exportSetting.getExportTestDataSetting();
 
-		} else if (this.formatDBUnitFlatXmlRadio.getSelection()) {
-			exportTestDataSetting
-					.setExportFormat(TestData.EXPORT_FORMT_DBUNIT_FLAT_XML);
+        if (formatSqlRadio.getSelection()) {
+            exportTestDataSetting.setExportFormat(TestData.EXPORT_FORMT_SQL);
 
-		} else if (this.formatDBUnitXlsRadio.getSelection()) {
-			exportTestDataSetting
-					.setExportFormat(TestData.EXPORT_FORMT_DBUNIT_XLS);
+        } else if (formatDBUnitRadio.getSelection()) {
+            exportTestDataSetting.setExportFormat(TestData.EXPORT_FORMT_DBUNIT);
 
-		}
+        } else if (formatDBUnitFlatXmlRadio.getSelection()) {
+            exportTestDataSetting.setExportFormat(TestData.EXPORT_FORMT_DBUNIT_FLAT_XML);
 
-		exportTestDataSetting.setExportFilePath(this.outputDirectoryText
-				.getFilePath());
-		exportTestDataSetting.setExportFileEncoding(this.fileEncodingCombo
-				.getText());
+        } else if (formatDBUnitXlsRadio.getSelection()) {
+            exportTestDataSetting.setExportFormat(TestData.EXPORT_FORMT_DBUNIT_XLS);
 
-		List<TestData> exportTestDataList = new ArrayList<TestData>();
+        }
 
-		for (Object selectedNode : this.testDataTable.getCheckedElements()) {
-			Object value = ((TreeNode) selectedNode).getValue();
+        exportTestDataSetting.setExportFilePath(outputDirectoryText.getFilePath());
+        exportTestDataSetting.setExportFileEncoding(fileEncodingCombo.getText());
 
-			if (value instanceof TestData) {
-				exportTestDataList.add((TestData) value);
-			}
-		}
+        final List<TestData> exportTestDataList = new ArrayList<TestData>();
 
-		return new ExportToTestDataManager(exportTestDataSetting,
-				exportTestDataList);
-	}
+        for (final Object selectedNode : testDataTable.getCheckedElements()) {
+            final Object value = ((TreeNode) selectedNode).getValue();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void setData() {
-		ExportTestDataSetting exportTestDataSetting = this.settings
-				.getExportSetting().getExportTestDataSetting();
+            if (value instanceof TestData) {
+                exportTestDataList.add((TestData) value);
+            }
+        }
 
-		setTestDataTable();
+        return new ExportToTestDataManager(exportTestDataSetting, exportTestDataList);
+    }
 
-		if (this.targetIndex >= 0) {
-			TreeNode rootNode = ((TreeNode[]) this.testDataTable.getInput())[0];
-			for (TreeNode treeNode : rootNode.getChildren()) {
-				if (treeNode.getValue() == this.testDataList
-						.get(this.targetIndex)) {
-					this.testDataTable.setChecked(treeNode, true);
-				}
-			}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setData() {
+        final ExportTestDataSetting exportTestDataSetting = settings.getExportSetting().getExportTestDataSetting();
 
-		} else {
-			this.testDataTable
-					.setCheckedElements((TreeNode[]) this.testDataTable
-							.getInput());
-		}
+        setTestDataTable();
 
-		this.fileEncodingCombo.setEnabled(true);
+        if (targetIndex >= 0) {
+            final TreeNode rootNode = ((TreeNode[]) testDataTable.getInput())[0];
+            for (final TreeNode treeNode : rootNode.getChildren()) {
+                if (treeNode.getValue() == testDataList.get(targetIndex)) {
+                    testDataTable.setChecked(treeNode, true);
+                }
+            }
 
-		if (exportTestDataSetting.getExportFormat() == TestData.EXPORT_FORMT_DBUNIT) {
-			this.formatDBUnitRadio.setSelection(true);
+        } else {
+            testDataTable.setCheckedElements((TreeNode[]) testDataTable.getInput());
+        }
 
-		} else if (exportTestDataSetting.getExportFormat() == TestData.EXPORT_FORMT_DBUNIT_FLAT_XML) {
-			this.formatDBUnitFlatXmlRadio.setSelection(true);
+        fileEncodingCombo.setEnabled(true);
 
-		} else if (exportTestDataSetting.getExportFormat() == TestData.EXPORT_FORMT_DBUNIT_XLS) {
-			this.formatDBUnitXlsRadio.setSelection(true);
-			this.fileEncodingCombo.setEnabled(false);
+        if (exportTestDataSetting.getExportFormat() == TestData.EXPORT_FORMT_DBUNIT) {
+            formatDBUnitRadio.setSelection(true);
 
-		} else {
-			this.formatSqlRadio.setSelection(true);
+        } else if (exportTestDataSetting.getExportFormat() == TestData.EXPORT_FORMT_DBUNIT_FLAT_XML) {
+            formatDBUnitFlatXmlRadio.setSelection(true);
 
-		}
+        } else if (exportTestDataSetting.getExportFormat() == TestData.EXPORT_FORMT_DBUNIT_XLS) {
+            formatDBUnitXlsRadio.setSelection(true);
+            fileEncodingCombo.setEnabled(false);
 
-		String outputDirectoryPath = exportTestDataSetting.getExportFilePath();
+        } else {
+            formatSqlRadio.setSelection(true);
 
-		if (Check.isEmpty(outputDirectoryPath)) {
-			outputDirectoryPath = "testdata";
-		}
+        }
 
-		this.outputDirectoryText.setText(outputDirectoryPath);
+        String outputDirectoryPath = exportTestDataSetting.getExportFilePath();
 
-		this.fileEncodingCombo.setText(exportTestDataSetting
-				.getExportFileEncoding());
-	}
+        if (Check.isEmpty(outputDirectoryPath)) {
+            outputDirectoryPath = "testdata";
+        }
 
-	private void setTestDataTable() {
-		List<TreeNode> treeNodeList = createTreeNodeList();
+        outputDirectoryText.setText(outputDirectoryPath);
 
-		TreeNode[] treeNodes = treeNodeList.toArray(new TreeNode[treeNodeList
-				.size()]);
-		this.testDataTable.setInput(treeNodes);
-		this.testDataTable.expandAll();
-	}
+        fileEncodingCombo.setText(exportTestDataSetting.getExportFileEncoding());
+    }
 
-	protected List<TreeNode> createTreeNodeList() {
-		List<TreeNode> treeNodeList = new ArrayList<TreeNode>();
+    private void setTestDataTable() {
+        final List<TreeNode> treeNodeList = createTreeNodeList();
 
-		TreeNode topNode = new TreeNode(new StringObjectModel(
-				ResourceString.getResourceString("label.testdata")));
-		treeNodeList.add(topNode);
+        final TreeNode[] treeNodes = treeNodeList.toArray(new TreeNode[treeNodeList.size()]);
+        testDataTable.setInput(treeNodes);
+        testDataTable.expandAll();
+    }
 
-		List<TreeNode> nodeList = new ArrayList<TreeNode>();
+    protected List<TreeNode> createTreeNodeList() {
+        final List<TreeNode> treeNodeList = new ArrayList<TreeNode>();
 
-		for (TestData testData : this.testDataList) {
-			TreeNode objectNode = new TreeNode(testData);
-			objectNode.setParent(topNode);
+        final TreeNode topNode = new TreeNode(new StringObjectModel(ResourceString.getResourceString("label.testdata")));
+        treeNodeList.add(topNode);
 
-			nodeList.add(objectNode);
-		}
+        final List<TreeNode> nodeList = new ArrayList<TreeNode>();
 
-		topNode.setChildren(nodeList.toArray(new TreeNode[nodeList.size()]));
+        for (final TestData testData : testDataList) {
+            final TreeNode objectNode = new TreeNode(testData);
+            objectNode.setParent(topNode);
 
-		return treeNodeList;
-	}
+            nodeList.add(objectNode);
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		this.createButton(parent, IDialogConstants.OK_ID,
-				ResourceString.getResourceString("label.button.export"), true);
-		this.createButton(parent, IDialogConstants.CLOSE_ID,
-				IDialogConstants.CLOSE_LABEL, false);
-	}
+        topNode.setChildren(nodeList.toArray(new TreeNode[nodeList.size()]));
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getTitle() {
-		return "dialog.title.export.testdata";
-	}
+        return treeNodeList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createButtonsForButtonBar(final Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, ResourceString.getResourceString("label.button.export"), true);
+        createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getTitle() {
+        return "dialog.title.export.testdata";
+    }
 
 }

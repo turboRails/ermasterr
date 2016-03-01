@@ -7,43 +7,42 @@ import org.insightech.er.editor.model.diagram_contents.element.connection.Connec
 
 public class MoveBendpointCommand extends AbstractCommand {
 
-	private ConnectionEditPart editPart;
+    private final ConnectionEditPart editPart;
 
-	private Bendpoint bendPoint;
+    private final Bendpoint bendPoint;
 
-	private Bendpoint oldBendpoint;
+    private Bendpoint oldBendpoint;
 
-	private int index;
+    private final int index;
 
-	public MoveBendpointCommand(ConnectionEditPart editPart, int x, int y,
-			int index) {
-		this.editPart = editPart;
-		this.bendPoint = new Bendpoint(x, y);
-		this.index = index;
-	}
+    public MoveBendpointCommand(final ConnectionEditPart editPart, final int x, final int y, final int index) {
+        this.editPart = editPart;
+        bendPoint = new Bendpoint(x, y);
+        this.index = index;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		ConnectionElement connection = (ConnectionElement) editPart.getModel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        final ConnectionElement connection = (ConnectionElement) editPart.getModel();
 
-		this.oldBendpoint = connection.getBendpoints().get(index);
-		connection.replaceBendpoint(index, this.bendPoint);
-		
-		connection.refreshBendpoint();
-	}
+        oldBendpoint = connection.getBendpoints().get(index);
+        connection.replaceBendpoint(index, bendPoint);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		ConnectionElement connection = (ConnectionElement) editPart.getModel();
-		connection.replaceBendpoint(index, this.oldBendpoint);
-		
-		connection.refreshBendpoint();
-	}
+        connection.refreshBendpoint();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        final ConnectionElement connection = (ConnectionElement) editPart.getModel();
+        connection.replaceBendpoint(index, oldBendpoint);
+
+        connection.refreshBendpoint();
+    }
 
 }

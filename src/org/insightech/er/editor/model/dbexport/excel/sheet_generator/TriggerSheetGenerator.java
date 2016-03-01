@@ -13,69 +13,55 @@ import org.insightech.er.util.POIUtils;
 
 public class TriggerSheetGenerator extends AbstractSheetGenerator {
 
-	private static final String KEYWORD_TRIGGER_NAME = "$PTGN";
+    private static final String KEYWORD_TRIGGER_NAME = "$PTGN";
 
-	private static final String KEYWORD_TRIGGER_DESCRIPTION = "$TGDSC";
+    private static final String KEYWORD_TRIGGER_DESCRIPTION = "$TGDSC";
 
-	private static final String KEYWORD_TRIGGER_SQL = "$SQL";
+    private static final String KEYWORD_TRIGGER_SQL = "$SQL";
 
-	public void setTriggerData(HSSFWorkbook workbook, HSSFSheet sheet,
-			Trigger trigger) {
-		POIUtils.replace(sheet, KEYWORD_TRIGGER_NAME, this.getValue(
-				this.keywordsValueMap, KEYWORD_TRIGGER_NAME, trigger.getName()));
+    public void setTriggerData(final HSSFWorkbook workbook, final HSSFSheet sheet, final Trigger trigger) {
+        POIUtils.replace(sheet, KEYWORD_TRIGGER_NAME, getValue(keywordsValueMap, KEYWORD_TRIGGER_NAME, trigger.getName()));
 
-		POIUtils.replace(sheet, KEYWORD_TRIGGER_DESCRIPTION, this.getValue(
-				this.keywordsValueMap, KEYWORD_TRIGGER_DESCRIPTION,
-				trigger.getDescription()));
+        POIUtils.replace(sheet, KEYWORD_TRIGGER_DESCRIPTION, getValue(keywordsValueMap, KEYWORD_TRIGGER_DESCRIPTION, trigger.getDescription()));
 
-		POIUtils.replace(sheet, KEYWORD_TRIGGER_SQL, this.getValue(
-				this.keywordsValueMap, KEYWORD_TRIGGER_SQL, trigger.getSql()));
-	}
+        POIUtils.replace(sheet, KEYWORD_TRIGGER_SQL, getValue(keywordsValueMap, KEYWORD_TRIGGER_SQL, trigger.getSql()));
+    }
 
-	@Override
-	public void generate(ProgressMonitor monitor, HSSFWorkbook workbook,
-			int sheetNo, boolean useLogicalNameAsSheetName,
-			Map<String, Integer> sheetNameMap,
-			Map<String, ObjectModel> sheetObjectMap, ERDiagram diagram,
-			Map<String, LoopDefinition> loopDefinitionMap)
-			throws InterruptedException {
+    @Override
+    public void generate(final ProgressMonitor monitor, final HSSFWorkbook workbook, final int sheetNo, final boolean useLogicalNameAsSheetName, final Map<String, Integer> sheetNameMap, final Map<String, ObjectModel> sheetObjectMap, final ERDiagram diagram, final Map<String, LoopDefinition> loopDefinitionMap) throws InterruptedException {
 
-		for (Trigger trigger : diagram.getDiagramContents().getTriggerSet()) {
-			String name = trigger.getName();
-			HSSFSheet newSheet = createNewSheet(workbook, sheetNo, name,
-					sheetNameMap);
+        for (final Trigger trigger : diagram.getDiagramContents().getTriggerSet()) {
+            final String name = trigger.getName();
+            final HSSFSheet newSheet = createNewSheet(workbook, sheetNo, name, sheetNameMap);
 
-			String sheetName = workbook.getSheetName(workbook
-					.getSheetIndex(newSheet));
-			monitor.subTaskWithCounter("[Trigger] " + sheetName);
+            final String sheetName = workbook.getSheetName(workbook.getSheetIndex(newSheet));
+            monitor.subTaskWithCounter("[Trigger] " + sheetName);
 
-			sheetObjectMap.put(sheetName, trigger);
+            sheetObjectMap.put(sheetName, trigger);
 
-			this.setTriggerData(workbook, newSheet, trigger);
-			monitor.worked(1);
-		}
-	}
+            setTriggerData(workbook, newSheet, trigger);
+            monitor.worked(1);
+        }
+    }
 
-	@Override
-	public String getTemplateSheetName() {
-		return "trigger_template";
-	}
+    @Override
+    public String getTemplateSheetName() {
+        return "trigger_template";
+    }
 
-	@Override
-	public String[] getKeywords() {
-		return new String[] { KEYWORD_TRIGGER_NAME,
-				KEYWORD_TRIGGER_DESCRIPTION, KEYWORD_TRIGGER_SQL };
-	}
+    @Override
+    public String[] getKeywords() {
+        return new String[] {KEYWORD_TRIGGER_NAME, KEYWORD_TRIGGER_DESCRIPTION, KEYWORD_TRIGGER_SQL};
+    }
 
-	@Override
-	public int getKeywordsColumnNo() {
-		return 16;
-	}
+    @Override
+    public int getKeywordsColumnNo() {
+        return 16;
+    }
 
-	@Override
-	public int count(ERDiagram diagram) {
-		return diagram.getDiagramContents().getTriggerSet().getObjectList()
-				.size();
-	}
+    @Override
+    public int count(final ERDiagram diagram) {
+        return diagram.getDiagramContents().getTriggerSet().getObjectList().size();
+    }
 
 }

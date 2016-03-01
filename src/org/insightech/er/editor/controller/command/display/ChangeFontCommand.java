@@ -6,51 +6,50 @@ import org.insightech.er.editor.model.diagram_contents.element.node.NodeElement;
 
 public class ChangeFontCommand extends AbstractCommand {
 
-	private ViewableModel viewableModel;
+    private final ViewableModel viewableModel;
 
-	private String oldFontName;
+    private final String oldFontName;
 
-	private String newFontName;
+    private final String newFontName;
 
-	private int oldFontSize;
+    private final int oldFontSize;
 
-	private int newFontSize;
+    private final int newFontSize;
 
-	public ChangeFontCommand(ViewableModel viewableModel, String fontName,
-			int fontSize) {
-		this.viewableModel = viewableModel;
+    public ChangeFontCommand(final ViewableModel viewableModel, final String fontName, final int fontSize) {
+        this.viewableModel = viewableModel;
 
-		this.oldFontName = viewableModel.getFontName();
-		this.oldFontSize = viewableModel.getFontSize();
+        oldFontName = viewableModel.getFontName();
+        oldFontSize = viewableModel.getFontSize();
 
-		this.newFontName = fontName;
-		this.newFontSize = fontSize;
-	}
+        newFontName = fontName;
+        newFontSize = fontSize;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.viewableModel.setFontName(this.newFontName);
-		this.viewableModel.setFontSize(this.newFontSize);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        viewableModel.setFontName(newFontName);
+        viewableModel.setFontSize(newFontSize);
 
-		this.viewableModel.refreshFont();
+        viewableModel.refreshFont();
 
-		if (this.viewableModel instanceof NodeElement) {
-			// to expand categories including this element.
-			((NodeElement) this.viewableModel).refreshCategory();
-		}
-	}
+        if (viewableModel instanceof NodeElement) {
+            // to expand categories including this element.
+            ((NodeElement) viewableModel).refreshCategory();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.viewableModel.setFontName(this.oldFontName);
-		this.viewableModel.setFontSize(this.oldFontSize);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        viewableModel.setFontName(oldFontName);
+        viewableModel.setFontSize(oldFontSize);
 
-		this.viewableModel.refreshFont();
-	}
+        viewableModel.refreshFont();
+    }
 }

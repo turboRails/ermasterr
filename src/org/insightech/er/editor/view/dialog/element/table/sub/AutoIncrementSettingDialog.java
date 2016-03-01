@@ -15,204 +15,193 @@ import org.insightech.er.util.Format;
 
 public class AutoIncrementSettingDialog extends AbstractDialog {
 
-	private Text incrementText;
+    private Text incrementText;
 
-	private Text minValueText;
+    private Text minValueText;
 
-	private Text maxValueText;
+    private Text maxValueText;
 
-	private Text startText;
+    private Text startText;
 
-	private Text cacheText;
+    private Text cacheText;
 
-	private Button cycleCheckBox;
+    private Button cycleCheckBox;
 
-	private Sequence sequence;
+    private final Sequence sequence;
 
-	private Sequence result;
+    private Sequence result;
 
-	private String database;
+    private final String database;
 
-	public AutoIncrementSettingDialog(Shell parentShell, Sequence sequence,
-			String database) {
-		super(parentShell);
+    public AutoIncrementSettingDialog(final Shell parentShell, final Sequence sequence, final String database) {
+        super(parentShell);
 
-		this.sequence = sequence;
-		this.database = database;
-	}
+        this.sequence = sequence;
+        this.database = database;
+    }
 
-	@Override
-	protected void initialize(Composite composite) {
-		this.incrementText = CompositeFactory.createNumText(this, composite,
-				"Increment", true);
+    @Override
+    protected void initialize(final Composite composite) {
+        incrementText = CompositeFactory.createNumText(this, composite, "Increment", true);
 
-		if (PostgresDBManager.ID.equals(this.database)) {
-			this.minValueText = CompositeFactory.createNumText(this, composite,
-					"MinValue", true);
-			this.maxValueText = CompositeFactory.createNumText(this, composite,
-					"MaxValue", true);
-		}
+        if (PostgresDBManager.ID.equals(database)) {
+            minValueText = CompositeFactory.createNumText(this, composite, "MinValue", true);
+            maxValueText = CompositeFactory.createNumText(this, composite, "MaxValue", true);
+        }
 
-		this.startText = CompositeFactory.createNumText(this, composite,
-				"Start", true);
+        startText = CompositeFactory.createNumText(this, composite, "Start", true);
 
-		if (PostgresDBManager.ID.equals(this.database)) {
-			this.cacheText = CompositeFactory.createNumText(this, composite,
-					"Cache", true);
-			this.cycleCheckBox = CompositeFactory.createCheckbox(this,
-					composite, "Cycle", false, 2);
-		}
-	}
+        if (PostgresDBManager.ID.equals(database)) {
+            cacheText = CompositeFactory.createNumText(this, composite, "Cache", true);
+            cycleCheckBox = CompositeFactory.createCheckbox(this, composite, "Cycle", false, 2);
+        }
+    }
 
-	@Override
-	protected String getErrorMessage() {
-		String text = incrementText.getText();
+    @Override
+    protected String getErrorMessage() {
+        String text = incrementText.getText();
 
-		if (!text.equals("")) {
-			try {
-				Integer.parseInt(text);
+        if (!text.equals("")) {
+            try {
+                Integer.parseInt(text);
 
-			} catch (NumberFormatException e) {
-				return "error.sequence.increment.degit";
-			}
-		}
+            } catch (final NumberFormatException e) {
+                return "error.sequence.increment.degit";
+            }
+        }
 
-		if (minValueText != null) {
-			text = minValueText.getText();
+        if (minValueText != null) {
+            text = minValueText.getText();
 
-			if (!text.equals("")) {
-				try {
-					Long.parseLong(text);
+            if (!text.equals("")) {
+                try {
+                    Long.parseLong(text);
 
-				} catch (NumberFormatException e) {
-					return "error.sequence.minValue.degit";
-				}
-			}
-		}
+                } catch (final NumberFormatException e) {
+                    return "error.sequence.minValue.degit";
+                }
+            }
+        }
 
-		if (maxValueText != null) {
-			text = maxValueText.getText();
+        if (maxValueText != null) {
+            text = maxValueText.getText();
 
-			if (!text.equals("")) {
-				try {
-					new BigDecimal(text);
+            if (!text.equals("")) {
+                try {
+                    new BigDecimal(text);
 
-				} catch (NumberFormatException e) {
-					return "error.sequence.maxValue.degit";
-				}
-			}
-		}
+                } catch (final NumberFormatException e) {
+                    return "error.sequence.maxValue.degit";
+                }
+            }
+        }
 
-		text = startText.getText();
+        text = startText.getText();
 
-		if (!text.equals("")) {
-			try {
-				Long.parseLong(text);
+        if (!text.equals("")) {
+            try {
+                Long.parseLong(text);
 
-			} catch (NumberFormatException e) {
-				return "error.sequence.start.degit";
-			}
-		}
+            } catch (final NumberFormatException e) {
+                return "error.sequence.start.degit";
+            }
+        }
 
-		if (cacheText != null) {
-			text = cacheText.getText();
+        if (cacheText != null) {
+            text = cacheText.getText();
 
-			if (!text.equals("")) {
-				try {
-					Integer.parseInt(text);
+            if (!text.equals("")) {
+                try {
+                    Integer.parseInt(text);
 
-				} catch (NumberFormatException e) {
-					return "error.sequence.cache.degit";
-				}
-			}
-		}
+                } catch (final NumberFormatException e) {
+                    return "error.sequence.cache.degit";
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected String getTitle() {
-		return "label.auto.increment.setting";
-	}
+    @Override
+    protected String getTitle() {
+        return "label.auto.increment.setting";
+    }
 
-	@Override
-	protected void perfomeOK() throws InputException {
-		this.result = new Sequence();
+    @Override
+    protected void perfomeOK() throws InputException {
+        result = new Sequence();
 
-		Integer increment = null;
-		Long minValue = null;
-		BigDecimal maxValue = null;
-		Long start = null;
-		Integer cache = null;
+        Integer increment = null;
+        Long minValue = null;
+        BigDecimal maxValue = null;
+        Long start = null;
+        Integer cache = null;
 
-		String text = incrementText.getText();
-		if (!text.equals("")) {
-			increment = Integer.valueOf(text);
-		}
+        String text = incrementText.getText();
+        if (!text.equals("")) {
+            increment = Integer.valueOf(text);
+        }
 
-		if (minValueText != null) {
-			text = minValueText.getText();
-			if (!text.equals("")) {
-				minValue = Long.valueOf(text);
-			}
-		}
+        if (minValueText != null) {
+            text = minValueText.getText();
+            if (!text.equals("")) {
+                minValue = Long.valueOf(text);
+            }
+        }
 
-		if (maxValueText != null) {
-			text = maxValueText.getText();
-			if (!text.equals("")) {
-				maxValue = new BigDecimal(text);
-			}
-		}
+        if (maxValueText != null) {
+            text = maxValueText.getText();
+            if (!text.equals("")) {
+                maxValue = new BigDecimal(text);
+            }
+        }
 
-		text = startText.getText();
-		if (!text.equals("")) {
-			start = Long.valueOf(text);
-		}
+        text = startText.getText();
+        if (!text.equals("")) {
+            start = Long.valueOf(text);
+        }
 
-		if (cacheText != null) {
-			text = cacheText.getText();
-			if (!text.equals("")) {
-				cache = Integer.valueOf(text);
-			}
-		}
+        if (cacheText != null) {
+            text = cacheText.getText();
+            if (!text.equals("")) {
+                cache = Integer.valueOf(text);
+            }
+        }
 
-		this.result.setIncrement(increment);
-		this.result.setMinValue(minValue);
-		this.result.setMaxValue(maxValue);
-		this.result.setStart(start);
-		this.result.setCache(cache);
+        result.setIncrement(increment);
+        result.setMinValue(minValue);
+        result.setMaxValue(maxValue);
+        result.setStart(start);
+        result.setCache(cache);
 
-		if (cycleCheckBox != null) {
-			this.result.setCycle(this.cycleCheckBox.getSelection());
-		}
-	}
+        if (cycleCheckBox != null) {
+            result.setCycle(cycleCheckBox.getSelection());
+        }
+    }
 
-	@Override
-	protected void setData() {
-		if (this.sequence != null) {
-			this.incrementText.setText(Format.toString(this.sequence
-					.getIncrement()));
-			if (minValueText != null) {
-				this.minValueText.setText(Format.toString(this.sequence
-						.getMinValue()));
-			}
-			if (maxValueText != null) {
-				this.maxValueText.setText(Format.toString(this.sequence
-						.getMaxValue()));
-			}
-			this.startText.setText(Format.toString(this.sequence.getStart()));
-			if (maxValueText != null) {
-				this.cacheText
-						.setText(Format.toString(this.sequence.getCache()));
-			}
-			if (cycleCheckBox != null) {
-				this.cycleCheckBox.setSelection(this.sequence.isCycle());
-			}
-		}
-	}
+    @Override
+    protected void setData() {
+        if (sequence != null) {
+            incrementText.setText(Format.toString(sequence.getIncrement()));
+            if (minValueText != null) {
+                minValueText.setText(Format.toString(sequence.getMinValue()));
+            }
+            if (maxValueText != null) {
+                maxValueText.setText(Format.toString(sequence.getMaxValue()));
+            }
+            startText.setText(Format.toString(sequence.getStart()));
+            if (maxValueText != null) {
+                cacheText.setText(Format.toString(sequence.getCache()));
+            }
+            if (cycleCheckBox != null) {
+                cycleCheckBox.setSelection(sequence.isCycle());
+            }
+        }
+    }
 
-	public Sequence getResult() {
-		return result;
-	}
+    public Sequence getResult() {
+        return result;
+    }
 
 }

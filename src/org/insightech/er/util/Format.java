@@ -7,117 +7,106 @@ import org.insightech.er.editor.model.diagram_contents.not_element.dictionary.Ty
 
 public class Format {
 
-	public static String formatType(SqlType sqlType, TypeData typeData,
-			String database, boolean embedded) {
-		String type = null;
+    public static String formatType(final SqlType sqlType, final TypeData typeData, final String database, final boolean embedded) {
+        String type = null;
 
-		if (sqlType != null) {
-			type = sqlType.getAlias(database);
-			if (type != null) {
-				if (embedded) {
-					if (typeData.getLength() != null
-							&& typeData.getDecimal() != null) {
-						type = type.replaceAll(
-								"\\(.,.\\)",
-								"(" + typeData.getLength() + ","
-										+ typeData.getDecimal() + ")");
+        if (sqlType != null) {
+            type = sqlType.getAlias(database);
+            if (type != null) {
+                if (embedded) {
+                    if (typeData.getLength() != null && typeData.getDecimal() != null) {
+                        type = type.replaceAll("\\(.,.\\)", "(" + typeData.getLength() + "," + typeData.getDecimal() + ")");
 
-						type = type.replaceFirst("\\([a-z]\\)",
-								"(" + typeData.getLength() + ")").replaceFirst(
-								"\\([a-z]\\)",
-								"(" + typeData.getDecimal() + ")");
+                        type = type.replaceFirst("\\([a-z]\\)", "(" + typeData.getLength() + ")").replaceFirst("\\([a-z]\\)", "(" + typeData.getDecimal() + ")");
 
-					} else if (typeData.getLength() != null) {
-						String len = null;
+                    } else if (typeData.getLength() != null) {
+                        String len = null;
 
-						if ("BLOB".equalsIgnoreCase(type)) {
-							len = getFileSizeStr(typeData.getLength()
-									.longValue());
-						} else {
-							len = String.valueOf(typeData.getLength());							
-						}
+                        if ("BLOB".equalsIgnoreCase(type)) {
+                            len = getFileSizeStr(typeData.getLength().longValue());
+                        } else {
+                            len = String.valueOf(typeData.getLength());
+                        }
 
-						type = type.replaceAll("\\(.\\)", "(" + len + ")");
+                        type = type.replaceAll("\\(.\\)", "(" + len + ")");
 
-					}
-				}
-				
-				if (sqlType.isNeedCharSemantics(database) && typeData.isCharSemantics()) {
-					type = type.replaceAll("\\)", " char)");
-				}
+                    }
+                }
 
-				if (typeData.isArray() && PostgresDBManager.ID.equals(database)) {
-					for (int i = 0; i < typeData.getArrayDimension(); i++) {
-						type += "[]";
-					}
-				}
+                if (sqlType.isNeedCharSemantics(database) && typeData.isCharSemantics()) {
+                    type = type.replaceAll("\\)", " char)");
+                }
 
-				if (sqlType.isNumber() && typeData.isUnsigned()
-						&& MySQLDBManager.ID.equals(database)) {
-					type += " unsigned";
-				}
+                if (typeData.isArray() && PostgresDBManager.ID.equals(database)) {
+                    for (int i = 0; i < typeData.getArrayDimension(); i++) {
+                        type += "[]";
+                    }
+                }
 
-				if (sqlType.isNumber() && typeData.isZerofill()
-						&& MySQLDBManager.ID.equals(database)) {
-					type += " zerofill";
-				}
+                if (sqlType.isNumber() && typeData.isUnsigned() && MySQLDBManager.ID.equals(database)) {
+                    type += " unsigned";
+                }
 
-				if (sqlType.doesNeedArgs()) {
-					type += "(" + typeData.getArgs() + ")";
-				}
+                if (sqlType.isNumber() && typeData.isZerofill() && MySQLDBManager.ID.equals(database)) {
+                    type += " zerofill";
+                }
 
-			} else {
-				type = "";
-			}
+                if (sqlType.doesNeedArgs()) {
+                    type += "(" + typeData.getArgs() + ")";
+                }
 
-		} else {
-			type = "";
-		}
+            } else {
+                type = "";
+            }
 
-		return type;
-	}
+        } else {
+            type = "";
+        }
 
-	public static String getFileSizeStr(long fileSize) {
-		long size = fileSize;
-		String unit = "";
+        return type;
+    }
 
-		if (size > 1024) {
-			size = size / 1024;
-			unit = "K";
+    public static String getFileSizeStr(final long fileSize) {
+        long size = fileSize;
+        String unit = "";
 
-			if (size > 1024) {
-				size = size / 1024;
-				unit = "M";
+        if (size > 1024) {
+            size = size / 1024;
+            unit = "K";
 
-				if (size > 1024) {
-					size = size / 1024;
-					unit = "G";
-				}
-			}
-		}
+            if (size > 1024) {
+                size = size / 1024;
+                unit = "M";
 
-		return size + unit;
-	}
+                if (size > 1024) {
+                    size = size / 1024;
+                    unit = "G";
+                }
+            }
+        }
 
-	public static String null2blank(String str) {
-		if (str == null) {
-			return "";
-		}
-		return str;
-	}
+        return size + unit;
+    }
 
-	public static String escapeSQL(String str) {
-		str = str.replaceAll("'", "''");
-		str = str.replaceAll("\\\\", "\\\\\\\\");
+    public static String null2blank(final String str) {
+        if (str == null) {
+            return "";
+        }
+        return str;
+    }
 
-		return str;
-	}
+    public static String escapeSQL(String str) {
+        str = str.replaceAll("'", "''");
+        str = str.replaceAll("\\\\", "\\\\\\\\");
 
-	public static String toString(Object value) {
-		if (value == null) {
-			return "";
-		}
+        return str;
+    }
 
-		return String.valueOf(value);
-	}
+    public static String toString(final Object value) {
+        if (value == null) {
+            return "";
+        }
+
+        return String.valueOf(value);
+    }
 }

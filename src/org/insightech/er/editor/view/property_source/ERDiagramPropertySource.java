@@ -17,78 +17,73 @@ import org.insightech.er.editor.model.settings.Settings;
 
 public class ERDiagramPropertySource extends AbstractPropertySource {
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	public ERDiagramPropertySource(ERDiagramMultiPageEditor editor,
-			ERDiagram diagram) {
-		super(editor);
-		this.diagram = diagram;
-	}
+    public ERDiagramPropertySource(final ERDiagramMultiPageEditor editor, final ERDiagram diagram) {
+        super(editor);
+        this.diagram = diagram;
+    }
 
-	public Object getEditableValue() {
-		return this.diagram;
-	}
+    @Override
+    public Object getEditableValue() {
+        return diagram;
+    }
 
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		List<String> dbList = DBManagerFactory.getAllDBList();
+    @Override
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        final List<String> dbList = DBManagerFactory.getAllDBList();
 
-		return new IPropertyDescriptor[] { new ComboBoxPropertyDescriptor(
-				"database", ResourceString.getResourceString("label.database"),
-				dbList.toArray(new String[dbList.size()])) };
-	}
+        return new IPropertyDescriptor[] {new ComboBoxPropertyDescriptor("database", ResourceString.getResourceString("label.database"), dbList.toArray(new String[dbList.size()]))};
+    }
 
-	public Object getPropertyValue(Object id) {
-		if (id.equals("database")) {
-			List<String> dbList = DBManagerFactory.getAllDBList();
+    @Override
+    public Object getPropertyValue(final Object id) {
+        if (id.equals("database")) {
+            final List<String> dbList = DBManagerFactory.getAllDBList();
 
-			for (int i = 0; i < dbList.size(); i++) {
-				if (dbList.get(i).equals(this.diagram.getDatabase())) {
-					return new Integer(i);
-				}
-			}
+            for (int i = 0; i < dbList.size(); i++) {
+                if (dbList.get(i).equals(diagram.getDatabase())) {
+                    return new Integer(i);
+                }
+            }
 
-			return new Integer(0);
-		}
+            return new Integer(0);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public boolean isPropertySet(Object id) {
-		if (id.equals("database")) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean isPropertySet(final Object id) {
+        if (id.equals("database")) {
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	protected Command createSetPropertyCommand(Object id, Object value) {
-		if (id.equals("database")) {
-			MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), SWT.ICON_QUESTION
-					| SWT.OK | SWT.CANCEL);
-			messageBox.setText(ResourceString
-					.getResourceString("dialog.title.change.database"));
-			messageBox.setMessage(ResourceString
-					.getResourceString("dialog.message.change.database"));
+    @Override
+    protected Command createSetPropertyCommand(final Object id, final Object value) {
+        if (id.equals("database")) {
+            final MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
+            messageBox.setText(ResourceString.getResourceString("dialog.title.change.database"));
+            messageBox.setMessage(ResourceString.getResourceString("dialog.message.change.database"));
 
-			if (messageBox.open() == SWT.OK) {
-				List<String> dbList = DBManagerFactory.getAllDBList();
+            if (messageBox.open() == SWT.OK) {
+                final List<String> dbList = DBManagerFactory.getAllDBList();
 
-				int index = Integer.parseInt(String.valueOf(value));
+                final int index = Integer.parseInt(String.valueOf(value));
 
-				Settings settings = (Settings) diagram.getDiagramContents()
-						.getSettings().clone();
-				settings.setDatabase(dbList.get(index));
+                final Settings settings = diagram.getDiagramContents().getSettings().clone();
+                settings.setDatabase(dbList.get(index));
 
-				ChangeSettingsCommand command = new ChangeSettingsCommand(
-						this.diagram, settings, true);
+                final ChangeSettingsCommand command = new ChangeSettingsCommand(diagram, settings, true);
 
-				return command;
-			}
+                return command;
+            }
 
-		}
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

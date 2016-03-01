@@ -8,26 +8,23 @@ import org.insightech.er.util.io.FileUtils;
 
 public class DirectoryText extends AbstractPathText {
 
-	private String message;
+    private final String message;
 
-	public DirectoryText(Composite parent, final File projectDir,
-			final String message) {
-		this(parent, projectDir, message, true);
-	}
+    public DirectoryText(final Composite parent, final File projectDir, final String message) {
+        this(parent, projectDir, message, true);
+    }
 
-	public DirectoryText(Composite parent, final File projectDir,
-			final String message, boolean indent) {
-		super(parent, projectDir, indent);
+    public DirectoryText(final Composite parent, final File projectDir, final String message, final boolean indent) {
+        super(parent, projectDir, indent);
 
-		this.message = message;
-	}
+        this.message = message;
+    }
 
-	@Override
-	protected String selectPathByDilaog() {
-		String filePath = FileUtils.getFile(this.projectDir, getFilePath())
-				.getAbsolutePath();
+    @Override
+    protected String selectPathByDilaog() {
+        final String filePath = FileUtils.getFile(projectDir, getFilePath()).getAbsolutePath();
 
-		return ERDiagramActivator.showDirectoryDialog(filePath, this.message);
-	}
+        return ERDiagramActivator.showDirectoryDialog(filePath, message);
+    }
 
 }

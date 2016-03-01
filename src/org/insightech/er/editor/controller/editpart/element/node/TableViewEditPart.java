@@ -26,181 +26,158 @@ import org.insightech.er.editor.view.figure.table.TableFigure;
 import org.insightech.er.editor.view.figure.table.column.GroupColumnFigure;
 import org.insightech.er.editor.view.figure.table.column.NormalColumnFigure;
 
-public abstract class TableViewEditPart extends NodeElementEditPart implements
-		IResizable {
+public abstract class TableViewEditPart extends NodeElementEditPart implements IResizable {
 
-	private Font titleFont;
+    private Font titleFont;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected List getModelChildren() {
-		List<Object> modelChildren = new ArrayList<Object>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List getModelChildren() {
+        final List<Object> modelChildren = new ArrayList<Object>();
 
-		TableView tableView = (TableView) this.getModel();
+        final TableView tableView = (TableView) getModel();
 
-		ERDiagram diagram = this.getDiagram();
-		if (diagram.getDiagramContents().getSettings().isNotationExpandGroup()) {
-			modelChildren.addAll(tableView.getExpandedColumns());
+        final ERDiagram diagram = getDiagram();
+        if (diagram.getDiagramContents().getSettings().isNotationExpandGroup()) {
+            modelChildren.addAll(tableView.getExpandedColumns());
 
-		} else {
-			modelChildren.addAll(tableView.getColumns());
-		}
+        } else {
+            modelChildren.addAll(tableView.getColumns());
+        }
 
-		return modelChildren;
-	}
+        return modelChildren;
+    }
 
-	@Override
-	public void doRefreshVisuals() {
-		TableFigure tableFigure = (TableFigure) this.getFigure();
-		TableView tableView = (TableView) this.getModel();
+    @Override
+    public void doRefreshVisuals() {
+        final TableFigure tableFigure = (TableFigure) getFigure();
+        final TableView tableView = (TableView) getModel();
 
-		tableFigure.create(tableView.getColor());
+        tableFigure.create(tableView.getColor());
 
-		ERDiagram diagram = this.getDiagram();
-		tableFigure.setName(getTableViewName(tableView, diagram));
+        final ERDiagram diagram = getDiagram();
+        tableFigure.setName(getTableViewName(tableView, diagram));
 
-		UpdatedNodeElement updated = null;
-		if (diagram.getChangeTrackingList().isCalculated()) {
-			updated = diagram.getChangeTrackingList().getUpdatedNodeElement(
-					tableView);
-		}
+        UpdatedNodeElement updated = null;
+        if (diagram.getChangeTrackingList().isCalculated()) {
+            updated = diagram.getChangeTrackingList().getUpdatedNodeElement(tableView);
+        }
 
-		for (Object child : this.getChildren()) {
-			ColumnEditPart part = (ColumnEditPart) child;
-			part.refreshTableColumns(updated);
-		}
+        for (final Object child : getChildren()) {
+            final ColumnEditPart part = (ColumnEditPart) child;
+            part.refreshTableColumns(updated);
+        }
 
-		if (updated != null) {
-			showRemovedColumns(diagram, tableFigure,
-					updated.getRemovedColumns(), true);
-		}
-	}
+        if (updated != null) {
+            showRemovedColumns(diagram, tableFigure, updated.getRemovedColumns(), true);
+        }
+    }
 
-	public static void showRemovedColumns(ERDiagram diagram,
-			TableFigure tableFigure, Collection<Column> removedColumns,
-			boolean isRemoved) {
+    public static void showRemovedColumns(final ERDiagram diagram, final TableFigure tableFigure, final Collection<Column> removedColumns, final boolean isRemoved) {
 
-		int notationLevel = diagram.getDiagramContents().getSettings()
-				.getNotationLevel();
+        final int notationLevel = diagram.getDiagramContents().getSettings().getNotationLevel();
 
-		for (Column removedColumn : removedColumns) {
+        for (final Column removedColumn : removedColumns) {
 
-			if (removedColumn instanceof ColumnGroup) {
-				if (diagram.getDiagramContents().getSettings()
-						.isNotationExpandGroup()) {
-					ColumnGroup columnGroup = (ColumnGroup) removedColumn;
+            if (removedColumn instanceof ColumnGroup) {
+                if (diagram.getDiagramContents().getSettings().isNotationExpandGroup()) {
+                    final ColumnGroup columnGroup = (ColumnGroup) removedColumn;
 
-					for (NormalColumn normalColumn : columnGroup.getColumns()) {
-						if (notationLevel == Settings.NOTATION_LEVLE_KEY
-								&& !normalColumn.isPrimaryKey()
-								&& !normalColumn.isForeignKey()
-								&& !normalColumn.isReferedStrictly()) {
-							continue;
-						}
+                    for (final NormalColumn normalColumn : columnGroup.getColumns()) {
+                        if (notationLevel == Settings.NOTATION_LEVLE_KEY && !normalColumn.isPrimaryKey() && !normalColumn.isForeignKey() && !normalColumn.isReferedStrictly()) {
+                            continue;
+                        }
 
-						NormalColumnFigure columnFigure = new NormalColumnFigure();
-						tableFigure.getColumns().add(columnFigure);
+                        final NormalColumnFigure columnFigure = new NormalColumnFigure();
+                        tableFigure.getColumns().add(columnFigure);
 
-						NormalColumnEditPart.addColumnFigure(diagram,
-								tableFigure, columnFigure, normalColumn, false,
-								false, false, false, isRemoved);
-					}
+                        NormalColumnEditPart.addColumnFigure(diagram, tableFigure, columnFigure, normalColumn, false, false, false, false, isRemoved);
+                    }
 
-				} else {
-					if ((notationLevel == Settings.NOTATION_LEVLE_KEY)) {
-						continue;
-					}
+                } else {
+                    if ((notationLevel == Settings.NOTATION_LEVLE_KEY)) {
+                        continue;
+                    }
 
-					GroupColumnFigure columnFigure = new GroupColumnFigure();
-					tableFigure.getColumns().add(columnFigure);
+                    final GroupColumnFigure columnFigure = new GroupColumnFigure();
+                    tableFigure.getColumns().add(columnFigure);
 
-					GroupColumnEditPart.addGroupColumnFigure(diagram,
-							tableFigure, columnFigure, removedColumn, false,
-							false, isRemoved);
-				}
+                    GroupColumnEditPart.addGroupColumnFigure(diagram, tableFigure, columnFigure, removedColumn, false, false, isRemoved);
+                }
 
-			} else {
-				NormalColumn normalColumn = (NormalColumn) removedColumn;
-				if (notationLevel == Settings.NOTATION_LEVLE_KEY
-						&& !normalColumn.isPrimaryKey()
-						&& !normalColumn.isForeignKey()
-						&& !normalColumn.isReferedStrictly()) {
-					continue;
-				}
+            } else {
+                final NormalColumn normalColumn = (NormalColumn) removedColumn;
+                if (notationLevel == Settings.NOTATION_LEVLE_KEY && !normalColumn.isPrimaryKey() && !normalColumn.isForeignKey() && !normalColumn.isReferedStrictly()) {
+                    continue;
+                }
 
-				NormalColumnFigure columnFigure = new NormalColumnFigure();
-				tableFigure.getColumns().add(columnFigure);
+                final NormalColumnFigure columnFigure = new NormalColumnFigure();
+                tableFigure.getColumns().add(columnFigure);
 
-				NormalColumnEditPart.addColumnFigure(diagram, tableFigure,
-						columnFigure, normalColumn, false, false, false, false,
-						isRemoved);
-			}
-		}
-	}
+                NormalColumnEditPart.addColumnFigure(diagram, tableFigure, columnFigure, normalColumn, false, false, false, false, isRemoved);
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void refreshSettings(Settings settings) {
-		TableFigure figure = (TableFigure) this.getFigure();
-		figure.setTableStyle(settings.getTableStyle());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void refreshSettings(final Settings settings) {
+        final TableFigure figure = (TableFigure) getFigure();
+        figure.setTableStyle(settings.getTableStyle());
 
-		super.refreshSettings(settings);
-	}
+        super.refreshSettings(settings);
+    }
 
-	protected Font changeFont(TableFigure tableFigure) {
-		Font font = super.changeFont(tableFigure);
+    protected Font changeFont(final TableFigure tableFigure) {
+        final Font font = super.changeFont(tableFigure);
 
-		FontData fonData = font.getFontData()[0];
+        final FontData fonData = font.getFontData()[0];
 
-		this.titleFont = Resources.getFont(fonData.getName(),
-				fonData.getHeight(), SWT.BOLD);
+        titleFont = Resources.getFont(fonData.getName(), fonData.getHeight(), SWT.BOLD);
 
-		tableFigure.setFont(font, this.titleFont);
+        tableFigure.setFont(font, titleFont);
 
-		return font;
-	}
+        return font;
+    }
 
-	public static String getTableViewName(TableView tableView, ERDiagram diagram) {
-		String name = null;
+    public static String getTableViewName(final TableView tableView, final ERDiagram diagram) {
+        String name = null;
 
-		int viewMode = diagram.getDiagramContents().getSettings().getViewMode();
+        final int viewMode = diagram.getDiagramContents().getSettings().getViewMode();
 
-		if (viewMode == Settings.VIEW_MODE_PHYSICAL) {
-			name = diagram.filter(tableView.getPhysicalName());
+        if (viewMode == Settings.VIEW_MODE_PHYSICAL) {
+            name = diagram.filter(tableView.getPhysicalName());
 
-		} else if (viewMode == Settings.VIEW_MODE_LOGICAL) {
-			name = diagram.filter(tableView.getLogicalName());
+        } else if (viewMode == Settings.VIEW_MODE_LOGICAL) {
+            name = diagram.filter(tableView.getLogicalName());
 
-		} else {
-			name = diagram.filter(tableView.getLogicalName()) + "/"
-					+ diagram.filter(tableView.getPhysicalName());
-		}
+        } else {
+            name = diagram.filter(tableView.getLogicalName()) + "/" + diagram.filter(tableView.getPhysicalName());
+        }
 
-		return name;
-	}
+        return name;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IFigure getContentPane() {
-		TableFigure figure = (TableFigure) super.getContentPane();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IFigure getContentPane() {
+        final TableFigure figure = (TableFigure) super.getContentPane();
 
-		return figure.getColumns();
-	}
+        return figure.getColumns();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createEditPolicies() {
-		this.installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new TableViewComponentEditPolicy());
-		this.installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE,
-				new TableViewGraphicalNodeEditPolicy());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createEditPolicies() {
+        installEditPolicy(EditPolicy.COMPONENT_ROLE, new TableViewComponentEditPolicy());
+        installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new TableViewGraphicalNodeEditPolicy());
+    }
 }

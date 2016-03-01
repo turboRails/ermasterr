@@ -34,429 +34,408 @@ import org.insightech.er.util.Format;
 
 public class TestDataDialog extends AbstractTabbedDialog {
 
-	public static final int TABLE_WIDTH = 800;
+    public static final int TABLE_WIDTH = 800;
 
-	public static final int TABLE_HEIGHT = 300;
+    public static final int TABLE_HEIGHT = 300;
 
-	private Button addButton;
+    private Button addButton;
 
-	private Button removeButton;
+    private Button removeButton;
 
-	private org.eclipse.swt.widgets.List allTableListWidget;
+    private org.eclipse.swt.widgets.List allTableListWidget;
 
-	private Table selectedTableTable;
+    private Table selectedTableTable;
 
-	private Button repeatToDirectRadio;
+    private Button repeatToDirectRadio;
 
-	private Button directToRepeatRadio;
+    private Button directToRepeatRadio;
 
-	private DirectTestDataTabWrapper directTestDataTabWrapper;
+    private DirectTestDataTabWrapper directTestDataTabWrapper;
 
-	private RepeatTestDataTabWrapper repeatTestDataTabWrapper;
+    private RepeatTestDataTabWrapper repeatTestDataTabWrapper;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private TestData testData;
+    private final TestData testData;
 
-	private List<ERTable> allTableList;
+    private final List<ERTable> allTableList;
 
-	private Text nameText;
+    private Text nameText;
 
-	private int selectedTableIndex = -1;
+    private int selectedTableIndex = -1;
 
-	public ERDiagram getDiagram() {
-		return this.diagram;
-	}
+    public ERDiagram getDiagram() {
+        return diagram;
+    }
 
-	public TestDataDialog(Shell parentShell, ERDiagram diagram,
-			TestData testData) {
-		super(parentShell);
+    public TestDataDialog(final Shell parentShell, final ERDiagram diagram, final TestData testData) {
+        super(parentShell);
 
-		this.diagram = diagram;
+        this.diagram = diagram;
 
-		this.testData = testData.clone();
+        this.testData = testData.clone();
 
-		this.allTableList = diagram.getDiagramContents().getContents()
-				.getTableSet().getList();
-	}
+        allTableList = diagram.getDiagramContents().getContents().getTableSet().getList();
+    }
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
 
-		layout.numColumns = 1;
-	}
+        layout.numColumns = 1;
+    }
 
-	@Override
-	protected void initialize(Composite composite) {
-		this.createNameComposite(composite);
-		this.createTopComposite(composite);
-		this.createBottomComposite(composite);
-	}
+    @Override
+    protected void initialize(final Composite composite) {
+        createNameComposite(composite);
+        createTopComposite(composite);
+        createBottomComposite(composite);
+    }
 
-	private void createNameComposite(Composite parent) {
-		Composite nameComposite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
+    private void createNameComposite(final Composite parent) {
+        final Composite nameComposite = new Composite(parent, SWT.NONE);
+        final GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
 
-		nameComposite.setLayoutData(gridData);
+        nameComposite.setLayoutData(gridData);
 
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		nameComposite.setLayout(layout);
+        final GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        nameComposite.setLayout(layout);
 
-		this.nameText = CompositeFactory.createText(this, nameComposite,
-				"label.testdata.name", true, true);
-	}
+        nameText = CompositeFactory.createText(this, nameComposite, "label.testdata.name", true, true);
+    }
 
-	private void createTopComposite(Composite parent) {
-		Composite topComposite = new Composite(parent, SWT.NONE);
+    private void createTopComposite(final Composite parent) {
+        final Composite topComposite = new Composite(parent, SWT.NONE);
 
-		GridLayout mainLayout = new GridLayout();
-		mainLayout.numColumns = 3;
-		topComposite.setLayout(mainLayout);
+        final GridLayout mainLayout = new GridLayout();
+        mainLayout.numColumns = 3;
+        topComposite.setLayout(mainLayout);
 
-		GridData topGridData = new GridData();
-		topGridData.grabExcessHorizontalSpace = true;
-		topGridData.horizontalAlignment = GridData.FILL;
-		topGridData.heightHint = 200;
-		topComposite.setLayoutData(topGridData);
+        final GridData topGridData = new GridData();
+        topGridData.grabExcessHorizontalSpace = true;
+        topGridData.horizontalAlignment = GridData.FILL;
+        topGridData.heightHint = 200;
+        topComposite.setLayoutData(topGridData);
 
-		this.createAllTableList(topComposite);
+        createAllTableList(topComposite);
 
-		this.addButton = CompositeFactory.createAddButton(topComposite);
-		this.addButton.setEnabled(false);
+        addButton = CompositeFactory.createAddButton(topComposite);
+        addButton.setEnabled(false);
 
-		this.createSelectedTableTable(topComposite);
+        createSelectedTableTable(topComposite);
 
-		this.removeButton = CompositeFactory.createRemoveButton(topComposite);
-		this.removeButton.setEnabled(false);
-	}
+        removeButton = CompositeFactory.createRemoveButton(topComposite);
+        removeButton.setEnabled(false);
+    }
 
-	private void createAllTableList(Composite composite) {
-		Group group = new Group(composite, SWT.NONE);
-
-		GridData gridData = new GridData();
-		gridData.verticalSpan = 2;
-		gridData.horizontalAlignment = GridData.BEGINNING;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.verticalAlignment = GridData.FILL;
-		group.setLayoutData(gridData);
-
-		GridLayout groupLayout = new GridLayout();
-		group.setLayout(groupLayout);
-		group.setText(ResourceString.getResourceString("label.all.table"));
-
-		GridData comboGridData = new GridData();
-		comboGridData.widthHint = 300;
-		comboGridData.grabExcessVerticalSpace = true;
-		comboGridData.verticalAlignment = GridData.FILL;
-
-		this.allTableListWidget = new org.eclipse.swt.widgets.List(group,
-				SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
-		this.allTableListWidget.setLayoutData(comboGridData);
-	}
-
-	private void createSelectedTableTable(Composite composite) {
-		GridData gridData = new GridData();
-		gridData.verticalSpan = 2;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.verticalAlignment = GridData.FILL;
-
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
-
-		Group group = new Group(composite, SWT.NONE);
-		group.setText(ResourceString
-				.getResourceString("label.testdata.table.list"));
-		group.setLayout(gridLayout);
-		group.setLayoutData(gridData);
-
-		GridData tableGridData = new GridData();
-		tableGridData.grabExcessVerticalSpace = true;
-		tableGridData.verticalAlignment = GridData.FILL;
-		tableGridData.widthHint = 300;
-		tableGridData.verticalSpan = 2;
-
-		this.selectedTableTable = new Table(group, SWT.FULL_SELECTION
-				| SWT.BORDER | SWT.MULTI);
-		this.selectedTableTable.setHeaderVisible(false);
-		this.selectedTableTable.setLayoutData(tableGridData);
-		this.selectedTableTable.setLinesVisible(false);
-
-		TableColumn tableColumn = new TableColumn(this.selectedTableTable,
-				SWT.CENTER);
-		tableColumn.setWidth(200);
-		tableColumn.setText(ResourceString
-				.getResourceString("label.testdata.table.name"));
-
-		TableColumn numColumn = new TableColumn(this.selectedTableTable,
-				SWT.CENTER);
-		numColumn.setWidth(80);
-		numColumn.setText(ResourceString
-				.getResourceString("label.testdata.table.test.num"));
-	}
-
-	private void createBottomComposite(Composite composite) {
-		this.createOutputOrderGroup(composite);
-		this.createTabFolder(composite);
-	}
-
-	private void createOutputOrderGroup(Composite parent) {
-		GridData groupGridData = new GridData();
-		groupGridData.horizontalAlignment = GridData.FILL;
-		groupGridData.grabExcessHorizontalSpace = true;
-
-		GridLayout groupLayout = new GridLayout();
-		groupLayout.marginWidth = 15;
-		groupLayout.marginHeight = 15;
-		groupLayout.numColumns = 4;
-
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(ResourceString.getResourceString("label.output.order"));
-		group.setLayoutData(groupGridData);
-		group.setLayout(groupLayout);
-
-		this.directToRepeatRadio = CompositeFactory.createRadio(this, group,
-				"label.output.order.direct.to.repeat");
-		this.repeatToDirectRadio = CompositeFactory.createRadio(this, group,
-				"label.output.order.repeat.to.direct");
-	}
-
-	private void initSelectedTableTable() {
-		this.selectedTableTable.removeAll();
-
-		for (Map.Entry<ERTable, TableTestData> entry : testData
-				.getTableTestDataMap().entrySet()) {
-			ERTable table = entry.getKey();
-			TableTestData tableTestData = entry.getValue();
-
-			TableItem tableItem = new TableItem(this.selectedTableTable,
-					SWT.NONE);
-			tableItem.setText(0, table.getName());
-			tableItem
-					.setText(1, String.valueOf(tableTestData.getTestDataNum()));
-		}
-	}
-
-	public void resetTestDataNum() {
-		Display.getDefault().asyncExec(new Runnable() {
-
-			public void run() {
-				int targetIndex = selectedTableTable.getSelectionIndex();
-
-				if (targetIndex != -1) {
-
-					int num = directTestDataTabWrapper.getTestDataNum()
-							+ repeatTestDataTabWrapper.getTestDataNum();
-
-					TableItem tableItem = selectedTableTable
-							.getItem(targetIndex);
-					tableItem.setText(1, String.valueOf(num));
-				}
-			}
-
-		});
-
-	}
-
-	@Override
-	protected void setData() {
-		this.nameText.setText(Format.null2blank(this.testData.getName()));
-
-		for (ERTable table : this.allTableList) {
-			this.allTableListWidget.add(Format.null2blank(table.getName()));
-		}
-
-		initSelectedTableTable();
-
-		if (this.selectedTableIndex != -1) {
-			this.selectedTableTable.select(this.selectedTableIndex);
-			removeButton.setEnabled(true);
-			resetTabs();
-			this.selectedTableIndex = -1;
-		}
-
-		if (this.testData.getExportOrder() == TestData.EXPORT_ORDER_DIRECT_TO_REPEAT) {
-			this.directToRepeatRadio.setSelection(true);
-
-		} else {
-			this.repeatToDirectRadio.setSelection(true);
-
-		}
-	}
-
-	@Override
-	protected String getTitle() {
-		return "dialog.title.testdata.edit";
-	}
-
-	@Override
-	protected String getErrorMessage() {
-		String text = this.nameText.getText().trim();
-
-		if (text.equals("")) {
-			return "error.testdata.name.empty";
-		}
-
-		if (this.selectedTableTable.getItemCount() == 0) {
-			return "error.testdata.table.empty";
-		}
-
-		return super.getErrorMessage();
-	}
-
-	@Override
-	protected void perfomeOK() throws InputException {
-		String text = this.nameText.getText().trim();
-
-		this.testData.setName(text);
-
-		if (this.repeatToDirectRadio.getSelection()) {
-			this.testData
-					.setExportOrder(TestData.EXPORT_ORDER_REPEAT_TO_DIRECT);
-
-		} else if (this.directToRepeatRadio.getSelection()) {
-			this.testData
-					.setExportOrder(TestData.EXPORT_ORDER_DIRECT_TO_REPEAT);
-
-		}
-
-		super.perfomeOK();
-	}
-
-	@Override
-	protected void addListener() {
-		super.addListener();
-
-		this.allTableListWidget.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				int index = allTableListWidget.getSelectionIndex();
-
-				if (index == -1) {
-					addButton.setEnabled(false);
-				} else {
-					addButton.setEnabled(true);
-				}
-			}
-		});
-
-		this.addButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int[] indexes = allTableListWidget.getSelectionIndices();
-
-				if (indexes.length < 1) {
-					return;
-				}
-
-				for (int index : indexes) {
-					ERTable table = allTableList.get(index);
-					if (!testData.contains(table)) {
-						TableTestData tableTestData = new TableTestData();
-
-						testData.putTableTestData(table, tableTestData);
-					}
-				}
-
-				initSelectedTableTable();
-				validate();
-			}
-
-		});
-
-		this.removeButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int index = selectedTableTable.getSelectionIndex();
-
-				if (index == -1) {
-					return;
-				}
-
-				testData.removeTableTestData(index);
-
-				initSelectedTableTable();
-				validate();
-
-				if (selectedTableTable.getItemCount() <= index) {
-					index--;
-				}
-
-				selectedTableTable.setSelection(index);
-				if (index == -1) {
-					removeButton.setEnabled(false);
-				}
-
-				resetTabs();
-			}
-
-		});
-
-		this.selectedTableTable.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-
-				int index = selectedTableTable.getSelectionIndex();
-
-				if (index == -1) {
-					removeButton.setEnabled(false);
-					return;
-
-				} else {
-					removeButton.setEnabled(true);
-				}
-
-				resetTabs();
-			}
-
-		});
-
-	}
-
-	public ERTable getTargetTable() {
-		int targetIndex = this.selectedTableTable.getSelectionIndex();
-		return this.testData.get(targetIndex);
-	}
-
-	public TestData getTestData() {
-		return this.testData;
-	}
-
-	public void setSelectedTable(int selectedTableIndex) {
-		this.selectedTableIndex = selectedTableIndex;
-	}
-
-	@Override
-	protected List<ValidatableTabWrapper> createTabWrapperList(
-			TabFolder tabFolder) {
-		List<ValidatableTabWrapper> list = new ArrayList<ValidatableTabWrapper>();
-
-		this.directTestDataTabWrapper = new DirectTestDataTabWrapper(this,
-				tabFolder);
-		list.add(this.directTestDataTabWrapper);
-
-		this.repeatTestDataTabWrapper = new RepeatTestDataTabWrapper(this,
-				tabFolder);
-		list.add(this.repeatTestDataTabWrapper);
-
-		return list;
-	}
+    private void createAllTableList(final Composite composite) {
+        final Group group = new Group(composite, SWT.NONE);
+
+        final GridData gridData = new GridData();
+        gridData.verticalSpan = 2;
+        gridData.horizontalAlignment = GridData.BEGINNING;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.verticalAlignment = GridData.FILL;
+        group.setLayoutData(gridData);
+
+        final GridLayout groupLayout = new GridLayout();
+        group.setLayout(groupLayout);
+        group.setText(ResourceString.getResourceString("label.all.table"));
+
+        final GridData comboGridData = new GridData();
+        comboGridData.widthHint = 300;
+        comboGridData.grabExcessVerticalSpace = true;
+        comboGridData.verticalAlignment = GridData.FILL;
+
+        allTableListWidget = new org.eclipse.swt.widgets.List(group, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
+        allTableListWidget.setLayoutData(comboGridData);
+    }
+
+    private void createSelectedTableTable(final Composite composite) {
+        final GridData gridData = new GridData();
+        gridData.verticalSpan = 2;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.verticalAlignment = GridData.FILL;
+
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 2;
+
+        final Group group = new Group(composite, SWT.NONE);
+        group.setText(ResourceString.getResourceString("label.testdata.table.list"));
+        group.setLayout(gridLayout);
+        group.setLayoutData(gridData);
+
+        final GridData tableGridData = new GridData();
+        tableGridData.grabExcessVerticalSpace = true;
+        tableGridData.verticalAlignment = GridData.FILL;
+        tableGridData.widthHint = 300;
+        tableGridData.verticalSpan = 2;
+
+        selectedTableTable = new Table(group, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
+        selectedTableTable.setHeaderVisible(false);
+        selectedTableTable.setLayoutData(tableGridData);
+        selectedTableTable.setLinesVisible(false);
+
+        final TableColumn tableColumn = new TableColumn(selectedTableTable, SWT.CENTER);
+        tableColumn.setWidth(200);
+        tableColumn.setText(ResourceString.getResourceString("label.testdata.table.name"));
+
+        final TableColumn numColumn = new TableColumn(selectedTableTable, SWT.CENTER);
+        numColumn.setWidth(80);
+        numColumn.setText(ResourceString.getResourceString("label.testdata.table.test.num"));
+    }
+
+    private void createBottomComposite(final Composite composite) {
+        createOutputOrderGroup(composite);
+        createTabFolder(composite);
+    }
+
+    private void createOutputOrderGroup(final Composite parent) {
+        final GridData groupGridData = new GridData();
+        groupGridData.horizontalAlignment = GridData.FILL;
+        groupGridData.grabExcessHorizontalSpace = true;
+
+        final GridLayout groupLayout = new GridLayout();
+        groupLayout.marginWidth = 15;
+        groupLayout.marginHeight = 15;
+        groupLayout.numColumns = 4;
+
+        final Group group = new Group(parent, SWT.NONE);
+        group.setText(ResourceString.getResourceString("label.output.order"));
+        group.setLayoutData(groupGridData);
+        group.setLayout(groupLayout);
+
+        directToRepeatRadio = CompositeFactory.createRadio(this, group, "label.output.order.direct.to.repeat");
+        repeatToDirectRadio = CompositeFactory.createRadio(this, group, "label.output.order.repeat.to.direct");
+    }
+
+    private void initSelectedTableTable() {
+        selectedTableTable.removeAll();
+
+        for (final Map.Entry<ERTable, TableTestData> entry : testData.getTableTestDataMap().entrySet()) {
+            final ERTable table = entry.getKey();
+            final TableTestData tableTestData = entry.getValue();
+
+            final TableItem tableItem = new TableItem(selectedTableTable, SWT.NONE);
+            tableItem.setText(0, table.getName());
+            tableItem.setText(1, String.valueOf(tableTestData.getTestDataNum()));
+        }
+    }
+
+    public void resetTestDataNum() {
+        Display.getDefault().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+                final int targetIndex = selectedTableTable.getSelectionIndex();
+
+                if (targetIndex != -1) {
+
+                    final int num = directTestDataTabWrapper.getTestDataNum() + repeatTestDataTabWrapper.getTestDataNum();
+
+                    final TableItem tableItem = selectedTableTable.getItem(targetIndex);
+                    tableItem.setText(1, String.valueOf(num));
+                }
+            }
+
+        });
+
+    }
+
+    @Override
+    protected void setData() {
+        nameText.setText(Format.null2blank(testData.getName()));
+
+        for (final ERTable table : allTableList) {
+            allTableListWidget.add(Format.null2blank(table.getName()));
+        }
+
+        initSelectedTableTable();
+
+        if (selectedTableIndex != -1) {
+            selectedTableTable.select(selectedTableIndex);
+            removeButton.setEnabled(true);
+            resetTabs();
+            selectedTableIndex = -1;
+        }
+
+        if (testData.getExportOrder() == TestData.EXPORT_ORDER_DIRECT_TO_REPEAT) {
+            directToRepeatRadio.setSelection(true);
+
+        } else {
+            repeatToDirectRadio.setSelection(true);
+
+        }
+    }
+
+    @Override
+    protected String getTitle() {
+        return "dialog.title.testdata.edit";
+    }
+
+    @Override
+    protected String getErrorMessage() {
+        final String text = nameText.getText().trim();
+
+        if (text.equals("")) {
+            return "error.testdata.name.empty";
+        }
+
+        if (selectedTableTable.getItemCount() == 0) {
+            return "error.testdata.table.empty";
+        }
+
+        return super.getErrorMessage();
+    }
+
+    @Override
+    protected void perfomeOK() throws InputException {
+        final String text = nameText.getText().trim();
+
+        testData.setName(text);
+
+        if (repeatToDirectRadio.getSelection()) {
+            testData.setExportOrder(TestData.EXPORT_ORDER_REPEAT_TO_DIRECT);
+
+        } else if (directToRepeatRadio.getSelection()) {
+            testData.setExportOrder(TestData.EXPORT_ORDER_DIRECT_TO_REPEAT);
+
+        }
+
+        super.perfomeOK();
+    }
+
+    @Override
+    protected void addListener() {
+        super.addListener();
+
+        allTableListWidget.addSelectionListener(new SelectionAdapter() {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent evt) {
+                final int index = allTableListWidget.getSelectionIndex();
+
+                if (index == -1) {
+                    addButton.setEnabled(false);
+                } else {
+                    addButton.setEnabled(true);
+                }
+            }
+        });
+
+        addButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int[] indexes = allTableListWidget.getSelectionIndices();
+
+                if (indexes.length < 1) {
+                    return;
+                }
+
+                for (final int index : indexes) {
+                    final ERTable table = allTableList.get(index);
+                    if (!testData.contains(table)) {
+                        final TableTestData tableTestData = new TableTestData();
+
+                        testData.putTableTestData(table, tableTestData);
+                    }
+                }
+
+                initSelectedTableTable();
+                validate();
+            }
+
+        });
+
+        removeButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                int index = selectedTableTable.getSelectionIndex();
+
+                if (index == -1) {
+                    return;
+                }
+
+                testData.removeTableTestData(index);
+
+                initSelectedTableTable();
+                validate();
+
+                if (selectedTableTable.getItemCount() <= index) {
+                    index--;
+                }
+
+                selectedTableTable.setSelection(index);
+                if (index == -1) {
+                    removeButton.setEnabled(false);
+                }
+
+                resetTabs();
+            }
+
+        });
+
+        selectedTableTable.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent evt) {
+
+                final int index = selectedTableTable.getSelectionIndex();
+
+                if (index == -1) {
+                    removeButton.setEnabled(false);
+                    return;
+
+                } else {
+                    removeButton.setEnabled(true);
+                }
+
+                resetTabs();
+            }
+
+        });
+
+    }
+
+    public ERTable getTargetTable() {
+        final int targetIndex = selectedTableTable.getSelectionIndex();
+        return testData.get(targetIndex);
+    }
+
+    public TestData getTestData() {
+        return testData;
+    }
+
+    public void setSelectedTable(final int selectedTableIndex) {
+        this.selectedTableIndex = selectedTableIndex;
+    }
+
+    @Override
+    protected List<ValidatableTabWrapper> createTabWrapperList(final TabFolder tabFolder) {
+        final List<ValidatableTabWrapper> list = new ArrayList<ValidatableTabWrapper>();
+
+        directTestDataTabWrapper = new DirectTestDataTabWrapper(this, tabFolder);
+        list.add(directTestDataTabWrapper);
+
+        repeatTestDataTabWrapper = new RepeatTestDataTabWrapper(this, tabFolder);
+        list.add(repeatTestDataTabWrapper);
+
+        return list;
+    }
 }

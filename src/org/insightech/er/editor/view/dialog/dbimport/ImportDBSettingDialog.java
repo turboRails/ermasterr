@@ -15,74 +15,73 @@ import org.insightech.er.preference.PreferenceInitializer;
 
 public class ImportDBSettingDialog extends AbstractDBSettingDialog {
 
-	public ImportDBSettingDialog(Shell parentShell, ERDiagram diagram) {
-		super(parentShell, diagram);
-	}
+    public ImportDBSettingDialog(final Shell parentShell, final ERDiagram diagram) {
+        super(parentShell, diagram);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite parent) {
-		super.initialize(parent);
-		this.dbSetting = PreferenceInitializer.getDBSetting(0);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite parent) {
+        super.initialize(parent);
+        dbSetting = PreferenceInitializer.getDBSetting(0);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void perfomeOK() throws InputException {
-		this.setCurrentSetting();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void perfomeOK() throws InputException {
+        setCurrentSetting();
 
-		Connection con = null;
+        Connection con = null;
 
-		try {
-			con = this.dbSetting.connect();
+        try {
+            con = dbSetting.connect();
 
-		} catch (InputException e) {
-			throw e;
+        } catch (final InputException e) {
+            throw e;
 
-		} catch (Throwable e) {
-			Throwable cause = e;
+        } catch (final Throwable e) {
+            Throwable cause = e;
 
-			while (cause.getCause() != null) {
-				cause = cause.getCause();
-			}
+            while (cause.getCause() != null) {
+                cause = cause.getCause();
+            }
 
-			if (cause instanceof UnknownHostException) {
-				throw new InputException("error.server.not.found");
+            if (cause instanceof UnknownHostException) {
+                throw new InputException("error.server.not.found");
 
-			} else if (cause instanceof ConnectException) {
-				throw new InputException("error.server.not.connected");
+            } else if (cause instanceof ConnectException) {
+                throw new InputException("error.server.not.connected");
 
-			} else if (e instanceof UnsupportedClassVersionError) {
-				throw new InputException("error.jdbc.class.version",
-						new String[] { System.getProperty("java.version") });
-			}
+            } else if (e instanceof UnsupportedClassVersionError) {
+                throw new InputException("error.jdbc.class.version", new String[] {System.getProperty("java.version")});
+            }
 
-			ERDiagramActivator.log(e);
-			ERDiagramActivator.showMessageDialog(e.getMessage());
+            ERDiagramActivator.log(e);
+            ERDiagramActivator.showMessageDialog(e.getMessage());
 
-			throw new InputException("error.database.not.found");
+            throw new InputException("error.database.not.found");
 
-		} finally {
-			if (con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					ERDiagramActivator.showExceptionDialog(e);
-				}
-			}
-		}
-	}
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (final SQLException e) {
+                    ERDiagramActivator.showExceptionDialog(e);
+                }
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getTitle() {
-		return "dialog.title.import.tables";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getTitle() {
+        return "dialog.title.import.tables";
+    }
 
 }

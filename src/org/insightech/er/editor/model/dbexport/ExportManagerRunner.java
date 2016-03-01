@@ -6,25 +6,26 @@ import org.insightech.er.editor.model.progress_monitor.EclipseProgressMonitor;
 
 public class ExportManagerRunner implements IRunnableWithProgress {
 
-	private ExportWithProgressManager exportManager;
+    private final ExportWithProgressManager exportManager;
 
-	private Exception exception;
+    private Exception exception;
 
-	public ExportManagerRunner(ExportWithProgressManager exportManager) {
-		this.exportManager = exportManager;
-	}
+    public ExportManagerRunner(final ExportWithProgressManager exportManager) {
+        this.exportManager = exportManager;
+    }
 
-	public void run(IProgressMonitor monitor) {
-		try {
-			this.exportManager.run(new EclipseProgressMonitor(monitor));
+    @Override
+    public void run(final IProgressMonitor monitor) {
+        try {
+            exportManager.run(new EclipseProgressMonitor(monitor));
 
-		} catch (Exception e) {
-			this.exception = e;
-		}
-	}
+        } catch (final Exception e) {
+            exception = e;
+        }
+    }
 
-	public Exception getException() {
-		return this.exception;
-	}
+    public Exception getException() {
+        return exception;
+    }
 
 }

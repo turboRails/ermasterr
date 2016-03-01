@@ -10,65 +10,54 @@ import org.insightech.er.editor.view.dialog.option.OptionSettingDialog;
 
 public class OptionTabWrapper extends ValidatableTabWrapper {
 
-	private Button autoImeChangeCheck;
+    private Button autoImeChangeCheck;
 
-	private Button validatePhysicalNameCheck;
+    private Button validatePhysicalNameCheck;
 
-	private Button useBezierCurveCheck;
+    private Button useBezierCurveCheck;
 
-	private Button suspendValidatorCheck;
+    private Button suspendValidatorCheck;
 
-	private Settings settings;
+    private final Settings settings;
 
-	public OptionTabWrapper(OptionSettingDialog dialog, TabFolder parent,
-			Settings settings) {
-		super(dialog, parent, "label.option");
+    public OptionTabWrapper(final OptionSettingDialog dialog, final TabFolder parent, final Settings settings) {
+        super(dialog, parent, "label.option");
 
-		this.settings = settings;
-	}
+        this.settings = settings;
+    }
 
-	@Override
-	public void initComposite() {
-		this.autoImeChangeCheck = CompositeFactory.createCheckbox(this.dialog,
-				this, "label.auto.ime.change", false);
-		this.validatePhysicalNameCheck = CompositeFactory.createCheckbox(
-				this.dialog, this, "label.validate.physical.name", false);
-		this.useBezierCurveCheck = CompositeFactory.createCheckbox(this.dialog,
-				this, "label.use.bezier.curve", false);
-		this.suspendValidatorCheck = CompositeFactory.createCheckbox(
-				this.dialog, this, "label.suspend.validator", false);
-	}
+    @Override
+    public void initComposite() {
+        autoImeChangeCheck = CompositeFactory.createCheckbox(dialog, this, "label.auto.ime.change", false);
+        validatePhysicalNameCheck = CompositeFactory.createCheckbox(dialog, this, "label.validate.physical.name", false);
+        useBezierCurveCheck = CompositeFactory.createCheckbox(dialog, this, "label.use.bezier.curve", false);
+        suspendValidatorCheck = CompositeFactory.createCheckbox(dialog, this, "label.suspend.validator", false);
+    }
 
-	@Override
-	public void setData() {
-		this.autoImeChangeCheck.setSelection(this.settings.isAutoImeChange());
-		this.validatePhysicalNameCheck.setSelection(this.settings
-				.isValidatePhysicalName());
-		this.useBezierCurveCheck.setSelection(this.settings.isUseBezierCurve());
-		this.suspendValidatorCheck.setSelection(this.settings
-				.isSuspendValidator());
-	}
+    @Override
+    public void setData() {
+        autoImeChangeCheck.setSelection(settings.isAutoImeChange());
+        validatePhysicalNameCheck.setSelection(settings.isValidatePhysicalName());
+        useBezierCurveCheck.setSelection(settings.isUseBezierCurve());
+        suspendValidatorCheck.setSelection(settings.isSuspendValidator());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-		this.settings.setAutoImeChange(this.autoImeChangeCheck.getSelection());
-		this.settings.setValidatePhysicalName(this.validatePhysicalNameCheck
-				.getSelection());
-		this.settings
-				.setUseBezierCurve(this.useBezierCurveCheck.getSelection());
-		this.settings.setSuspendValidator(this.suspendValidatorCheck
-				.getSelection());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {
+        settings.setAutoImeChange(autoImeChangeCheck.getSelection());
+        settings.setValidatePhysicalName(validatePhysicalNameCheck.getSelection());
+        settings.setUseBezierCurve(useBezierCurveCheck.getSelection());
+        settings.setSuspendValidator(suspendValidatorCheck.getSelection());
+    }
 
-	@Override
-	public void setInitFocus() {
-		this.autoImeChangeCheck.setFocus();
-	}
+    @Override
+    public void setInitFocus() {
+        autoImeChangeCheck.setFocus();
+    }
 
-	@Override
-	public void perfomeOK() {
-	}
+    @Override
+    public void perfomeOK() {}
 }

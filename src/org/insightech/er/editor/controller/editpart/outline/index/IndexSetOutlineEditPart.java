@@ -15,36 +15,34 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.index.
 
 public class IndexSetOutlineEditPart extends AbstractOutlineEditPart {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected List getModelChildren() {
-		List<Index> children = new ArrayList<Index>();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected List getModelChildren() {
+        final List<Index> children = new ArrayList<Index>();
 
-		ERDiagram diagram = this.getDiagram();
-		Category category = this.getCurrentCategory();
+        final ERDiagram diagram = getDiagram();
+        final Category category = getCurrentCategory();
 
-		for (ERTable table : diagram.getDiagramContents().getContents()
-				.getTableSet()) {
-			if (category == null || category.contains(table)) {
-				children.addAll(table.getIndexes());
-			}
-		}
+        for (final ERTable table : diagram.getDiagramContents().getContents().getTableSet()) {
+            if (category == null || category.contains(table)) {
+                children.addAll(table.getIndexes());
+            }
+        }
 
-		Collections.sort(children);
+        Collections.sort(children);
 
-		return children;
-	}
+        return children;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void refreshOutlineVisuals() {
-		this.setWidgetText(ResourceString.getResourceString("label.index")
-				+ " (" + this.getModelChildren().size() + ")");
-		this.setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void refreshOutlineVisuals() {
+        setWidgetText(ResourceString.getResourceString("label.index") + " (" + getModelChildren().size() + ")");
+        setWidgetImage(ERDiagramActivator.getImage(ImageKey.DICTIONARY));
+    }
 
 }

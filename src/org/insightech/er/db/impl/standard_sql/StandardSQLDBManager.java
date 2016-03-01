@@ -18,91 +18,99 @@ import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Ta
 
 public class StandardSQLDBManager extends DBManagerBase {
 
-	public static final String ID = "StandardSQL";
+    public static final String ID = "StandardSQL";
 
-	public String getId() {
-		return ID;
-	}
+    @Override
+    public String getId() {
+        return ID;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDriverClassName() {
-		return "";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDriverClassName() {
+        return "";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getURL() {
-		return "";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getURL() {
+        return "";
+    }
 
-	public int getDefaultPort() {
-		return 0;
-	}
+    @Override
+    public int getDefaultPort() {
+        return 0;
+    }
 
-	public SqlTypeManager getSqlTypeManager() {
-		return new StandardSQLSqlTypeManager();
-	}
+    @Override
+    public SqlTypeManager getSqlTypeManager() {
+        return new StandardSQLSqlTypeManager();
+    }
 
-	public TableProperties createTableProperties(TableProperties tableProperties) {
-		if (tableProperties != null
-				&& tableProperties instanceof StandardSQLTableProperties) {
-			return tableProperties;
-		}
+    @Override
+    public TableProperties createTableProperties(final TableProperties tableProperties) {
+        if (tableProperties != null && tableProperties instanceof StandardSQLTableProperties) {
+            return tableProperties;
+        }
 
-		return new StandardSQLTableProperties();
-	}
+        return new StandardSQLTableProperties();
+    }
 
-	public DDLCreator getDDLCreator(ERDiagram diagram, Category targetCategory,
-			boolean semicolon) {
-		return new StandardSQLDDLCreator(diagram, targetCategory, semicolon);
-	}
+    @Override
+    public DDLCreator getDDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        return new StandardSQLDDLCreator(diagram, targetCategory, semicolon);
+    }
 
-	public List<String> getIndexTypeList(ERTable table) {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getIndexTypeList(final ERTable table) {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("BTREE");
+        list.add("BTREE");
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	protected int[] getSupportItems() {
-		return new int[] { SUPPORT_AUTO_INCREMENT,
-				SUPPORT_AUTO_INCREMENT_SETTING, SUPPORT_SCHEMA,
-				SUPPORT_SEQUENCE, SUPPORT_SEQUENCE_NOCACHE };
-	}
+    @Override
+    protected int[] getSupportItems() {
+        return new int[] {SUPPORT_AUTO_INCREMENT, SUPPORT_AUTO_INCREMENT_SETTING, SUPPORT_SCHEMA, SUPPORT_SEQUENCE, SUPPORT_SEQUENCE_NOCACHE};
+    }
 
-	public ImportFromDBManager getTableImportManager() {
-		return new StandardSQLTableImportManager();
-	}
+    @Override
+    public ImportFromDBManager getTableImportManager() {
+        return new StandardSQLTableImportManager();
+    }
 
-	public PreImportFromDBManager getPreTableImportManager() {
-		return new StandardSQLPreTableImportManager();
-	}
+    @Override
+    public PreImportFromDBManager getPreTableImportManager() {
+        return new StandardSQLPreTableImportManager();
+    }
 
-	public PreTableExportManager getPreTableExportManager() {
-		return new StandardSQLPreTableExportManager();
-	}
+    @Override
+    public PreTableExportManager getPreTableExportManager() {
+        return new StandardSQLPreTableExportManager();
+    }
 
-	public TablespaceProperties createTablespaceProperties() {
-		return null;
-	}
+    @Override
+    public TablespaceProperties createTablespaceProperties() {
+        return null;
+    }
 
-	public TablespaceProperties checkTablespaceProperties(
-			TablespaceProperties tablespaceProperties) {
-		return null;
-	}
+    @Override
+    public TablespaceProperties checkTablespaceProperties(final TablespaceProperties tablespaceProperties) {
+        return null;
+    }
 
-	public String[] getCurrentTimeValue() {
-		return new String[] { "CURRENT_TIMESTAMP" };
-	}
+    @Override
+    public String[] getCurrentTimeValue() {
+        return new String[] {"CURRENT_TIMESTAMP"};
+    }
 
-	public BigDecimal getSequenceMaxValue() {
-		return null;
-	}
+    @Override
+    public BigDecimal getSequenceMaxValue() {
+        return null;
+    }
 }

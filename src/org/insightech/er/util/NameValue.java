@@ -4,41 +4,40 @@ import java.io.Serializable;
 
 public class NameValue implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 7655291687176977202L;
+    private static final long serialVersionUID = 7655291687176977202L;
 
-	private String name;
-	private String value;
+    private String name;
+    private String value;
 
-	public NameValue(String name, String value) {
-		this.name = name;
-		this.value = value;
-	}
+    public NameValue(final String name, final String value) {
+        this.name = name;
+        this.value = value;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(final String value) {
+        this.value = value;
+    }
 
-	@Override
-	public NameValue clone() {
-		try {
-			return (NameValue) super.clone();
+    @Override
+    public NameValue clone() {
+        try {
+            return (NameValue) super.clone();
 
-		} catch (CloneNotSupportedException e) {
-		}
+        } catch (final CloneNotSupportedException e) {}
 
-		return null;
-	}
+        return null;
+    }
 
 }

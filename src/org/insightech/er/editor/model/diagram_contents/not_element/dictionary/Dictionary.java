@@ -12,73 +12,73 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.column
 
 public class Dictionary extends AbstractModel {
 
-	private static final long serialVersionUID = -4476318682977312216L;
+    private static final long serialVersionUID = -4476318682977312216L;
 
-	private Map<Word, List<NormalColumn>> wordMap;
+    private final Map<Word, List<NormalColumn>> wordMap;
 
-	public Dictionary() {
-		this.wordMap = new HashMap<Word, List<NormalColumn>>();
-	}
+    public Dictionary() {
+        wordMap = new HashMap<Word, List<NormalColumn>>();
+    }
 
-	public void add(NormalColumn column) {
-		Word word = column.getWord();
+    public void add(final NormalColumn column) {
+        final Word word = column.getWord();
 
-		if (word == null) {
-			return;
-		}
+        if (word == null) {
+            return;
+        }
 
-		List<NormalColumn> useColumns = this.wordMap.get(word);
+        List<NormalColumn> useColumns = wordMap.get(word);
 
-		if (useColumns == null) {
-			useColumns = new ArrayList<NormalColumn>();
-			this.wordMap.put(word, useColumns);
-		}
+        if (useColumns == null) {
+            useColumns = new ArrayList<NormalColumn>();
+            wordMap.put(word, useColumns);
+        }
 
-		if (!useColumns.contains(column)) {
-			useColumns.add(column);
-		}
-	}
+        if (!useColumns.contains(column)) {
+            useColumns.add(column);
+        }
+    }
 
-	public void remove(NormalColumn column) {
-		Word word = column.getWord();
+    public void remove(final NormalColumn column) {
+        final Word word = column.getWord();
 
-		if (word == null) {
-			return;
-		}
+        if (word == null) {
+            return;
+        }
 
-		List<NormalColumn> useColumns = this.wordMap.get(word);
+        final List<NormalColumn> useColumns = wordMap.get(word);
 
-		if (useColumns != null) {
-			useColumns.remove(column);
-			if (useColumns.isEmpty()) {
-				this.wordMap.remove(word);
-			}
-		}
-	}
+        if (useColumns != null) {
+            useColumns.remove(column);
+            if (useColumns.isEmpty()) {
+                wordMap.remove(word);
+            }
+        }
+    }
 
-	public void remove(TableView tableView) {
-		for (NormalColumn normalColumn : tableView.getNormalColumns()) {
-			this.remove(normalColumn);
-		}
-	}
+    public void remove(final TableView tableView) {
+        for (final NormalColumn normalColumn : tableView.getNormalColumns()) {
+            this.remove(normalColumn);
+        }
+    }
 
-	public void clear() {
-		this.wordMap.clear();
-	}
+    public void clear() {
+        wordMap.clear();
+    }
 
-	public List<Word> getWordList() {
-		List<Word> list = new ArrayList<Word>(this.wordMap.keySet());
-		
-		Collections.sort(list);
-		
-		return list;
-	}
+    public List<Word> getWordList() {
+        final List<Word> list = new ArrayList<Word>(wordMap.keySet());
 
-	public List<NormalColumn> getColumnList(Word word) {
-		return this.wordMap.get(word);
-	}
+        Collections.sort(list);
 
-	public void copyTo(Word from, Word to) {
-		from.copyTo(to);
-	}
+        return list;
+    }
+
+    public List<NormalColumn> getColumnList(final Word word) {
+        return wordMap.get(word);
+    }
+
+    public void copyTo(final Word from, final Word to) {
+        from.copyTo(to);
+    }
 }

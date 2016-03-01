@@ -7,14 +7,14 @@ import org.insightech.er.editor.view.dialog.dbexport.ExportToExcelDialog;
 
 public class ExportToExcelAction extends AbstractExportWithDialogAction {
 
-	public static final String ID = ExportToExcelAction.class.getName();
+    public static final String ID = ExportToExcelAction.class.getName();
 
-	public ExportToExcelAction(ERDiagramEditor editor) {
-		super(ID, "action.title.export.excel", ImageKey.EXPORT_TO_EXCEL, editor);
-	}
+    public ExportToExcelAction(final ERDiagramEditor editor) {
+        super(ID, "action.title.export.excel", ImageKey.EXPORT_TO_EXCEL, editor);
+    }
 
-	@Override
-	protected AbstractExportDialog getExportDialog() {
-		return new ExportToExcelDialog();
-	}
+    @Override
+    protected AbstractExportDialog getExportDialog() {
+        return new ExportToExcelDialog();
+    }
 }

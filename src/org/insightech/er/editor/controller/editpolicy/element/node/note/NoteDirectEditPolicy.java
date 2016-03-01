@@ -11,32 +11,28 @@ import org.insightech.er.editor.model.diagram_contents.element.node.note.Note;
 
 public class NoteDirectEditPolicy extends DirectEditPolicy {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Command getDirectEditCommand(DirectEditRequest request) {
-		CompoundCommand command = new CompoundCommand();
-		
-		String text = (String) request.getCellEditor().getValue();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Command getDirectEditCommand(final DirectEditRequest request) {
+        final CompoundCommand command = new CompoundCommand();
 
-		Note note = (Note) getHost().getModel();
-		NoteEditCommand noteEditCommand = new NoteEditCommand(note, text);
-		command.add(noteEditCommand);
-		
-		MoveElementCommand autoResizeCommand = new MoveElementCommand(
-				(ERDiagram) this.getHost().getRoot().getContents().getModel(), this
-						.getHostFigure().getBounds(), note.getX(), note.getY(),
-				-1, -1, note);
-		command.add(autoResizeCommand);
+        final String text = (String) request.getCellEditor().getValue();
 
-		return command.unwrap();
-	}
+        final Note note = (Note) getHost().getModel();
+        final NoteEditCommand noteEditCommand = new NoteEditCommand(note, text);
+        command.add(noteEditCommand);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void showCurrentEditValue(DirectEditRequest request) {
-	}
+        final MoveElementCommand autoResizeCommand = new MoveElementCommand((ERDiagram) getHost().getRoot().getContents().getModel(), getHostFigure().getBounds(), note.getX(), note.getY(), -1, -1, note);
+        command.add(autoResizeCommand);
+
+        return command.unwrap();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void showCurrentEditValue(final DirectEditRequest request) {}
 }

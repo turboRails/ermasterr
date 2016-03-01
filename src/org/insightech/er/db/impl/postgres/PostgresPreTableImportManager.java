@@ -4,10 +4,9 @@ import org.insightech.er.editor.model.dbimport.PreImportFromDBManager;
 
 public class PostgresPreTableImportManager extends PreImportFromDBManager {
 
-	@Override
-	protected String getTableNameWithSchema(String schema, String tableName) {
-		return this.dbSetting.getTableNameWithSchema("\"" + tableName + "\"",
-				schema);
-	}
+    @Override
+    protected String getTableNameWithSchema(final String schema, final String tableName) {
+        return dbSetting.getTableNameWithSchema("\"" + tableName + "\"", schema);
+    }
 
 }

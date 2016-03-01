@@ -8,28 +8,28 @@ import org.insightech.er.editor.model.ERDiagram;
 
 public abstract class TableViewDialog extends AbstractTabbedDialog {
 
-	private EditPartViewer viewer;
+    private final EditPartViewer viewer;
 
-	public TableViewDialog(Shell parentShell, EditPartViewer viewer) {
-		super(parentShell);
+    public TableViewDialog(final Shell parentShell, final EditPartViewer viewer) {
+        super(parentShell);
 
-		this.viewer = viewer;
-	}
+        this.viewer = viewer;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite composite) {
-		this.createTabFolder(composite);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite composite) {
+        createTabFolder(composite);
+    }
 
-	public EditPartViewer getViewer() {
-		return viewer;
-	}
+    public EditPartViewer getViewer() {
+        return viewer;
+    }
 
-	public ERDiagram getDiagram() {
-		return (ERDiagram) this.viewer.getContents().getModel();
-	}
+    public ERDiagram getDiagram() {
+        return (ERDiagram) viewer.getContents().getModel();
+    }
 
 }

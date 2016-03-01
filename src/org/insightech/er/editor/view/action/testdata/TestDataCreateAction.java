@@ -18,40 +18,34 @@ import org.insightech.er.editor.view.dialog.testdata.TestDataManageDialog;
 
 public class TestDataCreateAction extends AbstractBaseAction {
 
-	public static final String ID = TestDataCreateAction.class.getName();
+    public static final String ID = TestDataCreateAction.class.getName();
 
-	public TestDataCreateAction(ERDiagramEditor editor) {
-		super(ID, ResourceString
-				.getResourceString("action.title.testdata.create"), editor);
+    public TestDataCreateAction(final ERDiagramEditor editor) {
+        super(ID, ResourceString.getResourceString("action.title.testdata.create"), editor);
 
-		this.setImageDescriptor(ERDiagramActivator
-				.getImageDescriptor(ImageKey.TEST_DATA));
-	}
+        setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.TEST_DATA));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        final ERDiagram diagram = getDiagram();
 
-		List<TestData> testDataList = diagram.getDiagramContents()
-				.getTestDataList();
+        final List<TestData> testDataList = diagram.getDiagramContents().getTestDataList();
 
-		List<TestData> copyTestDataList = new ArrayList<TestData>();
-		for (TestData testData : testDataList) {
-			copyTestDataList.add(testData.clone());
-		}
+        final List<TestData> copyTestDataList = new ArrayList<TestData>();
+        for (final TestData testData : testDataList) {
+            copyTestDataList.add(testData.clone());
+        }
 
-		TestDataManageDialog dialog = new TestDataManageDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram,
-				copyTestDataList);
+        final TestDataManageDialog dialog = new TestDataManageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram, copyTestDataList);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			ChangeTestDataCommand command = new ChangeTestDataCommand(diagram,
-					copyTestDataList);
-			this.execute(command);
-		}
-	}
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            final ChangeTestDataCommand command = new ChangeTestDataCommand(diagram, copyTestDataList);
+            this.execute(command);
+        }
+    }
 
 }

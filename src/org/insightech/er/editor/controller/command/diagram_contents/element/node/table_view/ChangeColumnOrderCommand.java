@@ -6,46 +6,45 @@ import org.insightech.er.editor.model.diagram_contents.element.node.table.column
 
 public class ChangeColumnOrderCommand extends AbstractCommand {
 
-	private TableView tableView;
+    private final TableView tableView;
 
-	private Column column;
+    private final Column column;
 
-	private int newIndex;
-	
-	private int oldIndex;
+    private int newIndex;
 
-	public ChangeColumnOrderCommand(TableView tableView, Column column,
-			int index) {
-		this.tableView = tableView;
-		this.column = column;
-		this.newIndex = index;
-		this.oldIndex = this.tableView.getColumns().indexOf(column);
-		
-		if (this.oldIndex < this.newIndex) {
-			this.newIndex--;
-		}
-	}
+    private final int oldIndex;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doExecute() {
-		this.tableView.removeColumn(column);
-		this.tableView.addColumn(newIndex, column);
-		
-		this.tableView.refresh();
-	}
+    public ChangeColumnOrderCommand(final TableView tableView, final Column column, final int index) {
+        this.tableView = tableView;
+        this.column = column;
+        newIndex = index;
+        oldIndex = this.tableView.getColumns().indexOf(column);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void doUndo() {
-		this.tableView.removeColumn(column);
-		this.tableView.addColumn(oldIndex, column);
-		
-		this.tableView.refresh();
-	}
+        if (oldIndex < newIndex) {
+            newIndex--;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doExecute() {
+        tableView.removeColumn(column);
+        tableView.addColumn(newIndex, column);
+
+        tableView.refresh();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doUndo() {
+        tableView.removeColumn(column);
+        tableView.addColumn(oldIndex, column);
+
+        tableView.refresh();
+    }
 
 }

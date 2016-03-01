@@ -20,121 +20,107 @@ import org.insightech.er.editor.model.diagram_contents.not_element.dictionary.Wo
 
 public class QuickAddDialog extends AbstractDialog {
 
-	private RowHeaderTable editColumnTable;
+    private RowHeaderTable editColumnTable;
 
-	private ERDiagram diagram;
+    private final ERDiagram diagram;
 
-	private List<NormalColumn> columnList;
+    private final List<NormalColumn> columnList;
 
-	public QuickAddDialog(Shell parentShell, ERDiagram diagram) {
-		super(parentShell);
+    public QuickAddDialog(final Shell parentShell, final ERDiagram diagram) {
+        super(parentShell);
 
-		this.diagram = diagram;
-		this.columnList = new ArrayList<NormalColumn>();
-	}
+        this.diagram = diagram;
+        columnList = new ArrayList<NormalColumn>();
+    }
 
-	@Override
-	protected void initialize(Composite composite) {
-		this.editColumnTable = CompositeFactory.createRowHeaderTable(composite,
-				695, 350, 75, 25, 1, false, true);
+    @Override
+    protected void initialize(final Composite composite) {
+        editColumnTable = CompositeFactory.createRowHeaderTable(composite, 695, 350, 75, 25, 1, false, true);
 
-		this.editColumnTable.setCellEditWorker(new CellEditWorker() {
+        editColumnTable.setCellEditWorker(new CellEditWorker() {
 
-			public void addNewRow() {
-				addNewRowToTable();
-			}
+            @Override
+            public void addNewRow() {
+                addNewRowToTable();
+            }
 
-			public void changeRowNum() {
-			}
+            @Override
+            public void changeRowNum() {}
 
-			public boolean isModified(int row, int column) {
-				return false;
-			}
+            @Override
+            public boolean isModified(final int row, final int column) {
+                return false;
+            }
 
-		});
-	}
+        });
+    }
 
-	private void addNewRowToTable() {
-		this.editColumnTable.addRow("+", null);
-	}
+    private void addNewRowToTable() {
+        editColumnTable.addRow("+", null);
+    }
 
-	@Override
-	protected String getErrorMessage() {
-		return null;
-	}
+    @Override
+    protected String getErrorMessage() {
+        return null;
+    }
 
-	@Override
-	protected String getTitle() {
-		return "label.button.quick.add";
-	}
+    @Override
+    protected String getTitle() {
+        return "label.button.quick.add";
+    }
 
-	@Override
-	protected void perfomeOK() throws InputException {
-		for (int row = 0; row < this.editColumnTable.getItemCount() - 1; row++) {
-			String logicalName = (String) this.editColumnTable.getValueAt(row,
-					0);
-			String physicalName = (String) this.editColumnTable.getValueAt(row,
-					1);
-			String type = (String) this.editColumnTable.getValueAt(row, 2);
+    @Override
+    protected void perfomeOK() throws InputException {
+        for (int row = 0; row < editColumnTable.getItemCount() - 1; row++) {
+            final String logicalName = (String) editColumnTable.getValueAt(row, 0);
+            final String physicalName = (String) editColumnTable.getValueAt(row, 1);
+            final String type = (String) editColumnTable.getValueAt(row, 2);
 
-			int length = 0;
-			try {
-				length = Integer.parseInt((String) this.editColumnTable
-						.getValueAt(row, 3));
-			} catch (NumberFormatException e) {
-			}
+            int length = 0;
+            try {
+                length = Integer.parseInt((String) editColumnTable.getValueAt(row, 3));
+            } catch (final NumberFormatException e) {}
 
-			int decimal = 0;
-			try {
-				decimal = Integer.parseInt((String) this.editColumnTable
-						.getValueAt(row, 4));
-			} catch (NumberFormatException e) {
-			}
+            int decimal = 0;
+            try {
+                decimal = Integer.parseInt((String) editColumnTable.getValueAt(row, 4));
+            } catch (final NumberFormatException e) {}
 
-			SqlType sqlType = SqlType.valueOf(this.diagram.getDatabase(), type,
-					length, decimal);
+            final SqlType sqlType = SqlType.valueOf(diagram.getDatabase(), type, length, decimal);
 
-			TypeData typeData = new TypeData(length, decimal, false, null,
-					false, false, false, null, false);
+            final TypeData typeData = new TypeData(length, decimal, false, null, false, false, false, null, false);
 
-			Word word = new CopyWord(new Word(physicalName, logicalName,
-					sqlType, typeData, null, this.diagram.getDatabase()));
+            final Word word = new CopyWord(new Word(physicalName, logicalName, sqlType, typeData, null, diagram.getDatabase()));
 
-			NormalColumn column = new NormalColumn(word, false, false, false,
-					false, null, null, null, null, null);
+            final NormalColumn column = new NormalColumn(word, false, false, false, false, null, null, null, null, null);
 
-			this.columnList.add(column);
-		}
-	}
+            columnList.add(column);
+        }
+    }
 
-	@Override
-	protected void setData() {
-		this.initTable();
-	}
+    @Override
+    protected void setData() {
+        initTable();
+    }
 
-	private void initTable() {
-		this.editColumnTable.setVisible(false);
+    private void initTable() {
+        editColumnTable.setVisible(false);
 
-		this.editColumnTable.removeData();
+        editColumnTable.removeData();
 
-		this.editColumnTable.addColumnHeader(
-				ResourceString.getResourceString("label.logical.name"), 150);
-		this.editColumnTable.addColumnHeader(
-				ResourceString.getResourceString("label.physical.name"), 150);
-		this.editColumnTable.addColumnHeader(
-				ResourceString.getResourceString("label.column.type"), 100);
-		this.editColumnTable.addColumnHeader(
-				ResourceString.getResourceString("label.column.length"), 100);
-		this.editColumnTable.addColumnHeader(
-				ResourceString.getResourceString("label.column.decimal"), 100);
+        editColumnTable.addColumnHeader(ResourceString.getResourceString("label.logical.name"), 150);
+        editColumnTable.addColumnHeader(ResourceString.getResourceString("label.physical.name"), 150);
+        editColumnTable.addColumnHeader(ResourceString.getResourceString("label.column.type"), 100);
+        editColumnTable.addColumnHeader(ResourceString.getResourceString("label.column.length"), 100);
+        editColumnTable.addColumnHeader(ResourceString.getResourceString("label.column.decimal"), 100);
 
-		this.addNewRowToTable();
+        addNewRowToTable();
 
-		this.editColumnTable.setVisible(true);
-	}
+        editColumnTable.setVisible(true);
+    }
 
-	public List<NormalColumn> getColumnList() {
-		return columnList;
-	}
+    public List<NormalColumn> getColumnList() {
+        return columnList;
+    }
 
 }

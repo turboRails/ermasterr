@@ -15,29 +15,26 @@ import org.insightech.er.editor.view.dialog.edit.EditAllAttributesDialog;
 
 public class EditAllAttributesAction extends AbstractBaseAction {
 
-	public static final String ID = EditAllAttributesAction.class.getName();
+    public static final String ID = EditAllAttributesAction.class.getName();
 
-	public EditAllAttributesAction(ERDiagramEditor editor) {
-		super(ID, ResourceString
-				.getResourceString("action.title.edit.all.attributes"), editor);
-		this.setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.EDIT));
-	}
+    public EditAllAttributesAction(final ERDiagramEditor editor) {
+        super(ID, ResourceString.getResourceString("action.title.edit.all.attributes"), editor);
+        setImageDescriptor(ERDiagramActivator.getImageDescriptor(ImageKey.EDIT));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Event event) {
-		ERDiagram diagram = this.getDiagram();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(final Event event) {
+        final ERDiagram diagram = getDiagram();
 
-		EditAllAttributesDialog dialog = new EditAllAttributesDialog(PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram);
+        final EditAllAttributesDialog dialog = new EditAllAttributesDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), diagram);
 
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			DiagramContents newDiagramContents = dialog.getDiagramContents();
-			EditAllAttributesCommand command = new EditAllAttributesCommand(
-					diagram, newDiagramContents);
-			this.execute(command);
-		}
-	}
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            final DiagramContents newDiagramContents = dialog.getDiagramContents();
+            final EditAllAttributesCommand command = new EditAllAttributesCommand(diagram, newDiagramContents);
+            this.execute(command);
+        }
+    }
 }

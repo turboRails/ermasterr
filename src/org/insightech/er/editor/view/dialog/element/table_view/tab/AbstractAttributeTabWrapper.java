@@ -37,345 +37,324 @@ import org.insightech.er.editor.view.dialog.word.column.AbstractColumnDialog;
 import org.insightech.er.util.Check;
 import org.insightech.er.util.Format;
 
-public abstract class AbstractAttributeTabWrapper extends ValidatableTabWrapper
-		implements ERTableCompositeHolder {
+public abstract class AbstractAttributeTabWrapper extends ValidatableTabWrapper implements ERTableCompositeHolder {
 
-	private static final int GROUP_TABLE_HEIGHT = 75;
+    private static final int GROUP_TABLE_HEIGHT = 75;
 
-	private TableView copyData;
+    private final TableView copyData;
 
-	private Text physicalNameText;
+    private Text physicalNameText;
 
-	private Text logicalNameText;
+    private Text logicalNameText;
 
-	private String oldPhysicalName;
+    private String oldPhysicalName;
 
-	private Combo groupCombo;
+    private Combo groupCombo;
 
-	private Button groupAddButton;
+    private Button groupAddButton;
 
-	private Button groupManageButton;
+    private Button groupManageButton;
 
-	private TableViewDialog tableViewDialog;
+    private final TableViewDialog tableViewDialog;
 
-	private ERTableComposite tableComposite;
+    private ERTableComposite tableComposite;
 
-	private ERTableComposite groupTableComposite;
+    private ERTableComposite groupTableComposite;
 
-	public AbstractAttributeTabWrapper(TableViewDialog tableViewDialog,
-			TabFolder parent, TableView copyData) {
-		super(tableViewDialog, parent, "label.table.attribute");
+    public AbstractAttributeTabWrapper(final TableViewDialog tableViewDialog, final TabFolder parent, final TableView copyData) {
+        super(tableViewDialog, parent, "label.table.attribute");
 
-		this.copyData = copyData;
-		this.tableViewDialog = tableViewDialog;
-	}
+        this.copyData = copyData;
+        this.tableViewDialog = tableViewDialog;
+    }
 
-	@Override
-	public void initComposite() {
-		this.setLayout(new GridLayout());
+    @Override
+    public void initComposite() {
+        setLayout(new GridLayout());
 
-		this.createHeader(this);
-		this.createBody(this);
-		this.createFooter(this);
-		this.createGroup(this);
-	}
+        createHeader(this);
+        createBody(this);
+        createFooter(this);
+        createGroup(this);
+    }
 
-	private void createHeader(Composite parent) {
-		Composite header = new Composite(parent, SWT.NONE);
+    private void createHeader(final Composite parent) {
+        final Composite header = new Composite(parent, SWT.NONE);
 
-		GridLayout gridLayout = new GridLayout(4, false);
-		gridLayout.horizontalSpacing = 20;
+        final GridLayout gridLayout = new GridLayout(4, false);
+        gridLayout.horizontalSpacing = 20;
 
-		header.setLayout(gridLayout);
+        header.setLayout(gridLayout);
 
-		this.physicalNameText = CompositeFactory.createText(tableViewDialog,
-				header, "label.physical.name", 1, 200, false, false);
-		this.logicalNameText = CompositeFactory.createText(tableViewDialog,
-				header, "label.logical.name", 1, 200, true, false);
+        physicalNameText = CompositeFactory.createText(tableViewDialog, header, "label.physical.name", 1, 200, false, false);
+        logicalNameText = CompositeFactory.createText(tableViewDialog, header, "label.logical.name", 1, 200, true, false);
 
-		this.physicalNameText.setText(Format.null2blank(copyData
-				.getPhysicalName()));
-		this.logicalNameText.setText(Format.null2blank(copyData
-				.getLogicalName()));
-		this.oldPhysicalName = this.physicalNameText.getText();
-	}
+        physicalNameText.setText(Format.null2blank(copyData.getPhysicalName()));
+        logicalNameText.setText(Format.null2blank(copyData.getLogicalName()));
+        oldPhysicalName = physicalNameText.getText();
+    }
 
-	private void createBody(Composite parent) {
-		Group content = new Group(parent, SWT.NONE);
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
+    private void createBody(final Composite parent) {
+        final Group content = new Group(parent, SWT.NONE);
+        final GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
 
-		content.setLayoutData(gridData);
+        content.setLayoutData(gridData);
 
-		content.setLayout(new GridLayout(1, false));
+        content.setLayout(new GridLayout(1, false));
 
-		this.initTable(content);
-	}
+        initTable(content);
+    }
 
-	private void initTable(Composite parent) {
-		AbstractColumnDialog columnDialog = this.createColumnDialog();
+    private void initTable(final Composite parent) {
+        final AbstractColumnDialog columnDialog = createColumnDialog();
 
-		ERTable table = null;
-		if (this.copyData instanceof ERTable) {
-			table = (ERTable) this.copyData;
-		}
+        ERTable table = null;
+        if (copyData instanceof ERTable) {
+            table = (ERTable) copyData;
+        }
 
-		this.tableComposite = new ERTableComposite(this, parent,
-				this.copyData.getDiagram(), table, this.copyData.getColumns(),
-				columnDialog, this.tableViewDialog, 1, true, true);
-	}
+        tableComposite = new ERTableComposite(this, parent, copyData.getDiagram(), table, copyData.getColumns(), columnDialog, tableViewDialog, 1, true, true);
+    }
 
-	protected abstract AbstractColumnDialog createColumnDialog();
+    protected abstract AbstractColumnDialog createColumnDialog();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void validatePage() throws InputException {
-		String text = logicalNameText.getText().trim();
-		this.copyData.setLogicalName(text);
-
-		if (text.equals("")) {
-			throw new InputException("error.table.logical.name.empty");
-		}
-
-		text = physicalNameText.getText().trim();
-		if (!Check.isAlphabet(text)) {
-			if (copyData.getDiagram().getDiagramContents().getSettings()
-					.isValidatePhysicalName()) {
-				throw new InputException(
-						"error.table.physical.name.not.alphabet");
-			}
-		}
-		this.copyData.setPhysicalName(text);
-	}
-
-	private void createFooter(Composite parent) {
-		Composite footer = new Composite(parent, SWT.NONE);
-
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
-
-		footer.setLayout(gridLayout);
-
-		this.createGroupCombo(footer);
-
-		this.groupAddButton = CompositeFactory.createLargeButton(footer,
-				this.getGroupAddButtonLabel());
-
-		this.groupAddButton.setEnabled(false);
-
-		this.initGroupCombo();
-	}
-
-	protected abstract String getGroupAddButtonLabel();
-
-	/**
-	 * This method initializes combo
-	 * 
-	 */
-	private void createGroupCombo(Composite parent) {
-		GridData gridData = new GridData();
-		gridData.widthHint = 200;
-
-		this.groupCombo = new Combo(parent, SWT.READ_ONLY);
-		this.groupCombo.setLayoutData(gridData);
-	}
-
-	private void initGroupCombo() {
-		this.groupCombo.removeAll();
-
-		for (ColumnGroup columnGroup : this.getColumnGroups()) {
-			this.groupCombo.add(columnGroup.getGroupName());
-		}
-
-		if (this.groupTableComposite != null) {
-			this.groupTableComposite.setColumnList(null);
-		}
-	}
-
-	private void restructGroup() {
-		this.initGroupCombo();
-
-		int index = 0;
-		for (Column column : new ArrayList<Column>(this.copyData.getColumns())) {
-			if (column instanceof ColumnGroup) {
-				if (!this.getColumnGroups().contains((ColumnGroup) column)) {
-					this.tableComposite.removeColumn(index);
-					continue;
-				}
-			}
-			index++;
-		}
-
-		this.tableViewDialog.validate();
-	}
-
-	/**
-	 * This method initializes group
-	 * 
-	 */
-	private void createGroup(Composite parent) {
-		// GridData gridData1 = new GridData();
-		// gridData1.heightHint = 100;
-		// gridData1.widthHint = -1;
-		GridData gridData = new GridData();
-		gridData.heightHint = -1;
-		gridData.horizontalSpan = 1;
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-
-		// FormToolkit toolkit = new FormToolkit(this.getDisplay());
-		// Form root = toolkit.createForm(parent);
-		// root.getBody().setLayout(new GridLayout());
-		//
-		// ExpandableComposite expandableComposite = toolkit
-		// .createExpandableComposite(root.getBody(),
-		// ExpandableComposite.TWISTIE);
-		//
-		// Composite inner = toolkit.createComposite(expandableComposite);
-		// inner.setLayout(new GridLayout());
-		// expandableComposite.setClient(inner);
-		// toolkit.createLabel(inner, "aaa");
-
-		Group group = new Group(parent, SWT.NONE);
-		group.setLayout(new GridLayout());
-		group.setLayoutData(gridData);
-
-		this.groupTableComposite = new ERTableComposite(this, group,
-				this.copyData.getDiagram(), null, null, null, null, 2, false,
-				false, GROUP_TABLE_HEIGHT);
-
-		this.groupManageButton = CompositeFactory.createLargeButton(group,
-				"label.button.group.manage");
-
-		this.groupTableComposite.setColumnList(null);
-	}
-
-	private GroupSet getColumnGroups() {
-		return this.copyData.getDiagram().getDiagramContents().getGroups();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setInitFocus() {
-		this.physicalNameText.setFocus();
-	}
-
-	public void selectGroup(ColumnGroup selectedColumn) {
-		int targetIndex = this.getColumnGroups().indexOf(selectedColumn);
-
-		this.groupCombo.select(targetIndex);
-		this.selectGroup(targetIndex);
-
-		this.groupAddButton.setEnabled(false);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void selectGroup(int targetIndex) {
-		ColumnGroup columnGroup = getColumnGroups().get(targetIndex);
-
-		if (this.copyData.getColumns().contains(columnGroup)) {
-			this.groupAddButton.setEnabled(false);
-		} else {
-			this.groupAddButton.setEnabled(true);
-		}
-
-		this.groupTableComposite.setColumnList((List) columnGroup.getColumns());
-	}
-
-	@Override
-	public void perfomeOK() {
-	}
-
-	@Override
-	protected void addListener() {
-		super.addListener();
-
-		this.physicalNameText.addModifyListener(new ModifyListener() {
-
-			public void modifyText(ModifyEvent e) {
-				String logicalName = logicalNameText.getText();
-				String physicalName = physicalNameText.getText();
-
-				if (oldPhysicalName.equals(logicalName)
-						|| logicalName.equals("")) {
-					logicalNameText.setText(physicalName);
-					oldPhysicalName = physicalName;
-				}
-			}
-		});
-
-		this.groupAddButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int targetIndex = groupCombo.getSelectionIndex();
-				if (targetIndex == -1) {
-					return;
-				}
-
-				ColumnGroup columnGroup = getColumnGroups().get(targetIndex);
-				tableComposite.addTableData(columnGroup);
-
-				groupAddButton.setEnabled(false);
-			}
-
-		});
-
-		this.groupCombo.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int targetIndex = groupCombo.getSelectionIndex();
-				if (targetIndex == -1) {
-					return;
-				}
-
-				selectGroup(targetIndex);
-			}
-		});
-
-		this.groupManageButton.addSelectionListener(new SelectionAdapter() {
-
-			/**
-			 * {@inheritDoc}
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				GroupSet groupSet = getColumnGroups();
-
-				GroupManageDialog dialog = new GroupManageDialog(PlatformUI
-						.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						groupSet, copyData.getDiagram(), false, -1);
-
-				if (dialog.open() == IDialogConstants.OK_ID) {
-					List<CopyGroup> newColumnGroups = dialog
-							.getCopyColumnGroups();
-
-					Command command = new ChangeGroupCommand(tableViewDialog
-							.getDiagram(), groupSet, newColumnGroups);
-
-					tableViewDialog.getViewer().getEditDomain()
-							.getCommandStack().execute(command);
-
-					restructGroup();
-
-					groupAddButton.setEnabled(false);
-				}
-			}
-
-		});
-
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validatePage() throws InputException {
+        String text = logicalNameText.getText().trim();
+        copyData.setLogicalName(text);
+
+        if (text.equals("")) {
+            throw new InputException("error.table.logical.name.empty");
+        }
+
+        text = physicalNameText.getText().trim();
+        if (!Check.isAlphabet(text)) {
+            if (copyData.getDiagram().getDiagramContents().getSettings().isValidatePhysicalName()) {
+                throw new InputException("error.table.physical.name.not.alphabet");
+            }
+        }
+        copyData.setPhysicalName(text);
+    }
+
+    private void createFooter(final Composite parent) {
+        final Composite footer = new Composite(parent, SWT.NONE);
+
+        final GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 2;
+
+        footer.setLayout(gridLayout);
+
+        createGroupCombo(footer);
+
+        groupAddButton = CompositeFactory.createLargeButton(footer, getGroupAddButtonLabel());
+
+        groupAddButton.setEnabled(false);
+
+        initGroupCombo();
+    }
+
+    protected abstract String getGroupAddButtonLabel();
+
+    /**
+     * This method initializes combo
+     */
+    private void createGroupCombo(final Composite parent) {
+        final GridData gridData = new GridData();
+        gridData.widthHint = 200;
+
+        groupCombo = new Combo(parent, SWT.READ_ONLY);
+        groupCombo.setLayoutData(gridData);
+    }
+
+    private void initGroupCombo() {
+        groupCombo.removeAll();
+
+        for (final ColumnGroup columnGroup : getColumnGroups()) {
+            groupCombo.add(columnGroup.getGroupName());
+        }
+
+        if (groupTableComposite != null) {
+            groupTableComposite.setColumnList(null);
+        }
+    }
+
+    private void restructGroup() {
+        initGroupCombo();
+
+        int index = 0;
+        for (final Column column : new ArrayList<Column>(copyData.getColumns())) {
+            if (column instanceof ColumnGroup) {
+                if (!getColumnGroups().contains((ColumnGroup) column)) {
+                    tableComposite.removeColumn(index);
+                    continue;
+                }
+            }
+            index++;
+        }
+
+        tableViewDialog.validate();
+    }
+
+    /**
+     * This method initializes group
+     */
+    private void createGroup(final Composite parent) {
+        // GridData gridData1 = new GridData();
+        // gridData1.heightHint = 100;
+        // gridData1.widthHint = -1;
+        final GridData gridData = new GridData();
+        gridData.heightHint = -1;
+        gridData.horizontalSpan = 1;
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+
+        // FormToolkit toolkit = new FormToolkit(this.getDisplay());
+        // Form root = toolkit.createForm(parent);
+        // root.getBody().setLayout(new GridLayout());
+        //
+        // ExpandableComposite expandableComposite = toolkit
+        // .createExpandableComposite(root.getBody(),
+        // ExpandableComposite.TWISTIE);
+        //
+        // Composite inner = toolkit.createComposite(expandableComposite);
+        // inner.setLayout(new GridLayout());
+        // expandableComposite.setClient(inner);
+        // toolkit.createLabel(inner, "aaa");
+
+        final Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout());
+        group.setLayoutData(gridData);
+
+        groupTableComposite = new ERTableComposite(this, group, copyData.getDiagram(), null, null, null, null, 2, false, false, GROUP_TABLE_HEIGHT);
+
+        groupManageButton = CompositeFactory.createLargeButton(group, "label.button.group.manage");
+
+        groupTableComposite.setColumnList(null);
+    }
+
+    private GroupSet getColumnGroups() {
+        return copyData.getDiagram().getDiagramContents().getGroups();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setInitFocus() {
+        physicalNameText.setFocus();
+    }
+
+    @Override
+    public void selectGroup(final ColumnGroup selectedColumn) {
+        final int targetIndex = getColumnGroups().indexOf(selectedColumn);
+
+        groupCombo.select(targetIndex);
+        this.selectGroup(targetIndex);
+
+        groupAddButton.setEnabled(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void selectGroup(final int targetIndex) {
+        final ColumnGroup columnGroup = getColumnGroups().get(targetIndex);
+
+        if (copyData.getColumns().contains(columnGroup)) {
+            groupAddButton.setEnabled(false);
+        } else {
+            groupAddButton.setEnabled(true);
+        }
+
+        groupTableComposite.setColumnList((List) columnGroup.getColumns());
+    }
+
+    @Override
+    public void perfomeOK() {}
+
+    @Override
+    protected void addListener() {
+        super.addListener();
+
+        physicalNameText.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(final ModifyEvent e) {
+                final String logicalName = logicalNameText.getText();
+                final String physicalName = physicalNameText.getText();
+
+                if (oldPhysicalName.equals(logicalName) || logicalName.equals("")) {
+                    logicalNameText.setText(physicalName);
+                    oldPhysicalName = physicalName;
+                }
+            }
+        });
+
+        groupAddButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int targetIndex = groupCombo.getSelectionIndex();
+                if (targetIndex == -1) {
+                    return;
+                }
+
+                final ColumnGroup columnGroup = getColumnGroups().get(targetIndex);
+                tableComposite.addTableData(columnGroup);
+
+                groupAddButton.setEnabled(false);
+            }
+
+        });
+
+        groupCombo.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final int targetIndex = groupCombo.getSelectionIndex();
+                if (targetIndex == -1) {
+                    return;
+                }
+
+                selectGroup(targetIndex);
+            }
+        });
+
+        groupManageButton.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                final GroupSet groupSet = getColumnGroups();
+
+                final GroupManageDialog dialog = new GroupManageDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), groupSet, copyData.getDiagram(), false, -1);
+
+                if (dialog.open() == IDialogConstants.OK_ID) {
+                    final List<CopyGroup> newColumnGroups = dialog.getCopyColumnGroups();
+
+                    final Command command = new ChangeGroupCommand(tableViewDialog.getDiagram(), groupSet, newColumnGroups);
+
+                    tableViewDialog.getViewer().getEditDomain().getCommandStack().execute(command);
+
+                    restructGroup();
+
+                    groupAddButton.setEnabled(false);
+                }
+            }
+
+        });
+
+    }
 
 }

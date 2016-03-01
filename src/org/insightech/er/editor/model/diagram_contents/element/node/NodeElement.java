@@ -12,161 +12,158 @@ import org.insightech.er.editor.model.diagram_contents.element.node.category.Cat
 
 public abstract class NodeElement extends ViewableModel implements ObjectModel {
 
-	private static final long serialVersionUID = -5143984125818569247L;
+    private static final long serialVersionUID = -5143984125818569247L;
 
-	private Location location;
+    private Location location;
 
-	private Location actualLocation;
+    private Location actualLocation;
 
-	private List<ConnectionElement> incomings = new ArrayList<ConnectionElement>();
+    private List<ConnectionElement> incomings = new ArrayList<ConnectionElement>();
 
-	private List<ConnectionElement> outgoings = new ArrayList<ConnectionElement>();
+    private List<ConnectionElement> outgoings = new ArrayList<ConnectionElement>();
 
-	private ERDiagram diagram;
+    private ERDiagram diagram;
 
-	public NodeElement() {
-		this.location = new Location(0, 0, 0, 0);
-	}
+    public NodeElement() {
+        location = new Location(0, 0, 0, 0);
+    }
 
-	public void setDiagram(ERDiagram diagram) {
-		this.diagram = diagram;
-	}
+    public void setDiagram(final ERDiagram diagram) {
+        this.diagram = diagram;
+    }
 
-	public ERDiagram getDiagram() {
-		return diagram;
-	}
+    public ERDiagram getDiagram() {
+        return diagram;
+    }
 
-	public int getX() {
-		return this.location.x;
-	}
+    public int getX() {
+        return location.x;
+    }
 
-	public int getY() {
-		return this.location.y;
-	}
+    public int getY() {
+        return location.y;
+    }
 
-	public int getWidth() {
-		return this.location.width;
-	}
+    public int getWidth() {
+        return location.width;
+    }
 
-	public int getHeight() {
-		return this.location.height;
-	}
+    public int getHeight() {
+        return location.height;
+    }
 
-	public void setLocation(Location location) {
-		this.location = location;
-	}
+    public void setLocation(final Location location) {
+        this.location = location;
+    }
 
-	public Location getLocation() {
-		return new Location(this.location.x, this.location.y,
-				this.location.width, this.location.height);
-	}
+    public Location getLocation() {
+        return new Location(location.x, location.y, location.width, location.height);
+    }
 
-	public Location getActualLocation() {
-		return actualLocation;
-	}
+    public Location getActualLocation() {
+        return actualLocation;
+    }
 
-	public void setActualLocation(Location actualLocation) {
-		this.actualLocation = actualLocation;
-	}
+    public void setActualLocation(final Location actualLocation) {
+        this.actualLocation = actualLocation;
+    }
 
-	public List<ConnectionElement> getIncomings() {
-		return incomings;
-	}
+    public List<ConnectionElement> getIncomings() {
+        return incomings;
+    }
 
-	public List<ConnectionElement> getOutgoings() {
-		return outgoings;
-	}
+    public List<ConnectionElement> getOutgoings() {
+        return outgoings;
+    }
 
-	public void setIncoming(List<ConnectionElement> relations) {
-		this.incomings = relations;
-	}
+    public void setIncoming(final List<ConnectionElement> relations) {
+        incomings = relations;
+    }
 
-	public void setOutgoing(List<ConnectionElement> relations) {
-		this.outgoings = relations;
-	}
+    public void setOutgoing(final List<ConnectionElement> relations) {
+        outgoings = relations;
+    }
 
-	public void addIncoming(ConnectionElement relation) {
-		this.incomings.add(relation);
-	}
+    public void addIncoming(final ConnectionElement relation) {
+        incomings.add(relation);
+    }
 
-	public void removeIncoming(ConnectionElement relation) {
-		this.incomings.remove(relation);
-	}
+    public void removeIncoming(final ConnectionElement relation) {
+        incomings.remove(relation);
+    }
 
-	public void addOutgoing(ConnectionElement relation) {
-		this.outgoings.add(relation);
-	}
+    public void addOutgoing(final ConnectionElement relation) {
+        outgoings.add(relation);
+    }
 
-	public void removeOutgoing(ConnectionElement relation) {
-		this.outgoings.remove(relation);
-	}
+    public void removeOutgoing(final ConnectionElement relation) {
+        outgoings.remove(relation);
+    }
 
-	public List<NodeElement> getReferringElementList() {
-		List<NodeElement> referringElementList = new ArrayList<NodeElement>();
+    public List<NodeElement> getReferringElementList() {
+        final List<NodeElement> referringElementList = new ArrayList<NodeElement>();
 
-		for (ConnectionElement connectionElement : this.getOutgoings()) {
-			NodeElement targetElement = connectionElement.getTarget();
+        for (final ConnectionElement connectionElement : getOutgoings()) {
+            final NodeElement targetElement = connectionElement.getTarget();
 
-			referringElementList.add(targetElement);
-		}
+            referringElementList.add(targetElement);
+        }
 
-		return referringElementList;
-	}
+        return referringElementList;
+    }
 
-	public List<NodeElement> getReferedElementList() {
-		List<NodeElement> referedElementList = new ArrayList<NodeElement>();
+    public List<NodeElement> getReferedElementList() {
+        final List<NodeElement> referedElementList = new ArrayList<NodeElement>();
 
-		for (ConnectionElement connectionElement : this.getIncomings()) {
-			NodeElement sourceElement = connectionElement.getSource();
+        for (final ConnectionElement connectionElement : getIncomings()) {
+            final NodeElement sourceElement = connectionElement.getSource();
 
-			referedElementList.add(sourceElement);
-		}
+            referedElementList.add(sourceElement);
+        }
 
-		return referedElementList;
-	}
+        return referedElementList;
+    }
 
-	public void refreshSourceConnections() {
-		if (isUpdateable()) {
-			this.firePropertyChange("refreshSourceConnections", null, null);
-		}
-	}
+    public void refreshSourceConnections() {
+        if (isUpdateable()) {
+            this.firePropertyChange("refreshSourceConnections", null, null);
+        }
+    }
 
-	public void refreshTargetConnections() {
-		if (isUpdateable()) {
-			this.firePropertyChange("refreshTargetConnections", null, null);
-		}
-	}
+    public void refreshTargetConnections() {
+        if (isUpdateable()) {
+            this.firePropertyChange("refreshTargetConnections", null, null);
+        }
+    }
 
-	public void refreshCategory() {
-		if (isUpdateable()) {
-			if (this.diagram != null) {
-				for (Category category : this.diagram.getDiagramContents()
-						.getSettings().getCategorySetting()
-						.getSelectedCategories()) {
-					if (category.contains(this)) {
-						category.refreshVisuals();
-					}
-				}
-			}
-		}
-	}
+    public void refreshCategory() {
+        if (isUpdateable()) {
+            if (diagram != null) {
+                for (final Category category : diagram.getDiagramContents().getSettings().getCategorySetting().getSelectedCategories()) {
+                    if (category.contains(this)) {
+                        category.refreshVisuals();
+                    }
+                }
+            }
+        }
+    }
 
-	public void sortRelations() {
-		Collections.sort(this.incomings);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodeElement clone() {
-		NodeElement clone = (NodeElement) super.clone();
+    public void sortRelations() {
+        Collections.sort(incomings);
+    }
 
-		clone.location = this.location.clone();
-		clone.setIncoming(new ArrayList<ConnectionElement>());
-		clone.setOutgoing(new ArrayList<ConnectionElement>());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NodeElement clone() {
+        final NodeElement clone = (NodeElement) super.clone();
 
-		return clone;
-	}
+        clone.location = location.clone();
+        clone.setIncoming(new ArrayList<ConnectionElement>());
+        clone.setOutgoing(new ArrayList<ConnectionElement>());
+
+        return clone;
+    }
 
 }

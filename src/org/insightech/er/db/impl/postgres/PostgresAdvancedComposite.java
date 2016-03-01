@@ -10,43 +10,39 @@ import org.insightech.er.editor.view.dialog.element.table_view.tab.AdvancedCompo
 
 public class PostgresAdvancedComposite extends AdvancedComposite {
 
-	private Button withoutOIDs;
+    private Button withoutOIDs;
 
-	public PostgresAdvancedComposite(Composite parent) {
-		super(parent);
-	}
+    public PostgresAdvancedComposite(final Composite parent) {
+        super(parent);
+    }
 
-	@Override
-	protected void initComposite() {
-		super.initComposite();
+    @Override
+    protected void initComposite() {
+        super.initComposite();
 
-		GridData gridData = new GridData();
-		gridData.horizontalSpan = 2;
+        final GridData gridData = new GridData();
+        gridData.horizontalSpan = 2;
 
-		this.withoutOIDs = new Button(this, SWT.CHECK);
-		this.withoutOIDs.setText(ResourceString
-				.getResourceString("label.without.oids"));
-		this.withoutOIDs.setLayoutData(gridData);
-	}
+        withoutOIDs = new Button(this, SWT.CHECK);
+        withoutOIDs.setText(ResourceString.getResourceString("label.without.oids"));
+        withoutOIDs.setLayoutData(gridData);
+    }
 
-	@Override
-	protected void setData() {
-		super.setData();
+    @Override
+    protected void setData() {
+        super.setData();
 
-		this.withoutOIDs
-				.setSelection(((PostgresTableProperties) this.tableViewProperties)
-						.isWithoutOIDs());
-	}
+        withoutOIDs.setSelection(((PostgresTableProperties) tableViewProperties).isWithoutOIDs());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean validate() throws InputException {
-		((PostgresTableProperties) this.tableViewProperties)
-				.setWithoutOIDs(this.withoutOIDs.getSelection());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean validate() throws InputException {
+        ((PostgresTableProperties) tableViewProperties).setWithoutOIDs(withoutOIDs.getSelection());
 
-		return super.validate();
-	}
+        return super.validate();
+    }
 
 }

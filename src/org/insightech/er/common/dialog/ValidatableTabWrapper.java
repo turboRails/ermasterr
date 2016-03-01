@@ -11,57 +11,52 @@ import org.insightech.er.common.exception.InputException;
 
 public abstract class ValidatableTabWrapper extends Composite {
 
-	protected TabItem tabItem;
+    protected TabItem tabItem;
 
-	protected AbstractTabbedDialog dialog;
+    protected AbstractTabbedDialog dialog;
 
-	public ValidatableTabWrapper(AbstractTabbedDialog dialog, TabFolder parent,
-			String title) {
-		super(parent, SWT.NONE);
+    public ValidatableTabWrapper(final AbstractTabbedDialog dialog, final TabFolder parent, final String title) {
+        super(parent, SWT.NONE);
 
-		this.dialog = dialog;
+        this.dialog = dialog;
 
-		this.tabItem = new TabItem(parent, SWT.NONE);
-		this.tabItem.setText(ResourceString.getResourceString(title));
+        tabItem = new TabItem(parent, SWT.NONE);
+        tabItem.setText(ResourceString.getResourceString(title));
 
-		this.tabItem.setControl(this);
-	}
+        tabItem.setControl(this);
+    }
 
-	abstract public void validatePage() throws InputException;
+    abstract public void validatePage() throws InputException;
 
-	protected final void init() {
-		GridLayout layout = new GridLayout();
-		this.initLayout(layout);
-		this.setLayout(layout);
+    protected final void init() {
+        final GridLayout layout = new GridLayout();
+        initLayout(layout);
+        setLayout(layout);
 
-		this.initComposite();
-		this.addListener();
-		this.setData();
-	}
+        initComposite();
+        this.addListener();
+        this.setData();
+    }
 
-	protected void initLayout(GridLayout layout) {
-		layout.marginTop = Resources.MARGIN_TAB;
-		layout.marginLeft = Resources.MARGIN_TAB;
-		layout.marginRight = Resources.MARGIN_TAB;
-		layout.marginBottom = Resources.MARGIN_TAB;
-	}
+    protected void initLayout(final GridLayout layout) {
+        layout.marginTop = Resources.MARGIN_TAB;
+        layout.marginLeft = Resources.MARGIN_TAB;
+        layout.marginRight = Resources.MARGIN_TAB;
+        layout.marginBottom = Resources.MARGIN_TAB;
+    }
 
-	public void reset() {
-	}
+    public void reset() {}
 
-	public void restruct() {
-	}
+    public void restruct() {}
 
-	abstract protected void initComposite();
+    abstract protected void initComposite();
 
-	protected void addListener() {
-	}
+    protected void addListener() {}
 
-	protected void setData() {
-	}
+    protected void setData() {}
 
-	abstract public void perfomeOK();
+    abstract public void perfomeOK();
 
-	abstract public void setInitFocus();
+    abstract public void setInitFocus();
 
 }

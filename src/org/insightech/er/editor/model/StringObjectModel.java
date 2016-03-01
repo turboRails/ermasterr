@@ -2,22 +2,25 @@ package org.insightech.er.editor.model;
 
 public class StringObjectModel implements ObjectModel {
 
-	private String name;
+    private final String name;
 
-	public StringObjectModel(String name) {
-		this.name = name;
-	}
+    public StringObjectModel(final String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return "";
-	}
+    @Override
+    public String getDescription() {
+        return "";
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	public String getObjectType() {
-		return "other";
-	}
+    @Override
+    public String getObjectType() {
+        return "other";
+    }
 
 }

@@ -20,311 +20,300 @@ import org.insightech.er.editor.model.tracking.ChangeTrackingList;
 
 public class ERDiagram extends ViewableModel {
 
-	private static final long serialVersionUID = 8729319470770699498L;
+    private static final long serialVersionUID = 8729319470770699498L;
 
-	private ChangeTrackingList changeTrackingList;
+    private ChangeTrackingList changeTrackingList;
 
-	private DiagramContents diagramContents;
+    private DiagramContents diagramContents;
 
-	private ERDiagramMultiPageEditor editor;
+    private ERDiagramMultiPageEditor editor;
 
-	private int[] defaultColor;
+    private int[] defaultColor;
 
-	private boolean tooltip;
+    private boolean tooltip;
 
-	private boolean disableSelectColumn;
+    private boolean disableSelectColumn;
 
-	private boolean snapToGrid;
+    private boolean snapToGrid;
 
-	private Category currentCategory;
+    private Category currentCategory;
 
-	private int pageIndex;
+    private int pageIndex;
 
-	private double zoom = 1.0d;
+    private double zoom = 1.0d;
 
-	private int x;
+    private int x;
 
-	private int y;
+    private int y;
 
-	private DBSetting dbSetting;
+    private DBSetting dbSetting;
 
-	private PageSetting pageSetting;
+    private PageSetting pageSetting;
 
-	public Point mousePoint = new Point();
+    public Point mousePoint = new Point();
 
-	public ERDiagram(String database) {
-		this.diagramContents = new DiagramContents();
-		this.diagramContents.getSettings().setDatabase(database);
-		this.pageSetting = new PageSetting();
+    public ERDiagram(final String database) {
+        diagramContents = new DiagramContents();
+        diagramContents.getSettings().setDatabase(database);
+        pageSetting = new PageSetting();
 
-		this.setDefaultColor(128, 128, 192);
-		this.setColor(255, 255, 255);
+        setDefaultColor(128, 128, 192);
+        setColor(255, 255, 255);
 
-		if (Display.getCurrent() != null) {
-			FontData fontData = Display.getCurrent().getSystemFont()
-					.getFontData()[0];
-			this.setFontName(fontData.getName());
-		}
-	}
+        if (Display.getCurrent() != null) {
+            final FontData fontData = Display.getCurrent().getSystemFont().getFontData()[0];
+            setFontName(fontData.getName());
+        }
+    }
 
-	public void clear() {
-		this.diagramContents.clear();
-		this.changeTrackingList.clear();
+    public void clear() {
+        diagramContents.clear();
+        changeTrackingList.clear();
 
-		this.diagramContents.setColumnGroups(GlobalGroupSet.load());
-	}
+        diagramContents.setColumnGroups(GlobalGroupSet.load());
+    }
 
-	public void init() {
-		this.diagramContents.setColumnGroups(GlobalGroupSet.load());
+    public void init() {
+        diagramContents.setColumnGroups(GlobalGroupSet.load());
 
-		Settings settings = this.getDiagramContents().getSettings();
+        final Settings settings = getDiagramContents().getSettings();
 
-		if (Locale.JAPANESE.getLanguage().equals(
-				Locale.getDefault().getLanguage())) {
-			settings.getTranslationSetting().setUse(true);
-			settings.getTranslationSetting().selectDefault();
-		}
+        if (Locale.JAPANESE.getLanguage().equals(Locale.getDefault().getLanguage())) {
+            settings.getTranslationSetting().setUse(true);
+            settings.getTranslationSetting().selectDefault();
+        }
 
-		settings.getModelProperties().init();
-	}
+        settings.getModelProperties().init();
+    }
 
-	public void addNewContent(NodeElement element) {
-		element.setColor(this.defaultColor[0], this.defaultColor[1],
-				this.defaultColor[2]);
-		element.setFontName(this.getFontName());
-		element.setFontSize(this.getFontSize());
+    public void addNewContent(final NodeElement element) {
+        element.setColor(defaultColor[0], defaultColor[1], defaultColor[2]);
+        element.setFontName(getFontName());
+        element.setFontSize(getFontSize());
 
-		this.addContent(element);
-	}
+        addContent(element);
+    }
 
-	public void addContent(NodeElement element) {
-		element.setDiagram(this);
+    public void addContent(final NodeElement element) {
+        element.setDiagram(this);
 
-		this.diagramContents.getContents().addNodeElement(element);
+        diagramContents.getContents().addNodeElement(element);
 
-		if (element instanceof TableView) {
-			for (NormalColumn normalColumn : ((TableView) element)
-					.getNormalColumns()) {
-				this.getDiagramContents().getDictionary().add(normalColumn);
-			}
-		}
+        if (element instanceof TableView) {
+            for (final NormalColumn normalColumn : ((TableView) element).getNormalColumns()) {
+                getDiagramContents().getDictionary().add(normalColumn);
+            }
+        }
 
-	}
+    }
 
-	public void removeContent(NodeElement element) {
-		this.diagramContents.getContents().remove(element);
+    public void removeContent(final NodeElement element) {
+        diagramContents.getContents().remove(element);
 
-		if (element instanceof TableView) {
-			this.diagramContents.getDictionary().remove((TableView) element);
-		}
+        if (element instanceof TableView) {
+            diagramContents.getDictionary().remove((TableView) element);
+        }
 
-		for (Category category : this.diagramContents.getSettings()
-				.getCategorySetting().getAllCategories()) {
-			category.getContents().remove(element);
-		}
-	}
-
-	public void replaceContents(DiagramContents newDiagramContents) {
-		this.diagramContents = newDiagramContents;
-	}
-
-	public String getDatabase() {
-		return this.getDiagramContents().getSettings().getDatabase();
-	}
-
-	public void setSettings(Settings settings) {
-		this.getDiagramContents().setSettings(settings);
-		this.editor.initCategoryPages();
-	}
-
-	public void setCurrentCategoryPageName() {
-		this.editor.setCurrentCategoryPageName();
-	}
-
-	public void addCategory(Category category) {
-		category.setColor(this.defaultColor[0], this.defaultColor[1],
-				this.defaultColor[2]);
-		category.setFontName(this.getFontName());
-		category.setFontSize(this.getFontSize());
-
-		this.getDiagramContents().getSettings().getCategorySetting()
-				.addCategoryAsSelected(category);
-		this.editor.initCategoryPages();
-	}
-
-	public void removeCategory(Category category) {
-		this.getDiagramContents().getSettings().getCategorySetting()
-				.removeCategory(category);
-		this.editor.initCategoryPages();
-	}
-
-	public void restoreCategories() {
-		this.editor.initCategoryPages();
-	}
-
-	public void change() {
-	}
-
-	public ChangeTrackingList getChangeTrackingList() {
-		if (this.changeTrackingList == null) {
-			this.changeTrackingList = new ChangeTrackingList();
-		}
-		return changeTrackingList;
-	}
-
-	public DiagramContents getDiagramContents() {
-		return this.diagramContents;
-	}
-
-	public void setEditor(ERDiagramMultiPageEditor editor) {
-		this.editor = editor;
-	}
-
-	public int[] getDefaultColor() {
-		return defaultColor;
-	}
-
-	public RGB getDefaultColorAsGRB() {
-		RGB rgb = new RGB(this.defaultColor[0], this.defaultColor[1],
-				this.defaultColor[2]);
-
-		return rgb;
-	}
-
-	public void setDefaultColor(int red, int green, int blue) {
-		this.defaultColor = new int[3];
-		this.defaultColor[0] = red;
-		this.defaultColor[1] = green;
-		this.defaultColor[2] = blue;
-	}
-
-	public void setCurrentCategory(Category currentCategory, int pageIndex) {
-		this.currentCategory = currentCategory;
-		this.pageIndex = pageIndex;
-	}
-
-	public Category getCurrentCategory() {
-		return currentCategory;
-	}
-
-	public int getPageIndex() {
-		return pageIndex;
-	}
-
-	public boolean isTooltip() {
-		return tooltip;
-	}
-
-	public void setTooltip(boolean tooltip) {
-		this.tooltip = tooltip;
-	}
-
-	public double getZoom() {
-		return zoom;
-	}
-
-	public void setZoom(double zoom) {
-		this.zoom = zoom;
-	}
-
-	public void setLocation(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public DBSetting getDbSetting() {
-		return dbSetting;
-	}
-
-	public void setDbSetting(DBSetting dbSetting) {
-		this.dbSetting = dbSetting;
-	}
-
-	public PageSetting getPageSetting() {
-		return pageSetting;
-	}
-
-	public void setPageSetting(PageSetting pageSetting) {
-		this.pageSetting = pageSetting;
-	}
-
-	public ERDiagramMultiPageEditor getEditor() {
-		return editor;
-	}
-
-	public String filter(String str) {
-		if (str == null) {
-			return str;
-		}
-
-		Settings settings = this.getDiagramContents().getSettings();
-
-		if (settings.isCapital()) {
-			return str.toUpperCase();
-		}
-
-		return str;
-	}
-
-	public boolean isDisableSelectColumn() {
-		return disableSelectColumn;
-	}
-
-	public void setDisableSelectColumn(boolean disableSelectColumn) {
-		this.disableSelectColumn = disableSelectColumn;
-	}
-
-	public boolean isSnapToGrid() {
-		return snapToGrid;
-	}
-
-	public void setSnapToGrid(boolean snapToGrid) {
-		this.snapToGrid = snapToGrid;
-	}
-
-	public void refreshChildren() {
-		if (isUpdateable()) {
-			this.firePropertyChange("refreshChildren", null, null);
-		}
-	}
-
-	public void refreshConnection() {
-		if (isUpdateable()) {
-			this.firePropertyChange("refreshConnection", null, null);
-		}
-	}
-
-	public void refreshOutline() {
-		if (isUpdateable()) {
-			this.firePropertyChange("refreshOutline", null, null);
-		}
-	}
-
-	public void refreshSettings() {
-		if (isUpdateable()) {
-			this.firePropertyChange("refreshSettings", null, null);
-		}
-	}
-
-	public void refreshWithConnection() {
-		if (isUpdateable()) {
-			this.firePropertyChange("refreshWithConnection", null, null);
-		}
-	}
-
-	public void refreshCategories() {
-		for (Category category : this.getDiagramContents().getSettings()
-				.getCategorySetting().getSelectedCategories()) {
-			category.refreshVisuals();
-		}
-	}
+        for (final Category category : diagramContents.getSettings().getCategorySetting().getAllCategories()) {
+            category.getContents().remove(element);
+        }
+    }
+
+    public void replaceContents(final DiagramContents newDiagramContents) {
+        diagramContents = newDiagramContents;
+    }
+
+    public String getDatabase() {
+        return getDiagramContents().getSettings().getDatabase();
+    }
+
+    public void setSettings(final Settings settings) {
+        getDiagramContents().setSettings(settings);
+        editor.initCategoryPages();
+    }
+
+    public void setCurrentCategoryPageName() {
+        editor.setCurrentCategoryPageName();
+    }
+
+    public void addCategory(final Category category) {
+        category.setColor(defaultColor[0], defaultColor[1], defaultColor[2]);
+        category.setFontName(getFontName());
+        category.setFontSize(getFontSize());
+
+        getDiagramContents().getSettings().getCategorySetting().addCategoryAsSelected(category);
+        editor.initCategoryPages();
+    }
+
+    public void removeCategory(final Category category) {
+        getDiagramContents().getSettings().getCategorySetting().removeCategory(category);
+        editor.initCategoryPages();
+    }
+
+    public void restoreCategories() {
+        editor.initCategoryPages();
+    }
+
+    public void change() {}
+
+    public ChangeTrackingList getChangeTrackingList() {
+        if (changeTrackingList == null) {
+            changeTrackingList = new ChangeTrackingList();
+        }
+        return changeTrackingList;
+    }
+
+    public DiagramContents getDiagramContents() {
+        return diagramContents;
+    }
+
+    public void setEditor(final ERDiagramMultiPageEditor editor) {
+        this.editor = editor;
+    }
+
+    public int[] getDefaultColor() {
+        return defaultColor;
+    }
+
+    public RGB getDefaultColorAsGRB() {
+        final RGB rgb = new RGB(defaultColor[0], defaultColor[1], defaultColor[2]);
+
+        return rgb;
+    }
+
+    public void setDefaultColor(final int red, final int green, final int blue) {
+        defaultColor = new int[3];
+        defaultColor[0] = red;
+        defaultColor[1] = green;
+        defaultColor[2] = blue;
+    }
+
+    public void setCurrentCategory(final Category currentCategory, final int pageIndex) {
+        this.currentCategory = currentCategory;
+        this.pageIndex = pageIndex;
+    }
+
+    public Category getCurrentCategory() {
+        return currentCategory;
+    }
+
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    public boolean isTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(final boolean tooltip) {
+        this.tooltip = tooltip;
+    }
+
+    public double getZoom() {
+        return zoom;
+    }
+
+    public void setZoom(final double zoom) {
+        this.zoom = zoom;
+    }
+
+    public void setLocation(final int x, final int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public DBSetting getDbSetting() {
+        return dbSetting;
+    }
+
+    public void setDbSetting(final DBSetting dbSetting) {
+        this.dbSetting = dbSetting;
+    }
+
+    public PageSetting getPageSetting() {
+        return pageSetting;
+    }
+
+    public void setPageSetting(final PageSetting pageSetting) {
+        this.pageSetting = pageSetting;
+    }
+
+    public ERDiagramMultiPageEditor getEditor() {
+        return editor;
+    }
+
+    public String filter(final String str) {
+        if (str == null) {
+            return str;
+        }
+
+        final Settings settings = getDiagramContents().getSettings();
+
+        if (settings.isCapital()) {
+            return str.toUpperCase();
+        }
+
+        return str;
+    }
+
+    public boolean isDisableSelectColumn() {
+        return disableSelectColumn;
+    }
+
+    public void setDisableSelectColumn(final boolean disableSelectColumn) {
+        this.disableSelectColumn = disableSelectColumn;
+    }
+
+    public boolean isSnapToGrid() {
+        return snapToGrid;
+    }
+
+    public void setSnapToGrid(final boolean snapToGrid) {
+        this.snapToGrid = snapToGrid;
+    }
+
+    public void refreshChildren() {
+        if (isUpdateable()) {
+            this.firePropertyChange("refreshChildren", null, null);
+        }
+    }
+
+    public void refreshConnection() {
+        if (isUpdateable()) {
+            this.firePropertyChange("refreshConnection", null, null);
+        }
+    }
+
+    public void refreshOutline() {
+        if (isUpdateable()) {
+            this.firePropertyChange("refreshOutline", null, null);
+        }
+    }
+
+    public void refreshSettings() {
+        if (isUpdateable()) {
+            this.firePropertyChange("refreshSettings", null, null);
+        }
+    }
+
+    public void refreshWithConnection() {
+        if (isUpdateable()) {
+            this.firePropertyChange("refreshWithConnection", null, null);
+        }
+    }
+
+    public void refreshCategories() {
+        for (final Category category : getDiagramContents().getSettings().getCategorySetting().getSelectedCategories()) {
+            category.refreshVisuals();
+        }
+    }
 
 }

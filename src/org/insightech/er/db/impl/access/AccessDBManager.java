@@ -18,106 +18,115 @@ import org.insightech.er.editor.model.diagram_contents.not_element.tablespace.Ta
 
 public class AccessDBManager extends DBManagerBase {
 
-	public static final String ID = "MSAccess";
+    public static final String ID = "MSAccess";
 
-	public String getId() {
-		return ID;
-	}
+    @Override
+    public String getId() {
+        return ID;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getDriverClassName() {
-		return "sun.jdbc.odbc.JdbcOdbcDriver";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDriverClassName() {
+        return "sun.jdbc.odbc.JdbcOdbcDriver";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getURL() {
-		return "jdbc:odbc:<DB NAME>";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getURL() {
+        return "jdbc:odbc:<DB NAME>";
+    }
 
-	public int getDefaultPort() {
-		return 0;
-	}
+    @Override
+    public int getDefaultPort() {
+        return 0;
+    }
 
-	public SqlTypeManager getSqlTypeManager() {
-		return new AccessSqlTypeManager();
-	}
+    @Override
+    public SqlTypeManager getSqlTypeManager() {
+        return new AccessSqlTypeManager();
+    }
 
-	public TableProperties createTableProperties(TableProperties tableProperties) {
-		if (tableProperties != null
-				&& tableProperties instanceof AccessTableProperties) {
-			return tableProperties;
-		}
+    @Override
+    public TableProperties createTableProperties(final TableProperties tableProperties) {
+        if (tableProperties != null && tableProperties instanceof AccessTableProperties) {
+            return tableProperties;
+        }
 
-		return new AccessTableProperties();
-	}
+        return new AccessTableProperties();
+    }
 
-	public DDLCreator getDDLCreator(ERDiagram diagram, Category targetCategory,
-			boolean semicolon) {
-		return new AccessDDLCreator(diagram, targetCategory, semicolon);
-	}
+    @Override
+    public DDLCreator getDDLCreator(final ERDiagram diagram, final Category targetCategory, final boolean semicolon) {
+        return new AccessDDLCreator(diagram, targetCategory, semicolon);
+    }
 
-	public List<String> getIndexTypeList(ERTable table) {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getIndexTypeList(final ERTable table) {
+        final List<String> list = new ArrayList<String>();
 
-		list.add("BTREE");
+        list.add("BTREE");
 
-		return list;
-	}
+        return list;
+    }
 
-	@Override
-	protected int[] getSupportItems() {
-		return new int[] { SUPPORT_AUTO_INCREMENT,
-				SUPPORT_AUTO_INCREMENT_SETTING };
-	}
+    @Override
+    protected int[] getSupportItems() {
+        return new int[] {SUPPORT_AUTO_INCREMENT, SUPPORT_AUTO_INCREMENT_SETTING};
+    }
 
-	public ImportFromDBManager getTableImportManager() {
-		return new AccessTableImportManager();
-	}
+    @Override
+    public ImportFromDBManager getTableImportManager() {
+        return new AccessTableImportManager();
+    }
 
-	public PreImportFromDBManager getPreTableImportManager() {
-		return new AccessPreTableImportManager();
-	}
+    @Override
+    public PreImportFromDBManager getPreTableImportManager() {
+        return new AccessPreTableImportManager();
+    }
 
-	public PreTableExportManager getPreTableExportManager() {
-		return new AccessPreTableExportManager();
-	}
+    @Override
+    public PreTableExportManager getPreTableExportManager() {
+        return new AccessPreTableExportManager();
+    }
 
-	public String[] getCurrentTimeValue() {
-		return new String[] { "GETDATE()", "CURRENT_TIMESTAMP" };
-	}
+    @Override
+    public String[] getCurrentTimeValue() {
+        return new String[] {"GETDATE()", "CURRENT_TIMESTAMP"};
+    }
 
-	@Override
-	public List<String> getSystemSchemaList() {
-		List<String> list = new ArrayList<String>();
+    @Override
+    public List<String> getSystemSchemaList() {
+        final List<String> list = new ArrayList<String>();
 
-		return list;
-	}
+        return list;
+    }
 
-	public BigDecimal getSequenceMaxValue() {
-		return null;
-	}
+    @Override
+    public BigDecimal getSequenceMaxValue() {
+        return null;
+    }
 
-	public TablespaceProperties checkTablespaceProperties(
-			TablespaceProperties tablespaceProperties) {
-		return null;
-	}
+    @Override
+    public TablespaceProperties checkTablespaceProperties(final TablespaceProperties tablespaceProperties) {
+        return null;
+    }
 
-	public TablespaceProperties createTablespaceProperties() {
-		return null;
-	}
+    @Override
+    public TablespaceProperties createTablespaceProperties() {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean doesNeedURLServerName() {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean doesNeedURLServerName() {
+        return false;
+    }
 
 }

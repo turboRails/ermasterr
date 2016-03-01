@@ -12,82 +12,77 @@ import org.insightech.er.editor.model.AbstractModel;
 import org.insightech.er.editor.model.ERDiagram;
 import org.insightech.er.editor.model.diagram_contents.element.node.category.Category;
 
-public abstract class AbstractModelEditPart extends AbstractGraphicalEditPart
-		implements PropertyChangeListener {
+public abstract class AbstractModelEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
 
-	private static Logger logger = Logger.getLogger(AbstractModelEditPart.class
-			.getName());
+    private static Logger logger = Logger.getLogger(AbstractModelEditPart.class.getName());
 
-	private static final boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void activate() {
-		super.activate();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void activate() {
+        super.activate();
 
-		AbstractModel model = (AbstractModel) this.getModel();
-		model.addPropertyChangeListener(this);
-	}
+        final AbstractModel model = (AbstractModel) getModel();
+        model.addPropertyChangeListener(this);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void deactivate() {
-		AbstractModel model = (AbstractModel) this.getModel();
-		model.removePropertyChangeListener(this);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deactivate() {
+        final AbstractModel model = (AbstractModel) getModel();
+        model.removePropertyChangeListener(this);
 
-		super.deactivate();
-	}
+        super.deactivate();
+    }
 
-	protected ERDiagram getDiagram() {
-		return (ERDiagram) this.getRoot().getContents().getModel();
-	}
+    protected ERDiagram getDiagram() {
+        return (ERDiagram) getRoot().getContents().getModel();
+    }
 
-	protected Category getCurrentCategory() {
-		return this.getDiagram().getCurrentCategory();
-	}
+    protected Category getCurrentCategory() {
+        return getDiagram().getCurrentCategory();
+    }
 
-	protected void executeCommand(Command command) {
-		this.getViewer().getEditDomain().getCommandStack().execute(command);
-	}
+    protected void executeCommand(final Command command) {
+        getViewer().getEditDomain().getCommandStack().execute(command);
+    }
 
-	public final void propertyChange(PropertyChangeEvent event) {
-		try {
-			if (DEBUG) {
-				logger.log(
-						Level.INFO,
-						this.getClass().getName() + ":"
-								+ event.getPropertyName() + ":"
-								+ event.toString());
-			}
+    @Override
+    public final void propertyChange(final PropertyChangeEvent event) {
+        try {
+            if (DEBUG) {
+                logger.log(Level.INFO, this.getClass().getName() + ":" + event.getPropertyName() + ":" + event.toString());
+            }
 
-			this.doPropertyChange(event);
+            doPropertyChange(event);
 
-		} catch (Exception e) {
-			ERDiagramActivator.showExceptionDialog(e);
-		}
-	}
+        } catch (final Exception e) {
+            ERDiagramActivator.showExceptionDialog(e);
+        }
+    }
 
-	protected void doPropertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals("refreshVisuals")) {
-			this.refreshVisuals();
+    protected void doPropertyChange(final PropertyChangeEvent event) {
+        if (event.getPropertyName().equals("refreshVisuals")) {
+            refreshVisuals();
 
-		} else if (event.getPropertyName().equals("refresh")) {
-			this.refresh();
+        } else if (event.getPropertyName().equals("refresh")) {
+            refresh();
 
-		}
-	}
+        }
+    }
 
-	@Override
-	public void refresh() {
-		refreshChildren();
-		refreshVisuals();
+    @Override
+    public void refresh() {
+        refreshChildren();
+        refreshVisuals();
 
-		refreshSourceConnections();
-		refreshTargetConnections();
-	}
+        refreshSourceConnections();
+        refreshTargetConnections();
+    }
 
 }

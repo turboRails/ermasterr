@@ -17,119 +17,99 @@ import org.insightech.er.util.io.FileUtils;
 
 public class ExportToHtmlDialog extends AbstractExportDialog {
 
-	private DirectoryText outputDirText;
+    private DirectoryText outputDirText;
 
-	private MultiLineCheckbox withImageButton;
+    private MultiLineCheckbox withImageButton;
 
-	private MultiLineCheckbox withCategoryImageButton;
+    private MultiLineCheckbox withCategoryImageButton;
 
-	// private Combo fileEncodingCombo;
+    // private Combo fileEncodingCombo;
 
-	@Override
-	protected void initLayout(GridLayout layout) {
-		super.initLayout(layout);
+    @Override
+    protected void initLayout(final GridLayout layout) {
+        super.initLayout(layout);
 
-		layout.numColumns = 3;
-	}
+        layout.numColumns = 3;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void initialize(Composite parent) {
-		this.outputDirText = CompositeFactory
-				.createDirectoryText(
-						this,
-						parent,
-						"label.output.dir",
-						this.getBaseDir(),
-						ResourceString
-								.getResourceString("dialog.message.export.html.dir.select"));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initialize(final Composite parent) {
+        outputDirText = CompositeFactory.createDirectoryText(this, parent, "label.output.dir", getBaseDir(), ResourceString.getResourceString("dialog.message.export.html.dir.select"));
 
-		// this.fileEncodingCombo = CompositeFactory
-		// .createFileEncodingCombo(this.diagramFile, this, parent,
-		// "label.output.file.encoding", 2);
+        // this.fileEncodingCombo = CompositeFactory
+        // .createFileEncodingCombo(this.diagramFile, this, parent,
+        // "label.output.file.encoding", 2);
 
-		Composite checkboxArea = this.createCheckboxArea(parent);
+        final Composite checkboxArea = this.createCheckboxArea(parent);
 
-		this.withImageButton = CompositeFactory.createMultiLineCheckbox(this,
-				checkboxArea, "label.output.image.to.html", false, 1);
+        withImageButton = CompositeFactory.createMultiLineCheckbox(this, checkboxArea, "label.output.image.to.html", false, 1);
 
-		this.withCategoryImageButton = CompositeFactory
-				.createMultiLineCheckbox(this, checkboxArea,
-						"label.output.image.to.html.category", false, 1);
+        withCategoryImageButton = CompositeFactory.createMultiLineCheckbox(this, checkboxArea, "label.output.image.to.html.category", false, 1);
 
-		this.createOpenAfterSavedButton(checkboxArea, false, 1);
-	}
+        createOpenAfterSavedButton(checkboxArea, false, 1);
+    }
 
-	@Override
-	protected String getErrorMessage() {
-		// if (this.outputDirText.isBlank()) {
-		// return "error.output.dir.is.empty";
-		// }
+    @Override
+    protected String getErrorMessage() {
+        // if (this.outputDirText.isBlank()) {
+        // return "error.output.dir.is.empty";
+        // }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	protected ExportWithProgressManager getExportWithProgressManager(
-			ExportSetting exportSetting) throws InputException {
+    @Override
+    protected ExportWithProgressManager getExportWithProgressManager(final ExportSetting exportSetting) throws InputException {
 
-		ExportHtmlSetting exportHtmlSetting = exportSetting
-				.getExportHtmlSetting();
+        final ExportHtmlSetting exportHtmlSetting = exportSetting.getExportHtmlSetting();
 
-		exportHtmlSetting.setOutputDir(this.outputDirText.getFilePath());
-		// exportHtmlSetting.setSrcFileEncoding(this.fileEncodingCombo.getText());
-		exportHtmlSetting.setWithImage(this.withImageButton.getSelection());
-		exportHtmlSetting.setWithCategoryImage(this.withCategoryImageButton
-				.getSelection());
-		exportHtmlSetting.setOpenAfterSaved(this.openAfterSavedButton
-				.getSelection());
+        exportHtmlSetting.setOutputDir(outputDirText.getFilePath());
+        // exportHtmlSetting.setSrcFileEncoding(this.fileEncodingCombo.getText());
+        exportHtmlSetting.setWithImage(withImageButton.getSelection());
+        exportHtmlSetting.setWithCategoryImage(withCategoryImageButton.getSelection());
+        exportHtmlSetting.setOpenAfterSaved(openAfterSavedButton.getSelection());
 
-		return new ExportToHtmlManager(exportHtmlSetting);
-	}
+        return new ExportToHtmlManager(exportHtmlSetting);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void setData() {
-		ExportHtmlSetting exportHtmlSetting = this.settings.getExportSetting()
-				.getExportHtmlSetting();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setData() {
+        final ExportHtmlSetting exportHtmlSetting = settings.getExportSetting().getExportHtmlSetting();
 
-		this.outputDirText.setText(FileUtils.getRelativeFilePath(
-				this.getBaseDir(), exportHtmlSetting.getOutputDir()));
+        outputDirText.setText(FileUtils.getRelativeFilePath(getBaseDir(), exportHtmlSetting.getOutputDir()));
 
-		// if (!Check.isEmpty(exportHtmlSetting.getSrcFileEncoding())) {
-		// this.fileEncodingCombo.setText(exportHtmlSetting
-		// .getSrcFileEncoding());
-		// }
+        // if (!Check.isEmpty(exportHtmlSetting.getSrcFileEncoding())) {
+        // this.fileEncodingCombo.setText(exportHtmlSetting
+        // .getSrcFileEncoding());
+        // }
 
-		this.withImageButton.setSelection(exportHtmlSetting.isWithImage());
-		this.withCategoryImageButton.setSelection(exportHtmlSetting
-				.isWithCategoryImage());
-		this.openAfterSavedButton.setSelection(exportHtmlSetting
-				.isOpenAfterSaved());
-	}
+        withImageButton.setSelection(exportHtmlSetting.isWithImage());
+        withCategoryImageButton.setSelection(exportHtmlSetting.isWithCategoryImage());
+        openAfterSavedButton.setSelection(exportHtmlSetting.isOpenAfterSaved());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getTitle() {
-		return "dialog.title.export.html";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getTitle() {
+        return "dialog.title.export.html";
+    }
 
-	@Override
-	protected File openAfterSaved() {
-		return ExportToHtmlManager.getIndexHtml(FileUtils.getFile(
-				this.getBaseDir(), this.settings.getExportSetting()
-						.getExportHtmlSetting().getOutputDir()));
-	}
+    @Override
+    protected File openAfterSaved() {
+        return ExportToHtmlManager.getIndexHtml(FileUtils.getFile(getBaseDir(), settings.getExportSetting().getExportHtmlSetting().getOutputDir()));
+    }
 
-	@Override
-	protected boolean openWithExternalEditor() {
-		return true;
-	}
+    @Override
+    protected boolean openWithExternalEditor() {
+        return true;
+    }
 
 }
