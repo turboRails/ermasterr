@@ -129,7 +129,8 @@ public class ERDiagram extends ViewableModel {
 
     public void setSettings(final Settings settings) {
         getDiagramContents().setSettings(settings);
-        editor.initCategoryPages();
+        // [ermaster-fast] Avoid expensive initialization, disable category tabs
+        //editor.initCategoryPages();
     }
 
     public void setCurrentCategoryPageName() {
@@ -142,16 +143,19 @@ public class ERDiagram extends ViewableModel {
         category.setFontSize(getFontSize());
 
         getDiagramContents().getSettings().getCategorySetting().addCategoryAsSelected(category);
-        editor.initCategoryPages();
+        // [ermaster-fast] Avoid expensive initialization, disable category tabs
+        //editor.initCategoryPages();
     }
 
     public void removeCategory(final Category category) {
         getDiagramContents().getSettings().getCategorySetting().removeCategory(category);
-        editor.initCategoryPages();
+        // [ermaster-fast] Avoid expensive initialization, disable category tabs
+        //editor.initCategoryPages();
     }
 
     public void restoreCategories() {
-        editor.initCategoryPages();
+        // [ermaster-fast] Avoid expensive initialization, disable category tabs
+        //editor.initCategoryPages();
     }
 
     public void change() {}
