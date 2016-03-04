@@ -1,6 +1,9 @@
 # ermaster-fast
 A fork of ERMaster(http://ermaster.sourceforge.net). It's faster when using a large .erm file.
 
+# Install
+Copy the contents of the dropins folder to the dropins folder located in the root of your Eclipse installation.
+
 # What is ERMaster?
 ERMaster is GUI editor for ER diagram. 
 It runs as Eclipse plug-in. 
