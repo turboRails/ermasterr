@@ -13,7 +13,7 @@ Moreover, importing from DB, management of the group, and the historical managem
 # ERMaster is very useful, but ...
 
 ## Draw speed is so slow when you open a ER diagram that has many categories
-ERMaster has a serious issue that increases drawing speed in proportion to the number of categories.
+ERMaster has a serious issue that increases drawing time in proportion to the number of categories.
 The cause of this problem is ERMaster processes expensive initialization for each category tabs.
 
 ## ER diagram file size becomes gigantic in sometimes
