@@ -17,11 +17,11 @@ ERMaster has a serious issue that increases drawing time in proportion to the nu
 The cause of this problem is ERMaster processes expensive initialization for each category tabs.
 
 ## ER diagram file size becomes gigantic in sometimes
-ERMaster has another problem that ER diagram file(xml) size becomes gigantic in sometimes.
+ERMaster has another problem that ER diagram file(xml) size becomes gigantic in sometimes ( https://sourceforge.net/p/ermaster/bugs/119/ ).
 The cause of this problem is ERMaster writes a large amount of same xml tags sometimes.
 
 # ermaster-fast solved this issues
-* ermaster-fast got rid of tabs of each category, and skipped this expensive initialization, prevent a increase of drawing speed.
+* ermaster-fast got rid of tabs of each category, and skipped this expensive initialization, prevent a increase of drawing time.
 * ermaster-fast fixed the issue that writes a large amount of same xml tags.
 
 # License
