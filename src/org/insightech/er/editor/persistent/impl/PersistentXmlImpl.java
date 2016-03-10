@@ -1159,6 +1159,7 @@ public class PersistentXmlImpl extends Persistent {
                 String ref = Format.toString(context.columnMap.get(referencedColumn));
                 if (!ref.equals(prevRef)) {
                     xml.append("\t<referenced_column>").append(ref).append("</referenced_column>\n");
+                    prevRef = ref;
                 }
             }
             Integer prevRel = null;
@@ -1166,6 +1167,7 @@ public class PersistentXmlImpl extends Persistent {
                 Integer rel = context.connectionMap.get(relation);
                 if (!rel.equals(prevRel)) {
                     xml.append("\t<relation>").append(rel).append("</relation>\n");
+                    prevRel = rel;
                 }
             }
         }
