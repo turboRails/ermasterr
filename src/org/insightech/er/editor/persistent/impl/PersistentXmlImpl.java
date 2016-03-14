@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +121,7 @@ public class PersistentXmlImpl extends Persistent {
             nodeElementCount++;
 
             final List<ConnectionElement> connections = content.getIncomings();
+            Collections.sort(connections);  // [ermaster-fast] Sort
 
             for (final ConnectionElement connection : connections) {
                 context.connectionMap.put(connection, new Integer(connectionCount));

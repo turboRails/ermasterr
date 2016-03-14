@@ -376,4 +376,34 @@ public class Relation extends ConnectionElement {
 
         return clone;
     }
+
+    @Override
+    public int compareTo(ConnectionElement other) {
+        int result = super.compareTo(other);
+        if (result != 0) {
+            return result;
+        }
+
+        if (!(other instanceof Relation)) {
+            return 1;
+        }
+
+        Relation _other = (Relation) other;
+        
+        // [ermaster-fast] compare by name
+        final String name1 = getName();
+        final String name2 = _other.getName();
+        
+        if (!name1.equals(name2)) {
+            return name1.compareTo(name2);
+        }
+        
+        // [ermaster-fast] compare by position
+        final Integer p1 = getSourceXp() + getSourceYp() + getTargetXp() + getTargetYp();
+        final Integer p2 = _other.getSourceXp() + _other.getSourceYp() + _other.getTargetXp() + _other.getTargetYp();
+        
+        return p1.compareTo(p2);
+        // [ermaster-fast] give up if same relation and same position
+    }
+
 }
