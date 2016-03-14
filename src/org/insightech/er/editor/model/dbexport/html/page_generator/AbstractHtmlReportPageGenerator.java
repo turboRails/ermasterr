@@ -2,6 +2,7 @@ package org.insightech.er.editor.model.dbexport.html.page_generator;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -254,15 +255,22 @@ public abstract class AbstractHtmlReportPageGenerator implements HtmlReportPageG
 
         final String template = ExportToHtmlManager.getTemplate("types/foreign_key_row_template.html");
 
+        // [ermaster-fast] distinct
+        List<String> generatedIds = new ArrayList<>();
         for (final NormalColumn normalColumn : foreignKeyList) {
             for (final Relation relation : normalColumn.getRelationList()) {
                 final TableView sourceTable = relation.getSourceTableView();
 
-                final Object[] args = {getObjectId(normalColumn), Format.null2blank(normalColumn.getName()), getObjectId(sourceTable), Format.null2blank(sourceTable.getName()), getObjectId(normalColumn.getReferencedColumn(relation)), Format.null2blank(normalColumn.getReferencedColumn(relation).getName()), relation.getOnUpdateAction(), relation.getOnDeleteAction(), Format.null2blank(relation.getParentCardinality()), Format.null2blank(relation.getChildCardinality())};
+                String id = getObjectId(normalColumn);
+                if (generatedIds.contains(id)) {
+                    continue;
+                }
+                final Object[] args = {id, Format.null2blank(normalColumn.getName()), getObjectId(sourceTable), Format.null2blank(sourceTable.getName()), getObjectId(normalColumn.getReferencedColumn(relation)), Format.null2blank(normalColumn.getReferencedColumn(relation).getName()), relation.getOnUpdateAction(), relation.getOnDeleteAction(), Format.null2blank(relation.getParentCardinality()), Format.null2blank(relation.getChildCardinality())};
 
                 final String row = MessageFormat.format(template, args);
 
                 sb.append(row);
+                generatedIds.add(id);
             }
         }
 
@@ -274,15 +282,22 @@ public abstract class AbstractHtmlReportPageGenerator implements HtmlReportPageG
 
         final String template = ExportToHtmlManager.getTemplate("types/foreign_key_row_template.html");
 
+        // [ermaster-fast] distinct
+        List<String> generatedIds = new ArrayList<>();
         for (final NormalColumn normalColumn : foreignKeyList) {
             for (final Relation relation : normalColumn.getRelationList()) {
                 final TableView targetTable = relation.getTargetTableView();
 
-                final Object[] args = {getObjectId(normalColumn.getReferencedColumn(relation)), Format.null2blank(normalColumn.getReferencedColumn(relation).getName()), getObjectId(targetTable), Format.null2blank(targetTable.getName()), getObjectId(normalColumn), Format.null2blank(normalColumn.getName()), relation.getOnUpdateAction(), relation.getOnDeleteAction(), Format.null2blank(relation.getParentCardinality()), Format.null2blank(relation.getChildCardinality())};
+                String id = getObjectId(normalColumn);
+                if (generatedIds.contains(id)) {
+                    continue;
+                }
+                final Object[] args = {getObjectId(normalColumn.getReferencedColumn(relation)), Format.null2blank(normalColumn.getReferencedColumn(relation).getName()), getObjectId(targetTable), Format.null2blank(targetTable.getName()), id, Format.null2blank(normalColumn.getName()), relation.getOnUpdateAction(), relation.getOnDeleteAction(), Format.null2blank(relation.getParentCardinality()), Format.null2blank(relation.getChildCardinality())};
 
                 final String row = MessageFormat.format(template, args);
 
                 sb.append(row);
+                generatedIds.add(id);
             }
         }
 
