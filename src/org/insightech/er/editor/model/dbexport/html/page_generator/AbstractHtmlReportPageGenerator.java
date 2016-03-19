@@ -255,7 +255,7 @@ public abstract class AbstractHtmlReportPageGenerator implements HtmlReportPageG
 
         final String template = ExportToHtmlManager.getTemplate("types/foreign_key_row_template.html");
 
-        // [ermaster-fast] distinct
+        // [ermasterr] distinct
         List<String> generatedIds = new ArrayList<>();
         for (final NormalColumn normalColumn : foreignKeyList) {
             for (final Relation relation : normalColumn.getRelationList()) {
@@ -282,7 +282,7 @@ public abstract class AbstractHtmlReportPageGenerator implements HtmlReportPageG
 
         final String template = ExportToHtmlManager.getTemplate("types/foreign_key_row_template.html");
 
-        // [ermaster-fast] distinct
+        // [ermasterr] distinct
         List<String> generatedIds = new ArrayList<>();
         for (final NormalColumn normalColumn : foreignKeyList) {
             for (final Relation relation : normalColumn.getRelationList()) {

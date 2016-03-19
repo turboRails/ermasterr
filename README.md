@@ -1,7 +1,12 @@
-# ermaster-fast
-A fork of ERMaster(http://ermaster.sourceforge.net). It's faster when using a large .erm file.
+# ermasterr
+A fork of ERMaster(http://ermaster.sourceforge.net). It's solved some issues of the original version.
 
 # Install
+1. Install Eclipse  
+Package: Eclipse IDE for Java Developers
+2. Install PDE plug-in  
+Plug-in name: Eclipse PDE Plug-in Developer Resources
+3. Install ermasterr  
 Copy the contents of the dropins folder to the dropins folder located in the root of your Eclipse installation.
 
 # What is ERMaster?
@@ -20,9 +25,9 @@ The cause of this problem is ERMaster processes expensive initialization for eac
 ERMaster has another problem that ER diagram file(xml) size becomes gigantic in sometimes ( https://sourceforge.net/p/ermaster/bugs/119/ ).
 The cause of this problem is ERMaster writes a large amount of same xml tags sometimes.
 
-# ermaster-fast solved this issues
-* ermaster-fast got rid of tabs of each category, and skipped this expensive initialization, prevent a increase of drawing time.
-* ermaster-fast fixed the issue that writes a large amount of same xml tags.
+# ermasterr solved this issues
+* ermasterr got rid of tabs of each category, and skipped this expensive initialization, prevent a increase of drawing time.
+* ermasterr fixed the issue that writes a large amount of same xml tags.
 
 # License
 Apache License V2.0

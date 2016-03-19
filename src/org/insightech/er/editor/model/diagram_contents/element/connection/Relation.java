@@ -390,7 +390,7 @@ public class Relation extends ConnectionElement {
 
         Relation _other = (Relation) other;
         
-        // [ermaster-fast] compare by name
+        // [ermasterr] compare by name
         final String name1 = getName();
         final String name2 = _other.getName();
         
@@ -398,12 +398,12 @@ public class Relation extends ConnectionElement {
             return name1.compareTo(name2);
         }
         
-        // [ermaster-fast] compare by position
+        // [ermasterr] compare by position
         final Integer p1 = getSourceXp() + getSourceYp() + getTargetXp() + getTargetYp();
         final Integer p2 = _other.getSourceXp() + _other.getSourceYp() + _other.getTargetXp() + _other.getTargetYp();
         
         return p1.compareTo(p2);
-        // [ermaster-fast] give up if same relation and same position
+        // [ermasterr] give up if same relation and same position
     }
 
 }

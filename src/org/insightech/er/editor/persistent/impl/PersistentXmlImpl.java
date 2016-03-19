@@ -121,7 +121,7 @@ public class PersistentXmlImpl extends Persistent {
             nodeElementCount++;
 
             final List<ConnectionElement> connections = content.getIncomings();
-            Collections.sort(connections);  // [ermaster-fast] Sort
+            Collections.sort(connections);  // [ermasterr] Sort
 
             for (final ConnectionElement connection : connections) {
                 context.connectionMap.put(connection, new Integer(connectionCount));
