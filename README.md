@@ -15,19 +15,13 @@ It runs as Eclipse plug-in.
 It can be done graphically to making ER diagram, printing ER diagram, exporting the DDL from ER diagram, etc. . 
 Moreover, importing from DB, management of the group, and the historical management, etc. are supported. 
 
-# ERMaster is very useful, but ...
+# ermasterr solved some issues of the original version
+* ermasterr prevented a increase of the drawing time by getting rid of tabs of each category and skipping expensive initialization for each category.
+* ermasterr fixed the issue that erdiagram data file size becomes gigantic in sometimes by writing a large amount of same xml tags.
+* ermasterr can write git-mergable erdiagram data as far as possible.
 
-## Draw speed is so slow when you open a ER diagram that has many categories
-ERMaster has a serious issue that increases drawing time in proportion to the number of categories.
-The cause of this problem is ERMaster processes expensive initialization for each category tabs.
-
-## ER diagram file size becomes gigantic in sometimes
-ERMaster has another problem that ER diagram file(xml) size becomes gigantic in sometimes ( https://sourceforge.net/p/ermaster/bugs/119/ ).
-The cause of this problem is ERMaster writes a large amount of same xml tags sometimes.
-
-# ermasterr solved this issues
-* ermasterr got rid of tabs of each category, and skipped this expensive initialization, prevent a increase of drawing time.
-* ermasterr fixed the issue that writes a large amount of same xml tags.
+# 1.1.x migration for 1.0.x
+Re-save .erm file using 1.1.x.
 
 # License
 Apache License V2.0

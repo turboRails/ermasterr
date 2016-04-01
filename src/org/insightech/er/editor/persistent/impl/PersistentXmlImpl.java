@@ -80,52 +80,56 @@ public class PersistentXmlImpl extends Persistent {
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private class PersistentContext {
-        private final Map<ColumnGroup, Integer> columnGroupMap = new HashMap<ColumnGroup, Integer>();
+        // [ermasterr] Change map value type to String
+        private final Map<ColumnGroup, String> columnGroupMap = new HashMap<>();
 
-        private final Map<ConnectionElement, Integer> connectionMap = new HashMap<ConnectionElement, Integer>();
+        private final Map<ConnectionElement, String> connectionMap = new HashMap<>();
 
-        private final Map<Column, Integer> columnMap = new HashMap<Column, Integer>();
+        private final Map<Column, String> columnMap = new HashMap<>();
 
-        private final Map<ComplexUniqueKey, Integer> complexUniqueKeyMap = new HashMap<ComplexUniqueKey, Integer>();
+        private final Map<ComplexUniqueKey, String> complexUniqueKeyMap = new HashMap<>();
 
-        private final Map<NodeElement, Integer> nodeElementMap = new HashMap<NodeElement, Integer>();
+        private final Map<NodeElement, String> nodeElementMap = new HashMap<>();
 
-        private final Map<Word, Integer> wordMap = new HashMap<Word, Integer>();
+        private final Map<Word, String> wordMap = new HashMap<>();
 
-        private final Map<Tablespace, Integer> tablespaceMap = new HashMap<Tablespace, Integer>();
+        private final Map<Tablespace, String> tablespaceMap = new HashMap<>();
 
-        private final Map<Environment, Integer> environmentMap = new HashMap<Environment, Integer>();
+        private final Map<Environment, String> environmentMap = new HashMap<>();
     }
 
     private PersistentContext getContext(final DiagramContents diagramContents) {
         final PersistentContext context = new PersistentContext();
 
-        int columnGroupCount = 0;
-        int columnCount = 0;
+        // [ermasterr] Change id generation to model's hash
+
+        //int columnGroupCount = 0;
+        //int columnCount = 0;
         for (final ColumnGroup columnGroup : diagramContents.getGroups()) {
-            context.columnGroupMap.put(columnGroup, new Integer(columnGroupCount));
-            columnGroupCount++;
+            context.columnGroupMap.put(columnGroup, IdGenerator.columnGroupId(columnGroup));
+            //columnGroupCount++;
 
             for (final NormalColumn normalColumn : columnGroup.getColumns()) {
-                context.columnMap.put(normalColumn, new Integer(columnCount));
-                columnCount++;
+                context.columnMap.put(normalColumn, IdGenerator.columnGroupColumnId(columnGroup, normalColumn));
+                //columnCount++;
             }
         }
 
-        int nodeElementCount = 0;
-        int connectionCount = 0;
-        int complexUniqueKeyCount = 0;
+        //int nodeElementCount = 0;
+        //int connectionCount = 0;
+        //int complexUniqueKeyCount = 0;
 
         for (final NodeElement content : diagramContents.getContents()) {
-            context.nodeElementMap.put(content, new Integer(nodeElementCount));
-            nodeElementCount++;
+            context.nodeElementMap.put(content, IdGenerator.nodeElementId(content));
+            //nodeElementCount++;
 
             final List<ConnectionElement> connections = content.getIncomings();
             Collections.sort(connections);  // [ermasterr] Sort
 
+            System.out.println(content);
             for (final ConnectionElement connection : connections) {
-                context.connectionMap.put(connection, new Integer(connectionCount));
-                connectionCount++;
+                context.connectionMap.put(connection, IdGenerator.connectionId(content, connection));
+                //connectionCount++;
             }
 
             if (content instanceof ERTable) {
@@ -136,42 +140,42 @@ public class PersistentXmlImpl extends Persistent {
 
                 for (final Column column : columns) {
                     if (column instanceof NormalColumn) {
-                        context.columnMap.put(column, new Integer(columnCount));
+                        context.columnMap.put(column, IdGenerator.tableColumnId(table, (NormalColumn) column));
 
-                        columnCount++;
+                        //columnCount++;
                     }
                 }
 
                 for (final ComplexUniqueKey complexUniqueKey : table.getComplexUniqueKeyList()) {
-                    context.complexUniqueKeyMap.put(complexUniqueKey, new Integer(complexUniqueKeyCount));
+                    context.complexUniqueKeyMap.put(complexUniqueKey, IdGenerator.complexUniqueKeyId(table, complexUniqueKey));
 
-                    complexUniqueKeyCount++;
+                    //complexUniqueKeyCount++;
                 }
 
             }
         }
 
         for (final Category category : diagramContents.getSettings().getCategorySetting().getAllCategories()) {
-            context.nodeElementMap.put(category, new Integer(nodeElementCount));
-            nodeElementCount++;
+            context.nodeElementMap.put(category, IdGenerator.categoryId(category));
+            //nodeElementCount++;
         }
 
-        int wordCount = 0;
+        //int wordCount = 0;
         for (final Word word : diagramContents.getDictionary().getWordList()) {
-            context.wordMap.put(word, new Integer(wordCount));
-            wordCount++;
+            context.wordMap.put(word, IdGenerator.wordId(word));
+            //wordCount++;
         }
 
-        int tablespaceCount = 0;
+        //int tablespaceCount = 0;
         for (final Tablespace tablespace : diagramContents.getTablespaceSet()) {
-            context.tablespaceMap.put(tablespace, new Integer(tablespaceCount));
-            tablespaceCount++;
+            context.tablespaceMap.put(tablespace, IdGenerator.tablespaceId(tablespace));
+            //tablespaceCount++;
         }
 
-        int environmentCount = 0;
+        //int environmentCount = 0;
         for (final Environment environment : diagramContents.getSettings().getEnvironmentSetting().getEnvironments()) {
-            context.environmentMap.put(environment, new Integer(environmentCount));
-            environmentCount++;
+            context.environmentMap.put(environment, IdGenerator.environmentId(environment));
+            //environmentCount++;
         }
 
         return context;
@@ -651,7 +655,7 @@ public class PersistentXmlImpl extends Persistent {
     private String createXML(final RepeatTestDataDef repeatTestDataDef, final NormalColumn column, final PersistentContext context) {
         final StringBuilder xml = new StringBuilder();
 
-        final Integer columnId = context.columnMap.get(column);
+        final String columnId = context.columnMap.get(column);
 
         if (columnId != null) {
             xml.append("<data_def>\n");
@@ -1147,7 +1151,7 @@ public class PersistentXmlImpl extends Persistent {
 
         xml.append("<normal_column>\n");
 
-        Integer wordId = null;
+        String wordId = null;
 
         if (context != null) {
             wordId = context.wordMap.get(normalColumn.getWord());
@@ -1164,9 +1168,9 @@ public class PersistentXmlImpl extends Persistent {
                     prevRef = ref;
                 }
             }
-            Integer prevRel = null;
+            String prevRel = null;
             for (final Relation relation : normalColumn.getRelationList()) {
-                Integer rel = context.connectionMap.get(relation);
+                String rel = context.connectionMap.get(relation);
                 if (!rel.equals(prevRel)) {
                     xml.append("\t<relation>").append(rel).append("</relation>\n");
                     prevRel = rel;
@@ -1331,7 +1335,7 @@ public class PersistentXmlImpl extends Persistent {
         for (final Environment environment : environmentSetting.getEnvironments()) {
             xml.append("\t<environment>\n");
 
-            final Integer environmentId = context.environmentMap.get(environment);
+            final String environmentId = context.environmentMap.get(environment);
             xml.append("\t\t<id>").append(environmentId).append("</id>\n");
             xml.append("\t\t<name>").append(environment.getName()).append("</name>\n");
 
@@ -1348,7 +1352,7 @@ public class PersistentXmlImpl extends Persistent {
 
         xml.append("<table_properties>\n");
 
-        final Integer tablespaceId = context.tablespaceMap.get(tableProperties.getTableSpace());
+        final String tablespaceId = context.tablespaceMap.get(tableProperties.getTableSpace());
         if (tablespaceId != null) {
             xml.append("\t<tablespace_id>").append(tablespaceId).append("</tablespace_id>\n");
         }
@@ -1391,7 +1395,7 @@ public class PersistentXmlImpl extends Persistent {
 
         xml.append("<view_properties>\n");
 
-        final Integer tablespaceId = context.tablespaceMap.get(viewProperties.getTableSpace());
+        final String tablespaceId = context.tablespaceMap.get(viewProperties.getTableSpace());
         if (tablespaceId != null) {
             xml.append("\t<tablespace_id>").append(tablespaceId).append("</tablespace_id>\n");
         }

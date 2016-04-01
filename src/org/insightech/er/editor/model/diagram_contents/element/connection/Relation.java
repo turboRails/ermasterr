@@ -379,30 +379,24 @@ public class Relation extends ConnectionElement {
 
     @Override
     public int compareTo(ConnectionElement other) {
-        int result = super.compareTo(other);
-        if (result != 0) {
-            return result;
-        }
-
         if (!(other instanceof Relation)) {
             return 1;
         }
 
         Relation _other = (Relation) other;
-        
+
         // [ermasterr] compare by name
         final String name1 = getName();
         final String name2 = _other.getName();
-        
+
+        if (name1 == null && name2 != null) {
+            return 1;
+        }
         if (!name1.equals(name2)) {
             return name1.compareTo(name2);
         }
-        
-        // [ermasterr] compare by position
-        final Integer p1 = getSourceXp() + getSourceYp() + getTargetXp() + getTargetYp();
-        final Integer p2 = _other.getSourceXp() + _other.getSourceYp() + _other.getTargetXp() + _other.getTargetYp();
-        
-        return p1.compareTo(p2);
+
+        return super.compareTo(other);
         // [ermasterr] give up if same relation and same position
     }
 

@@ -202,7 +202,8 @@ public class XMLLoader {
             if (referencedColumnIds != null) {
                 for (final String referencedColumnId : referencedColumnIds) {
                     try {
-                        Integer.parseInt(referencedColumnId);
+                        // [ermasterr] Change id generation to model's hash
+                        //Integer.parseInt(referencedColumnId);
 
                         final NormalColumn referencedColumn = columnMap.get(referencedColumnId);
                         referencedColumnList.add(referencedColumn);
@@ -218,7 +219,8 @@ public class XMLLoader {
             if (relationIds != null) {
                 for (final String relationId : relationIds) {
                     try {
-                        Integer.parseInt(relationId);
+                        // [ermasterr] Change id generation to model's hash
+                        //Integer.parseInt(relationId);
 
                         final Relation relation = (Relation) connectionMap.get(relationId);
                         for (final NormalColumn referencedColumn : referencedColumnList) {
@@ -959,7 +961,8 @@ public class XMLLoader {
         for (final String str : referencedColumnIds) {
             try {
                 if (str != null) {
-                    Integer.parseInt(str);
+                    // [ermasterr] Change id generation to model's hash
+                    //Integer.parseInt(str);
                     temp.add(str);
                 }
 

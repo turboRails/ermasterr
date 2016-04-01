@@ -86,7 +86,15 @@ public abstract class ConnectionElement extends AbstractModel implements Compara
             return tableView1.compareTo(tableView2);
         }
 
-        return 0;
+        // [ermasterr] compare by position
+        final Integer p1 = getSourceXp() + getSourceYp() + getTargetXp() + getTargetYp() +
+                getSource().getLocation().hashCode() + getTarget().getLocation().hashCode() +
+                getSource().getActualLocation().hashCode() + getTarget().getActualLocation().hashCode();
+        final Integer p2 = other.getSourceXp() + other.getSourceYp() + other.getTargetXp() + other.getTargetYp() +
+                other.getSource().getLocation().hashCode() + other.getTarget().getLocation().hashCode() +
+                other.getSource().getActualLocation().hashCode() + other.getTarget().getActualLocation().hashCode();
+
+        return p1.compareTo(p2);
     }
 
     public NodeElement getSource() {
