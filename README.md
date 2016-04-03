@@ -16,8 +16,14 @@ It can be done graphically to making ER diagram, printing ER diagram, exporting 
 Moreover, importing from DB, management of the group, and the historical management, etc. are supported. 
 
 # ermasterr solved some issues of the original version
+
+## Faster
 * ermasterr prevented a increase of the drawing time by getting rid of tabs of each category and skipping expensive initialization for each category.
+
+## Better
 * ermasterr fixed the issue that erdiagram data file size becomes gigantic in sometimes by writing a large amount of same xml tags.
+
+## Git-Mergable
 * ermasterr can write git-mergable erdiagram data as far as possible.
 
 # 1.1.x migration for 1.0.x
