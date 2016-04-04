@@ -2,6 +2,7 @@ package org.insightech.er.editor.persistent.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -190,9 +191,9 @@ public class PersistentXmlImpl extends Persistent {
     }
 
     @Override
-    public ERDiagram load(final InputStream in) throws Exception {
+    public ERDiagram load(final InputStream in, final File file) throws Exception {
         final XMLLoader loader = new XMLLoader();
-        return loader.load(in);
+        return loader.load(in, file);
     }
 
     /**
@@ -703,7 +704,7 @@ public class PersistentXmlImpl extends Persistent {
 
         xml.append("<change_tracking>\n");
 
-        xml.append("\t<updated_date>").append(DATE_FORMAT.format(changeTracking.getUpdatedDate())).append("</updated_date>\n");
+        //xml.append("\t<updated_date>").append(DATE_FORMAT.format(changeTracking.getUpdatedDate())).append("</updated_date>\n");
         xml.append("\t<comment>").append(escape(changeTracking.getComment())).append("</comment>\n");
 
         final PersistentContext context = getChangeTrackingContext(changeTracking);
@@ -1062,7 +1063,7 @@ public class PersistentXmlImpl extends Persistent {
 
         xml.append("\t<display>").append(modelProperties.isDisplay()).append("</display>\n");
         xml.append("\t<creation_date>").append(DATE_FORMAT.format(modelProperties.getCreationDate())).append("</creation_date>\n");
-        xml.append("\t<updated_date>").append(DATE_FORMAT.format(modelProperties.getUpdatedDate())).append("</updated_date>\n");
+        //xml.append("\t<updated_date>").append(DATE_FORMAT.format(modelProperties.getUpdatedDate())).append("</updated_date>\n");
 
         for (final NameValue property : modelProperties.getProperties()) {
             xml.append(tab(this.createXML(property, context)));

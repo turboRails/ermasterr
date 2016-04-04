@@ -1,5 +1,6 @@
 package org.insightech.er.editor.persistent.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -100,6 +101,8 @@ public class XMLLoader {
     private String database;
 
     private class LoadContext {
+        private final File file;
+
         private final Map<String, NodeElement> nodeElementMap;
 
         private final Map<String, NormalColumn> columnMap;
@@ -132,7 +135,8 @@ public class XMLLoader {
 
         private final Dictionary dictionary;
 
-        private LoadContext(final Dictionary dictionary) {
+        private LoadContext(final File file, final Dictionary dictionary) {
+            this.file = file;
             nodeElementMap = new HashMap<String, NodeElement>();
             columnMap = new HashMap<String, NormalColumn>();
             complexUniqueKeyMap = new HashMap<String, ComplexUniqueKey>();
@@ -151,6 +155,10 @@ public class XMLLoader {
 
             this.dictionary = dictionary;
             this.dictionary.clear();
+        }
+
+        private Date getUpdatedDate() {
+            return new Date(file.lastModified());
         }
 
         private void resolve() {
@@ -237,7 +245,7 @@ public class XMLLoader {
         }
     }
 
-    public ERDiagram load(final InputStream in) throws Exception {
+    public ERDiagram load(final InputStream in, final File file) throws Exception {
         final DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
         final Document document = parser.parse(in);
@@ -249,7 +257,7 @@ public class XMLLoader {
             root = document.getFirstChild();
         }
 
-        load((Element) root);
+        load((Element) root, file);
 
         return diagram;
     }
@@ -441,7 +449,7 @@ public class XMLLoader {
         return null;
     }
 
-    private void load(final Element root) {
+    private void load(final Element root, final File file) {
         final Element settings = getElement(root, "settings");
         database = loadDatabase(settings);
 
@@ -455,7 +463,7 @@ public class XMLLoader {
         loadFont(diagram, root);
 
         final DiagramContents diagramContents = diagram.getDiagramContents();
-        loadDiagramContents(diagramContents, root);
+        LoadContext context = loadDiagramContents(diagramContents, root, file);
 
         final int categoryIndex = this.getIntValue(root, "category_index");
         diagram.setCurrentCategory(null, categoryIndex);
@@ -467,7 +475,7 @@ public class XMLLoader {
         final int y = this.getIntValue(root, "y");
         diagram.setLocation(x, y);
 
-        loadChangeTrackingList(diagram.getChangeTrackingList(), root);
+        loadChangeTrackingList(diagram.getChangeTrackingList(), root, context);
 
         diagram.getDiagramContents().getSettings().getTranslationSetting().load();
     }
@@ -481,10 +489,10 @@ public class XMLLoader {
         return database;
     }
 
-    private void loadDiagramContents(final DiagramContents diagramContents, final Element parent) {
+    private LoadContext loadDiagramContents(final DiagramContents diagramContents, final Element parent, final File file) {
         final Dictionary dictionary = diagramContents.getDictionary();
 
-        final LoadContext context = new LoadContext(dictionary);
+        final LoadContext context = new LoadContext(file, dictionary);
 
         loadDictionary(dictionary, parent, context);
 
@@ -505,6 +513,8 @@ public class XMLLoader {
         loadSettings(settings, parent, context);
 
         context.resolve();
+
+        return context;
     }
 
     private void loadSequenceSet(final SequenceSet sequenceSet, final Element parent) {
@@ -689,7 +699,7 @@ public class XMLLoader {
         return properties;
     }
 
-    private void loadChangeTrackingList(final ChangeTrackingList changeTrackingList, final Element parent) {
+    private void loadChangeTrackingList(final ChangeTrackingList changeTrackingList, final Element parent, final LoadContext context) {
         final Element element = getElement(parent, "change_tracking_list");
 
         if (element != null) {
@@ -697,22 +707,23 @@ public class XMLLoader {
 
             for (int i = 0; i < nodeList.getLength(); i++) {
                 final Element changeTrackingElemnt = (Element) nodeList.item(i);
-                final ChangeTracking changeTracking = loadChangeTracking(changeTrackingElemnt);
+                final ChangeTracking changeTracking = loadChangeTracking(changeTrackingElemnt, context);
 
                 changeTrackingList.addChangeTracking(changeTracking);
             }
         }
     }
 
-    private ChangeTracking loadChangeTracking(final Element element) {
+    private ChangeTracking loadChangeTracking(final Element element, final LoadContext context) {
         final DiagramContents diagramContents = new DiagramContents();
 
-        loadDiagramContents(diagramContents, element);
+        loadDiagramContents(diagramContents, element, context.file);
 
         final ChangeTracking changeTracking = new ChangeTracking(diagramContents);
 
         changeTracking.setComment(getStringValue(element, "comment"));
-        changeTracking.setUpdatedDate(getDateValue(element, "updated_date"));
+        //changeTracking.setUpdatedDate(getDateValue(element, "updated_date"));
+        changeTracking.setUpdatedDate(context.getUpdatedDate());
 
         return changeTracking;
     }
@@ -1017,7 +1028,7 @@ public class XMLLoader {
             loadTranslationSetting(translationSetting, element, context);
 
             final ModelProperties modelProperties = settings.getModelProperties();
-            loadModelProperties(modelProperties, element);
+            loadModelProperties(modelProperties, element, context);
 
             loadTableProperties((TableProperties) settings.getTableViewProperties(), element, context);
 
@@ -1259,7 +1270,7 @@ public class XMLLoader {
         environmentSetting.setEnvironments(environmentList);
     }
 
-    private void loadModelProperties(final ModelProperties modelProperties, final Element parent) {
+    private void loadModelProperties(final ModelProperties modelProperties, final Element parent, final LoadContext context) {
         final Element element = getElement(parent, "model_properties");
 
         loadLocation(modelProperties, element);
@@ -1268,7 +1279,8 @@ public class XMLLoader {
 
         modelProperties.setDisplay(this.getBooleanValue(element, "display", false));
         modelProperties.setCreationDate(getDateValue(element, "creation_date"));
-        modelProperties.setUpdatedDate(getDateValue(element, "updated_date"));
+        //modelProperties.setUpdatedDate(getDateValue(element, "updated_date"));
+        modelProperties.setUpdatedDate(context.getUpdatedDate());
 
         final NodeList nodeList = element.getElementsByTagName("model_property");
 

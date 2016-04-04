@@ -101,7 +101,7 @@ public class NoWindowTest {
             final File file = new File("newfile.erm");
             in = new BufferedInputStream(new FileInputStream(file));
 
-            diagram = persistent.load(in);
+            diagram = persistent.load(in, file);
 
         } catch (final Exception e) {
             e.printStackTrace();

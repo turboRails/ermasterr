@@ -2,6 +2,7 @@ package org.insightech.er.editor.persistent.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -30,7 +31,7 @@ public class PersistentSerializeImpl extends Persistent {
     }
 
     @Override
-    public ERDiagram load(final InputStream in) throws Exception {
+    public ERDiagram load(final InputStream in, final File file) throws Exception {
         return (ERDiagram) ((ObjectInputStream) in).readObject();
     }
 

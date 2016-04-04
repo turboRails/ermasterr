@@ -1,5 +1,6 @@
 package org.insightech.er.editor.persistent;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,6 +17,6 @@ public abstract class Persistent {
 
     abstract public InputStream createInputStream(ERDiagram diagram) throws IOException;
 
-    abstract public ERDiagram load(InputStream in) throws Exception;
+    abstract public ERDiagram load(InputStream in, File file) throws Exception;
 
 }

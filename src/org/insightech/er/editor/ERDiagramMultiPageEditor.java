@@ -119,9 +119,11 @@ public class ERDiagramMultiPageEditor extends MultiPageEditorPart {
         try {
             final IEditorInput input = getEditorInput();
 
+            File file;
             if (input instanceof IFileEditorInput) {
                 inputFile = ((IFileEditorInput) input).getFile();
                 inputFilePath = inputFile.getLocation().toOSString();
+                file = inputFile.getLocation().toFile();
 
                 setPartName(inputFile.getName());
 
@@ -133,7 +135,7 @@ public class ERDiagramMultiPageEditor extends MultiPageEditorPart {
 
             } else {
                 final URI uri = ((FileStoreEditorInput) input).getURI();
-                final File file = new File(uri);
+                file = new File(uri);
                 inputFilePath = file.getCanonicalPath();
 
                 setPartName(file.getName());
@@ -142,7 +144,7 @@ public class ERDiagramMultiPageEditor extends MultiPageEditorPart {
             }
 
             final Persistent persistent = Persistent.getInstance();
-            diagram = persistent.load(in);
+            diagram = persistent.load(in, file);
 
         } catch (final Exception e) {
             ERDiagramActivator.showExceptionDialog(e);
