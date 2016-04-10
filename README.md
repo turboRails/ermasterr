@@ -13,7 +13,7 @@ Package: Eclipse IDE for Java Developers
 2. Install PDE plug-in  
 Plug-in name: Eclipse PDE Plug-in Developer Resources
 3. Install ermasterr  
-Copy the contents of the dropins folder to the dropins folder located in the root of your Eclipse installation.
+Copy the contents of the [dropins folder](https://github.com/roundrop/ermasterr/tree/master/dropins/ermasterr/eclipse/plugins) to the dropins folder located in the root of your Eclipse installation.
 
 # Features
 
