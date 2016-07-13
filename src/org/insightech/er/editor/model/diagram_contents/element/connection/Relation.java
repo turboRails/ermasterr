@@ -392,8 +392,10 @@ public class Relation extends ConnectionElement {
         if (name1 == null && name2 != null) {
             return 1;
         }
-        if (!name1.equals(name2)) {
-            return name1.compareTo(name2);
+        if (name1 != null) {
+            if (!name1.equals(name2)) {
+                return name1.compareTo(name2);
+            }
         }
 
         return super.compareTo(other);
