@@ -21,13 +21,10 @@ Copy the contents of the [dropins folder](https://github.com/roundrop/ermasterr/
 * ermasterr prevented a increase of the drawing time by getting rid of tabs of each category and skipping expensive initialization for each category.
 
 ## Better
-* ermasterr fixed the issue that erdiagram data file size becomes gigantic in sometimes by writing a large amount of same xml tags.
+* ermasterr has fixed the issue that erdiagram data file size becomes gigantic in sometimes by writing a large amount of same xml tags. (https://sourceforge.net/p/ermaster/bugs/119/)
 
 ## VCS-friendly
-* ermasterr can write git-mergable erdiagram data as far as possible.
-
-# 1.1.x migration for 1.0.x
-Re-save .erm file using 1.1.x.
+* ermasterr can write git-mergable erdiagram data as far as possible. (https://sourceforge.net/p/ermaster/feature-requests/104/)
 
 # License
 Apache License V2.0
