@@ -127,7 +127,6 @@ public class PersistentXmlImpl extends Persistent {
             final List<ConnectionElement> connections = content.getIncomings();
             Collections.sort(connections);  // [ermasterr] Sort
 
-            System.out.println(content);
             for (final ConnectionElement connection : connections) {
                 context.connectionMap.put(connection, IdGenerator.connectionId(content, connection));
                 //connectionCount++;
