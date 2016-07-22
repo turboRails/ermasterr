@@ -5,6 +5,8 @@ import java.util.List;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPartViewer;
+import org.eclipse.gef.Request;
+import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.gef.tools.PanningSelectionTool;
@@ -81,6 +83,21 @@ public class MovablePanningSelectionTool extends PanningSelectionTool {
             }
 
             getCurrentViewer().getEditDomain().getCommandStack().execute(compoundCommand.unwrap());
+        } else {
+            // [ermasterr] to open editor when the enter key pressed
+            if (event.keyCode == SWT.Selection) {
+                NodeElementEditPart targetEditPart = null;
+                final List selectedEditParts = getCurrentViewer().getSelectedEditParts();
+                for (final Object object : selectedEditParts) {
+                    final NodeElementEditPart editPart = (NodeElementEditPart) object;
+                    targetEditPart = editPart;
+                }
+                if (targetEditPart != null) {
+                    Request request = new Request();
+                    request.setType(RequestConstants.REQ_OPEN);
+                    targetEditPart.performRequest(request);
+                }
+            }
         }
 
         return super.handleKeyDown(event);
