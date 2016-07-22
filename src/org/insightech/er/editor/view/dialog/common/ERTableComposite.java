@@ -7,6 +7,8 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -188,6 +190,20 @@ public class ERTableComposite extends Composite {
                 final Column selectedColumn = columnList.get(index);
                 if (selectedColumn instanceof ColumnGroup) {
                     holder.selectGroup((ColumnGroup) selectedColumn);
+                }
+            }
+        });
+
+        // [ermasterr] to open column editor when the space key pressed
+        table.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.keyCode == SWT.MouseHover) {
+                    Column targetColumn = getTargetColumn();
+                    if (targetColumn == null || !(targetColumn instanceof CopyColumn)) {
+                        return;
+                    }
+                    addOrEditColumn((CopyColumn) targetColumn, false);
                 }
             }
         });
