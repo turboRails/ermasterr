@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -1319,6 +1320,16 @@ public class PersistentXmlImpl extends Persistent {
         xml.append("<complex_unique_key_list>\n");
 
         for (final ComplexUniqueKey complexUniqueKey : complexUniqueKeyList) {
+            // [ermasterr] truncate column if not exists #Issue2
+            final List<NormalColumn> newColumns = new ArrayList<>();
+            final List<NormalColumn> oldColumns = complexUniqueKey.getColumnList();
+            for (NormalColumn column : oldColumns) {
+                if (context.columnMap.get(column) != null) {
+                    newColumns.add(column);
+                }
+            }
+            complexUniqueKey.setColumnList(newColumns);
+
             xml.append(tab(this.createXML(complexUniqueKey, context)));
         }
 
