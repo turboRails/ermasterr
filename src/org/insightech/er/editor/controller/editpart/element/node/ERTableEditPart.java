@@ -130,8 +130,9 @@ public class ERTableEditPart extends TableViewEditPart implements IResizable {
             final NormalColumn oldAutoIncrementColumn = table.getAutoIncrementColumn();
 
             if (oldAutoIncrementColumn != null) {
-                if (autoIncrementColumn == null || ((CopyColumn) autoIncrementColumn).getOriginalColumn() != oldAutoIncrementColumn) {
-                    final String oldTableName = table.getPhysicalName();
+                final String oldTableName = table.getPhysicalName();
+                if (autoIncrementColumn == null || ((CopyColumn) autoIncrementColumn).getOriginalColumn() != oldAutoIncrementColumn
+                        || !tableName.equals(oldTableName)) {   // [ermasterr] Add condition for when table name changed
                     final String columnName = oldAutoIncrementColumn.getPhysicalName();
 
                     if (!Check.isEmpty(columnName)) {
@@ -152,7 +153,7 @@ public class ERTableEditPart extends TableViewEditPart implements IResizable {
                                     command.add(deleteTriggerCommand);
                                 }
 
-                                // シーケンスの作成
+                                // シーケンスの削除
                                 final Sequence sequence = sequenceSet.get(sequenceName);
 
                                 if (sequence != null) {
