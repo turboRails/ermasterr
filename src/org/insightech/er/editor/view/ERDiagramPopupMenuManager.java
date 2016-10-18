@@ -195,14 +195,14 @@ public class ERDiagramPopupMenuManager extends MenuManager {
         this.add(this.getAction(TranslationManageAction.ID));
         this.add(this.getAction(TestDataCreateAction.ID));
 
-        /* [ermasterr] Disable category menu
         final MenuManager categoryMenu = new MenuManager(ResourceString.getResourceString("label.category"));
         categoryMenu.add(this.getAction(CategoryManageAction.ID));
         // categoryMenu.add(changeFreeLayoutAction);
+        /* [ermasterr] Disable 'Show refered tables'
         categoryMenu.add(changeShowReferredTablesAction);
+        */
 
         this.add(categoryMenu);
-        */
 
         this.add(this.getAction(OptionSettingAction.ID));
 
