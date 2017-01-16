@@ -153,7 +153,7 @@ public class SqlServerDDLCreator extends DDLCreator {
 
     @Override
     protected String getDropTableDDL(final String name) {
-        final String ddl = "IF ObJECt_ID('" + name + "') IS NOT NULL DROP TABLE " + name;
+        final String ddl = "IF OBJECT_ID('" + name + "') IS NOT NULL DROP TABLE " + name;
 
         return ddl;
     }
