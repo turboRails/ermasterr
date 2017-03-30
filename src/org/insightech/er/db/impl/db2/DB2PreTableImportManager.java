@@ -25,10 +25,10 @@ public class DB2PreTableImportManager extends PreImportFromDBManager {
         for (final String schemaPattern : schemaList) {
             try {
                 if (schemaPattern == null) {
-                    stmt = con.prepareStatement("SELECT SEQSCHEMA, SEQNAME FROM SYSCAT.SEQUENCES");
+                    stmt = con.prepareStatement("SELECT SEQSCHEMA, SEQNAME FROM SYSIBM.SYSSEQUENCES");
 
                 } else {
-                    stmt = con.prepareStatement("SELECT SEQSCHEMA, SEQNAME FROM SYSCAT.SEQUENCES WHERE SEQSCHEMA = ?");
+                    stmt = con.prepareStatement("SELECT SEQSCHEMA, SEQNAME FROM SYSIBM.SYSSEQUENCES WHERE SEQSCHEMA = ?");
                     stmt.setString(1, schemaPattern);
                 }
 

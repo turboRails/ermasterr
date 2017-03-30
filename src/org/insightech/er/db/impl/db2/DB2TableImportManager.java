@@ -15,7 +15,7 @@ public class DB2TableImportManager extends ImportFromDBManagerEclipseBase {
      */
     @Override
     protected String getViewDefinitionSQL(final String schema) {
-        return "SELECT TEXT FROM SYSCAT.VIEWS WHERE VIEWSCHEMA = ? AND VIEWNAME = ?";
+        return "SELECT TEXT FROM SYSIBM.SYSVIEWS WHERE VIEWSCHEMA = ? AND VIEWNAME = ?";
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DB2TableImportManager extends ImportFromDBManagerEclipseBase {
         ResultSet rs = null;
 
         try {
-            stmt = con.prepareStatement("SELECT * FROM SYSCAT.SEQUENCES WHERE SEQSCHEMA = ? AND SEQNAME = ?");
+            stmt = con.prepareStatement("SELECT * FROM SYSIBM.SYSSEQUENCES WHERE SEQSCHEMA = ? AND SEQNAME = ?");
             stmt.setString(1, schema);
             stmt.setString(2, sequenceName);
 
@@ -118,5 +118,10 @@ public class DB2TableImportManager extends ImportFromDBManagerEclipseBase {
             this.close(stmt);
         }
     }
+
+	@Override
+	protected void cacheForeignKeyData() throws SQLException {
+		tableForeignKeyDataMap = null; // indicate no caching for DB2, must query for each table individually
+	}
 
 }
