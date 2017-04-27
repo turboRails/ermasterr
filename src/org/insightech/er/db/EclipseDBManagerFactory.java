@@ -8,6 +8,7 @@ import org.insightech.er.db.impl.access.AccessEclipseDBManager;
 import org.insightech.er.db.impl.db2.DB2EclipseDBManager;
 import org.insightech.er.db.impl.h2.H2EclipseDBManager;
 import org.insightech.er.db.impl.hsqldb.HSQLDBEclipseDBManager;
+import org.insightech.er.db.impl.informix.InformixEclipseDBManager;
 import org.insightech.er.db.impl.mysql.MySQLEclipseDBManager;
 import org.insightech.er.db.impl.oracle.OracleEclipseDBManager;
 import org.insightech.er.db.impl.postgres.PostgresEclipseDBManager;
@@ -31,9 +32,10 @@ public class EclipseDBManagerFactory {
         new OracleEclipseDBManager();
         new PostgresEclipseDBManager();
         new SQLiteEclipseDBManager();
-        new SqlServerEclipseDBManager();
-        new SqlServer2008EclipseDBManager();
-    }
+		new SqlServerEclipseDBManager();
+		new SqlServer2008EclipseDBManager();
+		new InformixEclipseDBManager();
+	}
 
     static void addDB(final EclipseDBManager manager) {
         DB_LIST.add(manager);
