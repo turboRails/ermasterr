@@ -145,15 +145,6 @@ public class InformixTableImportManager extends ImportFromDBManagerEclipseBase {
 			this.close(stmt);
 		}
 	}
-	
-	@Override
-	protected ERTable importTable(String tableNameWithSchema, String tableName, String schema) throws SQLException, InterruptedException
-	{
-		if(tableName.startsWith("sys") || tableName.endsWith("_aud"))
-			return null;
-		
-		return super.importTable(tableNameWithSchema, tableName, schema);
-	}
 
 	@Override
 	protected void cacheForeignKeyData() throws SQLException {
