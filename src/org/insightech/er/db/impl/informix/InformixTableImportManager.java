@@ -5,13 +5,14 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.insightech.er.editor.model.dbimport.ImportFromDBManagerEclipseBase;
-import org.insightech.er.editor.model.diagram_contents.element.node.table.ERTable;
 import org.insightech.er.editor.model.diagram_contents.not_element.sequence.Sequence;
+import org.insightech.er.util.Format;
 
 public class InformixTableImportManager extends ImportFromDBManagerEclipseBase {
-
 
 	/**
 	 * {@inheritDoc}
@@ -31,15 +32,11 @@ public class InformixTableImportManager extends ImportFromDBManagerEclipseBase {
 	}
 
 	@Override
-	protected ColumnData createColumnData(ResultSet columnSet)
-			throws SQLException {
+	protected ColumnData createColumnData(ResultSet columnSet) throws SQLException {
 		ColumnData columnData = super.createColumnData(columnSet);
-		String type = columnData.type.toLowerCase();
-
-		if ("bigint".equals(type)) {
-		} 
+		String type = Format.null2blank(columnData.type).toLowerCase();
 		
-		else if (type.startsWith("timestamp")) {
+		if (type.startsWith("timestamp")) {
 			columnData.size = columnData.decimalDegits;
 		}
 		
@@ -59,8 +56,19 @@ public class InformixTableImportManager extends ImportFromDBManagerEclipseBase {
 		            if(columnData.columnName.equals(columnName))
 		            	columnData.type = columnTypeName;
 			}
-		}
+			
+			if (columnData.type.indexOf("fraction") != -1) {
+	            final Pattern p = Pattern.compile("(.*fraction)\\((\\d+)\\)");
+	            final Matcher m = p.matcher(columnData.type);
 
+	            if (m.matches()) {
+	            	columnData.type = m.group(1);
+	                columnData.size = Integer.parseInt(m.group(2));
+	            }
+			} 
+
+		}
+		
 		return columnData;
 	}
 
