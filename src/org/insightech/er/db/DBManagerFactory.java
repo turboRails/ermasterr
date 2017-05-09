@@ -8,6 +8,7 @@ import org.insightech.er.db.impl.access.AccessDBManager;
 import org.insightech.er.db.impl.db2.DB2DBManager;
 import org.insightech.er.db.impl.h2.H2DBManager;
 import org.insightech.er.db.impl.hsqldb.HSQLDBDBManager;
+import org.insightech.er.db.impl.informix.InformixDBManager;
 import org.insightech.er.db.impl.mysql.MySQLDBManager;
 import org.insightech.er.db.impl.oracle.OracleDBManager;
 import org.insightech.er.db.impl.postgres.PostgresDBManager;
@@ -33,9 +34,10 @@ public class DBManagerFactory {
         new OracleDBManager();
         new PostgresDBManager();
         new SQLiteDBManager();
-        new SqlServerDBManager();
-        new SqlServer2008DBManager();
-    }
+		new SqlServerDBManager();
+		new SqlServer2008DBManager();
+		new InformixDBManager();
+	}
 
     static void addDB(final DBManager manager) {
         DB_LIST.add(manager);
