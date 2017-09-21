@@ -9,11 +9,30 @@ Original version is http://ermaster.sourceforge.net
 
 # Install
 1. Install Eclipse  
-Package: Eclipse IDE for Java Developers
+Package: `Eclipse IDE for Java Developers`
 2. Install PDE plug-in  
-Plug-in name: Eclipse PDE Plug-in Developer Resources
+Plug-in name: `Eclipse PDE Plug-in Developer Resources`
 3. Install ermasterr  
 Copy the contents of the [dropins folder](https://github.com/roundrop/ermasterr/tree/master/dropins/ermasterr/eclipse/plugins) to the dropins folder located in the root of your Eclipse installation.
+
+Directory tree example:
+
+```
+your_eclipse_install_dir/
+└── dropins/
+    └── ermasterr/
+        └── eclipse/
+            └── plugins/
+                └── org.insightech.er_x.y.z.jar
+```
+
+or put jar file to dropins directly.
+
+```
+your_eclipse_install_dir/
+└── dropins/
+    └── org.insightech.er_x.y.z.jar
+```
 
 # Features
 
