@@ -3,7 +3,7 @@ package org.insightech.er.db.impl.postgres;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import org.insightech.er.editor.model.progress_monitor.ProgressMonitor;
 import org.insightech.er.editor.model.dbimport.ImportFromDBManagerEclipseBase;
 
 public class PostgresTableImportManager extends ImportFromDBManagerEclipseBase {
