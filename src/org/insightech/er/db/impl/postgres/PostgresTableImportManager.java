@@ -28,6 +28,29 @@ public class PostgresTableImportManager extends ImportFromDBManagerEclipseBase {
     }
 
     @Override
+    protected void cacheTableComment(final ProgressMonitor monitor) throws SQLException, InterruptedException {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            stmt = con.prepareStatement("select relname,description,nspname from pg_description join pg_class on pg_description.objoid = pg_class.oid join pg_namespace on pg_class.relnamespace = pg_namespace.oid where objsubid=0");
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+            	 String tableName = rs.getString("relname");
+        		 final String schemaName = rs.getString("nspname");  
+        		 final String comments = rs.getString("description");
+            	 if (tableName != null && comments != null) {
+            		 tableName = dbSetting.getTableNameWithSchema(tableName, schemaName);
+            		 tableCommentMap.put(tableName, comments);
+            	 }
+            }
+        } finally {
+            this.close(rs);
+            this.close(stmt);
+        }
+    }
+    
+    @Override
     protected ColumnData createColumnData(final ResultSet columnSet) throws SQLException {
         final ColumnData columnData = super.createColumnData(columnSet);
         final String type = columnData.type.toLowerCase();

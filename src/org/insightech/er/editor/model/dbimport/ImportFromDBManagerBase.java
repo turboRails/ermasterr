@@ -473,9 +473,17 @@ public abstract class ImportFromDBManagerBase implements ImportFromDBManager {
         tableProperties.setSchema(schema);
 
         table.setPhysicalName(tableName);
-        table.setLogicalName(translationResources.translate(tableName));
-
-        table.setDescription(tableCommentMap.get(tableNameWithSchema));
+        
+        final String description = Format.null2blank(tableCommentMap.get(tableNameWithSchema));
+        String logicalName = null;
+        if (useCommentAsLogicalName && !Check.isEmpty(description)) {
+            logicalName = description.replaceAll("[\r\n]", "");
+        }
+        if (Check.isEmpty(logicalName)) {
+            logicalName = translationResources.translate(tableName);
+        }
+        table.setLogicalName(logicalName);
+        table.setDescription(description);
 
         final List<PrimaryKeyData> primaryKeys = getPrimaryKeys(table, metaData);
         if (!primaryKeys.isEmpty()) {
